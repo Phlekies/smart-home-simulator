@@ -114,6 +114,17 @@ class SimulatorModelTest {
         }
 
         @Test
+        void roomNamesAreShownOnlyWhileTheTemplateIsUnchanged() {
+            model.loadTemplate(FloorPlanTemplate.MEDITERRANEAN_VILLA);
+            assertEquals(FloorPlanTemplate.MEDITERRANEAN_VILLA.rooms(), model.roomLabels());
+
+            model.removeWall(model.walls().getFirst());
+            assertTrue(model.roomLabels().isEmpty());
+            model.undo();
+            assertFalse(model.roomLabels().isEmpty());
+        }
+
+        @Test
         void roomsNeedAnArea() {
             int before = model.walls().size();
             assertFalse(model.addRoom(5, 5, 5, 10, Materials.DRYWALL, 8));

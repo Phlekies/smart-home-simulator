@@ -30,7 +30,9 @@ budget. One click finds the hub position that serves every sensor best.
   that reaches every sensor with the largest worst-case margin (max-min optimisation).
 - **Sensor links at a glance**: green/red lines and a table with received power, SNR and
   link margin of every sensor.
-- **Floor plan editor**: walls, rooms, six materials, undo/redo and 12 building templates.
+- **Ten realistic houses** drawn to scale, with doorways, windows, garages and named rooms,
+  plus 12 more building templates (apartments, offices, hotel, clinic, warehouse, factory).
+- **Floor plan editor**: walls, rooms, six materials and undo/redo.
 - **Ray tracing animation** showing how energy reflects and passes through walls.
 - **Projects and reports**: save/open JSON projects, export the plan as PNG or a
   self-contained HTML coverage report.
@@ -115,6 +117,27 @@ Example projects live in [`examples/`](examples) and can be opened with *File �
 | Ctrl + mouse wheel, Ctrl+= / Ctrl+- / Ctrl+0 | Zoom in / out / fit; drag with the middle button to pan |
 | Ctrl+E / Ctrl+R | Export plan image / coverage report |
 
+## Realistic houses
+
+Ten complete single-storey houses can be loaded from the *Templates* tab. They are drawn to
+scale in metres from typical architectural layouts, with interior doorways left open, glazed
+windows and closed entrance, garage and fire doors. Each house uses the materials it would be
+built with, so each one stresses the propagation in a different way. Room names are written on
+the plan until it is edited.
+
+| Template | Footprint | What it is good for testing |
+| --- | --- | --- |
+| Mediterranean villa | 26 × 12 m + garage | Brick cavity façades, hollow-brick partitions, garage behind a steel fire door |
+| Ranch house | L, 29.5 × 18 m | Light drywall partitions, open great room, three-car garage |
+| Courtyard house | 22 × 22 m | 40 cm load-bearing brick around a glazed gallery and an open-air patio |
+| Modern glass villa | T, 24 × 30 m | Concrete walls next to glass curtain walls, cinema in a concrete box |
+| Nordic timber house | 34 × 10 m | Long plan with low-loss timber walls, sauna and a masonry fireplace |
+| Stone farmhouse | U, 30 × 24 m | 50 cm stone walls around a walled yard, garage and workshop in the barn |
+| Concrete block house | 26 × 19 m | Deep plan with a concrete-block shell and rooms far from the windows |
+| Villa with guest house | 39 × 13 m | Two buildings on either side of a pool terrace |
+| Semi-detached pair | 32 × 14.6 m | Two mirrored homes sharing a party wall: interference between neighbours |
+| Two-wing country house | H, 24 × 22 m | Day and night wings joined only by a glass entrance gallery |
+
 ## The physics
 
 For every receiver point and sensor the engine builds a set of paths and applies a link
@@ -172,14 +195,14 @@ flowchart TD
 | Package | Responsibility |
 | --- | --- |
 | [`physics`](src/main/java/io/github/phlekies/smarthome/physics) | Pure formulas: path loss, noise, BER, Shannon, knife-edge, segment geometry |
-| [`model`](src/main/java/io/github/phlekies/smarthome/model) | Domain objects, wall materials and the 12 floor plan templates |
+| [`model`](src/main/java/io/github/phlekies/smarthome/model) | Domain objects, wall materials and the 22 floor plan templates |
 | [`simulation`](src/main/java/io/github/phlekies/smarthome/simulation) | Parallel, cancellable multipath engine; hub optimiser; iterative ray tracer; coverage statistics; formula validator |
 | [`app`](src/main/java/io/github/phlekies/smarthome/app) | UI-independent application state with snapshot-based undo/redo, project files (Jackson), HTML report |
 | [`ui`](src/main/java/io/github/phlekies/smarthome/ui) | Plan view, editor, toolbar, side panel tabs, animators, dialogs; styles in `app.css` on top of AtlantaFX |
 
 ## Testing
 
-`./gradlew test` runs 192 tests (JUnit 6), executed on Linux, Windows and macOS by the CI
+`./gradlew test` runs 249 tests (JUnit 6), executed on Linux, Windows and macOS by the CI
 pipeline, with 93–100 % line coverage of the non-UI layers and 81 % overall:
 
 - **Physics** checked against textbook values: Friis loss, noise floor of a 20 MHz channel,
@@ -191,6 +214,9 @@ pipeline, with 93–100 % line coverage of the non-UI layers and 81 % overall:
   every candidate is scored, cancellation.
 - **Projects and reports**: JSON round trips, invalid and newer files rejected, the example
   projects load, HTML output is escaped.
+- **Floor plans**: every house is rasterised at 10 cm, with its real wall thicknesses, and
+  flood-filled to prove that each room can be reached through a doorway; walls meet only at
+  their ends, without crossing or overlapping.
 - **Application state**: undo/redo of every edit, device moves, isolated snapshots.
 - **User interface**: smoke tests start the real application on the headless Monocle platform
   and drag a sensor, draw and undo a wall, optimise the hub, zoom, switch theme and export.

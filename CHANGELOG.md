@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- Ten realistic single-storey houses drawn to scale: Mediterranean villa, ranch house,
+  courtyard house, modern glass villa, Nordic timber house, stone farmhouse, concrete block
+  house, villa with guest house, semi-detached pair and two-wing country house. They have
+  open interior doorways, windows, closed entrance, garage and fire doors, and the materials
+  each type of house is built with.
+- Room names are written on the plan while a house template is unedited.
+- Tests that flood-fill every house to check that all its rooms can be reached.
+
 ## [1.0.0] - 2026-09-30
 
 First stable release.

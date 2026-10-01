@@ -7,14 +7,15 @@ import static io.github.phlekies.smarthome.model.material.Materials.GLASS;
 import static io.github.phlekies.smarthome.model.material.Materials.METAL_DOOR;
 import static io.github.phlekies.smarthome.model.material.Materials.WOOD;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import io.github.phlekies.smarthome.model.Wall;
-import io.github.phlekies.smarthome.model.material.Material;
 
-/** Built-in indoor floor plans. Coordinates are designed on a small grid and scaled to metres. */
+/**
+ * Built-in indoor floor plans. The original layouts are drawn on a compact grid and enlarged to
+ * realistic sizes; the houses are drawn to scale, with doorways, windows and named rooms.
+ */
 public enum FloorPlanTemplate {
 
     COMPACT_STUDIO("Compact studio",
@@ -72,6 +73,53 @@ public enum FloorPlanTemplate {
                 plan.wall(12, 18, 33, 18, DRYWALL, 8);
                 plan.wall(22, 18, 22, 28, DRYWALL, 8);
             }),
+
+    MEDITERRANEAN_VILLA("Mediterranean villa",
+            "Single-storey Spanish villa: brick façades, living-dining room facing the garden, three"
+                    + " bedrooms, a study, two bathrooms and a double garage.",
+            Units.METRES, HousePlans::mediterraneanVilla),
+
+    RANCH_HOUSE("Ranch house",
+            "L-shaped American ranch: brick veneer, drywall partitions, open great room, four bedrooms"
+                    + " and a three-car garage.",
+            Units.METRES, HousePlans::ranchHouse),
+
+    COURTYARD_HOUSE("Courtyard house",
+            "Andalusian patio house with 40 cm brick walls: rooms around a glazed gallery and an"
+                    + " open-air courtyard.",
+            Units.METRES, HousePlans::courtyardHouse),
+
+    MODERN_GLASS_VILLA("Modern glass villa",
+            "T-shaped concrete villa: glazed open-plan day wing, cinema and a glass gallery serving"
+                    + " the bedroom wing.",
+            Units.METRES, HousePlans::modernGlassVilla),
+
+    NORDIC_TIMBER_HOUSE("Nordic timber house",
+            "Long timber house with an open-plan day zone, masonry fireplace, sauna and three bedrooms.",
+            Units.METRES, HousePlans::nordicTimberHouse),
+
+    STONE_FARMHOUSE("Stone farmhouse",
+            "U-shaped farmhouse with 50 cm stone walls around a walled yard, glazed gallery,"
+                    + " workshop and garage.",
+            Units.METRES, HousePlans::stoneFarmhouse),
+
+    CONCRETE_BLOCK_HOUSE("Concrete block house",
+            "Deep-plan family house in concrete block: great room, kitchen and dining far from the"
+                    + " windows, internal garage.",
+            Units.METRES, HousePlans::concreteBlockHouse),
+
+    VILLA_WITH_GUEST_HOUSE("Villa with guest house",
+            "Brick villa with three bedrooms and a detached guest studio on the far side of the pool.",
+            Units.METRES, HousePlans::villaWithGuestHouse),
+
+    SEMI_DETACHED_PAIR("Semi-detached pair",
+            "Two mirrored three-bedroom homes sharing a concrete party wall: tests interference"
+                    + " between neighbours.",
+            Units.METRES, HousePlans::semiDetachedPair),
+
+    TWO_WING_COUNTRY_HOUSE("Two-wing country house",
+            "Day wing and night wing joined by a glass entrance gallery, with four bedrooms.",
+            Units.METRES, HousePlans::twoWingCountryHouse),
 
     HOTEL_FLOOR("Hotel floor",
             "Central corridor with repeated rooms, useful to analyse linear coverage.",
@@ -173,16 +221,33 @@ public enum FloorPlanTemplate {
                 plan.wall(9, 14, 34, 14, WOOD, 5);
             });
 
-    /** Templates are drawn on a compact grid and enlarged to realistic room sizes. */
-    private static final double SCALE = 1.30;
+    /** How the coordinates of a layout are given. */
+    private enum Units {
+        /** Drawn on a compact grid and enlarged to realistic room sizes. */
+        GRID(1.30),
+        /** Drawn to scale, in metres. */
+        METRES(1.0);
+
+        private final double scale;
+
+        Units(double scale) {
+            this.scale = scale;
+        }
+    }
 
     private final String displayName;
     private final String description;
+    private final Units units;
     private final Consumer<PlanBuilder> layout;
 
     FloorPlanTemplate(String displayName, String description, Consumer<PlanBuilder> layout) {
+        this(displayName, description, Units.GRID, layout);
+    }
+
+    FloorPlanTemplate(String displayName, String description, Units units, Consumer<PlanBuilder> layout) {
         this.displayName = displayName;
         this.description = description;
+        this.units = units;
         this.layout = layout;
     }
 
@@ -203,28 +268,24 @@ public enum FloorPlanTemplate {
 
     /** A fresh list of new wall instances, in metres. */
     public List<Wall> walls() {
+        return build().walls().stream().map(wall -> wall.scaled(units.scale)).toList();
+    }
+
+    /** Names of the rooms and where to write them, in metres; empty if the rooms are not named. */
+    public List<RoomLabel> rooms() {
+        return build().rooms().stream()
+                .map(room -> new RoomLabel(room.name(), room.x() * units.scale, room.y() * units.scale))
+                .toList();
+    }
+
+    private PlanBuilder build() {
         PlanBuilder builder = new PlanBuilder();
         layout.accept(builder);
-        return builder.walls.stream().map(wall -> wall.scaled(SCALE)).toList();
+        return builder;
     }
 
     @Override
     public String toString() {
         return displayName;
-    }
-
-    private static final class PlanBuilder {
-        private final List<Wall> walls = new ArrayList<>();
-
-        void wall(double x1, double y1, double x2, double y2, Material material, double thicknessCm) {
-            walls.add(new Wall(x1, y1, x2, y2, material, thicknessCm));
-        }
-
-        void rect(double x1, double y1, double x2, double y2, Material material, double thicknessCm) {
-            wall(x1, y1, x2, y1, material, thicknessCm);
-            wall(x2, y1, x2, y2, material, thicknessCm);
-            wall(x2, y2, x1, y2, material, thicknessCm);
-            wall(x1, y2, x1, y1, material, thicknessCm);
-        }
     }
 }
