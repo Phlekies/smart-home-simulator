@@ -20,7 +20,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] Contrato versionado con unidades explícitas y coordenadas decimales/altura.
 - [x] Varias radios y enlaces identificados sin frecuencia global.
 - [x] Validación de IDs, referencias, números finitos y geometría degenerada.
-- [ ] JSON Schema y OpenAPI comprobados por una ejecución remota de CI (generación y comprobación local superadas; workflow preparado).
+- [x] JSON Schema y OpenAPI comprobados por CI remota de migración en PR #2 (commit 33f1df8, evidencia en STATUS).
 - [x] Importar apartamento, oficina y almacén Java sin perder el original.
 - [x] Rechazar versiones desconocidas y archivos inválidos.
 - [x] Avisar sobre alturas, canales y parámetros inferidos.
@@ -77,7 +77,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 
 ## M5 — Cierre técnico
 
-- [ ] JSON Schema/OpenAPI/TypeScript comprobados por CI remota.
+- [x] JSON Schema/OpenAPI/TypeScript comprobados por CI remota (PR #2, commit 33f1df8).
 - [ ] Importación y recuperación de los tres ejemplos Java sin pérdida silenciosa.
 - [ ] Pruebas de fórmulas/geometría y regresiones pertinentes.
 - [ ] E2E de crear/importar, editar, calcular, comparar y guardar.

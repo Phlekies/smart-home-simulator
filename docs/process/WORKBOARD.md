@@ -18,7 +18,8 @@ consolidada). Una tarea que espera su turno no implica que el proyecto entero es
 - Editor de paredes: dibujo, selección, arrastre, giro, material/espesor/altura, 2D/3D.
 - Historial de 50 acciones y agrupación de arrastres.
 - Evidencia local previa: 16 pruebas de editor, 31 Python, build web; 192 Java en la entrega
-  de base. Detalles y fechas en [STATUS](../migration/STATUS.md). CI remota no acreditada.
+  de base. Detalles y fechas en [STATUS](../migration/STATUS.md). CI de migración y Java
+  superadas remotamente para 33f1df8 en PR #2.
 - `PROCESS-001`: instrucciones, reparto, tablero y registros creados en esta entrega.
 
 Esto no significa que M2 esté completa, ni que existan mapas nuevos, motor avanzado o
@@ -35,7 +36,7 @@ validación en viviendas. Los checklists técnico y de producto siguen siendo la
 | B-102 | B | blocked | Prueba técnica aislada de motor avanzado; versiones/hardware/interacciones y benchmark reproducible; error explícito si no ejecuta | Casos analíticos de B-101 |
 | B-103 | B | blocked | Contrato y ejecución de mapas por perfil/altura, límites y cancelación; tipos generados y pruebas | Motor elegido y alcance verificado en B-102 |
 | A-104 | A | blocked | Mostrar mapa, leyenda/resolución/perfil/altura, puntos sin calcular y obsolescencia de resultados | Contrato e implementación B-103 |
-| I-001 | B integrador | claimed | Revisar base local acumulada, ejecutar pruebas y publicar primera entrega en rama/PR | Usuario ha pedido actualizar GitHub; sin merge ni force-push; AGENTS.md local |
+| I-001 | B integrador | done | Base publicada en `codex/migrate-web-python`, PR #2 en borrador; pruebas locales y CI de código 33f1df8 superadas | Sin merge ni force-push; AGENTS.md local; consultar el PR para revisiones posteriores |
 
 `ready` indica que puede comenzar el trabajo independiente; los criterios de salida
 siguen requiriendo sus dependencias. Tomar preferentemente A-101 y B-101; después elegir

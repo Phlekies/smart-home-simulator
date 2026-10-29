@@ -5,16 +5,15 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **claimed**.
-- Tarea: **I-001**, integrar y publicar la base acumulada; autorizado por el usuario.
+- Estado: **idle**, entrega I-001 publicada; sin nueva tarea asignada.
+- Tarea cerrada: **I-001**, integrar y publicar la base acumulada; autorizado por el usuario.
 - Sesión/chat: conversación actual que inició la migración.
 - Rama/worktree: clon actual, `codex/migrate-web-python`.
-- Última actualización: 2026-10-29, preparación de publicación.
-- Archivos reservados: documentación común, workflow y conjunto acumulado listado por Git;
-  revisión e integración, sin nuevas funciones ni cambios simultáneos del agente A.
+- Última actualización: 2026-10-29, cierre de publicación.
+- Archivos reservados: ninguno tras el cierre de la entrega.
 - Siguiente tarea recomendada: **B-101**, referencias analíticas y protocolo piloto.
-- Integración pendiente: ejecutar verificaciones, crear commit, push de rama y PR en borrador.
-  `AGENTS.md` queda excluido. No se autoriza merge ni force-push.
+- Integración: commit 33f1df8 publicado y PR #2 creado; CI de migración y Java superadas
+  para ese SHA. `AGENTS.md` queda excluido. Sin merge ni force-push.
 
 ## Plantilla de entrega — completar al trabajar
 
@@ -33,7 +32,7 @@ Siguiente paso:
 
 ## Historial
 
-### I-001 — preparación revisada
+### I-001 — entrega publicada
 
 - Usuario autoriza publicar todos los cambios acumulados; `AGENTS.md` permanece local.
 - Remoto `origin/main` verificado en el SHA de base; rama de entrega creada.
@@ -41,5 +40,7 @@ Siguiente paso:
 - 16 pruebas del editor y 31 Python pasan; build web y contratos correctos. Gradle test
   termina correctamente con tareas ya actualizadas. Regenerar tipos no produce deriva.
 - Exclusiones revisadas: AGENTS.md, entornos, dependencias y builds no se publican.
-- Pendiente al preparar este commit: push de rama, PR y comprobación del estado remoto.
-- No hay Sionna integrado ni medidas de viviendas. CI remota aún no acreditada aquí.
+- Push de rama verificado; PR https://github.com/Phlekies/smart-home-simulator/pull/2 en borrador.
+- CI de migración 40959814307 y Java 40959814298 superadas para 33f1df8.
+- El último estado de commits posteriores de documentación se consulta en el PR.
+- No hay Sionna integrado ni medidas de viviendas; la publicación no completa la migración.

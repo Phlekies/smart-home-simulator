@@ -106,6 +106,10 @@ Al crear este proceso hay cambios locales de entregas anteriores, sin commits nu
 push de la migración en esta sesión. Verificar Git antes de cada trabajo: esto es una
 instantánea, no una condición permanente.
 
+Después de esa inicialización, el usuario autorizó la publicación. La primera entrega
+está en `codex/migrate-web-python` y [PR #2](https://github.com/Phlekies/smart-home-simulator/pull/2)
+en borrador. No se fusionó en `main`. Revisar Git y el PR antes de nuevas entregas.
+
 La preparación de la primera entrega publicable debe revisar esos archivos como base
 común, separarlos de nuevos trabajos de A/B y comprobar que el conjunto compila. No
 atribuirse todo el diff ni cometerlo como si fuera una sola tarea recién implementada.

@@ -7,17 +7,17 @@ Inicio: 2026-10-29. La migración completa está en curso, no terminada.
 Última actualización documental: 2026-10-29. Leer también el archivo local `AGENTS.md`,
 [proceso A/B](../process/WORKFLOW.md) y [tablero](../process/WORKBOARD.md).
 
-- M0/base M1 implementados localmente; CI remota de la migración aún no acreditada.
+- M0/base M1 implementados; CI remota de migración superada en PR #2 para 33f1df8.
 - M2 parcial: paredes editables y undo/redo terminados en la entrega correspondiente.
   Faltan imagen de plano calibrada, recuperación automática y accesibilidad completa.
 - API/estimador directo y contratos disponibles; sin mapas nuevos ni Sionna RT integrado.
 - Sin validación experimental en viviendas; el producto completo continúa pendiente.
 - Última evidencia de código: 16 pruebas web/editor y 31 Python, build y contratos correctos;
   192 Java en la entrega de base. Revisar las fechas/secciones antes de atribuir otra ejecución.
-- A: siguiente tarea propuesta A-101. B: B-101. No hay reservas activas inicializadas.
-- El usuario ha autorizado publicar los cambios acumulados. Se prepara la entrega en
-  `codex/migrate-web-python`; consultar la sección de publicación y Git para el estado
-  remoto real. `AGENTS.md` permanece local y excluido del commit.
+- A: siguiente tarea propuesta A-101. B: B-101. I-001 publicada; consultar registros por rol.
+- Entrega publicada en `codex/migrate-web-python` y [PR #2 en borrador](https://github.com/Phlekies/smart-home-simulator/pull/2).
+  No se ha fusionado en `main`. Consultar las comprobaciones del PR para el último SHA.
+  `AGENTS.md` permanece local y excluido del commit.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
@@ -193,3 +193,21 @@ JSON Schema/OpenAPI sin deriva; regeneración TypeScript idéntica; Gradle test 
 con tareas ya actualizadas. Dependencias, entornos, builds y AGENTS.md excluidos.
 El commit de preparación no acredita por sí mismo push, PR ni CI remota: registrar
 estos resultados solo después de verificarlos.
+
+### Publicación verificada
+
+- Commit inicial de la entrega: `33f1df8b81955070972873f6a89cff65e5e50d9e`, 48 archivos.
+- Push verificado: `origin/codex/migrate-web-python` coincide con el commit local.
+- [PR #2](https://github.com/Phlekies/smart-home-simulator/pull/2), abierto en borrador
+  contra `main`; no se ha hecho merge ni force-push.
+- [CI de migración](https://github.com/Phlekies/smart-home-simulator/actions/runs/40959814307)
+  superada para 33f1df8: instalación limpia de dependencias, 31 pruebas Python, esquemas,
+  regeneración de tipos sin deriva, build web y 16 pruebas del editor.
+- [CI Java](https://github.com/Phlekies/smart-home-simulator/actions/runs/40959814298)
+  superada para 33f1df8 en Linux, Windows y macOS, incluyendo build, pruebas y Javadoc.
+- Esta evidencia corresponde al SHA indicado. Para revisiones posteriores de documentación
+  o código, comprobar el último estado en el PR; no heredar conclusiones sin verificarlas.
+- `git ls-tree` confirma que AGENTS.md no forma parte del commit. Tampoco se incluyen
+  entornos, dependencias instaladas, builds ni archivos temporales locales.
+- El plugin GitHub devolvió 403 al crear el PR; se creó correctamente con la sesión
+  autorizada de GitHub CLI y se verificó después su URL, rama y estado de borrador.
