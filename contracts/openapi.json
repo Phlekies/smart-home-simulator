@@ -1,0 +1,1483 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Smart Environment Simulator",
+    "description": "API local. Estimación analítica; sin garantía de precisión experimental.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Api Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/engines": {
+      "get": {
+        "summary": "Engines",
+        "operationId": "engines_api_engines_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response Engines Api Engines Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/examples": {
+      "get": {
+        "summary": "Examples",
+        "operationId": "examples_api_examples_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  "type": "array",
+                  "title": "Response Examples Api Examples Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/examples/{example_id}": {
+      "get": {
+        "summary": "Example",
+        "operationId": "example_api_examples__example_id__get",
+        "parameters": [
+          {
+            "name": "example_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Example Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project-Output"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/projects/import": {
+      "post": {
+        "summary": "Project Import",
+        "operationId": "project_import_api_projects_import_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Data"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Project-Output"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/simulations": {
+      "post": {
+        "summary": "Simulation",
+        "operationId": "simulation_api_simulations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulationResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Building-Input": {
+        "properties": {
+          "width_m": {
+            "type": "number",
+            "maximum": 1000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Width M",
+            "default": 20
+          },
+          "depth_m": {
+            "type": "number",
+            "maximum": 1000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Depth M",
+            "default": 15
+          },
+          "walls": {
+            "items": {
+              "$ref": "#/components/schemas/Wall-Input"
+            },
+            "type": "array",
+            "maxItems": 2000,
+            "title": "Walls"
+          },
+          "materials": {
+            "items": {
+              "$ref": "#/components/schemas/Material-Input"
+            },
+            "type": "array",
+            "maxItems": 64,
+            "minItems": 1,
+            "title": "Materials"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "materials"
+        ],
+        "title": "Building"
+      },
+      "Building-Output": {
+        "properties": {
+          "width_m": {
+            "type": "number",
+            "maximum": 1000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Width M",
+            "default": 20
+          },
+          "depth_m": {
+            "type": "number",
+            "maximum": 1000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Depth M",
+            "default": 15
+          },
+          "walls": {
+            "items": {
+              "$ref": "#/components/schemas/Wall-Output"
+            },
+            "type": "array",
+            "maxItems": 2000,
+            "title": "Walls"
+          },
+          "materials": {
+            "items": {
+              "$ref": "#/components/schemas/Material-Output"
+            },
+            "type": "array",
+            "maxItems": 64,
+            "minItems": 1,
+            "title": "Materials"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "width_m",
+          "depth_m",
+          "walls",
+          "materials"
+        ],
+        "title": "Building"
+      },
+      "Device-Input": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "endpoint",
+              "access-point",
+              "controller",
+              "router",
+              "bridge",
+              "unknown"
+            ],
+            "title": "Role",
+            "default": "unknown"
+          },
+          "position": {
+            "$ref": "#/components/schemas/Point-Input"
+          },
+          "radios": {
+            "items": {
+              "$ref": "#/components/schemas/Radio-Input"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Radios"
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence",
+            "default": "User-defined generic device; functional compatibility unverified"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "position",
+          "radios"
+        ],
+        "title": "Device"
+      },
+      "Device-Output": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "endpoint",
+              "access-point",
+              "controller",
+              "router",
+              "bridge",
+              "unknown"
+            ],
+            "title": "Role",
+            "default": "unknown"
+          },
+          "position": {
+            "$ref": "#/components/schemas/Point-Output"
+          },
+          "radios": {
+            "items": {
+              "$ref": "#/components/schemas/Radio-Output"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Radios"
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence",
+            "default": "User-defined generic device; functional compatibility unverified"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "role",
+          "position",
+          "radios",
+          "evidence"
+        ],
+        "title": "Device"
+      },
+      "DirectionResult": {
+        "properties": {
+          "tx_device_id": {
+            "type": "string",
+            "title": "Tx Device Id"
+          },
+          "rx_device_id": {
+            "type": "string",
+            "title": "Rx Device Id"
+          },
+          "distance_m": {
+            "type": "number",
+            "title": "Distance M"
+          },
+          "path_loss_db": {
+            "type": "number",
+            "title": "Path Loss Db"
+          },
+          "wall_loss_db": {
+            "type": "number",
+            "title": "Wall Loss Db"
+          },
+          "crossed_wall_ids": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Crossed Wall Ids"
+          },
+          "received_power_dbm": {
+            "type": "number",
+            "title": "Received Power Dbm"
+          },
+          "noise_dbm": {
+            "type": "number",
+            "title": "Noise Dbm"
+          },
+          "snr_db": {
+            "type": "number",
+            "title": "Snr Db"
+          },
+          "margin_db": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Db"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "tx_device_id",
+          "rx_device_id",
+          "distance_m",
+          "path_loss_db",
+          "wall_loss_db",
+          "crossed_wall_ids",
+          "received_power_dbm",
+          "noise_dbm",
+          "snr_db",
+          "margin_db"
+        ],
+        "title": "DirectionResult"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Link": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "source_device_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source Device Id"
+          },
+          "source_radio_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Source Radio Id"
+          },
+          "target_device_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Target Device Id"
+          },
+          "target_radio_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Target Radio Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "source_device_id",
+          "source_radio_id",
+          "target_device_id",
+          "target_radio_id"
+        ],
+        "title": "Link"
+      },
+      "LinkResult": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "compatibility": {
+            "type": "string",
+            "enum": [
+              "radio-compatible",
+              "incompatible",
+              "unverified"
+            ],
+            "title": "Compatibility"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "above-threshold",
+              "below-threshold",
+              "incompatible",
+              "unverified",
+              "unsupported"
+            ],
+            "title": "Status"
+          },
+          "forward": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DirectionResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reverse": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DirectionResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "compatibility",
+          "status",
+          "forward",
+          "reverse",
+          "reasons"
+        ],
+        "title": "LinkResult"
+      },
+      "Material-Input": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "loss_db_24ghz": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Loss Db 24Ghz"
+          },
+          "loss_db_5ghz": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Loss Db 5Ghz"
+          },
+          "extra_loss_db_per_cm": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Extra Loss Db Per Cm",
+            "default": 0
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence",
+            "default": "Hypothesis: legacy empirical values; not calibrated"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "loss_db_24ghz",
+          "loss_db_5ghz"
+        ],
+        "title": "Material"
+      },
+      "Material-Output": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "loss_db_24ghz": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Loss Db 24Ghz"
+          },
+          "loss_db_5ghz": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Loss Db 5Ghz"
+          },
+          "extra_loss_db_per_cm": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Extra Loss Db Per Cm",
+            "default": 0
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence",
+            "default": "Hypothesis: legacy empirical values; not calibrated"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "loss_db_24ghz",
+          "loss_db_5ghz",
+          "extra_loss_db_per_cm",
+          "evidence"
+        ],
+        "title": "Material"
+      },
+      "Point-Input": {
+        "properties": {
+          "x": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "X"
+          },
+          "y": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "Y"
+          },
+          "z": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": -1000.0,
+            "title": "Z",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "x",
+          "y"
+        ],
+        "title": "Point"
+      },
+      "Point-Output": {
+        "properties": {
+          "x": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "X"
+          },
+          "y": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "Y"
+          },
+          "z": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": -1000.0,
+            "title": "Z",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "x",
+          "y",
+          "z"
+        ],
+        "title": "Point"
+      },
+      "Project-Input": {
+        "properties": {
+          "format": {
+            "type": "string",
+            "const": "smart-environment-simulator",
+            "title": "Format",
+            "default": "smart-environment-simulator"
+          },
+          "version": {
+            "type": "integer",
+            "const": 1,
+            "title": "Version",
+            "default": 1
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name",
+            "default": "Entorno inteligente"
+          },
+          "units": {
+            "type": "string",
+            "const": "m",
+            "title": "Units",
+            "default": "m"
+          },
+          "building": {
+            "$ref": "#/components/schemas/Building-Input"
+          },
+          "devices": {
+            "items": {
+              "$ref": "#/components/schemas/Device-Input"
+            },
+            "type": "array",
+            "maxItems": 128,
+            "title": "Devices"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            },
+            "type": "array",
+            "maxItems": 512,
+            "title": "Links"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/Settings-Input"
+          },
+          "migration_notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 256,
+            "title": "Migration Notes"
+          },
+          "legacy_source": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legacy Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "building"
+        ],
+        "title": "Project"
+      },
+      "Project-Output": {
+        "properties": {
+          "format": {
+            "type": "string",
+            "const": "smart-environment-simulator",
+            "title": "Format",
+            "default": "smart-environment-simulator"
+          },
+          "version": {
+            "type": "integer",
+            "const": 1,
+            "title": "Version",
+            "default": 1
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name",
+            "default": "Entorno inteligente"
+          },
+          "units": {
+            "type": "string",
+            "const": "m",
+            "title": "Units",
+            "default": "m"
+          },
+          "building": {
+            "$ref": "#/components/schemas/Building-Output"
+          },
+          "devices": {
+            "items": {
+              "$ref": "#/components/schemas/Device-Output"
+            },
+            "type": "array",
+            "maxItems": 128,
+            "title": "Devices"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/Link"
+            },
+            "type": "array",
+            "maxItems": 512,
+            "title": "Links"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/Settings-Output"
+          },
+          "migration_notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 256,
+            "title": "Migration Notes"
+          },
+          "legacy_source": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Legacy Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "format",
+          "version",
+          "name",
+          "units",
+          "building",
+          "devices",
+          "links",
+          "settings",
+          "migration_notes",
+          "legacy_source"
+        ],
+        "title": "Project"
+      },
+      "Radio-Input": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "protocol": {
+            "type": "string",
+            "enum": [
+              "wifi",
+              "thread",
+              "zigbee",
+              "ble",
+              "zwave",
+              "unknown"
+            ],
+            "title": "Protocol",
+            "default": "unknown"
+          },
+          "frequency_hz": {
+            "type": "number",
+            "maximum": 100000000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Frequency Hz"
+          },
+          "bandwidth_hz": {
+            "type": "number",
+            "maximum": 1000000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Bandwidth Hz"
+          },
+          "channel": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel"
+          },
+          "tx_power_dbm": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": -100.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tx Power Dbm"
+          },
+          "tx_gain_dbi": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": -100.0,
+            "title": "Tx Gain Dbi",
+            "default": 0
+          },
+          "rx_gain_dbi": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": -100.0,
+            "title": "Rx Gain Dbi",
+            "default": 0
+          },
+          "sensitivity_dbm": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 0.0,
+                "minimum": -200.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sensitivity Dbm"
+          },
+          "noise_figure_db": {
+            "type": "number",
+            "maximum": 60.0,
+            "minimum": 0.0,
+            "title": "Noise Figure Db",
+            "default": 7
+          },
+          "antenna": {
+            "type": "string",
+            "enum": [
+              "omnidirectional",
+              "directional"
+            ],
+            "title": "Antenna",
+            "default": "omnidirectional"
+          },
+          "orientation_deg": {
+            "type": "number",
+            "maximum": 360.0,
+            "minimum": -360.0,
+            "title": "Orientation Deg",
+            "default": 0
+          },
+          "beamwidth_deg": {
+            "type": "number",
+            "maximum": 360.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Beamwidth Deg",
+            "default": 360
+          },
+          "pattern_sharpness": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.5,
+            "title": "Pattern Sharpness",
+            "default": 1.8
+          },
+          "side_lobe_attenuation_db": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Side Lobe Attenuation Db",
+            "default": 18
+          },
+          "polarization_deg": {
+            "type": "number",
+            "maximum": 360.0,
+            "minimum": -360.0,
+            "title": "Polarization Deg",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "frequency_hz",
+          "bandwidth_hz"
+        ],
+        "title": "Radio"
+      },
+      "Radio-Output": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "protocol": {
+            "type": "string",
+            "enum": [
+              "wifi",
+              "thread",
+              "zigbee",
+              "ble",
+              "zwave",
+              "unknown"
+            ],
+            "title": "Protocol",
+            "default": "unknown"
+          },
+          "frequency_hz": {
+            "type": "number",
+            "maximum": 100000000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Frequency Hz"
+          },
+          "bandwidth_hz": {
+            "type": "number",
+            "maximum": 1000000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Bandwidth Hz"
+          },
+          "channel": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel"
+          },
+          "tx_power_dbm": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": -100.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tx Power Dbm"
+          },
+          "tx_gain_dbi": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": -100.0,
+            "title": "Tx Gain Dbi",
+            "default": 0
+          },
+          "rx_gain_dbi": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": -100.0,
+            "title": "Rx Gain Dbi",
+            "default": 0
+          },
+          "sensitivity_dbm": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 0.0,
+                "minimum": -200.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sensitivity Dbm"
+          },
+          "noise_figure_db": {
+            "type": "number",
+            "maximum": 60.0,
+            "minimum": 0.0,
+            "title": "Noise Figure Db",
+            "default": 7
+          },
+          "antenna": {
+            "type": "string",
+            "enum": [
+              "omnidirectional",
+              "directional"
+            ],
+            "title": "Antenna",
+            "default": "omnidirectional"
+          },
+          "orientation_deg": {
+            "type": "number",
+            "maximum": 360.0,
+            "minimum": -360.0,
+            "title": "Orientation Deg",
+            "default": 0
+          },
+          "beamwidth_deg": {
+            "type": "number",
+            "maximum": 360.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Beamwidth Deg",
+            "default": 360
+          },
+          "pattern_sharpness": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.5,
+            "title": "Pattern Sharpness",
+            "default": 1.8
+          },
+          "side_lobe_attenuation_db": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Side Lobe Attenuation Db",
+            "default": 18
+          },
+          "polarization_deg": {
+            "type": "number",
+            "maximum": 360.0,
+            "minimum": -360.0,
+            "title": "Polarization Deg",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "protocol",
+          "frequency_hz",
+          "bandwidth_hz",
+          "channel",
+          "tx_power_dbm",
+          "tx_gain_dbi",
+          "rx_gain_dbi",
+          "sensitivity_dbm",
+          "noise_figure_db",
+          "antenna",
+          "orientation_deg",
+          "beamwidth_deg",
+          "pattern_sharpness",
+          "side_lobe_attenuation_db",
+          "polarization_deg"
+        ],
+        "title": "Radio"
+      },
+      "Settings-Input": {
+        "properties": {
+          "path_loss_exponent": {
+            "type": "number",
+            "maximum": 6.0,
+            "minimum": 1.0,
+            "title": "Path Loss Exponent",
+            "default": 2.1
+          },
+          "extra_loss_db_per_m": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Extra Loss Db Per M",
+            "default": 0
+          },
+          "system_gain_db": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": -100.0,
+            "title": "System Gain Db",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "Settings"
+      },
+      "Settings-Output": {
+        "properties": {
+          "path_loss_exponent": {
+            "type": "number",
+            "maximum": 6.0,
+            "minimum": 1.0,
+            "title": "Path Loss Exponent",
+            "default": 2.1
+          },
+          "extra_loss_db_per_m": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Extra Loss Db Per M",
+            "default": 0
+          },
+          "system_gain_db": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": -100.0,
+            "title": "System Gain Db",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "path_loss_exponent",
+          "extra_loss_db_per_m",
+          "system_gain_db"
+        ],
+        "title": "Settings"
+      },
+      "SimulationRequest": {
+        "properties": {
+          "project": {
+            "$ref": "#/components/schemas/Project-Input"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "quick-estimate",
+              "sionna-rt",
+              "ns-3"
+            ],
+            "title": "Engine",
+            "default": "quick-estimate"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "project"
+        ],
+        "title": "SimulationRequest"
+      },
+      "SimulationResult": {
+        "properties": {
+          "engine": {
+            "type": "string",
+            "title": "Engine"
+          },
+          "engine_version": {
+            "type": "string",
+            "title": "Engine Version"
+          },
+          "input_hash": {
+            "type": "string",
+            "title": "Input Hash"
+          },
+          "elapsed_ms": {
+            "type": "number",
+            "title": "Elapsed Ms"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/LinkResult"
+            },
+            "type": "array",
+            "title": "Links"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "engine",
+          "engine_version",
+          "input_hash",
+          "elapsed_ms",
+          "scope",
+          "limitations",
+          "links"
+        ],
+        "title": "SimulationResult"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "Wall-Input": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "start": {
+            "$ref": "#/components/schemas/Point-Input"
+          },
+          "end": {
+            "$ref": "#/components/schemas/Point-Input"
+          },
+          "height_m": {
+            "type": "number",
+            "maximum": 100.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Height M",
+            "default": 2.6
+          },
+          "thickness_m": {
+            "type": "number",
+            "maximum": 10.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Thickness M",
+            "default": 0.12
+          },
+          "material_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Material Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "start",
+          "end",
+          "material_id"
+        ],
+        "title": "Wall"
+      },
+      "Wall-Output": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "start": {
+            "$ref": "#/components/schemas/Point-Output"
+          },
+          "end": {
+            "$ref": "#/components/schemas/Point-Output"
+          },
+          "height_m": {
+            "type": "number",
+            "maximum": 100.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Height M",
+            "default": 2.6
+          },
+          "thickness_m": {
+            "type": "number",
+            "maximum": 10.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Thickness M",
+            "default": 0.12
+          },
+          "material_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Material Id"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "start",
+          "end",
+          "height_m",
+          "thickness_m",
+          "material_id"
+        ],
+        "title": "Wall"
+      }
+    }
+  }
+}
