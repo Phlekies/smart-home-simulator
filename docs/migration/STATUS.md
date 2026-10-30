@@ -183,6 +183,10 @@ sin merge. CI remota: consultar el PR. Documentación técnica en `docs/simulati
 | `npm run build` / `npm test` | Correcto / 16 superadas |
 | `python -m smart_environment.references` | Estimador = Friis y su propio modelo (Δ < 1e-9 dB); paredes con tabla Java se desvían de la losa ITU entre −3.9 y +0.6 dB; reflexión no modelada (−4.8 / +0.3 dB) |
 
+CI remota de [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) superada para `fc9f062`:
+[migración](https://github.com/Phlekies/smart-home-simulator/actions/runs/41023810988) (python-web) y
+[Java](https://github.com/Phlekies/smart-home-simulator/actions/runs/41023810990) en Linux, Windows y macOS.
+
 Límites: referencias idealizadas, no medidas; tabla ITU contrastada con la reproducción de
 MathWorks (PDF ITU con 404), pendiente de cotejo oficial. Ningún checklist se marca con esta
 entrega: el criterio activo de fallo, los conjuntos reales y el motor avanzado siguen pendientes.
