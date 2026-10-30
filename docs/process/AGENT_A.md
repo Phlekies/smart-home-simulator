@@ -5,7 +5,14 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review**, A-107/A-108 implementadas/verificadas; sin edición activa.
+- Estado: **claimed**, integración I-002 por instrucción explícita del usuario.
+- Cambio de rol secuencial: A asume temporalmente integración/Git y documentos comunes
+  para revisar ramas B, verificar la combinación y actualizar main. Esta instrucción
+  del usuario prevalece sobre el reparto ordinario; después vuelve al ámbito A.
+- Ramas B verificadas remotamente: pila B-101→B-102→B-104→B-103, cabeza a5e6ff8;
+  registro B remoto en review, clon separado y sin tarea nueva activa declarada.
+- Reserva I-002: integración de las entregas A/B, package.json (generación de cobertura),
+  documentos compartidos de estado/checklist/tablero y Git. No descartar cambios locales.
 - Tareas: **A-107**, gestión de interfaces de radio, y **A-108**, gestión de enlaces por
   radio. Usuario pide seguir completando tareas del rol A; contratos vigentes.
 - Sesión/chat: conversación actual, agente A; sin identificador adicional conocido.
