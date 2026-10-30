@@ -22,6 +22,7 @@ from .cache import ResultCache
 from .engines import LIMITATIONS, direction, input_hash, radio_pair_check
 from .models import (
     CoverageCells, CoverageMapJob, CoverageMapRequest, CoverageMapResult, CoverageSample, Device, Point, Project,
+    ScenarioAssumptions,
     Wall,
 )
 
@@ -73,7 +74,8 @@ def inside_wall(point: Point, wall: Wall) -> bool:
     return math.hypot(point.x - (ax + t * (bx - ax)), point.y - (ay + t * (by - ay))) < wall.thickness_m / 2
 
 
-def evaluate(project: Project, ap: Device, ap_radio, profile_radio, point: Point) -> CoverageSample:
+def evaluate(project: Project, ap: Device, ap_radio, profile_radio, point: Point,
+             scenario: ScenarioAssumptions | None = None) -> CoverageSample:
     for wall in project.building.walls:
         if inside_wall(point, wall):
             return CoverageSample(forward_dbm=None, reverse_dbm=None, forward_margin_db=None,
@@ -83,8 +85,8 @@ def evaluate(project: Project, ap: Device, ap_radio, profile_radio, point: Point
                               reverse_margin_db=None, status="not-computed", reason="too-close-to-access-point")
     candidate = Device.model_construct(id="__profile__", name="profile", role="endpoint", position=point,
                                        radios=[profile_radio], evidence="map sample")
-    forward = direction(project, ap, ap_radio, candidate, profile_radio)
-    reverse = direction(project, candidate, profile_radio, ap, ap_radio)
+    forward = direction(project, ap, ap_radio, candidate, profile_radio, scenario)
+    reverse = direction(project, candidate, profile_radio, ap, ap_radio, scenario)
     values = (None if forward is None else forward.received_power_dbm,
               None if reverse is None else reverse.received_power_dbm,
               None if forward is None else forward.margin_db,
@@ -119,13 +121,16 @@ def compute(request: CoverageMapRequest, progress: Callable[[float], None] = lam
         for i in range(columns):
             x = grid.origin_x_m + (i * grid.resolution_m + min((i + 1) * grid.resolution_m, grid.width_m)) / 2
             point = Point.model_construct(x=x, y=y, z=grid.height_m)
-            samples.append(evaluate(project, ap, ap_radio, profile_radio, point))
+            samples.append(evaluate(project, ap, ap_radio, profile_radio, point, request.scenario))
         progress((j + 1) / total)
     if cancelled():
         raise Cancelled()
-    exact = [evaluate(project, ap, ap_radio, profile_radio, point) for point in request.points]
+    exact = [evaluate(project, ap, ap_radio, profile_radio, point, request.scenario) for point in request.points]
     progress(1.0)
     counts = {status: sum(s.status == status for s in samples) for status in ("computed", "partial", "not-computed")}
+    if request.scenario is not None:
+        reasons.append(f"Escenario «{request.scenario.name}»: puertas {request.scenario.doors or 'sin cambios'}, "
+                       f"materiales {request.scenario.materials or 'nominales'}. Es una hipótesis, no una medida.")
     if counts["not-computed"]:
         reasons.append(f"{counts['not-computed']} celdas sin calcular (dentro de paredes o junto al AP).")
     return CoverageMapResult(
@@ -140,8 +145,9 @@ def compute(request: CoverageMapRequest, progress: Callable[[float], None] = lam
                             status=[s.status for s in samples]),
         points=exact, computed_cells=counts["computed"], partial_cells=counts["partial"],
         not_computed_cells=counts["not-computed"], elapsed_ms=(time.perf_counter() - started) * 1000,
-        scope=f"Mapa de trayecto directo a {grid.height_m:g} m para el perfil «{request.profile.name}»; "
-              "compatibilidad funcional no evaluada",
+        scope=f"Mapa de trayecto directo a {grid.height_m:g} m para el perfil «{request.profile.name}»"
+              + (f" bajo el escenario «{request.scenario.name}»" if request.scenario else "")
+              + "; compatibilidad funcional no evaluada",
         limitations=MAP_LIMITATIONS, reasons=reasons)
 
 

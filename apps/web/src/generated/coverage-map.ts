@@ -39,6 +39,14 @@ export type BeamwidthDeg = number;
 export type PatternSharpness = number;
 export type SideLobeAttenuationDb = number;
 export type PolarizationDeg = number;
+/**
+ * Optional origin of each value. 'unknown' requires an empty value; measured/declared require one.
+ */
+export type Provenance = {
+  [k: string]: RadioValueSource;
+} | null;
+export type Provenance1 = "measured" | "declared" | "standard-minimum" | "inferred" | "unknown";
+export type Source = string | null;
 export type Evidence = string;
 export type OriginXM = number;
 export type OriginYM = number;
@@ -56,6 +64,8 @@ export type Z = number;
  */
 export type Points = Point[];
 export type Engine1 = "quick-estimate" | "sionna-rt" | "ns-3";
+export type Id2 = string;
+export type Name1 = string;
 export type Metric = "direct-path-received-power";
 export type FrequencyHz1 = number;
 export type Compatibility = "radio-compatible" | "unverified";
@@ -129,6 +139,10 @@ export interface CoverageMapParameters {
   grid: MapGrid;
   points: Points;
   engine: Engine1;
+  /**
+   * Door states and material bounds applied to every cell, e.g. the best or worst case of /api/scenario-simulations; None evaluates the project as it is
+   */
+  scenario?: ScenarioAssumptions | null;
 }
 /**
  * Radio of the candidate device as it would be installed; drives both link directions.
@@ -156,6 +170,14 @@ export interface Radio {
   pattern_sharpness: PatternSharpness;
   side_lobe_attenuation_db: SideLobeAttenuationDb;
   polarization_deg: PolarizationDeg;
+  provenance?: Provenance;
+}
+/**
+ * Where one radio value comes from; documentation only, never a solver input.
+ */
+export interface RadioValueSource {
+  provenance: Provenance1;
+  source: Source;
 }
 /**
  * Horizontal sampling plane. Cell (i, j) is evaluated at its centre:
@@ -174,6 +196,21 @@ export interface Point {
   x: X;
   y: Y;
   z: Z;
+}
+/**
+ * Named scenario: door states and material bounds that replace the nominal project values.
+ */
+export interface ScenarioAssumptions {
+  id: Id2;
+  name: Name1;
+  doors: Doors;
+  materials: Materials;
+}
+export interface Doors {
+  [k: string]: "open" | "closed";
+}
+export interface Materials {
+  [k: string]: "low" | "nominal" | "high";
 }
 /**
  * Row-major arrays (index = j·columns + i), one entry per cell, same meaning as CoverageSample.

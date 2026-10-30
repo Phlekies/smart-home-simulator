@@ -7,7 +7,7 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 
 - [ ] Perfiles iniciales Wi-Fi 2.4 GHz con parámetros de AP/cliente y procedencia (parcial: perfiles de cliente B-106 en `main`; tabla HT sin cotejar; sin perfiles de AP ni interfaz).
 - [ ] Configuración/modo de radio y requisitos por perfil documentados (modo documentado en B-106; requisito de enlace pendiente del criterio de fallo).
-- [ ] Desconocidos y valores inferidos diferenciados de datos medidos (procedencia en medidas B-101 y perfiles B-106; el proyecto aún no la guarda por parámetro de radio).
+- [ ] Desconocidos y valores inferidos diferenciados de datos medidos (contrato: medidas B-101, perfiles B-106 y procedencia por parámetro de radio B-113; falta mostrarlo en la interfaz).
 - [ ] Protocolo de medida piloto y criterio activo de fallo del enlace (protocolo B-101 en `main`; umbral del criterio pendiente de decisión del usuario).
 - [ ] Conjuntos de calibración y evaluación independientes separados (regla por vivienda implementada en B-101; sin datos todavía).
 - [ ] Objetivos numéricos congelados tras piloto y antes de evaluación independiente.
@@ -26,7 +26,7 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 
 ## P2 — Riesgo y supuestos
 
-- [ ] Puertas y materiales inciertos admiten escenarios identificados (API B-108 en `main`; interfaz pendiente).
+- [ ] Puertas y materiales inciertos admiten escenarios identificados (API B-108 en `main` y mapas con escenario B-114; interfaz A-111…A-113 en curso).
 - [ ] Clasificación distingue favorable, marginal, insuficiente y sin datos.
 - [ ] Sin umbral RSSI universal ni porcentajes de éxito inventados.
 - [ ] Ruido/interferencia no evaluados se declaran independientemente de la cobertura.
@@ -45,7 +45,7 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 
 ## P4 — Validación
 
-- [ ] Medidas importables con posición, radio, configuración y condiciones.
+- [ ] Medidas importables con posición, radio, configuración y condiciones (formato B-101 y comprobación por API B-116; falta la importación en la interfaz).
 - [ ] Calibración reproducible y diferencias antes/después registradas.
 - [ ] Baseline y motor avanzado comparados sobre datos independientes.
 - [ ] Error de señal, sesgo y casos difíciles publicados.
@@ -59,7 +59,7 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 - [ ] Persona nueva completa vivienda→equipo→ubicación→diagnóstico→alternativa→informe.
 - [ ] Puede explorar sin haber comprado toda la domótica.
 - [ ] Si usa móvil como medida, se explica su diferencia respecto al equipo candidato.
-- [ ] Informe conserva versiones, escenario, perfil, supuestos y datos pendientes.
+- [ ] Informe conserva versiones, escenario, perfil, supuestos y datos pendientes (API B-115 en JSON/Markdown; falta la descarga en la interfaz y adjuntar mapas).
 - [ ] Guardado/recuperación, accesibilidad e instalación local comprobados.
 - [ ] Se distingue predicción de medidas reales y rendimiento no evaluado.
 - [ ] Las extensiones sin validar no se anuncian como soportadas.

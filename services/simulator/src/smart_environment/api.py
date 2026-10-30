@@ -6,16 +6,18 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import ValidationError
 
 from .cache import ResultCache
+from .calibration import MeasurementCheckRequest, MeasurementCheckResult, check as check_measurements
 from .coverage import CoverageJobs, CoverageLimitError
 from .engines import engine_capabilities, simulate
 from .legacy import import_project
 from .placement import ENGINE_VERSION as PLACEMENT_VERSION, PlacementLimitError, search
 from .placement import request_hash as placement_hash
 from .profiles import CATALOG
+from .report import InstallationReport, ReportRequest, build_report, to_markdown
 from .scenarios import ENGINE_VERSION as SCENARIO_VERSION, evaluate as evaluate_scenarios
 from .scenarios import request_hash as scenario_hash
 from .models import (
@@ -161,3 +163,21 @@ def scenario_simulation(request: ScenarioRequest) -> ScenarioResult:
         cached = evaluate_scenarios(request)
         scenario_cache.put(key, cached)
     return cached
+
+
+@app.post("/api/reports", response_model=InstallationReport)
+def report(request: ReportRequest) -> InstallationReport:
+    """Per-link report of computed values, hypotheses and missing data; no coverage verdict."""
+    return build_report(request)
+
+
+@app.post("/api/reports/markdown", response_class=PlainTextResponse,
+          responses={200: {"content": {"text/markdown": {}}}})
+def report_markdown(request: ReportRequest) -> PlainTextResponse:
+    return PlainTextResponse(to_markdown(build_report(request)), media_type="text/markdown; charset=utf-8")
+
+
+@app.post("/api/measurements/check", response_model=MeasurementCheckResult)
+def measurement_check(request: MeasurementCheckRequest) -> MeasurementCheckResult:
+    """Validate a local measurement campaign and, with its project, compare it with predictions."""
+    return check_measurements(request)
