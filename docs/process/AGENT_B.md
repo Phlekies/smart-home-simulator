@@ -5,7 +5,7 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **claimed** — **I-003** (consolidar documentos comunes tras el merge de #7) y **B-107**
+- Estado: **review** — **I-003** (consolidar documentos comunes tras el merge de #7) y **B-107**
   (matriz de funciones Java conservadas/sustituidas/excluidas). Integrador: B de nuevo, porque A
   declaró I-002 terminada y volvió a su rol (registro A en su worktree, 2026-10-30).
 - Entregas en review: B-105/B-106 [PR #8](https://github.com/Phlekies/smart-home-simulator/pull/8) (base `main`),
@@ -35,6 +35,24 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### I-003 y B-107 — consolidación tras #7 y matriz de funciones Java (review)
+
+```text
+Tarea / estado: I-003 y B-107 / review. Rama local agent-b/i-003-b-107-docs sobre #9 (e6fb351).
+Motivo: A declaró I-002 terminada y volvió a A-104; B retoma la integración.
+Archivos: docs/process/WORKBOARD.md, docs/migration/STATUS.md, docs/migration/CHECKLIST.md,
+  docs/product/ACCEPTANCE_CHECKLIST.md, docs/migration/LOCAL_DEVELOPMENT.md,
+  docs/migration/FEATURE_MATRIX.md (nuevo) y este registro. Ningún archivo reservado por A.
+Evidencia: CI de main (046ee82) en verde (migración y Java); cabezas de #3–#6 ancestros de main;
+  PR #8 con base main y CI verde. En esta rama: pytest 199, export --check sin deriva,
+  npm test 70/70, build correcto; enlaces de los documentos comprobados.
+Marcado: B-101…B-104 e I-002 done; M5 «matriz de funciones» [x]; el resto solo con anotaciones
+  de estado parcial (nada sin evidencia pasa a [x]).
+Límites: la matriz se basa en el README y los paquetes Java de eff803c y en el código actual;
+  conviene revisarla al cerrar cada fase.
+Siguiente paso: publicar esta rama como PR apilado sobre #9 si el usuario lo autoriza.
+```
 
 ### B-108 — escenarios de puertas y materiales inciertos (review)
 

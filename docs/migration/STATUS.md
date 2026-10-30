@@ -4,7 +4,7 @@ Inicio: 2026-10-29. La migración completa está en curso, no terminada.
 
 ## Resumen vigente para retomar trabajo
 
-Última actualización documental: 2026-10-30, integración I-002. Leer también el archivo local `AGENTS.md`,
+Última actualización documental: 2026-10-30, consolidación I-003 (B). Leer también el archivo local `AGENTS.md`,
 [proceso A/B](../process/WORKFLOW.md) y [tablero](../process/WORKBOARD.md).
 
 - M0/base M1 implementados; CI remota de migración superada en PR #2 para 33f1df8.
@@ -17,14 +17,30 @@ Inicio: 2026-10-29. La migración completa está en curso, no terminada.
 - Última evidencia conjunta local: **162 pruebas Python, 70 web/editor, build y contratos
   correctos**. Se integran las entregas A-101/102/103/105–108 y B-101/102/103/104.
   Java no se modifica; su CI remota de esta revisión se consulta en GitHub.
-- I-002 autorizado por el usuario: revisión y publicación conjunta a main, seguida de
-  trabajo A. Se usa `codex/integrate-agents` en un worktree aislado para evitar cambios
-  de rama concurrentes en el checkout compartido. Estado remoto y CI: consultar el PR.
+- `main` = 046ee82: PR #7 (I-002, ejecutada por A por instrucción del usuario) fusionado; CI de
+  migración y Java en verde para ese commit. PR #3–#6 cerrados sin fusionar porque ya están en `main`.
+- En revisión: B-105/B-106 ([PR #8](https://github.com/Phlekies/smart-home-simulator/pull/8), base `main`, CI verde) y B-108
+  ([PR #9](https://github.com/Phlekies/smart-home-simulator/pull/9), sobre #8). A trabaja en A-104 (interfaz de mapas). B vuelve a integrar.
+- [Matriz de funciones Java](FEATURE_MATRIX.md) (B-107): qué se conserva, sustituye o excluye y por qué.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## I-003 — consolidación tras el merge de #7 — 2026-10-30
+
+A declaró I-002 terminada y volvió a su rol; B retoma la integración. Comprobaciones:
+
+| Comprobación | Resultado |
+|---|---|
+| `gh run list --branch main` | «Migration contracts and application» y «CI» (Java) en verde para 046ee82 |
+| Cabezas de PR #3–#6 frente a `main` | Las cuatro son ancestros de 046ee82; cerrados sin fusionar a petición del usuario, ramas conservadas |
+| PR #8 tras cambiar la base a `main` | Solo sus 4 commits; CI en verde (Python/web y Java en tres sistemas) |
+| Rama de I-003 (sobre #9): pruebas y contratos | Ver el traspaso de I-003 en el registro B |
+
+Documentos: tablero (B-101…B-104 e I-002 `done`; B-105/B-106/B-108/B-107/I-003 en `review`; A-104
+reservada por A), este resumen, checklists técnico y de producto y la matriz de funciones nueva.
 
 ## Base
 

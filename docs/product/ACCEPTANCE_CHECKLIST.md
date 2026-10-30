@@ -5,11 +5,11 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 
 ## P0 — Requisitos y evidencia
 
-- [ ] Perfiles iniciales Wi-Fi 2.4 GHz con parámetros de AP/cliente y procedencia.
-- [ ] Configuración/modo de radio y requisitos por perfil documentados.
-- [ ] Desconocidos y valores inferidos diferenciados de datos medidos.
-- [ ] Protocolo de medida piloto y criterio activo de fallo del enlace.
-- [ ] Conjuntos de calibración y evaluación independientes separados.
+- [ ] Perfiles iniciales Wi-Fi 2.4 GHz con parámetros de AP/cliente y procedencia (parcial: perfiles de cliente B-106 en PR #8; tabla HT sin cotejar; sin perfiles de AP).
+- [ ] Configuración/modo de radio y requisitos por perfil documentados (modo documentado en B-106; requisito de enlace pendiente del criterio de fallo).
+- [ ] Desconocidos y valores inferidos diferenciados de datos medidos (procedencia en medidas B-101 y perfiles B-106; el proyecto aún no la guarda por parámetro de radio).
+- [ ] Protocolo de medida piloto y criterio activo de fallo del enlace (protocolo B-101 en `main`; umbral del criterio pendiente de decisión del usuario).
+- [ ] Conjuntos de calibración y evaluación independientes separados (regla por vivienda implementada en B-101; sin datos todavía).
 - [ ] Objetivos numéricos congelados tras piloto y antes de evaluación independiente.
 - [ ] Clasificación de cobertura y reserva de diseño documentadas.
 
@@ -26,7 +26,7 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 
 ## P2 — Riesgo y supuestos
 
-- [ ] Puertas y materiales inciertos admiten escenarios identificados.
+- [ ] Puertas y materiales inciertos admiten escenarios identificados (API B-108 en PR #9; interfaz pendiente).
 - [ ] Clasificación distingue favorable, marginal, insuficiente y sin datos.
 - [ ] Sin umbral RSSI universal ni porcentajes de éxito inventados.
 - [ ] Ruido/interferencia no evaluados se declaran independientemente de la cobertura.

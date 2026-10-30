@@ -71,7 +71,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [ ] Presupuesto de ambos sentidos para puntos individuales (API B-103: `points` exactos; interfaz pendiente).
 - [ ] AP/emisor y receptor/perfil identificados en cada resultado (API B-103; interfaz pendiente).
 - [ ] Energía agregada no se presenta como señal de una conexión (API B-103: un AP por mapa; interfaz pendiente).
-- [ ] Comparación de posiciones y optimización básica con restricciones (comparación manual de sesión A-105 disponible; optimización/restricciones pendientes).
+- [ ] Comparación de posiciones y optimización básica con restricciones (comparación manual A-105 en `main`; búsqueda con lugares permitidos B-105 en PR #8; interfaz pendiente).
 - [ ] Mapas guardables y resultados invalidados al editar.
 - [ ] Predicción técnica separada de recomendación de compra validada.
 
@@ -82,7 +82,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [ ] Pruebas de fórmulas/geometría y regresiones pertinentes.
 - [ ] E2E de crear/importar, editar, calcular, comparar y guardar.
 - [ ] Instalación limpia y arranque local reproducibles.
-- [ ] Matriz de funciones conservadas/sustituidas/excluidas y motivos.
+- [x] Matriz de funciones conservadas/sustituidas/excluidas y motivos ([FEATURE_MATRIX](FEATURE_MATRIX.md), B-107; revisar al cerrar cada fase).
 - [ ] Documentación del ámbito real y motores disponibles.
 - [ ] Java preservado como referencia hasta superar las puertas de sustitución.
 
