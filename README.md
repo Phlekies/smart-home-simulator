@@ -1,5 +1,23 @@
 # Smart Home Simulator
 
+**Para agentes que continúen el trabajo:** leer el archivo local `AGENTS.md` (no publicado),
+[proceso y reparto A/B](docs/process/WORKFLOW.md) y
+[tablero de tareas](docs/process/WORKBOARD.md) antes de modificar archivos.
+
+**Objetivo:** ayudar a evaluar cobertura por ubicación antes de comprar e instalar domótica,
+detectar riesgos y comparar mejoras. Wi-Fi primero, empezando por 2.4 GHz.
+[Definición y alcance](docs/PRODUCT_OBJECTIVE.md) ·
+[Plan del producto tras la migración](docs/product/DEVELOPMENT_PLAN.md) ·
+[Checklist del producto](docs/product/ACCEPTANCE_CHECKLIST.md).
+
+> **Migración en curso (2026-10-29):** nueva aplicación local con interfaz React/TypeScript
+> y servicio Python. [Arranque local](docs/migration/LOCAL_DEVELOPMENT.md),
+> [ruta completa](docs/migration/ROADMAP.md), [checklist](docs/migration/CHECKLIST.md)
+> y [evidencia del estado](docs/migration/STATUS.md).
+> Java se conserva como referencia. El primer motor Python es una estimación directa;
+> Sionna RT y ns-3 todavía no están integrados ni validados. La documentación inferior
+> corresponde a la aplicación Java original.
+
 [![CI](https://github.com/Phlekies/smart-home-simulator/actions/workflows/ci.yml/badge.svg)](https://github.com/Phlekies/smart-home-simulator/actions/workflows/ci.yml)
 ![Java 21](https://img.shields.io/badge/Java-21-orange)
 ![JavaFX 21](https://img.shields.io/badge/JavaFX-21-blue)

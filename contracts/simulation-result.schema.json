@@ -1,0 +1,189 @@
+{
+  "$defs": {
+    "DirectionResult": {
+      "additionalProperties": false,
+      "properties": {
+        "tx_device_id": {
+          "title": "Tx Device Id",
+          "type": "string"
+        },
+        "rx_device_id": {
+          "title": "Rx Device Id",
+          "type": "string"
+        },
+        "distance_m": {
+          "title": "Distance M",
+          "type": "number"
+        },
+        "path_loss_db": {
+          "title": "Path Loss Db",
+          "type": "number"
+        },
+        "wall_loss_db": {
+          "title": "Wall Loss Db",
+          "type": "number"
+        },
+        "crossed_wall_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Crossed Wall Ids",
+          "type": "array"
+        },
+        "received_power_dbm": {
+          "title": "Received Power Dbm",
+          "type": "number"
+        },
+        "noise_dbm": {
+          "title": "Noise Dbm",
+          "type": "number"
+        },
+        "snr_db": {
+          "title": "Snr Db",
+          "type": "number"
+        },
+        "margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Margin Db"
+        }
+      },
+      "required": [
+        "tx_device_id",
+        "rx_device_id",
+        "distance_m",
+        "path_loss_db",
+        "wall_loss_db",
+        "crossed_wall_ids",
+        "received_power_dbm",
+        "noise_dbm",
+        "snr_db",
+        "margin_db"
+      ],
+      "title": "DirectionResult",
+      "type": "object"
+    },
+    "LinkResult": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "compatibility": {
+          "enum": [
+            "radio-compatible",
+            "incompatible",
+            "unverified"
+          ],
+          "title": "Compatibility",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "above-threshold",
+            "below-threshold",
+            "incompatible",
+            "unverified",
+            "unsupported"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "forward": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DirectionResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reverse": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DirectionResult"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "compatibility",
+        "status",
+        "forward",
+        "reverse",
+        "reasons"
+      ],
+      "title": "LinkResult",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "engine": {
+      "title": "Engine",
+      "type": "string"
+    },
+    "engine_version": {
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "input_hash": {
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "elapsed_ms": {
+      "title": "Elapsed Ms",
+      "type": "number"
+    },
+    "scope": {
+      "title": "Scope",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "links": {
+      "items": {
+        "$ref": "#/$defs/LinkResult"
+      },
+      "title": "Links",
+      "type": "array"
+    }
+  },
+  "required": [
+    "engine",
+    "engine_version",
+    "input_hash",
+    "elapsed_ms",
+    "scope",
+    "limitations",
+    "links"
+  ],
+  "title": "SimulationResult",
+  "type": "object"
+}

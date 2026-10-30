@@ -1,0 +1,705 @@
+{
+  "$defs": {
+    "Building": {
+      "additionalProperties": false,
+      "properties": {
+        "width_m": {
+          "default": 20,
+          "exclusiveMinimum": 0,
+          "maximum": 1000,
+          "title": "Width M",
+          "type": "number"
+        },
+        "depth_m": {
+          "default": 15,
+          "exclusiveMinimum": 0,
+          "maximum": 1000,
+          "title": "Depth M",
+          "type": "number"
+        },
+        "walls": {
+          "items": {
+            "$ref": "#/$defs/Wall"
+          },
+          "maxItems": 2000,
+          "title": "Walls",
+          "type": "array"
+        },
+        "materials": {
+          "items": {
+            "$ref": "#/$defs/Material"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "title": "Materials",
+          "type": "array"
+        }
+      },
+      "required": [
+        "width_m",
+        "depth_m",
+        "walls",
+        "materials"
+      ],
+      "title": "Building",
+      "type": "object"
+    },
+    "Device": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "role": {
+          "default": "unknown",
+          "enum": [
+            "endpoint",
+            "access-point",
+            "controller",
+            "router",
+            "bridge",
+            "unknown"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Point"
+        },
+        "radios": {
+          "items": {
+            "$ref": "#/$defs/Radio"
+          },
+          "maxItems": 8,
+          "minItems": 1,
+          "title": "Radios",
+          "type": "array"
+        },
+        "evidence": {
+          "default": "User-defined generic device; functional compatibility unverified",
+          "title": "Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "role",
+        "position",
+        "radios",
+        "evidence"
+      ],
+      "title": "Device",
+      "type": "object"
+    },
+    "Link": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "source_device_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Source Device Id",
+          "type": "string"
+        },
+        "source_radio_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Source Radio Id",
+          "type": "string"
+        },
+        "target_device_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Target Device Id",
+          "type": "string"
+        },
+        "target_radio_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Target Radio Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "source_device_id",
+        "source_radio_id",
+        "target_device_id",
+        "target_radio_id"
+      ],
+      "title": "Link",
+      "type": "object"
+    },
+    "Material": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "loss_db_24ghz": {
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Loss Db 24Ghz",
+          "type": "number"
+        },
+        "loss_db_5ghz": {
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Loss Db 5Ghz",
+          "type": "number"
+        },
+        "extra_loss_db_per_cm": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Extra Loss Db Per Cm",
+          "type": "number"
+        },
+        "evidence": {
+          "default": "Hypothesis: legacy empirical values; not calibrated",
+          "title": "Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "loss_db_24ghz",
+        "loss_db_5ghz",
+        "extra_loss_db_per_cm",
+        "evidence"
+      ],
+      "title": "Material",
+      "type": "object"
+    },
+    "PixelPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 16384,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 16384,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "PixelPoint",
+      "type": "object"
+    },
+    "PlanReference": {
+      "additionalProperties": false,
+      "description": "Background floor-plan image placed at scale; display aid only, never a solver input.\n\nThe image stays a local file: only its fingerprint travels in the project. Pixel (u, v),\nu to the right and v downwards from the top-left corner, maps to\nx = origin_x_m + u·meters_per_pixel and y = origin_y_m + v·meters_per_pixel.",
+      "properties": {
+        "file_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "File Name",
+          "type": "string"
+        },
+        "media_type": {
+          "enum": [
+            "image/png",
+            "image/jpeg",
+            "image/webp"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "sha256": {
+          "description": "SHA-256 of the image file bytes",
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "width_px": {
+          "maximum": 16384,
+          "minimum": 1,
+          "title": "Width Px",
+          "type": "integer"
+        },
+        "height_px": {
+          "maximum": 16384,
+          "minimum": 1,
+          "title": "Height Px",
+          "type": "integer"
+        },
+        "meters_per_pixel": {
+          "exclusiveMinimum": 0,
+          "maximum": 20000,
+          "title": "Meters Per Pixel",
+          "type": "number"
+        },
+        "origin_x_m": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Origin X M",
+          "type": "number"
+        },
+        "origin_y_m": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Origin Y M",
+          "type": "number"
+        },
+        "calibration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlanReferenceCalibration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence": {
+          "default": "User calibration from a known distance; not surveyed",
+          "title": "Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_name",
+        "media_type",
+        "sha256",
+        "width_px",
+        "height_px",
+        "meters_per_pixel",
+        "origin_x_m",
+        "origin_y_m",
+        "calibration",
+        "evidence"
+      ],
+      "title": "PlanReference",
+      "type": "object"
+    },
+    "PlanReferenceCalibration": {
+      "additionalProperties": false,
+      "description": "Two image points and the real distance between them, kept so the scale can be reviewed.",
+      "properties": {
+        "point_a_px": {
+          "$ref": "#/$defs/PixelPoint"
+        },
+        "point_b_px": {
+          "$ref": "#/$defs/PixelPoint"
+        },
+        "distance_m": {
+          "maximum": 20000,
+          "minimum": 0.01,
+          "title": "Distance M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "point_a_px",
+        "point_b_px",
+        "distance_m"
+      ],
+      "title": "PlanReferenceCalibration",
+      "type": "object"
+    },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Y",
+          "type": "number"
+        },
+        "z": {
+          "default": 0,
+          "maximum": 1000,
+          "minimum": -1000,
+          "title": "Z",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
+    "Radio": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "protocol": {
+          "default": "unknown",
+          "enum": [
+            "wifi",
+            "thread",
+            "zigbee",
+            "ble",
+            "zwave",
+            "unknown"
+          ],
+          "title": "Protocol",
+          "type": "string"
+        },
+        "frequency_hz": {
+          "exclusiveMinimum": 0,
+          "maximum": 100000000000.0,
+          "title": "Frequency Hz",
+          "type": "number"
+        },
+        "bandwidth_hz": {
+          "exclusiveMinimum": 0,
+          "maximum": 1000000000.0,
+          "title": "Bandwidth Hz",
+          "type": "number"
+        },
+        "channel": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel"
+        },
+        "tx_power_dbm": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": -100,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tx Power Dbm"
+        },
+        "tx_gain_dbi": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": -100,
+          "title": "Tx Gain Dbi",
+          "type": "number"
+        },
+        "rx_gain_dbi": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": -100,
+          "title": "Rx Gain Dbi",
+          "type": "number"
+        },
+        "sensitivity_dbm": {
+          "anyOf": [
+            {
+              "maximum": 0,
+              "minimum": -200,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sensitivity Dbm"
+        },
+        "noise_figure_db": {
+          "default": 7,
+          "maximum": 60,
+          "minimum": 0,
+          "title": "Noise Figure Db",
+          "type": "number"
+        },
+        "antenna": {
+          "default": "omnidirectional",
+          "enum": [
+            "omnidirectional",
+            "directional"
+          ],
+          "title": "Antenna",
+          "type": "string"
+        },
+        "orientation_deg": {
+          "default": 0,
+          "maximum": 360,
+          "minimum": -360,
+          "title": "Orientation Deg",
+          "type": "number"
+        },
+        "beamwidth_deg": {
+          "default": 360,
+          "exclusiveMinimum": 0,
+          "maximum": 360,
+          "title": "Beamwidth Deg",
+          "type": "number"
+        },
+        "pattern_sharpness": {
+          "default": 1.8,
+          "maximum": 100,
+          "minimum": 0.5,
+          "title": "Pattern Sharpness",
+          "type": "number"
+        },
+        "side_lobe_attenuation_db": {
+          "default": 18,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Side Lobe Attenuation Db",
+          "type": "number"
+        },
+        "polarization_deg": {
+          "default": 0,
+          "maximum": 360,
+          "minimum": -360,
+          "title": "Polarization Deg",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "protocol",
+        "frequency_hz",
+        "bandwidth_hz",
+        "channel",
+        "tx_power_dbm",
+        "tx_gain_dbi",
+        "rx_gain_dbi",
+        "sensitivity_dbm",
+        "noise_figure_db",
+        "antenna",
+        "orientation_deg",
+        "beamwidth_deg",
+        "pattern_sharpness",
+        "side_lobe_attenuation_db",
+        "polarization_deg"
+      ],
+      "title": "Radio",
+      "type": "object"
+    },
+    "Settings": {
+      "additionalProperties": false,
+      "properties": {
+        "path_loss_exponent": {
+          "default": 2.1,
+          "maximum": 6,
+          "minimum": 1,
+          "title": "Path Loss Exponent",
+          "type": "number"
+        },
+        "extra_loss_db_per_m": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Extra Loss Db Per M",
+          "type": "number"
+        },
+        "system_gain_db": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": -100,
+          "title": "System Gain Db",
+          "type": "number"
+        }
+      },
+      "required": [
+        "path_loss_exponent",
+        "extra_loss_db_per_m",
+        "system_gain_db"
+      ],
+      "title": "Settings",
+      "type": "object"
+    },
+    "Wall": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "start": {
+          "$ref": "#/$defs/Point"
+        },
+        "end": {
+          "$ref": "#/$defs/Point"
+        },
+        "height_m": {
+          "default": 2.6,
+          "exclusiveMinimum": 0,
+          "maximum": 100,
+          "title": "Height M",
+          "type": "number"
+        },
+        "thickness_m": {
+          "default": 0.12,
+          "exclusiveMinimum": 0,
+          "maximum": 10,
+          "title": "Thickness M",
+          "type": "number"
+        },
+        "material_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Material Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "start",
+        "end",
+        "height_m",
+        "thickness_m",
+        "material_id"
+      ],
+      "title": "Wall",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "smart-environment-simulator",
+      "default": "smart-environment-simulator",
+      "title": "Format",
+      "type": "string"
+    },
+    "version": {
+      "const": 1,
+      "default": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "name": {
+      "default": "Entorno inteligente",
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "units": {
+      "const": "m",
+      "default": "m",
+      "title": "Units",
+      "type": "string"
+    },
+    "building": {
+      "$ref": "#/$defs/Building"
+    },
+    "devices": {
+      "items": {
+        "$ref": "#/$defs/Device"
+      },
+      "maxItems": 128,
+      "title": "Devices",
+      "type": "array"
+    },
+    "links": {
+      "items": {
+        "$ref": "#/$defs/Link"
+      },
+      "maxItems": 512,
+      "title": "Links",
+      "type": "array"
+    },
+    "settings": {
+      "$ref": "#/$defs/Settings"
+    },
+    "migration_notes": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 256,
+      "title": "Migration Notes",
+      "type": "array"
+    },
+    "legacy_source": {
+      "anyOf": [
+        {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Legacy Source"
+    },
+    "plan_reference": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PlanReference"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "name",
+    "units",
+    "building",
+    "devices",
+    "links",
+    "settings",
+    "migration_notes",
+    "legacy_source"
+  ],
+  "title": "Project",
+  "type": "object"
+}
