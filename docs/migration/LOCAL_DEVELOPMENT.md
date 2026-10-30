@@ -86,8 +86,10 @@ tienen límites explícitos de dispositivos, enlaces y paredes en el contrato.
 Las pruebas nativas de Node verifican historial, agrupación de gestos, límites y
 transformaciones. Los tests `.test.ts` se ejecutan con Node 22 y strip-types; no forman
 parte del typecheck de la interfaz. El historial se reinicia al abrir otro proyecto o
-crear uno nuevo. La recuperación automática y la imagen de plano calibrada siguen pendientes;
-guardar JSON manualmente antes de recargar o cerrar la aplicación.
+crear uno nuevo. La copia local se actualiza tras validar; al volver se ofrece restaurar
+o descartar. Guarda también JSON para conservar un archivo fuera del navegador.
+La imagen a escala funciona como referencia de sesión; el contrato de persistencia B-104
+está disponible y su consumidor sigue pendiente. Más detalle en `docs/ui/`.
 
 El estimador no calcula tráfico, Mbps reales o latencia. Las versiones Sionna RT y
 ns-3 aún no están integradas. Su ausencia no activa una sustitución automática.

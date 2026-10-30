@@ -13,6 +13,10 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
   registro B remoto en review, clon separado y sin tarea nueva activa declarada.
 - Reserva I-002: integración de las entregas A/B, package.json (generación de cobertura),
   documentos compartidos de estado/checklist/tablero y Git. No descartar cambios locales.
+- Trabajo activo I-002 aislado en `smart-home-simulator/.local/integration-review`, rama
+  `codex/integrate-agents`, porque otra sesión creó `agent-a/a-101-a108-ui` y guardó
+  las entregas A en 1b5b596 mientras se iniciaba la revisión. No cambiar la rama del
+  checkout compartido; todas las operaciones siguientes se hacen en este worktree.
 - Tareas: **A-107**, gestión de interfaces de radio, y **A-108**, gestión de enlaces por
   radio. Usuario pide seguir completando tareas del rol A; contratos vigentes.
 - Sesión/chat: conversación actual, agente A; sin identificador adicional conocido.

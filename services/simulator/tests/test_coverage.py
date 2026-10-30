@@ -1,6 +1,7 @@
 """Coverage maps (B-103): same budget as links, explicit gaps, bounded and cancellable jobs."""
 
 import time
+import threading
 
 import pytest
 from fastapi.testclient import TestClient
@@ -208,3 +209,68 @@ def test_history_is_bounded():
         assert jobs.get(ids[0]) is None and jobs.get(third.job_id) is not None
     finally:
         jobs.shutdown()
+
+
+def test_edge_cells_are_evaluated_at_the_centre_of_the_requested_extent(monkeypatch):
+    from smart_environment import coverage
+    from smart_environment.models import CoverageSample
+    positions = []
+
+    def sample(project, ap, ap_radio, profile_radio, point):
+        positions.append((point.x, point.y))
+        return CoverageSample(forward_dbm=None, reverse_dbm=None, forward_margin_db=None,
+                              reverse_margin_db=None, status="partial")
+
+    monkeypatch.setattr(coverage, "evaluate", sample)
+    data = request_data(points=[], grid={"origin_x_m": 2, "origin_y_m": -3, "width_m": 1.2,
+                                        "depth_m": .2, "resolution_m": 1, "height_m": 1.2})
+    result = compute(CoverageMapRequest.model_validate(data))
+    assert (result.columns, result.rows) == (2, 1)
+    for actual, expected in zip(positions, [(2.5, -2.9), (3.1, -2.9)], strict=True):
+        assert actual == pytest.approx(expected)
+
+
+@pytest.mark.parametrize("grid", [
+    {"origin_x_m": 9999.5, "width_m": 1},
+    {"origin_y_m": 9999.5, "depth_m": 1},
+])
+def test_the_complete_map_extent_must_stay_inside_supported_coordinates(grid):
+    data = request_data()
+    data["grid"].update(grid)
+    with pytest.raises(ValidationError, match="entire map extent"):
+        CoverageMapRequest.model_validate(data)
+
+
+def test_cancel_after_compute_before_publication_cannot_publish_a_result(monkeypatch):
+    from smart_environment import coverage
+    request = CoverageMapRequest.model_validate(request_data())
+    result = compute(request)
+    ready, release = threading.Event(), threading.Event()
+
+    def gated(*args):
+        ready.set()
+        assert release.wait(5)
+        return result
+
+    monkeypatch.setattr(coverage, "compute", gated)
+    jobs = CoverageJobs()
+    try:
+        job = jobs.submit(request)
+        assert ready.wait(5)
+        jobs.cancel(job.job_id)
+        release.set()
+        deadline = time.monotonic() + 5
+        while jobs.get(job.job_id).state == "running" and time.monotonic() < deadline:
+            time.sleep(.01)
+        assert jobs.get(job.job_id).state == "cancelled"
+        assert jobs.get(job.job_id).result is None
+    finally:
+        release.set()
+        jobs.shutdown()
+
+
+def test_api_map_queue_is_available_after_a_lifespan_restart():
+    for _ in range(2):
+        with TestClient(app) as restarted:
+            response = restarted.post("/api/coverage-maps", json=request_data())
+            assert response.status_code == 202

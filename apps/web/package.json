@@ -8,7 +8,7 @@
     "build": "tsc --noEmit && vite build",
     "check": "tsc --noEmit",
     "test": "node --experimental-strip-types --test src/editor/*.test.ts",
-    "contracts": "json2ts -i ../../contracts/project.schema.json -o src/generated/project.ts && json2ts -i ../../contracts/simulation-result.schema.json -o src/generated/simulation-result.ts",
+    "contracts": "json2ts -i ../../contracts/project.schema.json -o src/generated/project.ts && json2ts -i ../../contracts/simulation-result.schema.json -o src/generated/simulation-result.ts && json2ts -i ../../contracts/coverage-map.schema.json -o src/generated/coverage-map.ts",
     "preview": "vite preview --host 127.0.0.1 --port 4174 --strictPort"
   },
   "dependencies": {

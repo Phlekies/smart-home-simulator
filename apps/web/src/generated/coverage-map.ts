@@ -155,6 +155,7 @@ export interface Radio {
 /**
  * Horizontal sampling plane. Cell (i, j) is evaluated at its centre:
  * x = origin_x_m + (i + 0.5)·resolution_m, y = origin_y_m + (j + 0.5)·resolution_m, z = height_m.
+ * Edge cells narrower than resolution_m use the centre of their clipped extent.
  */
 export interface MapGrid {
   origin_x_m: OriginXM;

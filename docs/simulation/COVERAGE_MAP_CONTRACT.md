@@ -28,6 +28,9 @@ resolución 0.1–5 m y **altura obligatoria**), `points` (hasta 256 posiciones 
 
 - **Celdas:** la celda (i, j) se evalúa en su centro, `x = origen_x + (i + 0.5)·resolución`, a
   `height_m`. Las matrices están por filas: índice `j·columns + i`. Sin interpolación.
+  En el borde, la celda se recorta al ancho/fondo solicitado y se evalúa en el centro
+  de ese rectángulo recortado, incluso si el área es menor que una celda. El consumidor
+  debe usar ese mismo recorte al dibujarla. Toda la extensión queda dentro de ±10000 m.
 - **Ambos sentidos:** `forward` es AP→perfil y `reverse` es perfil→AP, cada uno con su potencia,
   su receptor y su sensibilidad. Un margen de retorno negativo es visible aunque la bajada sea buena.
 - **Estados por celda:** `computed` (cuatro valores), `partial` (falta potencia o sensibilidad de

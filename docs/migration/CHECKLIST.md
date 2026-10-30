@@ -51,7 +51,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [ ] Imagen de referencia con escala y cotas.
 - [x] Undo/redo con 50 acciones; cada arrastre es una acción; transformaciones y pérdidas de material recuperables.
 - [x] Guardado/apertura manual de proyectos JSON (base M1, conservada).
-- [ ] Recuperación automática de trabajo tras cierre o recarga.
+- [x] Recuperación automática de trabajo tras cierre o recarga (A-101; validación, restaurar/descartar y límites documentados; I-002 integra la evidencia).
 - [ ] Accesibilidad y recorrido de creación de una vivienda.
 - [x] Ámbito de una planta declarado hasta soportar y validar forjados.
 
@@ -71,7 +71,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [ ] Presupuesto de ambos sentidos para puntos individuales (API B-103: `points` exactos; interfaz pendiente).
 - [ ] AP/emisor y receptor/perfil identificados en cada resultado (API B-103; interfaz pendiente).
 - [ ] Energía agregada no se presenta como señal de una conexión (API B-103: un AP por mapa; interfaz pendiente).
-- [ ] Comparación de posiciones y optimización básica con restricciones.
+- [ ] Comparación de posiciones y optimización básica con restricciones (comparación manual de sesión A-105 disponible; optimización/restricciones pendientes).
 - [ ] Mapas guardables y resultados invalidados al editar.
 - [ ] Predicción técnica separada de recomendación de compra validada.
 

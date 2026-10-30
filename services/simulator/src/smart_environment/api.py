@@ -22,8 +22,13 @@ coverage_jobs = CoverageJobs()
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    yield
-    coverage_jobs.shutdown()  # cancel queued/running maps so the server stops promptly
+    global coverage_jobs
+    coverage_jobs.shutdown()
+    jobs = coverage_jobs = CoverageJobs()
+    try:
+        yield
+    finally:
+        jobs.shutdown()  # cancel queued/running maps so the server stops promptly
 
 
 app = FastAPI(title="Smart Environment Simulator", version="0.1.0", lifespan=lifespan,

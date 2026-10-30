@@ -113,9 +113,10 @@ def compute(request: CoverageMapRequest, progress: Callable[[float], None] = lam
     for j in range(rows):
         if cancelled():
             raise Cancelled()
-        y = grid.origin_y_m + (j + 0.5) * grid.resolution_m
+        y = grid.origin_y_m + (j * grid.resolution_m + min((j + 1) * grid.resolution_m, grid.depth_m)) / 2
         for i in range(columns):
-            point = Point.model_construct(x=grid.origin_x_m + (i + 0.5) * grid.resolution_m, y=y, z=grid.height_m)
+            x = grid.origin_x_m + (i * grid.resolution_m + min((i + 1) * grid.resolution_m, grid.width_m)) / 2
+            point = Point.model_construct(x=x, y=y, z=grid.height_m)
             samples.append(evaluate(project, ap, ap_radio, profile_radio, point))
         progress((j + 1) / total)
     if cancelled():
@@ -206,7 +207,10 @@ class CoverageJobs:
                 job.state, job.error = "failed", f"{type(error).__name__}: {error}"
             return
         with self._lock:
-            job.result, job.state, job.progress = result, "done", 1.0
+            if job.cancel.is_set():
+                job.state = "cancelled"
+            else:
+                job.result, job.state, job.progress = result, "done", 1.0
 
     def get(self, job_id: str) -> CoverageMapJob | None:
         with self._lock:

@@ -269,7 +269,8 @@ class ReceiverProfile(Model):
 
 class MapGrid(Model):
     """Horizontal sampling plane. Cell (i, j) is evaluated at its centre:
-    x = origin_x_m + (i + 0.5)·resolution_m, y = origin_y_m + (j + 0.5)·resolution_m, z = height_m."""
+    x = origin_x_m + (i + 0.5)·resolution_m, y = origin_y_m + (j + 0.5)·resolution_m, z = height_m.
+    Edge cells narrower than resolution_m use the centre of their clipped extent."""
 
     origin_x_m: Finite = Field(default=0, ge=-10000, le=10000)
     origin_y_m: Finite = Field(default=0, ge=-10000, le=10000)
@@ -290,6 +291,8 @@ class MapGrid(Model):
     def bounded(self) -> MapGrid:
         if self.columns * self.rows > MAX_MAP_CELLS:
             raise ValueError(f"Grid exceeds {MAX_MAP_CELLS} cells; increase resolution_m or reduce the area")
+        if self.origin_x_m + self.width_m > 10000 or self.origin_y_m + self.depth_m > 10000:
+            raise ValueError("The entire map extent must stay within ±10000 m")
         return self
 
 

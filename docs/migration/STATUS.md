@@ -4,23 +4,24 @@ Inicio: 2026-10-29. La migración completa está en curso, no terminada.
 
 ## Resumen vigente para retomar trabajo
 
-Última actualización documental: 2026-10-29. Leer también el archivo local `AGENTS.md`,
+Última actualización documental: 2026-10-30, integración I-002. Leer también el archivo local `AGENTS.md`,
 [proceso A/B](../process/WORKFLOW.md) y [tablero](../process/WORKBOARD.md).
 
 - M0/base M1 implementados; CI remota de migración superada en PR #2 para 33f1df8.
-- M2 parcial: paredes editables y undo/redo terminados en la entrega correspondiente.
-  Faltan imagen de plano calibrada, recuperación automática y accesibilidad completa.
-- API/estimador directo y contratos disponibles; sin mapas nuevos ni Sionna RT integrado en la API.
+- M2 parcial: paredes/undo, recuperación local, radios/enlaces y recorrido de teclado
+  implementados. Referencia de imagen de sesión disponible; persistencia del consumidor
+  A-102 y evaluación completa de accesibilidad pendientes.
+- API de mapas B-103 y tipos disponibles, visualización A-104 pendiente; Sionna RT no está integrado en la API.
   B-102: Sionna RT evaluado en WSL/CPU contra referencias (18/18); Windows nativo no ejecuta.
 - Sin validación experimental en viviendas; el producto completo continúa pendiente.
-- Última evidencia de código: 16 pruebas web/editor y 31 Python, build y contratos correctos;
-  192 Java en la entrega de base. Revisar las fechas/secciones antes de atribuir otra ejecución.
-- A: A-101 reservada en el checkout compartido (ver su registro). B: B-101 en `review` en
-  `agent-b/b-101-reference-cases`, [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) en borrador contra la rama de migración
-  (casos analíticos, formato de medidas, protocolo piloto); sin merge. I-001 publicada; consultar registros por rol.
-- Entrega publicada en `codex/migrate-web-python` y [PR #2 en borrador](https://github.com/Phlekies/smart-home-simulator/pull/2).
-  No se ha fusionado en `main`. Consultar las comprobaciones del PR para el último SHA.
-  `AGENTS.md` permanece local y excluido del commit.
+- Última evidencia conjunta local: **162 pruebas Python, 70 web/editor, build y contratos
+  correctos**. Se integran las entregas A-101/102/103/105–108 y B-101/102/103/104.
+  Java no se modifica; su CI remota de esta revisión se consulta en GitHub.
+- I-002 autorizado por el usuario: revisión y publicación conjunta a main, seguida de
+  trabajo A. Se usa `codex/integrate-agents` en un worktree aislado para evitar cambios
+  de rama concurrentes en el checkout compartido. Estado remoto y CI: consultar el PR.
+- `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
+  las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
@@ -32,6 +33,35 @@ entrega; este resumen y el checklist reflejan lo pendiente actual.
 - SHA: `eff803c7825ce2ad71e6c0b1b1934f9f8bb26515`.
 - Fuentes Java conservadas; prototipo de la carpeta padre conservado.
 - M0: documentos ROADMAP, CHECKLIST y decisiones preparados.
+
+## I-002 — revisión conjunta del 2026-10-30
+
+Por instrucción explícita del usuario, A asume temporalmente integración y publicación,
+antes de volver al desarrollo de consumidores de interfaz. Se inspecciona la pila de B
+hasta a5e6ff8 y se combina con las entregas A guardadas en 1b5b596. La CI previa de B
+en PR #6 estaba verde; no acredita por sí sola la combinación nueva.
+
+Revisión y correcciones antes de publicar:
+
+- Se reproducía POST de mapas 500 al segundo ciclo de vida de la misma aplicación:
+  la cola cerrada se reutilizaba. Se crea una cola por arranque y se cierra al salir.
+- Una rejilla de 0.2×0.2 m con resolución de 1 m evaluaba (0.5,0.5), fuera del área.
+  Ahora las celdas de borde usan el centro de su extensión recortada. Se valida toda
+  la extensión de mapa dentro de ±10000 m y se actualiza la descripción del contrato.
+- Una cancelación entre acabar el cálculo y publicar el resultado ya no publica `done`.
+- Se incluye coverage-map.ts en el script de generación para que la CI detecte deriva.
+
+Evidencia de la combinación: 162 pruebas Python (157 de B + 5 casos de regresión),
+70 web/editor, build TypeScript/Vite y comprobación de contratos correctos. Regeneración
+exclusivamente por sus herramientas canónicas. Java/Gradle/ejemplos originales intactos.
+No se reinstala Sionna ni se atribuye una nueva ejecución a su evidencia WSL de B-102.
+Se mantiene 501 para Sionna/ns-3 en la API y el estimador directo como único motor web.
+
+Las pruebas con TestClient se ejecutan fuera del sandbox tras detener una ejecución
+restringida bloqueada por los hilos; el resto de herramientas funciona normalmente.
+`AGENTS.md`, node_modules, entornos y worktree temporal quedan fuera de los commits.
+La publicación y CI de esta revisión se verifican en el PR de integración, sin suponerlas
+a partir de estas pruebas locales.
 
 ## Entrega actual — primera base funcional
 
