@@ -91,8 +91,21 @@ o descartar. Guarda también JSON para conservar un archivo fuera del navegador.
 La imagen a escala funciona como referencia de sesión; el contrato de persistencia B-104
 está disponible y su consumidor sigue pendiente. Más detalle en `docs/ui/`.
 
-El estimador no calcula tráfico, Mbps reales o latencia. Las versiones Sionna RT y
-ns-3 aún no están integradas. Su ausencia no activa una sustitución automática.
+API local (documentación interactiva en http://127.0.0.1:8000/docs):
+
+| Ruta | Para qué | Contrato |
+|---|---|---|
+| `POST /api/simulations` | Presupuesto de cada enlace en ambos sentidos | `SimulationResult` |
+| `POST/GET/DELETE /api/coverage-maps` | Mapa por perfil y altura como trabajo cancelable | [mapas](../simulation/COVERAGE_MAP_CONTRACT.md) |
+| `POST /api/placement-searches` | Comparar lugares permitidos para el AP | [ubicación](../simulation/PLACEMENT_SEARCH_CONTRACT.md) |
+| `GET /api/profiles` | Perfiles Wi-Fi genéricos con procedencia | [perfiles](../simulation/RADIO_PROFILES.md) |
+| `POST /api/scenario-simulations` | Mejor/peor caso de puertas y materiales inciertos | [escenarios](../simulation/SCENARIOS_CONTRACT.md) |
+
+Ninguna clasifica la cobertura como favorable o insuficiente: la reserva de diseño está pendiente.
+
+El estimador no calcula tráfico, Mbps reales o latencia. Sionna RT y ns-3 aún no están
+integrados en la API (Sionna se evaluó aparte en WSL, ver
+[evaluación](../simulation/ADVANCED_ENGINE_EVALUATION.md)). Su ausencia no activa una sustitución automática.
 Las notas Java indican qué se ha inferido; rellenar campos no demuestra compatibilidad
 funcional de un producto comercial.
 

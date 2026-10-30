@@ -4,31 +4,45 @@ Inicio: 2026-10-29. La migración completa está en curso, no terminada.
 
 ## Resumen vigente para retomar trabajo
 
-Última actualización documental: 2026-10-30, I-002 publicada y entrega A-104 en revisión. Leer también el archivo local `AGENTS.md`,
-[proceso A/B](../process/WORKFLOW.md) y [tablero](../process/WORKBOARD.md).
+Última actualización documental: 2026-10-30, consolidación I-003 (B) tras fusionar #8, #9 y #10.
+Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md) y [tablero](../process/WORKBOARD.md).
 
 - M0/base M1 implementados; CI remota de migración superada en PR #2 para 33f1df8.
 - M2 parcial: paredes/undo, recuperación local, radios/enlaces y recorrido de teclado
   implementados. Referencia de imagen de sesión disponible; persistencia del consumidor
   A-102 y evaluación completa de accesibilidad pendientes.
-- API de mapas B-103 y tipos en main; visualización A-104 implementada en rama de revisión
-  `codex/coverage-map-ui`, [PR #10](https://github.com/Phlekies/smart-home-simulator/pull/10),
-  con [evidencia UI](../ui/COVERAGE_MAP.md). Sionna RT no está integrado en la API.
-  B-102: Sionna RT evaluado en WSL/CPU contra referencias (18/18); Windows nativo no ejecuta.
+- Mapas: API B-103 y visualización A-104 en `main` ([evidencia UI](../ui/COVERAGE_MAP.md)).
+  Sionna RT no está integrado en la API; B-102 lo evaluó en WSL/CPU (18/18) y no ejecuta en Windows nativo.
+- También en `main`, solo como API y sin interfaz todavía: búsqueda de ubicación del AP (B-105),
+  perfiles Wi-Fi genéricos (B-106) y escenarios de puertas/materiales (B-108).
 - Sin validación experimental en viviendas; el producto completo continúa pendiente.
-- Última evidencia conjunta local: **162 pruebas Python, 70 web/editor, build y contratos
-  correctos**. Se integran las entregas A-101/102/103/105–108 y B-101/102/103/104.
-  Java no se modifica. A-104 posterior: **84 web/editor y build correctos**; no cambia
-  backend/contratos. Es una entrega independiente, pendiente de integración.
-- I-002 terminada por autorización del usuario: [PR #7](https://github.com/Phlekies/smart-home-simulator/pull/7)
-  fusionado en main `046ee827ded4f97aebf58e251234fb5175a37dc1`. CI de migración y
-  Java Linux/Windows/macOS verde antes y después. Trabajo posterior en worktree aislado
-  para evitar cambios de rama concurrentes en el checkout compartido.
+- `main` = 6fb42e2: #7 (I-002, ejecutada por A, 046ee82) y después, a petición del usuario, #8
+  (6d7e69f), #9 (760e3cd) y #10 (6fb42e2). PR #3–#6 cerrados sin fusionar porque ya estaban en `main`.
+  CI de 6fb42e2: migración en verde; Java: en verde (Linux, Windows y macOS; run 41070899874).
+- Última evidencia de código: combinación `main`+#8+#9+#10 verificada localmente por B: **199 pruebas
+  Python, 84 web/editor, build, contratos y tipos generados sin deriva**. Java no se modifica.
+- [Matriz de funciones Java](FEATURE_MATRIX.md) (B-107): qué se conserva, sustituye o excluye y por qué.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## I-003 — consolidación tras el merge de #7 — 2026-10-30
+
+A declaró I-002 terminada y volvió a su rol; B retoma la integración. Comprobaciones:
+
+| Comprobación | Resultado |
+|---|---|
+| `gh run list --branch main` | «Migration contracts and application» y «CI» (Java) en verde para 046ee82 |
+| Cabezas de PR #3–#6 frente a `main` | Las cuatro son ancestros de 046ee82; cerrados sin fusionar a petición del usuario, ramas conservadas |
+| PR #8 tras cambiar la base a `main` | Solo sus 4 commits; CI en verde (Python/web y Java en tres sistemas) |
+| Combinación `main`+#8+#9+#10 en una rama local temporal | Sin conflictos de código; 199 Python, 84 web, build, contratos y generados sin deriva |
+| Fusiones autorizadas por el usuario, con cabeza verificada | #8 → 6d7e69f, #9 (base cambiada a `main`) → 760e3cd, #10 → 6fb42e2 |
+| CI de `main` en 6fb42e2 | Migración (41070899629) y Java (41070899874) en verde |
+| Rama de I-003 (sobre #9): pruebas y contratos | Ver el traspaso de I-003 en el registro B |
+
+Documentos: tablero (B-101…B-106, B-108, A-104 e I-002 `done`; B-107 e I-003 en `review` en #11), este resumen, checklists técnico y de producto y la matriz de funciones nueva.
 
 ## Base
 

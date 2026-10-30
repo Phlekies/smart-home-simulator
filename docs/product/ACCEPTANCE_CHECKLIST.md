@@ -5,28 +5,28 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 
 ## P0 — Requisitos y evidencia
 
-- [ ] Perfiles iniciales Wi-Fi 2.4 GHz con parámetros de AP/cliente y procedencia.
-- [ ] Configuración/modo de radio y requisitos por perfil documentados.
-- [ ] Desconocidos y valores inferidos diferenciados de datos medidos.
-- [ ] Protocolo de medida piloto y criterio activo de fallo del enlace.
-- [ ] Conjuntos de calibración y evaluación independientes separados.
+- [ ] Perfiles iniciales Wi-Fi 2.4 GHz con parámetros de AP/cliente y procedencia (parcial: perfiles de cliente B-106 en `main`; tabla HT sin cotejar; sin perfiles de AP ni interfaz).
+- [ ] Configuración/modo de radio y requisitos por perfil documentados (modo documentado en B-106; requisito de enlace pendiente del criterio de fallo).
+- [ ] Desconocidos y valores inferidos diferenciados de datos medidos (procedencia en medidas B-101 y perfiles B-106; el proyecto aún no la guarda por parámetro de radio).
+- [ ] Protocolo de medida piloto y criterio activo de fallo del enlace (protocolo B-101 en `main`; umbral del criterio pendiente de decisión del usuario).
+- [ ] Conjuntos de calibración y evaluación independientes separados (regla por vivienda implementada en B-101; sin datos todavía).
 - [ ] Objetivos numéricos congelados tras piloto y antes de evaluación independiente.
 - [ ] Clasificación de cobertura y reserva de diseño documentadas.
 
 ## P1 — Cobertura espacial
 
 - [ ] Plano a escala, paredes/espesores/materiales y alturas editables.
-- [ ] Mapa por perfil/banda/altura, con resolución y puntos no calculados identificados.
-- [ ] Coordenada elegida se evalúa sin redondeo a la celda visual.
-- [ ] Potencia y margen de ida y vuelta visibles.
+- [x] Mapa por perfil/banda/altura, con resolución y puntos no calculados identificados (B-103 + A-104 en `main`; [evidencia](../ui/COVERAGE_MAP.md)).
+- [x] Coordenada elegida se evalúa sin redondeo a la celda visual (punto exacto; B-103 + A-104 en `main`; [evidencia](../ui/COVERAGE_MAP.md)).
+- [x] Potencia y margen de ida y vuelta visibles (mapas y enlaces; B-103 + A-104 en `main`; [evidencia](../ui/COVERAGE_MAP.md)).
 - [ ] Un retorno insuficiente impide concluir cobertura favorable aunque la bajada sea buena.
-- [ ] Selección de AP explícita; energía de distintos AP no se suma como señal de una conexión.
+- [x] Selección de AP explícita; energía de distintos AP no se suma como señal de una conexión (B-103 + A-104 en `main`; [evidencia](../ui/COVERAGE_MAP.md)).
 - [ ] Sensibilidad/configuración desconocida produce conclusión parcial o sin datos.
 - [ ] Cambiar paredes, AP o radios invalida resultados obsoletos.
 
 ## P2 — Riesgo y supuestos
 
-- [ ] Puertas y materiales inciertos admiten escenarios identificados.
+- [ ] Puertas y materiales inciertos admiten escenarios identificados (API B-108 en `main`; interfaz pendiente).
 - [ ] Clasificación distingue favorable, marginal, insuficiente y sin datos.
 - [ ] Sin umbral RSSI universal ni porcentajes de éxito inventados.
 - [ ] Ruido/interferencia no evaluados se declaran independientemente de la cobertura.

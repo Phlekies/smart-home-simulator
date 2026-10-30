@@ -5,24 +5,19 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — B-105/B-106 en [PR #8](https://github.com/Phlekies/smart-home-simulator/pull/8) (borrador, base
-  `main`) y B-108 en [PR #9](https://github.com/Phlekies/smart-home-simulator/pull/9) (borrador, apilado sobre #8).
-  PR #3–#6 cerrados sin fusionar a petición del usuario: su contenido ya está en `main` por #7
-  (cabezas comprobadas como ancestros de 046ee82); ramas conservadas. Sin tarea nueva reservada.
-- Integración: **I-002 la ejecutó A** por instrucción del usuario; PR #7 fusionado en `main`
-  (046ee82). Registro A en `main` aún con I-002 reservada:
-  A asume temporalmente Git, documentos comunes y `package.json`. B no integra ni edita
-  WORKBOARD/STATUS/CHECKLIST/LOCAL_DEVELOPMENT mientras dure, y solo entrega ramas propias.
-- Pila B publicada (borradores, sin merge): [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) B-101 →
-  [PR #4](https://github.com/Phlekies/smart-home-simulator/pull/4) B-102 → [PR #5](https://github.com/Phlekies/smart-home-simulator/pull/5) B-104 →
-  [PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6) B-103. B-105/B-106 recolocadas sobre la integración de A (`codex/integrate-agents`, PR #7) en
-  `agent-b/b-105-106-on-integration` (publicada, PR #8); incluyen las correcciones de A revisadas (abajo).
+- Estado: **review** — **I-003** (consolidar documentos comunes tras el merge de #7) y **B-107**
+  (matriz de funciones Java conservadas/sustituidas/excluidas). Integrador: B de nuevo, porque A
+  declaró I-002 terminada y volvió a su rol (registro A en su worktree, 2026-10-30).
+- B-105/B-106 (#8) y B-108 (#9) fusionadas en `main`. En review solo I-003/B-107 en
+  [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11).
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
-- Rama/worktree: clon B `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`; no escribe en el
-  checkout compartido de A.
+- Rama/worktree: clon B `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`, rama
+  `agent-b/i-003-b-107-docs` apilada sobre #9. No escribe en el checkout ni el worktree de A.
 - Última actualización: 2026-10-30 (Europe/Madrid).
-- Archivos reservados: `services/simulator/**` (código y pruebas de B), contratos generados,
-  `scripts/export_contracts.py`, `docs/simulation/**` y este registro.
+- Archivos reservados: `docs/process/WORKBOARD.md`, `docs/migration/STATUS.md`,
+  `docs/migration/CHECKLIST.md`, `docs/product/ACCEPTANCE_CHECKLIST.md`,
+  `docs/migration/LOCAL_DEVELOPMENT.md`, nuevo `docs/migration/FEATURE_MATRIX.md` y este registro.
+  No toca los archivos reservados por A para A-104 (App/Plan/styles, CoveragePanel, editor/coverage*).
 
 ## Plantilla de entrega — completar al trabajar
 
@@ -40,6 +35,30 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### I-003 y B-107 — consolidación tras #7 y matriz de funciones Java (review)
+
+```text
+Tarea / estado: I-003 y B-107 / review. Rama local agent-b/i-003-b-107-docs sobre #9 (e6fb351).
+Motivo: A declaró I-002 terminada y volvió a A-104; B retoma la integración.
+Archivos: docs/process/WORKBOARD.md, docs/migration/STATUS.md, docs/migration/CHECKLIST.md,
+  docs/product/ACCEPTANCE_CHECKLIST.md, docs/migration/LOCAL_DEVELOPMENT.md,
+  docs/migration/FEATURE_MATRIX.md (nuevo) y este registro. Ningún archivo reservado por A.
+Evidencia: CI de main (046ee82) en verde (migración y Java); cabezas de #3–#6 ancestros de main;
+  PR #8 con base main y CI verde. En esta rama: pytest 199, export --check sin deriva,
+  npm test 70/70, build correcto; enlaces de los documentos comprobados.
+Marcado: B-101…B-104 e I-002 done; M5 «matriz de funciones» [x]; el resto solo con anotaciones
+  de estado parcial (nada sin evidencia pasa a [x]).
+Límites: la matriz se basa en el README y los paquetes Java de eff803c y en el código actual;
+  conviene revisarla al cerrar cada fase.
+Publicación: [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11) en borrador, apilado sobre #9, por autorización del usuario.
+Fusiones autorizadas por el usuario en el orden propuesto: #8 → 6d7e69f, #9 → 760e3cd (base
+  cambiada a `main`), #10 (A-104, cabeza verificada) → 6fb42e2; CI de `main` en verde. Conflictos de
+  STATUS/WORKBOARD con #10 resueltos consolidando ambos textos; checklists M4/P1 marcados con la
+  evidencia de A-104 y B-103.
+  Incidencia: GitHub devolvió 500 en `git-receive-pack` en tres intentos; el cuarto entró, pero el
+  PR #11 no se sincronizó con la rama, y un commit posterior forzó la sincronización y la CI.
+```
 
 ### B-108 — escenarios de puertas y materiales inciertos (review)
 
