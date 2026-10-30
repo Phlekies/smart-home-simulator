@@ -51,7 +51,9 @@ Marcado: B-101…B-104 e I-002 done; M5 «matriz de funciones» [x]; el resto so
   de estado parcial (nada sin evidencia pasa a [x]).
 Límites: la matriz se basa en el README y los paquetes Java de eff803c y en el código actual;
   conviene revisarla al cerrar cada fase.
-Siguiente paso: publicar esta rama como PR apilado sobre #9 si el usuario lo autoriza.
+Publicación: [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11) en borrador, apilado sobre #9, por autorización del usuario.
+Conflicto conocido: el PR #10 de A (A-104) también edita STATUS.md y WORKBOARD.md; quien se
+  fusione después debe consolidar ambos textos. B propone el orden al usuario.
 ```
 
 ### B-108 — escenarios de puertas y materiales inciertos (review)
