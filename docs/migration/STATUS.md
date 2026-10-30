@@ -207,6 +207,21 @@ Rama local `agent-b/b-102-sionna-evaluation`, apilada sobre B-101; sin push. Inf
 Límites: concordancia con física idealizada, no con medidas. Difracción y difusa sin caso de
 referencia. Sin GPU compatible. La API mantiene 501 para `sionna-rt`, sin fallback.
 
+## Entrega B-104 — contrato de la referencia de plano — 2026-10-30
+
+Respuesta a la solicitud de A-102. `Project.plan_reference` opcional (v1 aditivo): nombre,
+tipo, SHA-256, píxeles, metros por píxel, origen y calibración; la imagen no viaja en el JSON
+y el hash de cálculo la excluye. Detalle en [PLAN_REFERENCE_CONTRACT](../simulation/PLAN_REFERENCE_CONTRACT.md).
+
+| Comprobación | Resultado |
+|---|---|
+| `pytest services/simulator/tests -q` | 137 superadas (20 nuevas del contrato) |
+| `export_contracts.py` / `--check` | Esquemas y OpenAPI regenerados; sin deriva |
+| `npm run contracts`, `build`, `test` | Solo `project.ts` cambia (campo opcional); build correcto; 16/16 |
+| Copia del código en curso de A con los tipos nuevos | `tsc --noEmit` correcto; 57/57 pruebas |
+
+M2 «Imagen de referencia con escala y cotas» sigue pendiente: falta el consumidor de A.
+
 ## Reglas de evidencia
 
 Registrar comando, fecha, resultado y limitaciones de cada verificación. Detectar una

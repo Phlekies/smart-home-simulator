@@ -99,7 +99,67 @@ class Settings(Model):
     system_gain_db: Finite = Field(default=0, ge=-100, le=100)
 
 
+class PixelPoint(Model):
+    x: Finite = Field(ge=0, le=16384)
+    y: Finite = Field(ge=0, le=16384)
+
+
+class PlanReferenceCalibration(Model):
+    """Two image points and the real distance between them, kept so the scale can be reviewed."""
+
+    point_a_px: PixelPoint
+    point_b_px: PixelPoint
+    distance_m: Finite = Field(ge=0.01, le=20000)
+
+
+class PlanReference(Model):
+    """Background floor-plan image placed at scale; display aid only, never a solver input.
+
+    The image stays a local file: only its fingerprint travels in the project. Pixel (u, v),
+    u to the right and v downwards from the top-left corner, maps to
+    x = origin_x_m + u·meters_per_pixel and y = origin_y_m + v·meters_per_pixel.
+    """
+
+    file_name: str = Field(min_length=1, max_length=255)
+    media_type: Literal["image/png", "image/jpeg", "image/webp"]
+    sha256: str = Field(pattern=r"^[0-9a-f]{64}$", description="SHA-256 of the image file bytes")
+    width_px: int = Field(ge=1, le=16384)
+    height_px: int = Field(ge=1, le=16384)
+    meters_per_pixel: Positive = Field(le=20000)
+    origin_x_m: Finite = Field(ge=-10000, le=10000)
+    origin_y_m: Finite = Field(ge=-10000, le=10000)
+    calibration: PlanReferenceCalibration | None = None
+    evidence: str = "User calibration from a known distance; not surveyed"
+
+    @model_validator(mode="after")
+    def consistent_placement(self) -> PlanReference:
+        if self.width_px * self.height_px > 16_000_000:
+            raise ValueError("Plan reference images are limited to 16 million pixels")
+        width_m, height_m = self.width_px * self.meters_per_pixel, self.height_px * self.meters_per_pixel
+        if min(width_m, height_m) < 0.01:
+            raise ValueError("The placed image must span at least 0.01 m on each axis")
+        if max(abs(self.origin_x_m + width_m), abs(self.origin_y_m + height_m)) > 10000:
+            raise ValueError("The placed image must stay within ±10000 m")
+        if self.calibration is not None:
+            a, b = self.calibration.point_a_px, self.calibration.point_b_px
+            if not all(p.x <= self.width_px and p.y <= self.height_px for p in (a, b)):
+                raise ValueError("Calibration points must lie inside the image")
+            pixels = math.hypot(b.x - a.x, b.y - a.y)
+            if pixels < 2:
+                raise ValueError("Calibration points must be at least 2 pixels apart")
+            if not math.isclose(self.calibration.distance_m / pixels, self.meters_per_pixel, rel_tol=1e-9):
+                raise ValueError("meters_per_pixel does not match the recorded calibration")
+        return self
+
+
+def _plan_reference_optional(schema: dict[str, Any]) -> None:
+    # Additive v1 field: generated clients must not have to send it.
+    schema["required"] = [name for name in schema.get("required", []) if name != "plan_reference"]
+
+
 class Project(Model):
+    model_config = ConfigDict(json_schema_extra=_plan_reference_optional)
+
     format: Literal["smart-environment-simulator"] = "smart-environment-simulator"
     version: Literal[1] = 1
     name: str = Field(default="Entorno inteligente", min_length=1, max_length=160)
@@ -110,6 +170,7 @@ class Project(Model):
     settings: Settings = Field(default_factory=Settings)
     migration_notes: list[str] = Field(default_factory=list, max_length=256)
     legacy_source: dict[str, Any] | None = None
+    plan_reference: PlanReference | None = None
 
     @field_validator("version", mode="before")
     @classmethod

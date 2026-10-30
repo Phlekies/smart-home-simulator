@@ -681,6 +681,224 @@
         ],
         "title": "Material"
       },
+      "PixelPoint": {
+        "properties": {
+          "x": {
+            "type": "number",
+            "maximum": 16384.0,
+            "minimum": 0.0,
+            "title": "X"
+          },
+          "y": {
+            "type": "number",
+            "maximum": 16384.0,
+            "minimum": 0.0,
+            "title": "Y"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "x",
+          "y"
+        ],
+        "title": "PixelPoint"
+      },
+      "PlanReference-Input": {
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "File Name"
+          },
+          "media_type": {
+            "type": "string",
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/webp"
+            ],
+            "title": "Media Type"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256",
+            "description": "SHA-256 of the image file bytes"
+          },
+          "width_px": {
+            "type": "integer",
+            "maximum": 16384.0,
+            "minimum": 1.0,
+            "title": "Width Px"
+          },
+          "height_px": {
+            "type": "integer",
+            "maximum": 16384.0,
+            "minimum": 1.0,
+            "title": "Height Px"
+          },
+          "meters_per_pixel": {
+            "type": "number",
+            "maximum": 20000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Meters Per Pixel"
+          },
+          "origin_x_m": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "Origin X M"
+          },
+          "origin_y_m": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "Origin Y M"
+          },
+          "calibration": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanReferenceCalibration"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence",
+            "default": "User calibration from a known distance; not surveyed"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "file_name",
+          "media_type",
+          "sha256",
+          "width_px",
+          "height_px",
+          "meters_per_pixel",
+          "origin_x_m",
+          "origin_y_m"
+        ],
+        "title": "PlanReference",
+        "description": "Background floor-plan image placed at scale; display aid only, never a solver input.\n\nThe image stays a local file: only its fingerprint travels in the project. Pixel (u, v),\nu to the right and v downwards from the top-left corner, maps to\nx = origin_x_m + u·meters_per_pixel and y = origin_y_m + v·meters_per_pixel."
+      },
+      "PlanReference-Output": {
+        "properties": {
+          "file_name": {
+            "type": "string",
+            "maxLength": 255,
+            "minLength": 1,
+            "title": "File Name"
+          },
+          "media_type": {
+            "type": "string",
+            "enum": [
+              "image/png",
+              "image/jpeg",
+              "image/webp"
+            ],
+            "title": "Media Type"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Sha256",
+            "description": "SHA-256 of the image file bytes"
+          },
+          "width_px": {
+            "type": "integer",
+            "maximum": 16384.0,
+            "minimum": 1.0,
+            "title": "Width Px"
+          },
+          "height_px": {
+            "type": "integer",
+            "maximum": 16384.0,
+            "minimum": 1.0,
+            "title": "Height Px"
+          },
+          "meters_per_pixel": {
+            "type": "number",
+            "maximum": 20000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Meters Per Pixel"
+          },
+          "origin_x_m": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "Origin X M"
+          },
+          "origin_y_m": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "Origin Y M"
+          },
+          "calibration": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanReferenceCalibration"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence",
+            "default": "User calibration from a known distance; not surveyed"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "file_name",
+          "media_type",
+          "sha256",
+          "width_px",
+          "height_px",
+          "meters_per_pixel",
+          "origin_x_m",
+          "origin_y_m",
+          "calibration",
+          "evidence"
+        ],
+        "title": "PlanReference",
+        "description": "Background floor-plan image placed at scale; display aid only, never a solver input.\n\nThe image stays a local file: only its fingerprint travels in the project. Pixel (u, v),\nu to the right and v downwards from the top-left corner, maps to\nx = origin_x_m + u·meters_per_pixel and y = origin_y_m + v·meters_per_pixel."
+      },
+      "PlanReferenceCalibration": {
+        "properties": {
+          "point_a_px": {
+            "$ref": "#/components/schemas/PixelPoint"
+          },
+          "point_b_px": {
+            "$ref": "#/components/schemas/PixelPoint"
+          },
+          "distance_m": {
+            "type": "number",
+            "maximum": 20000.0,
+            "minimum": 0.01,
+            "title": "Distance M"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "point_a_px",
+          "point_b_px",
+          "distance_m"
+        ],
+        "title": "PlanReferenceCalibration",
+        "description": "Two image points and the real distance between them, kept so the scale can be reviewed."
+      },
       "Point-Input": {
         "properties": {
           "x": {
@@ -810,6 +1028,16 @@
               }
             ],
             "title": "Legacy Source"
+          },
+          "plan_reference": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanReference-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "additionalProperties": false,
@@ -887,6 +1115,16 @@
               }
             ],
             "title": "Legacy Source"
+          },
+          "plan_reference": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PlanReference-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "additionalProperties": false,

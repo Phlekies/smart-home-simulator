@@ -22,8 +22,13 @@ MODELLED_INTERACTIONS = ("free-space", "log-distance", "wall-penetration")
 
 
 def input_hash(project: Project) -> str:
-    """SHA-256 of the canonical project JSON; identifies the scenario of a result or measurement."""
-    canonical = json.dumps(project.model_dump(mode="json"), sort_keys=True, separators=(",", ":"), allow_nan=False)
+    """SHA-256 of the canonical project JSON; identifies the scenario of a result or measurement.
+
+    The plan reference image is a display aid that no solver reads, so it is left out: adding or
+    moving it neither changes the hash of existing projects nor invalidates their results.
+    """
+    data = project.model_dump(mode="json", exclude={"plan_reference"})
+    canonical = json.dumps(data, sort_keys=True, separators=(",", ":"), allow_nan=False)
     return hashlib.sha256(canonical.encode()).hexdigest()
 
 

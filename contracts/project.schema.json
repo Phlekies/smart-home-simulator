@@ -196,6 +196,141 @@
       "title": "Material",
       "type": "object"
     },
+    "PixelPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 16384,
+          "minimum": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 16384,
+          "minimum": 0,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y"
+      ],
+      "title": "PixelPoint",
+      "type": "object"
+    },
+    "PlanReference": {
+      "additionalProperties": false,
+      "description": "Background floor-plan image placed at scale; display aid only, never a solver input.\n\nThe image stays a local file: only its fingerprint travels in the project. Pixel (u, v),\nu to the right and v downwards from the top-left corner, maps to\nx = origin_x_m + u·meters_per_pixel and y = origin_y_m + v·meters_per_pixel.",
+      "properties": {
+        "file_name": {
+          "maxLength": 255,
+          "minLength": 1,
+          "title": "File Name",
+          "type": "string"
+        },
+        "media_type": {
+          "enum": [
+            "image/png",
+            "image/jpeg",
+            "image/webp"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "sha256": {
+          "description": "SHA-256 of the image file bytes",
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Sha256",
+          "type": "string"
+        },
+        "width_px": {
+          "maximum": 16384,
+          "minimum": 1,
+          "title": "Width Px",
+          "type": "integer"
+        },
+        "height_px": {
+          "maximum": 16384,
+          "minimum": 1,
+          "title": "Height Px",
+          "type": "integer"
+        },
+        "meters_per_pixel": {
+          "exclusiveMinimum": 0,
+          "maximum": 20000,
+          "title": "Meters Per Pixel",
+          "type": "number"
+        },
+        "origin_x_m": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Origin X M",
+          "type": "number"
+        },
+        "origin_y_m": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Origin Y M",
+          "type": "number"
+        },
+        "calibration": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PlanReferenceCalibration"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "evidence": {
+          "default": "User calibration from a known distance; not surveyed",
+          "title": "Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_name",
+        "media_type",
+        "sha256",
+        "width_px",
+        "height_px",
+        "meters_per_pixel",
+        "origin_x_m",
+        "origin_y_m",
+        "calibration",
+        "evidence"
+      ],
+      "title": "PlanReference",
+      "type": "object"
+    },
+    "PlanReferenceCalibration": {
+      "additionalProperties": false,
+      "description": "Two image points and the real distance between them, kept so the scale can be reviewed.",
+      "properties": {
+        "point_a_px": {
+          "$ref": "#/$defs/PixelPoint"
+        },
+        "point_b_px": {
+          "$ref": "#/$defs/PixelPoint"
+        },
+        "distance_m": {
+          "maximum": 20000,
+          "minimum": 0.01,
+          "title": "Distance M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "point_a_px",
+        "point_b_px",
+        "distance_m"
+      ],
+      "title": "PlanReferenceCalibration",
+      "type": "object"
+    },
     "Point": {
       "additionalProperties": false,
       "properties": {
@@ -540,6 +675,17 @@
       ],
       "default": null,
       "title": "Legacy Source"
+    },
+    "plan_reference": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PlanReference"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "required": [

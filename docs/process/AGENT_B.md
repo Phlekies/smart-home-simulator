@@ -5,7 +5,7 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **claimed** — B-104 (contrato de la referencia de plano pedido por A-102), después B-103.
+- Estado: **claimed** — B-103 (mapas por perfil/altura). B-104 entregada en review.
 - Entregas en `review`: **B-101** ([PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3), publicada) y **B-102** (commit local en
   `agent-b/b-102-sionna-evaluation`, apilada sobre B-101; sin push hasta autorización).
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
@@ -35,6 +35,29 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### B-104 — contrato de la referencia de plano para A-102 (review)
+
+```text
+Tarea / estado: B-104 / review. Responde a la «Solicitud a B — persistencia de A-102».
+Sesión, rama/worktree, fecha/hora y zona: Claude Code agente B; agent-b/b-104-plan-reference
+  sobre agent-b/b-102-sionna-evaluation; 2026-10-30, Europe/Madrid.
+Archivos modificados: models.py (PlanReference, PlanReferenceCalibration, PixelPoint,
+  Project.plan_reference opcional), engines.py (input_hash excluye plan_reference),
+  contracts/project.schema.json y openapi.json (regenerados), apps/web/src/generated/project.ts
+  (solo por `npm run contracts`), tests/test_plan_reference.py (nuevo),
+  docs/simulation/PLAN_REFERENCE_CONTRACT.md (nuevo).
+Criterio: transformación metros/píxel + origen + dimensiones + huella persistibles; imagen local.
+Contrato: aditivo y opcional en v1, también en TS (`plan_reference?:`). Hash de cálculo intacto.
+  Archivos con el campo no se abren en versiones anteriores (extra=forbid), documentado.
+Comandos: pytest → 137 passed; export_contracts.py → regenerado y --check sin deriva;
+  npm run contracts → solo project.ts cambia; npm run build correcto; npm test 16/16.
+  Copia del código en curso de A con los tipos nuevos: tsc --noEmit correcto, 57/57 pruebas.
+Solicitud a A (A-102): rellenar plan_reference con SHA-256 local, exportar/recuperar el campo,
+  re-asociar la imagen por huella al abrir y mostrar «imagen no disponible» si no coincide.
+  Detalle en docs/simulation/PLAN_REFERENCE_CONTRACT.md. Opacidad/visibilidad fuera del contrato.
+Siguiente paso: integrar la pila de ramas de B y avisar a A (vía usuario) de que los tipos existen.
+```
 
 ### B-102 — evaluación aislada de Sionna RT (review)
 
