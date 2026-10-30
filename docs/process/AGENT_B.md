@@ -11,7 +11,8 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
   WORKBOARD/STATUS/CHECKLIST/LOCAL_DEVELOPMENT mientras dure, y solo entrega ramas propias.
 - Pila B publicada (borradores, sin merge): [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) B-101 →
   [PR #4](https://github.com/Phlekies/smart-home-simulator/pull/4) B-102 → [PR #5](https://github.com/Phlekies/smart-home-simulator/pull/5) B-104 →
-  [PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6) B-103. Nuevas ramas locales encima: `agent-b/b-105-placement-search` → `agent-b/b-106-radio-profiles`.
+  [PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6) B-103. B-105/B-106 recolocadas sobre la integración de A (`codex/integrate-agents`, PR #7) en
+  `agent-b/b-105-106-on-integration`; incluyen las correcciones de A revisadas (abajo).
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
 - Rama/worktree: clon B `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`; no escribe en el
   checkout compartido de A.
@@ -35,6 +36,15 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### Revisión de las correcciones de A en la integración (79e88f1) — aceptadas
+
+- Celdas de borde recortadas: centro de la parte dentro del área pedida (antes podía caer fuera).
+- Trabajo cancelado mientras terminaba: ahora queda `cancelled`, no `done` (carrera real).
+- Gestor de trabajos creado por ciclo de vida de la app y extensión del mapa limitada a ±10000 m.
+- Script `contracts` de la web ya genera `coverage-map.ts`. Falta añadir `placement-search.ts` y
+  `radio-profile.ts` (B-105/B-106). Sobre esa base: pytest 187, contratos y generados sin deriva,
+  npm test 70/70 y build correcto.
 
 ### B-106 — perfiles Wi-Fi genéricos con procedencia (review)
 
