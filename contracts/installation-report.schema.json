@@ -1,0 +1,310 @@
+{
+  "$defs": {
+    "ReportDirection": {
+      "additionalProperties": false,
+      "properties": {
+        "from_device_id": {
+          "title": "From Device Id",
+          "type": "string"
+        },
+        "to_device_id": {
+          "title": "To Device Id",
+          "type": "string"
+        },
+        "received_power_dbm": {
+          "title": "Received Power Dbm",
+          "type": "number"
+        },
+        "margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Margin Db"
+        },
+        "sensitivity_provenance": {
+          "description": "Origin of the receiver sensitivity, 'sin etiqueta' if not set",
+          "title": "Sensitivity Provenance",
+          "type": "string"
+        },
+        "walls": {
+          "items": {
+            "$ref": "#/$defs/ReportWall"
+          },
+          "title": "Walls",
+          "type": "array"
+        }
+      },
+      "required": [
+        "from_device_id",
+        "to_device_id",
+        "received_power_dbm",
+        "margin_db",
+        "sensitivity_provenance",
+        "walls"
+      ],
+      "title": "ReportDirection",
+      "type": "object"
+    },
+    "ReportLink": {
+      "additionalProperties": false,
+      "properties": {
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        },
+        "devices": {
+          "description": "Names of both ends, source first",
+          "items": {
+            "type": "string"
+          },
+          "title": "Devices",
+          "type": "array"
+        },
+        "radios": {
+          "description": "Protocol, channel and frequency of each end",
+          "items": {
+            "type": "string"
+          },
+          "title": "Radios",
+          "type": "array"
+        },
+        "compatibility": {
+          "title": "Compatibility",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "forward": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ReportDirection"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reverse": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ReportDirection"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "limiting_direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "forward",
+                "reverse"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Limiting Direction"
+        },
+        "limiting_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Limiting Margin Db"
+        },
+        "forward_range_dbm": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Forward Range Dbm"
+        },
+        "reverse_range_dbm": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reverse Range Dbm"
+        },
+        "margin_sign": {
+          "title": "Margin Sign",
+          "type": "string"
+        },
+        "hypotheses": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Hypotheses",
+          "type": "array"
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "link_id",
+        "devices",
+        "radios",
+        "compatibility",
+        "status",
+        "forward",
+        "reverse",
+        "limiting_direction",
+        "limiting_margin_db",
+        "forward_range_dbm",
+        "reverse_range_dbm",
+        "margin_sign",
+        "hypotheses",
+        "notes"
+      ],
+      "title": "ReportLink",
+      "type": "object"
+    },
+    "ReportWall": {
+      "additionalProperties": false,
+      "properties": {
+        "wall_id": {
+          "title": "Wall Id",
+          "type": "string"
+        },
+        "material": {
+          "title": "Material",
+          "type": "string"
+        },
+        "door": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed",
+                "unknown"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Door"
+        }
+      },
+      "required": [
+        "wall_id",
+        "material",
+        "door"
+      ],
+      "title": "ReportWall",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "title": "Title",
+      "type": "string"
+    },
+    "project_name": {
+      "title": "Project Name",
+      "type": "string"
+    },
+    "input_hash": {
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "engine": {
+      "title": "Engine",
+      "type": "string"
+    },
+    "engine_version": {
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "scope": {
+      "title": "Scope",
+      "type": "string"
+    },
+    "links": {
+      "items": {
+        "$ref": "#/$defs/ReportLink"
+      },
+      "title": "Links",
+      "type": "array"
+    },
+    "counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Counts",
+      "type": "object"
+    },
+    "pending_decisions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Pending Decisions",
+      "type": "array"
+    },
+    "not_evaluated": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Not Evaluated",
+      "type": "array"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "title",
+    "project_name",
+    "input_hash",
+    "engine",
+    "engine_version",
+    "scope",
+    "links",
+    "counts",
+    "pending_decisions",
+    "not_evaluated",
+    "limitations"
+  ],
+  "title": "InstallationReport",
+  "type": "object"
+}

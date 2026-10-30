@@ -404,6 +404,84 @@
           }
         }
       }
+    },
+    "/api/reports": {
+      "post": {
+        "summary": "Report",
+        "description": "Per-link report of computed values, hypotheses and missing data; no coverage verdict.",
+        "operationId": "report_api_reports_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstallationReport"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reports/markdown": {
+      "post": {
+        "summary": "Report Markdown",
+        "operationId": "report_markdown_api_reports_markdown_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/markdown": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1362,6 +1440,85 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "InstallationReport": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "project_name": {
+            "type": "string",
+            "title": "Project Name"
+          },
+          "input_hash": {
+            "type": "string",
+            "title": "Input Hash"
+          },
+          "engine": {
+            "type": "string",
+            "title": "Engine"
+          },
+          "engine_version": {
+            "type": "string",
+            "title": "Engine Version"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/ReportLink"
+            },
+            "type": "array",
+            "title": "Links"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Counts"
+          },
+          "pending_decisions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pending Decisions"
+          },
+          "not_evaluated": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Not Evaluated"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "project_name",
+          "input_hash",
+          "engine",
+          "engine_version",
+          "scope",
+          "links",
+          "counts",
+          "pending_decisions",
+          "not_evaluated",
+          "limitations"
+        ],
+        "title": "InstallationReport"
       },
       "Link": {
         "properties": {
@@ -3274,6 +3431,268 @@
         ],
         "title": "ReceiverProfile",
         "description": "Radio of the candidate device as it would be installed; drives both link directions."
+      },
+      "ReportDirection": {
+        "properties": {
+          "from_device_id": {
+            "type": "string",
+            "title": "From Device Id"
+          },
+          "to_device_id": {
+            "type": "string",
+            "title": "To Device Id"
+          },
+          "received_power_dbm": {
+            "type": "number",
+            "title": "Received Power Dbm"
+          },
+          "margin_db": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Db"
+          },
+          "sensitivity_provenance": {
+            "type": "string",
+            "title": "Sensitivity Provenance",
+            "description": "Origin of the receiver sensitivity, 'sin etiqueta' if not set"
+          },
+          "walls": {
+            "items": {
+              "$ref": "#/components/schemas/ReportWall"
+            },
+            "type": "array",
+            "title": "Walls"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "from_device_id",
+          "to_device_id",
+          "received_power_dbm",
+          "margin_db",
+          "sensitivity_provenance",
+          "walls"
+        ],
+        "title": "ReportDirection"
+      },
+      "ReportLink": {
+        "properties": {
+          "link_id": {
+            "type": "string",
+            "title": "Link Id"
+          },
+          "devices": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Devices",
+            "description": "Names of both ends, source first"
+          },
+          "radios": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Radios",
+            "description": "Protocol, channel and frequency of each end"
+          },
+          "compatibility": {
+            "type": "string",
+            "title": "Compatibility"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "forward": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReportDirection"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reverse": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReportDirection"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "limiting_direction": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "forward",
+                  "reverse"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limiting Direction"
+          },
+          "limiting_margin_db": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limiting Margin Db"
+          },
+          "forward_range_dbm": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forward Range Dbm"
+          },
+          "reverse_range_dbm": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reverse Range Dbm"
+          },
+          "margin_sign": {
+            "type": "string",
+            "title": "Margin Sign"
+          },
+          "hypotheses": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Hypotheses"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "link_id",
+          "devices",
+          "radios",
+          "compatibility",
+          "status",
+          "forward",
+          "reverse",
+          "limiting_direction",
+          "limiting_margin_db",
+          "forward_range_dbm",
+          "reverse_range_dbm",
+          "margin_sign",
+          "hypotheses",
+          "notes"
+        ],
+        "title": "ReportLink"
+      },
+      "ReportRequest": {
+        "properties": {
+          "project": {
+            "$ref": "#/components/schemas/Project-Input"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioAssumptions-Input"
+            },
+            "type": "array",
+            "maxItems": 16,
+            "title": "Scenarios"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 160
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "project"
+        ],
+        "title": "ReportRequest"
+      },
+      "ReportWall": {
+        "properties": {
+          "wall_id": {
+            "type": "string",
+            "title": "Wall Id"
+          },
+          "material": {
+            "type": "string",
+            "title": "Material"
+          },
+          "door": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "open",
+                  "closed",
+                  "unknown"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Door"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "wall_id",
+          "material",
+          "door"
+        ],
+        "title": "ReportWall"
       },
       "ScenarioAssumptions-Input": {
         "properties": {
