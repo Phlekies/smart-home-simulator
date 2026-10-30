@@ -17,6 +17,14 @@ LIMITATIONS = [
     "Antena aproximada en azimut; no representa patrones tridimensionales medidos.",
     "Cruces por superficies y esquinas son aproximados; equipos dentro de paredes no se modelan.",
 ]
+# Interaction kinds of smart_environment.references that this engine claims to model.
+MODELLED_INTERACTIONS = ("free-space", "log-distance", "wall-penetration")
+
+
+def input_hash(project: Project) -> str:
+    """SHA-256 of the canonical project JSON; identifies the scenario of a result or measurement."""
+    canonical = json.dumps(project.model_dump(mode="json"), sort_keys=True, separators=(",", ":"), allow_nan=False)
+    return hashlib.sha256(canonical.encode()).hexdigest()
 
 
 def engine_capabilities() -> list[dict]:
@@ -27,6 +35,7 @@ def engine_capabilities() -> list[dict]:
     return [
         {"id": "quick-estimate", "name": "Estimación rápida", "implemented": True,
          "available": True, "verified": False, "version": "0.1.0",
+         "interactions": list(MODELLED_INTERACTIONS),
          "description": "Modelo analítico probado con casos sintéticos; sin validación experimental."},
         {"id": "sionna-rt", "name": "Sionna RT", "implemented": False,
          "available": False, "verified": False, "version": version,
@@ -149,9 +158,8 @@ def simulate(project: Project) -> SimulationResult:
             status = "unverified"
         results.append(LinkResult(id=link.id, compatibility=compatibility, status=status,
                                   forward=forward, reverse=reverse, reasons=reasons))
-    canonical = json.dumps(project.model_dump(mode="json"), sort_keys=True, separators=(",", ":"), allow_nan=False)
     return SimulationResult(engine="quick-estimate", engine_version="0.1.0",
-                            input_hash=hashlib.sha256(canonical.encode()).hexdigest(),
+                            input_hash=input_hash(project),
                             elapsed_ms=(time.perf_counter() - started) * 1000,
                             scope="Presupuesto de enlace directo; compatibilidad funcional no evaluada",
                             limitations=LIMITATIONS, links=results)

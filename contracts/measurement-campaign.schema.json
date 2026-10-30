@@ -1,0 +1,923 @@
+{
+  "$defs": {
+    "AccessPointSetup": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "project_device_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Project Device Id",
+          "type": "string"
+        },
+        "project_radio_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Project Radio Id",
+          "type": "string"
+        },
+        "instrument_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Instrument Id",
+          "type": "string"
+        },
+        "frequency_hz": {
+          "exclusiveMinimum": 0,
+          "maximum": 100000000000.0,
+          "title": "Frequency Hz",
+          "type": "number"
+        },
+        "channel": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel"
+        },
+        "bandwidth_hz": {
+          "exclusiveMinimum": 0,
+          "maximum": 1000000000.0,
+          "title": "Bandwidth Hz",
+          "type": "number"
+        },
+        "tx_power_dbm": {
+          "$ref": "#/$defs/ParameterValue"
+        },
+        "antenna_gain_dbi": {
+          "$ref": "#/$defs/ParameterValue"
+        },
+        "settings_note": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fixed channel, band steering, power mode, etc.",
+          "title": "Settings Note"
+        }
+      },
+      "required": [
+        "id",
+        "project_device_id",
+        "project_radio_id",
+        "instrument_id",
+        "frequency_hz",
+        "channel",
+        "bandwidth_hz",
+        "tx_power_dbm",
+        "antenna_gain_dbi",
+        "settings_note"
+      ],
+      "title": "AccessPointSetup",
+      "type": "object"
+    },
+    "Conditions": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "doors": {
+          "additionalProperties": {
+            "enum": [
+              "open",
+              "closed",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "description": "Project wall ids representing doors and their state",
+          "propertyNames": {
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "title": "Doors",
+          "type": "object"
+        },
+        "people_present": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "People Present"
+        },
+        "visible_networks_same_channel": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Visible Networks Same Channel"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "id",
+        "doors",
+        "people_present",
+        "visible_networks_same_channel",
+        "notes"
+      ],
+      "title": "Conditions",
+      "type": "object"
+    },
+    "DeliveryTest": {
+      "additionalProperties": false,
+      "description": "Raw counts only; the outcome is derived against its criterion, never stored.",
+      "properties": {
+        "criterion_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Criterion Id",
+          "type": "string"
+        },
+        "method": {
+          "enum": [
+            "icmp-echo",
+            "udp-probe",
+            "application-report",
+            "other"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "ap-to-device",
+            "device-to-ap",
+            "round-trip"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "payload_bytes": {
+          "maximum": 65535,
+          "minimum": 0,
+          "title": "Payload Bytes",
+          "type": "integer"
+        },
+        "interval_s": {
+          "exclusiveMinimum": 0,
+          "title": "Interval S",
+          "type": "number"
+        },
+        "sent": {
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Sent",
+          "type": "integer"
+        },
+        "received": {
+          "maximum": 1000000,
+          "minimum": 0,
+          "title": "Received",
+          "type": "integer"
+        },
+        "retries_reported": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retries Reported"
+        }
+      },
+      "required": [
+        "criterion_id",
+        "method",
+        "direction",
+        "payload_bytes",
+        "interval_s",
+        "sent",
+        "received",
+        "retries_reported"
+      ],
+      "title": "DeliveryTest",
+      "type": "object"
+    },
+    "FailureCriterion": {
+      "additionalProperties": false,
+      "description": "Active link test decided before looking at predictions; frozen before validation.",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "method": {
+          "enum": [
+            "icmp-echo",
+            "udp-probe",
+            "application-report",
+            "other"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "ap-to-device",
+            "device-to-ap",
+            "round-trip"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "min_packets": {
+          "maximum": 1000000,
+          "minimum": 1,
+          "title": "Min Packets",
+          "type": "integer"
+        },
+        "min_delivery_ratio": {
+          "exclusiveMinimum": 0,
+          "maximum": 1,
+          "title": "Min Delivery Ratio",
+          "type": "number"
+        },
+        "frozen_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Frozen On"
+        }
+      },
+      "required": [
+        "id",
+        "description",
+        "method",
+        "direction",
+        "min_packets",
+        "min_delivery_ratio",
+        "frozen_on"
+      ],
+      "title": "FailureCriterion",
+      "type": "object"
+    },
+    "Instrument": {
+      "additionalProperties": false,
+      "description": "Device that reports a reading. A phone is not the candidate device's radio.",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "candidate-device",
+            "same-model-as-candidate",
+            "phone",
+            "laptop",
+            "usb-adapter",
+            "access-point",
+            "other"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "radio_chipset": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Radio Chipset"
+        },
+        "firmware": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Firmware"
+        },
+        "software": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App/tool and version used to read the values",
+          "title": "Software"
+        },
+        "rssi_reporting": {
+          "default": "unknown",
+          "enum": [
+            "dbm",
+            "vendor-scale",
+            "unknown"
+          ],
+          "title": "Rssi Reporting",
+          "type": "string"
+        },
+        "radio": {
+          "$ref": "#/$defs/RadioCharacterization"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "model",
+        "radio_chipset",
+        "firmware",
+        "software",
+        "rssi_reporting",
+        "radio",
+        "notes"
+      ],
+      "title": "Instrument",
+      "type": "object"
+    },
+    "MeasurementPoint": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "measured",
+            "excluded"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Point"
+        },
+        "position_uncertainty_m": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 100,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position Uncertainty M"
+        },
+        "orientation_deg": {
+          "anyOf": [
+            {
+              "maximum": 360,
+              "minimum": -360,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Orientation Deg"
+        },
+        "device_instrument_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Device Instrument Id",
+          "type": "string"
+        },
+        "access_point_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Access Point Id",
+          "type": "string"
+        },
+        "conditions_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Conditions Id",
+          "type": "string"
+        },
+        "measured_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Measured At"
+        },
+        "rssi": {
+          "items": {
+            "$ref": "#/$defs/RssiObservation"
+          },
+          "maxItems": 64,
+          "title": "Rssi",
+          "type": "array"
+        },
+        "delivery": {
+          "items": {
+            "$ref": "#/$defs/DeliveryTest"
+          },
+          "maxItems": 64,
+          "title": "Delivery",
+          "type": "array"
+        },
+        "exclusion_reason": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exclusion Reason"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "position",
+        "position_uncertainty_m",
+        "orientation_deg",
+        "device_instrument_id",
+        "access_point_id",
+        "conditions_id",
+        "measured_at",
+        "rssi",
+        "delivery",
+        "exclusion_reason"
+      ],
+      "title": "MeasurementPoint",
+      "type": "object"
+    },
+    "ParameterValue": {
+      "additionalProperties": false,
+      "description": "A radio parameter with its origin; ``unknown`` and an absent value always go together.",
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "provenance": {
+          "default": "unknown",
+          "enum": [
+            "measured",
+            "declared",
+            "inferred",
+            "unknown"
+          ],
+          "title": "Provenance",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "value",
+        "provenance",
+        "source"
+      ],
+      "title": "ParameterValue",
+      "type": "object"
+    },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Y",
+          "type": "number"
+        },
+        "z": {
+          "default": 0,
+          "maximum": 1000,
+          "minimum": -1000,
+          "title": "Z",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
+    "ProjectReference": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "input_hash": {
+          "description": "SHA-256 of the canonical project JSON",
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Input Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "input_hash"
+      ],
+      "title": "ProjectReference",
+      "type": "object"
+    },
+    "RadioCharacterization": {
+      "additionalProperties": false,
+      "properties": {
+        "tx_power_dbm": {
+          "$ref": "#/$defs/ParameterValue"
+        },
+        "antenna_gain_dbi": {
+          "$ref": "#/$defs/ParameterValue"
+        },
+        "noise_figure_db": {
+          "$ref": "#/$defs/ParameterValue"
+        },
+        "sensitivity_dbm": {
+          "$ref": "#/$defs/ParameterValue"
+        }
+      },
+      "required": [
+        "tx_power_dbm",
+        "antenna_gain_dbi",
+        "noise_figure_db",
+        "sensitivity_dbm"
+      ],
+      "title": "RadioCharacterization",
+      "type": "object"
+    },
+    "RssiObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "enum": [
+            "ap-to-device",
+            "device-to-ap"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "receiver_instrument_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Receiver Instrument Id",
+          "type": "string"
+        },
+        "samples_dbm": {
+          "items": {
+            "type": "number"
+          },
+          "maxItems": 100000,
+          "minItems": 1,
+          "title": "Samples Dbm",
+          "type": "array"
+        },
+        "noise_dbm": {
+          "anyOf": [
+            {
+              "maximum": 0,
+              "minimum": -200,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Noise Dbm"
+        },
+        "duration_s": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duration S"
+        }
+      },
+      "required": [
+        "direction",
+        "receiver_instrument_id",
+        "samples_dbm",
+        "noise_dbm",
+        "duration_s"
+      ],
+      "title": "RssiObservation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "format": {
+      "const": "smart-environment-measurements",
+      "default": "smart-environment-measurements",
+      "title": "Format",
+      "type": "string"
+    },
+    "version": {
+      "const": 1,
+      "default": 1,
+      "title": "Version",
+      "type": "integer"
+    },
+    "id": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "site_id": {
+      "description": "Pseudonymous home identifier; never an address",
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Site Id",
+      "type": "string"
+    },
+    "split": {
+      "enum": [
+        "format-example",
+        "pilot",
+        "calibration",
+        "validation"
+      ],
+      "title": "Split",
+      "type": "string"
+    },
+    "synthetic": {
+      "description": "True only for format examples; synthetic data is never evidence",
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "purpose": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Purpose",
+      "type": "string"
+    },
+    "project": {
+      "$ref": "#/$defs/ProjectReference"
+    },
+    "collected_from": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Collected From"
+    },
+    "collected_to": {
+      "anyOf": [
+        {
+          "format": "date",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Collected To"
+    },
+    "operator_role": {
+      "anyOf": [
+        {
+          "maxLength": 160,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Role, not a personal name",
+      "title": "Operator Role"
+    },
+    "instruments": {
+      "items": {
+        "$ref": "#/$defs/Instrument"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Instruments",
+      "type": "array"
+    },
+    "access_points": {
+      "items": {
+        "$ref": "#/$defs/AccessPointSetup"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "title": "Access Points",
+      "type": "array"
+    },
+    "conditions": {
+      "items": {
+        "$ref": "#/$defs/Conditions"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "title": "Conditions",
+      "type": "array"
+    },
+    "criteria": {
+      "items": {
+        "$ref": "#/$defs/FailureCriterion"
+      },
+      "maxItems": 32,
+      "title": "Criteria",
+      "type": "array"
+    },
+    "points": {
+      "items": {
+        "$ref": "#/$defs/MeasurementPoint"
+      },
+      "maxItems": 10000,
+      "title": "Points",
+      "type": "array"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 256,
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "id",
+    "site_id",
+    "split",
+    "synthetic",
+    "purpose",
+    "project",
+    "collected_from",
+    "collected_to",
+    "operator_role",
+    "instruments",
+    "access_points",
+    "conditions",
+    "criteria",
+    "points",
+    "notes"
+  ],
+  "title": "MeasurementCampaign",
+  "type": "object"
+}

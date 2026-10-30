@@ -14,7 +14,9 @@ Inicio: 2026-10-29. La migración completa está en curso, no terminada.
 - Sin validación experimental en viviendas; el producto completo continúa pendiente.
 - Última evidencia de código: 16 pruebas web/editor y 31 Python, build y contratos correctos;
   192 Java en la entrega de base. Revisar las fechas/secciones antes de atribuir otra ejecución.
-- A: siguiente tarea propuesta A-101. B: B-101. I-001 publicada; consultar registros por rol.
+- A: A-101 reservada en el checkout compartido (ver su registro). B: B-101 en `review` en la rama
+  local `agent-b/b-101-reference-cases` (casos analíticos, formato de medidas, protocolo piloto);
+  sin push ni integración en la rama de migración. I-001 publicada; consultar registros por rol.
 - Entrega publicada en `codex/migrate-web-python` y [PR #2 en borrador](https://github.com/Phlekies/smart-home-simulator/pull/2).
   No se ha fusionado en `main`. Consultar las comprobaciones del PR para el último SHA.
   `AGENTS.md` permanece local y excluido del commit.
@@ -158,6 +160,30 @@ Los valores de señal son resultados del estimador analítico actual, no medicio
 evidencia de precisión experimental. Siguen pendientes imagen de referencia calibrada,
 recuperación automática y evaluación completa de accesibilidad. No se han añadido
 forjados, mapas de cobertura nuevos, Sionna RT ni simulación de tráfico.
+
+## Entrega B-101 — referencias analíticas y medidas — 2026-10-30
+
+Rama local `agent-b/b-101-reference-cases` desde `ec62675`, clon separado del checkout de A.
+Sin push, PR ni merge. Documentación técnica en `docs/simulation/`.
+
+- `references.py`: 19 casos (espacio libre, log-distance, pared ITU-R P.2040-3, reflexión
+  especular por imágenes) independientes del motor y arnés `compare()` para cualquier motor.
+- `measurements.py` y `contracts/measurement-campaign.schema.json`: campañas locales separadas
+  del proyecto, procedencia de parámetros, puntos planificados/medidos/excluidos, recuentos
+  crudos de entrega, criterio congelado y partición por vivienda. Plantilla sintética sin medidas.
+- `PILOT_PROTOCOL.md`: protocolo propuesto, sin ejecutar; umbral de fallo pendiente de decisión.
+
+| Comprobación | Resultado |
+|---|---|
+| `pytest services/simulator/tests -q` | 107 superadas (31 previas + 76 nuevas); aviso httpx/Starlette ya registrado |
+| `scripts/export_contracts.py --check` | Sin deriva; contratos previos idénticos, nuevo esquema de campañas |
+| `npm ci`, `npm run contracts`, `git diff --exit-code src/generated` | Tipos TypeScript sin deriva |
+| `npm run build` / `npm test` | Correcto / 16 superadas |
+| `python -m smart_environment.references` | Estimador = Friis y su propio modelo (Δ < 1e-9 dB); paredes con tabla Java se desvían de la losa ITU entre −3.9 y +0.6 dB; reflexión no modelada (−4.8 / +0.3 dB) |
+
+Límites: referencias idealizadas, no medidas; tabla ITU contrastada con la reproducción de
+MathWorks (PDF ITU con 404), pendiente de cotejo oficial. Ningún checklist se marca con esta
+entrega: el criterio activo de fallo, los conjuntos reales y el motor avanzado siguen pendientes.
 
 ## Reglas de evidencia
 
