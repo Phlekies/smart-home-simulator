@@ -5,19 +5,17 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — **I-003** (consolidar documentos comunes tras el merge de #7) y **B-107**
-  (matriz de funciones Java conservadas/sustituidas/excluidas). Integrador: B de nuevo, porque A
-  declaró I-002 terminada y volvió a su rol (registro A en su worktree, 2026-10-30).
-- B-105/B-106 (#8) y B-108 (#9) fusionadas en `main`. En review solo I-003/B-107 en
-  [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11).
+- Estado: **claimed** — cinco tareas pedidas por el usuario el 2026-10-30: **I-004** (revisar e integrar
+  A-102, PR #12), **B-109** (medidas frente a predicciones y calibración), **B-110** (caché de
+  resultados), **B-111** (E2E de la API con los ejemplos Java) y **B-112** (instalación limpia).
+- En review: I-003/B-107 en [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11), pendiente de que el usuario lo fusione.
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
-- Rama/worktree: clon B `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`, rama
-  `agent-b/i-003-b-107-docs` apilada sobre #9. No escribe en el checkout ni el worktree de A.
+- Rama/worktree: clon B, rama local `agent-b/b-109-112` apilada sobre #11. No escribe en el
+  checkout ni en el worktree de A.
 - Última actualización: 2026-10-30 (Europe/Madrid).
-- Archivos reservados: `docs/process/WORKBOARD.md`, `docs/migration/STATUS.md`,
-  `docs/migration/CHECKLIST.md`, `docs/product/ACCEPTANCE_CHECKLIST.md`,
-  `docs/migration/LOCAL_DEVELOPMENT.md`, nuevo `docs/migration/FEATURE_MATRIX.md` y este registro.
-  No toca los archivos reservados por A para A-104 (App/Plan/styles, CoveragePanel, editor/coverage*).
+- Archivos reservados: `services/simulator/**` (nuevos `calibration.py`, `cache.py`, pruebas),
+  `scripts/export_contracts.py`, `contracts/**`, `apps/web/src/generated/**` solo por generación,
+  `docs/simulation/**`, documentos comunes de integración y este registro. No toca archivos de A.
 
 ## Plantilla de entrega — completar al trabajar
 
