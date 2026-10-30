@@ -84,6 +84,10 @@ export type Limitations = string[];
  */
 export type Reasons = string[];
 export type Error = string | null;
+/**
+ * True when an identical finished map was reused
+ */
+export type Cached = boolean;
 
 export interface CoverageMapJob {
   job_id: JobId;
@@ -92,6 +96,7 @@ export interface CoverageMapJob {
   request_hash: RequestHash;
   result: CoverageMapResult | null;
   error: Error;
+  cached?: Cached;
 }
 export interface CoverageMapResult {
   engine: Engine;

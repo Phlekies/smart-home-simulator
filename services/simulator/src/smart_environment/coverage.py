@@ -17,6 +17,8 @@ from collections import OrderedDict
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 
+from .cache import ResultCache
+
 from .engines import LIMITATIONS, direction, input_hash, radio_pair_check
 from .models import (
     CoverageCells, CoverageMapJob, CoverageMapRequest, CoverageMapResult, CoverageSample, Device, Point, Project,
@@ -157,25 +159,30 @@ class _Job:
         self.progress = 0.0
         self.result: CoverageMapResult | None = None
         self.error: str | None = None
+        self.cached = False
         self.cancel = threading.Event()
 
 
 class CoverageJobs:
     """In-process job queue: one worker, bounded history, cooperative cancellation."""
 
-    def __init__(self, max_jobs: int = 16) -> None:
+    def __init__(self, max_jobs: int = 16, cache_entries: int = 8) -> None:
         self._jobs: OrderedDict[str, _Job] = OrderedDict()
+        self.cache: ResultCache[CoverageMapResult] = ResultCache(cache_entries)
         self._lock = threading.Lock()
         self._max_jobs = max_jobs
         self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="coverage-map")
 
     def _snapshot(self, job: _Job) -> CoverageMapJob:
         return CoverageMapJob(job_id=job.id, state=job.state, progress=job.progress, request_hash=job.hash,
-                              result=job.result, error=job.error)
+                              result=job.result, error=job.error, cached=job.cached)
 
     def submit(self, request: CoverageMapRequest) -> CoverageMapJob:
         preflight(request)
         job = _Job(request)
+        cached = self.cache.get(f"{ENGINE_VERSION}:{job.hash}")
+        if cached is not None:
+            job.result, job.state, job.progress, job.cached = cached, "done", 1.0, True
         with self._lock:
             finished = [k for k, v in self._jobs.items() if v.state in ("done", "cancelled", "failed")]
             while len(self._jobs) >= self._max_jobs and finished:
@@ -183,7 +190,8 @@ class CoverageJobs:
             if len(self._jobs) >= self._max_jobs:
                 raise OverflowError("Demasiados mapas en curso; cancela alguno o espera a que terminen.")
             self._jobs[job.id] = job
-        self._executor.submit(self._run, job)
+        if not job.cached:
+            self._executor.submit(self._run, job)
         return self._snapshot(job)
 
     def _run(self, job: _Job) -> None:
@@ -211,6 +219,7 @@ class CoverageJobs:
                 job.state = "cancelled"
             else:
                 job.result, job.state, job.progress = result, "done", 1.0
+                self.cache.put(f"{ENGINE_VERSION}:{job.hash}", result)
 
     def get(self, job_id: str) -> CoverageMapJob | None:
         with self._lock:

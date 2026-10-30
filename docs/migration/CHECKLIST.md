@@ -62,7 +62,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] Interacciones físicas y omisiones de la versión seleccionada documentadas (B-102).
 - [x] Espacio libre, pared y reflexión contrastados con referencias (B-101 + B-102: 18/18).
 - [ ] Diferencias respecto a Java explicadas; errores antiguos no se conservan como requisito (parcial: tabla de materiales y fase de reflexión documentadas; motor multipath Java no contrastado).
-- [ ] Progreso, cancelación, caché y límites para cálculo pesado (parcial B-103: progreso, cancelación y límites de mapas; sin caché).
+- [x] Progreso, cancelación, caché y límites para cálculo pesado (B-103: progreso, cancelación y límites de mapas; B-105: búsqueda acotada; B-110: caché en memoria por hash de petición).
 - [x] Benchmark inicial reproducible de tiempo y memoria (script y evidencia JSON de B-102; un equipo, una ejecución).
 
 ## M4 — Mapas y comparación básica

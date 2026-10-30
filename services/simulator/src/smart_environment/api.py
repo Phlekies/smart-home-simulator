@@ -9,12 +9,15 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
+from .cache import ResultCache
 from .coverage import CoverageJobs, CoverageLimitError
 from .engines import engine_capabilities, simulate
 from .legacy import import_project
-from .placement import PlacementLimitError, search
+from .placement import ENGINE_VERSION as PLACEMENT_VERSION, PlacementLimitError, search
+from .placement import request_hash as placement_hash
 from .profiles import CATALOG
-from .scenarios import evaluate as evaluate_scenarios
+from .scenarios import ENGINE_VERSION as SCENARIO_VERSION, evaluate as evaluate_scenarios
+from .scenarios import request_hash as scenario_hash
 from .models import (
     CoverageMapJob, CoverageMapRequest, GenericProfile, PlacementSearchRequest, PlacementSearchResult, Project,
     ScenarioRequest, ScenarioResult, SimulationRequest, SimulationResult,
@@ -24,6 +27,9 @@ ROOT = Path(__file__).resolve().parents[4]
 EXAMPLES = {"apartment": "smart-apartment.shsim.json", "office": "office-floor.shsim.json",
             "warehouse": "warehouse.shsim.json"}
 coverage_jobs = CoverageJobs()
+# Deterministic results reused for identical requests; local, bounded, emptied on restart.
+placement_cache: ResultCache[PlacementSearchResult] = ResultCache(16)
+scenario_cache: ResultCache[ScenarioResult] = ResultCache(32)
 
 
 @asynccontextmanager
@@ -126,10 +132,15 @@ def placement_search(request: PlacementSearchRequest) -> PlacementSearchResult:
     """Bounded exhaustive comparison of allowed AP places; synchronous because it is capped."""
     if request.engine != "quick-estimate":
         raise HTTPException(501, f"{request.engine}: placement adapter not implemented or verified; no fallback executed")
+    key = f"{PLACEMENT_VERSION}:{placement_hash(request)}"
+    if (cached := placement_cache.get(key)) is not None:
+        return cached
     try:
-        return search(request)
+        result = search(request)
     except PlacementLimitError as error:
         raise HTTPException(422, str(error)) from error
+    placement_cache.put(key, result)
+    return result
 
 
 @app.get("/api/profiles", response_model=list[GenericProfile])
@@ -143,4 +154,8 @@ def scenario_simulation(request: ScenarioRequest) -> ScenarioResult:
     """Nominal, best and worst cases of unresolved doors/materials, plus named scenarios."""
     if request.engine != "quick-estimate":
         raise HTTPException(501, f"{request.engine}: scenario adapter not implemented or verified; no fallback executed")
-    return evaluate_scenarios(request)
+    key = f"{SCENARIO_VERSION}:{scenario_hash(request)}"
+    if (cached := scenario_cache.get(key)) is None:
+        cached = evaluate_scenarios(request)
+        scenario_cache.put(key, cached)
+    return cached

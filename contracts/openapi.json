@@ -718,6 +718,12 @@
               }
             ],
             "title": "Error"
+          },
+          "cached": {
+            "type": "boolean",
+            "title": "Cached",
+            "description": "True when an identical finished map was reused",
+            "default": false
           }
         },
         "additionalProperties": false,
