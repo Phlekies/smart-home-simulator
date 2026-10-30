@@ -22,7 +22,7 @@ consolidada). Una tarea que espera su turno no implica que el proyecto entero es
   superadas remotamente para 33f1df8 en PR #2.
 - `PROCESS-001`: instrucciones, reparto, tablero y registros creados en esta entrega.
 
-Esto no significa que M2 esté completa, ni que existan mapas nuevos, motor avanzado o
+Esto no significa que M2 esté completa ni que exista un motor avanzado integrado o
 validación en viviendas. Los checklists técnico y de producto siguen siendo la aceptación.
 
 ## Próximas tareas disjuntas
@@ -32,20 +32,20 @@ validación en viviendas. Los checklists técnico y de producto siguen siendo la
 | A-101 | A | done | Recuperación local validada, restaurar/descartar, errores/cuota y pruebas; evidencia en AGENT_A y docs/ui/PROJECT_RECOVERY.md | Integrada en I-002; copia por origen/navegador |
 | A-102 | A | ready | Imagen de sesión a escala implementada; completar persistencia, huella y reasociación con contrato B-104 | Contrato integrado en I-002; conservar imagen local y avisar si no está disponible |
 | A-103 | A | done | Paredes por teclado, foco, errores y recorrido crear/editar/guardar verificados | No certifica accesibilidad completa; evidencia en docs/ui/KEYBOARD_WORKFLOW.md |
-| B-101 | B | review | Casos de espacio libre/pared/reflexión, protocolo piloto y formato/procedencia de medidas; separar calibración y validación. Entregado 2026-10-30 en `agent-b/b-101-reference-cases`, [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) en borrador (107 Python, 16 editor; ver [registro B](AGENT_B.md)) | Sin merge; integrar en la rama de migración. Umbral del criterio activo de fallo pendiente de decisión |
-| B-102 | B | review | Prueba técnica aislada de motor avanzado; versiones/hardware/interacciones y benchmark reproducible; error explícito si no ejecuta. Sionna RT 2.2.0 en WSL/CPU: 18/18 referencias; Windows nativo no ejecuta (ver [evaluación](../simulation/ADVANCED_ENGINE_EVALUATION.md)) | [PR #4](https://github.com/Phlekies/smart-home-simulator/pull/4) en borrador, apilado sobre #3 |
-| B-103 | B | review | Contrato y ejecución de mapas por perfil/altura, límites y cancelación; tipos generados y pruebas. `/api/coverage-maps` como trabajos cancelables, ambos sentidos, puntos exactos, sin clasificación; ver [contrato](../simulation/COVERAGE_MAP_CONTRACT.md) | [PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6) en borrador, apilado sobre #5; A-104 consume |
-| B-104 | B | review | Contrato aditivo para persistir la referencia de plano (escala, origen, píxeles, huella) solicitado por A-102; imagen como recurso local, no incrustada. Ver [contrato](../simulation/PLAN_REFERENCE_CONTRACT.md) | [PR #5](https://github.com/Phlekies/smart-home-simulator/pull/5) en borrador, apilado sobre #4; A integra el consumidor en A-102 |
-| A-104 | A | ready | Mostrar mapa, leyenda/resolución/perfil/altura, puntos sin calcular y obsolescencia de resultados | B-103 integrada en I-002; generador coverage-map.ts añadido; usar recorte de celdas de borde |
+| B-101 | B | done | Casos de espacio libre/pared/reflexión, protocolo piloto y formato/procedencia de medidas; separar calibración y validación. Ver [registro B](AGENT_B.md) | Integrada en main por PR #7; no son medidas reales. Umbral del criterio activo de fallo pendiente de decisión |
+| B-102 | B | done | Evaluación aislada Sionna RT 2.2.0 en WSL/CPU: 18/18 referencias; Windows nativo no ejecuta. Versiones/hardware y benchmark en [evaluación](../simulation/ADVANCED_ENGINE_EVALUATION.md) | Integrada en main por PR #7; API avanzada sigue con 501, sin validación experimental |
+| B-103 | B | done | API `/api/coverage-maps`, trabajos cancelables por perfil/altura, ambos sentidos y puntos exactos; contratos/límites/pruebas. Ver [contrato](../simulation/COVERAGE_MAP_CONTRACT.md) | Integrada en main por PR #7; A-104 consume. Bordes, reinicio y cancelación corregidos en I-002 |
+| B-104 | B | done | Contrato aditivo de referencia de plano, imagen local sin incrustar. Ver [contrato](../simulation/PLAN_REFERENCE_CONTRACT.md) | Integrada en main por PR #7; consumidor A-102 pendiente |
+| A-104 | A | review | Capa 2D por métrica/sentido, perfil/frecuencia/altura/resolución, datos parciales y punto exacto; progreso/cancelación e invalidación. 84 pruebas web/build y recorrido real; [evidencia](../ui/COVERAGE_MAP.md) | [PR #10](https://github.com/Phlekies/smart-home-simulator/pull/10), `codex/coverage-map-ui`; pendiente de integración. Mapas de sesión, sin motor físico nuevo |
 | A-105 | A | done | Comparación manual de posiciones con los mismos perfiles/condiciones; ambos sentidos y datos ausentes | Base de sesión; no optimización ni persistencia de variantes |
 | A-106 | A | done | Diagnóstico del trayecto directo y paredes inspeccionables, datos de ambos sentidos | Consume resultados existentes; no multipath nuevo |
 | A-107/A-108 | A | done | Radios 1–8 y enlaces por interfaz; límites, cascada, undo y recuperación verificados | Sin nuevos protocolos ni compatibilidad funcional |
-| I-002 | Integración por usuario | review | Entregas A/B combinadas; 162 Python, 70 web, build/contratos; correcciones de bordes, reinicio y cancelación | Publicar solo tras CI verde; AGENTS.md excluido |
-| I-001 | B integrador | done | Base publicada en `codex/migrate-web-python`, PR #2 en borrador; pruebas locales y CI de código 33f1df8 superadas | Sin merge ni force-push; AGENTS.md local; consultar el PR para revisiones posteriores |
+| I-002 | Integración por usuario | done | Entregas A/B en main 046ee827 por [PR #7](https://github.com/Phlekies/smart-home-simulator/pull/7); 162 Python/70 web/build/contratos. CI migración y Java Linux/Windows/macOS verde antes y después del merge | AGENTS.md excluido; Java conservado. No volver a fusionar la pila B como entregas nuevas |
+| I-001 | B integrador | done | Base publicada en PR #2 e incluida en main por I-002; evidencia histórica en STATUS | Sin force-push; AGENTS.md local |
 
 `ready` indica que puede comenzar el trabajo independiente; los criterios de salida
-siguen requiriendo sus dependencias. Tomar preferentemente A-101 y B-101; después elegir
-según avance y registros. No ejecutar todas las filas como un único cambio gigante.
+siguen requiriendo sus dependencias. A-102 es el siguiente consumidor A disponible;
+consultar las reservas y entregas antes de editar. No ejecutar todas las filas como un único cambio gigante.
 
 ## Trabajo posterior
 

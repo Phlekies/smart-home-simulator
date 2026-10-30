@@ -9,6 +9,8 @@ import PlanReference from './PlanReference';
 import PositionComparison from './PositionComparison';
 import LinkDiagnostics from './LinkDiagnostics';
 import ConnectionEditor from './ConnectionEditor';
+import CoveragePanel from './CoveragePanel';
+import type { CoverageLayer } from './editor/coverage';
 import { linksUsingRadio, MAX_RADIOS, withAddedConnection, withAddedRadio, withRemovedConnection, withRemovedRadio } from './editor/connections';
 import { captureComparison, samePositionConfiguration } from './editor/comparison';
 import type { ComparisonBase } from './editor/comparison';
@@ -58,6 +60,7 @@ export default function App() {
   const [radioId, setRadioId] = useState('');
   const [result, setResult] = useState<SimulationResult | null>(null);
   const [comparisonBase, setComparisonBase] = useState<ComparisonBase | null>(null);
+  const [coverageLayer, setCoverageLayer] = useState<CoverageLayer | null>(null);
   const [engines, setEngines] = useState<Engine[]>([]);
   const [view, setView] = useState<'2d' | '3d'>('2d');
   const [busy, setBusy] = useState(false);
@@ -84,6 +87,7 @@ export default function App() {
   }
 
   function adopt(next: Project) {
+    setCoverageLayer(null);
     setComparisonBase(null);
     setReference(null); setProjectEpoch(value => value + 1);
     revision.current += 1;
@@ -125,6 +129,7 @@ export default function App() {
   function change(edit: (p: Project) => void) {
     if (loading) return;
     revision.current += 1; setResult(null); setNotice('Cambios pendientes de simular.');
+    setCoverageLayer(null);
     setError('');
     setHistory(previous => editHistory(previous, edit));
   }
@@ -137,6 +142,7 @@ export default function App() {
     const changed = current.gestureBase !== null && JSON.stringify(current.present) !== JSON.stringify(current.gestureBase);
     if (direction === 'undo' ? !current.past.length && !changed : !current.future.length || changed) return;
     revision.current += 1; setResult(null); setTool('select');
+    setCoverageLayer(null);
     setHistory(previous => direction === 'undo' ? undoHistory(previous) : redoHistory(previous));
     setNotice(direction === 'undo' ? 'Cambio deshecho. Ejecuta una nueva estimación.' : 'Cambio rehecho. Ejecuta una nueva estimación.');
   }
@@ -370,7 +376,7 @@ export default function App() {
           {project && <WallCreator key={`wall-creator-${projectEpoch}`} disabled={loading || project.building.walls.length >= 2000} onCreate={addWall} />}
           <p className="editor-hint" role="status">{tool === 'wall' ? 'Haz clic en el inicio y el final de la pared. Escape cancela. Ajuste a 0.1 m.' : 'Selecciona o arrastra paredes y equipos. Flechas mueven en el plano; Shift amplía el paso.'}</p>
           <div className="scene-content">{project ? view === '2d'
-            ? <Plan project={project} selected={selected} onSelect={selectDevice} result={result} reference={reference}
+            ? <Plan project={project} selected={selected} onSelect={selectDevice} result={result} reference={reference} coverageLayer={coverageLayer}
               tool={tool} selectedWallId={selectedWallId} onSelectWall={selectWall} onAddWall={addWall}
               onGestureStart={beginGesture} onGestureEnd={endGesture}
               onMoveWall={(id, dx, dy) => change(p => {
@@ -430,6 +436,7 @@ export default function App() {
         </aside>
       </section>
 
+      {project && <CoveragePanel key={`coverage-${projectEpoch}`} project={project} onLayer={setCoverageLayer} onValidate={checkEditorFields} disabled={loading} />}
       <section className="results-panel panel">
         <div className="results-heading"><div><span className="eyebrow">DIAGNÓSTICO DE LA INSTALACIÓN</span><h2>Comprueba cada dirección.</h2></div>
           {result && <button onClick={() => download({ project, result }, 'diagnostico.json')}>Exportar diagnóstico</button>}</div>
