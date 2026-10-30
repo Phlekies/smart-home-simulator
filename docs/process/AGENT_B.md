@@ -5,17 +5,19 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — cinco tareas pedidas por el usuario el 2026-10-30, entregadas: **I-004** (revisar e integrar
-  A-102, PR #12), **B-109** (medidas frente a predicciones y calibración), **B-110** (caché de
-  resultados), **B-111** (E2E de la API con los ejemplos Java) y **B-112** (instalación limpia).
-- En review: I-003/B-107 en [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11), pendiente de que el usuario lo fusione.
+- Estado: **claimed** — **B-113** (procedencia por parámetro de radio), **B-114** (mapas bajo un
+  escenario), **B-115** (informe por equipo) y **B-116** (comprobar campañas de medida por API).
+  Todas aditivas; no cambian contratos que A esté consumiendo en A-109…A-113.
+- En review, pendientes de merge por el usuario: [#11](https://github.com/Phlekies/smart-home-simulator/pull/11)
+  (documentos comunes), [#13](https://github.com/Phlekies/smart-home-simulator/pull/13) (B-109…B-112, I-004) y el
+  [#12](https://github.com/Phlekies/smart-home-simulator/pull/12) de A (revisado en I-004).
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
-- Rama/worktree: clon B, rama local `agent-b/b-109-112` apilada sobre #11. No escribe en el
-  checkout ni en el worktree de A.
+- Rama/worktree: clon B, rama local `agent-b/b-113-116` apilada sobre #13. No escribe en el checkout
+  ni en los worktrees de A (`integration-review`, `five-ui-tasks`).
 - Última actualización: 2026-10-30 (Europe/Madrid).
-- Archivos reservados: `services/simulator/**` (nuevos `calibration.py`, `cache.py`, pruebas),
+- Archivos reservados: `services/simulator/**` (models, engines, coverage, nuevos `report.py`, pruebas),
   `scripts/export_contracts.py`, `contracts/**`, `apps/web/src/generated/**` solo por generación,
-  `docs/simulation/**`, documentos comunes de integración y este registro. No toca archivos de A.
+  `docs/simulation/**`, documentos comunes de integración y este registro.
 
 ## Plantilla de entrega — completar al trabajar
 
