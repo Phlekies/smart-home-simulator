@@ -499,3 +499,55 @@ class PlacementSearchResult(Model):
     scope: str
     limitations: list[str]
     reasons: list[str]
+
+
+# --- Generic radio profiles with provenance (B-106) ------------------------------------
+
+class ProfileValue(Model):
+    """A profile parameter and where it comes from; ``unknown`` never carries a value."""
+
+    value: Finite | None = None
+    provenance: Literal["standard-minimum", "declared", "measured", "inferred", "unknown"] = "unknown"
+    source: str | None = Field(default=None, max_length=500)
+
+    @model_validator(mode="after")
+    def value_matches_provenance(self) -> ProfileValue:
+        if (self.value is None) != (self.provenance == "unknown"):
+            raise ValueError("A value needs a known provenance, and 'unknown' cannot carry a value")
+        return self
+
+
+class GenericProfile(Model):
+    """Generic client radio for a band and mode; an approximation, never a certified product."""
+
+    id: Identifier
+    name: str = Field(min_length=1, max_length=160)
+    description: str = Field(max_length=1000)
+    protocol: Literal["wifi"]
+    band: Literal["2.4GHz"]
+    mode: str = Field(max_length=160, description="PHY, bandwidth and rate the values refer to")
+    bandwidth_hz: Positive
+    sensitivity_dbm: ProfileValue
+    tx_power_dbm: ProfileValue
+    antenna_gain_dbi: ProfileValue
+    noise_figure_db: ProfileValue
+    notes: list[str] = Field(default_factory=list, max_length=32)
+
+    def receiver_profile(self, access_point_radio: Radio) -> ReceiverProfile:
+        """Profile radio on the AP's channel: a Wi-Fi client follows the AP's frequency and channel."""
+        if not 2.4e9 <= access_point_radio.frequency_hz <= 2.5e9:
+            raise ValueError("This profile only describes the 2.4 GHz band")
+        if abs(access_point_radio.bandwidth_hz - self.bandwidth_hz) > 1:
+            raise ValueError("The AP bandwidth differs from the profile mode")
+        if self.antenna_gain_dbi.value is None or self.noise_figure_db.value is None:
+            raise ValueError("Antenna gain and noise figure need a declared or inferred value")
+        gain = self.antenna_gain_dbi.value
+        return ReceiverProfile(
+            id=self.id, name=self.name,
+            evidence=f"Generic profile {self.id}: sensitivity {self.sensitivity_dbm.provenance}, "
+                     f"tx power {self.tx_power_dbm.provenance}, antenna gain {self.antenna_gain_dbi.provenance}",
+            radio=Radio(id=f"profile-{self.id}", protocol="wifi", frequency_hz=access_point_radio.frequency_hz,
+                        bandwidth_hz=self.bandwidth_hz, channel=access_point_radio.channel,
+                        tx_power_dbm=self.tx_power_dbm.value, tx_gain_dbi=gain, rx_gain_dbi=gain,
+                        sensitivity_dbm=self.sensitivity_dbm.value,
+                        noise_figure_db=self.noise_figure_db.value))

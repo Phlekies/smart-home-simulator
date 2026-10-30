@@ -342,6 +342,29 @@
           }
         }
       }
+    },
+    "/api/profiles": {
+      "get": {
+        "summary": "Profiles",
+        "description": "Generic radio profiles with per-value provenance; approximations, not products.",
+        "operationId": "profiles_api_profiles_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/GenericProfile"
+                  },
+                  "type": "array",
+                  "title": "Response Profiles Api Profiles Get"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1179,6 +1202,86 @@
           "reason"
         ],
         "title": "ExcludedCandidate"
+      },
+      "GenericProfile": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 1000,
+            "title": "Description"
+          },
+          "protocol": {
+            "type": "string",
+            "const": "wifi",
+            "title": "Protocol"
+          },
+          "band": {
+            "type": "string",
+            "const": "2.4GHz",
+            "title": "Band"
+          },
+          "mode": {
+            "type": "string",
+            "maxLength": 160,
+            "title": "Mode",
+            "description": "PHY, bandwidth and rate the values refer to"
+          },
+          "bandwidth_hz": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Bandwidth Hz"
+          },
+          "sensitivity_dbm": {
+            "$ref": "#/components/schemas/ProfileValue"
+          },
+          "tx_power_dbm": {
+            "$ref": "#/components/schemas/ProfileValue"
+          },
+          "antenna_gain_dbi": {
+            "$ref": "#/components/schemas/ProfileValue"
+          },
+          "noise_figure_db": {
+            "$ref": "#/components/schemas/ProfileValue"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 32,
+            "title": "Notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "protocol",
+          "band",
+          "mode",
+          "bandwidth_hz",
+          "sensitivity_dbm",
+          "tx_power_dbm",
+          "antenna_gain_dbi",
+          "noise_figure_db",
+          "notes"
+        ],
+        "title": "GenericProfile",
+        "description": "Generic client radio for a band and mode; an approximation, never a certified product."
       },
       "HTTPValidationError": {
         "properties": {
@@ -2221,6 +2324,54 @@
           "z"
         ],
         "title": "Point"
+      },
+      "ProfileValue": {
+        "properties": {
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "provenance": {
+            "type": "string",
+            "enum": [
+              "standard-minimum",
+              "declared",
+              "measured",
+              "inferred",
+              "unknown"
+            ],
+            "title": "Provenance",
+            "default": "unknown"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "provenance",
+          "source"
+        ],
+        "title": "ProfileValue",
+        "description": "A profile parameter and where it comes from; ``unknown`` never carries a value."
       },
       "Project-Input": {
         "properties": {

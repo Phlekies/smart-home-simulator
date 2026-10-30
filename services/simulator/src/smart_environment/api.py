@@ -13,9 +13,10 @@ from .coverage import CoverageJobs, CoverageLimitError
 from .engines import engine_capabilities, simulate
 from .legacy import import_project
 from .placement import PlacementLimitError, search
+from .profiles import CATALOG
 from .models import (
-    CoverageMapJob, CoverageMapRequest, PlacementSearchRequest, PlacementSearchResult, Project, SimulationRequest,
-    SimulationResult,
+    CoverageMapJob, CoverageMapRequest, GenericProfile, PlacementSearchRequest, PlacementSearchResult, Project,
+    SimulationRequest, SimulationResult,
 )
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -128,3 +129,9 @@ def placement_search(request: PlacementSearchRequest) -> PlacementSearchResult:
         return search(request)
     except PlacementLimitError as error:
         raise HTTPException(422, str(error)) from error
+
+
+@app.get("/api/profiles", response_model=list[GenericProfile])
+def profiles() -> list[GenericProfile]:
+    """Generic radio profiles with per-value provenance; approximations, not products."""
+    return CATALOG

@@ -5,13 +5,13 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **claimed** — B-106 (perfiles Wi-Fi genéricos con procedencia). B-105 en review.
+- Estado: **review** — B-105 y B-106 entregadas en ramas locales; sin tarea nueva reservada.
 - Integración: **I-002 la ejecuta A** por instrucción del usuario (registro A, 2026-10-30 09:54):
   A asume temporalmente Git, documentos comunes y `package.json`. B no integra ni edita
   WORKBOARD/STATUS/CHECKLIST/LOCAL_DEVELOPMENT mientras dure, y solo entrega ramas propias.
 - Pila B publicada (borradores, sin merge): [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) B-101 →
   [PR #4](https://github.com/Phlekies/smart-home-simulator/pull/4) B-102 → [PR #5](https://github.com/Phlekies/smart-home-simulator/pull/5) B-104 →
-  [PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6) B-103. Nuevas ramas locales encima: `agent-b/b-105-placement-search`, …
+  [PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6) B-103. Nuevas ramas locales encima: `agent-b/b-105-placement-search` → `agent-b/b-106-radio-profiles`.
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
 - Rama/worktree: clon B `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`; no escribe en el
   checkout compartido de A.
@@ -35,6 +35,25 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### B-106 — perfiles Wi-Fi genéricos con procedencia (review)
+
+```text
+Tarea / estado: B-106 / review. Rama local agent-b/b-106-radio-profiles sobre B-105.
+Archivos: models.py (ProfileValue, GenericProfile.receiver_profile), profiles.py (catálogo nuevo),
+  api.py (GET /api/profiles), scripts/export_contracts.py, contracts/radio-profile.schema.json
+  (nuevo), openapi.json, apps/web/src/generated/radio-profile.ts (json2ts), tests/test_profiles.py,
+  docs/simulation/RADIO_PROFILES.md.
+Criterio: perfiles 2.4 GHz con parámetros trazables; desconocidos e inferidos diferenciados.
+Valores: HT20 MCS0/MCS3/MCS7 = −82/−74/−64 dBm, mínimos de IEEE 802.11-2020 tabla 21-25
+  (verificados en la reproducción de MathWorks); tabla HT de 2.4 GHz no cotejada (declarado en
+  la fuente). Potencia TX desconocida; ganancia 0 dBi y NF 7 dB inferidas con motivo.
+Contrato: aditivo (1 ruta, 1 esquema; ningún esquema existente cambia).
+Comandos: pytest → 182 passed; export --check sin deriva; npm run build correcto; npm test 16/16.
+Límites: no son datos de producto; sin 802.11b/g, 5 GHz, Zigbee ni Thread.
+Solicitud a A: añadir radio-profile.ts al script `contracts`; ofrecer el catálogo al elegir perfil
+  del mapa mostrando la procedencia de cada valor y pidiendo la potencia TX si se conoce.
+```
 
 ### B-105 — búsqueda de ubicación del AP entre lugares permitidos (review)
 

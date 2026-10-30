@@ -1,0 +1,132 @@
+{
+  "$defs": {
+    "ProfileValue": {
+      "additionalProperties": false,
+      "description": "A profile parameter and where it comes from; ``unknown`` never carries a value.",
+      "properties": {
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        },
+        "provenance": {
+          "default": "unknown",
+          "enum": [
+            "standard-minimum",
+            "declared",
+            "measured",
+            "inferred",
+            "unknown"
+          ],
+          "title": "Provenance",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "value",
+        "provenance",
+        "source"
+      ],
+      "title": "ProfileValue",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Generic client radio for a band and mode; an approximation, never a certified product.",
+  "properties": {
+    "id": {
+      "maxLength": 120,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "maxLength": 160,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "description": {
+      "maxLength": 1000,
+      "title": "Description",
+      "type": "string"
+    },
+    "protocol": {
+      "const": "wifi",
+      "title": "Protocol",
+      "type": "string"
+    },
+    "band": {
+      "const": "2.4GHz",
+      "title": "Band",
+      "type": "string"
+    },
+    "mode": {
+      "description": "PHY, bandwidth and rate the values refer to",
+      "maxLength": 160,
+      "title": "Mode",
+      "type": "string"
+    },
+    "bandwidth_hz": {
+      "exclusiveMinimum": 0,
+      "title": "Bandwidth Hz",
+      "type": "number"
+    },
+    "sensitivity_dbm": {
+      "$ref": "#/$defs/ProfileValue"
+    },
+    "tx_power_dbm": {
+      "$ref": "#/$defs/ProfileValue"
+    },
+    "antenna_gain_dbi": {
+      "$ref": "#/$defs/ProfileValue"
+    },
+    "noise_figure_db": {
+      "$ref": "#/$defs/ProfileValue"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 32,
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "description",
+    "protocol",
+    "band",
+    "mode",
+    "bandwidth_hz",
+    "sensitivity_dbm",
+    "tx_power_dbm",
+    "antenna_gain_dbi",
+    "noise_figure_db",
+    "notes"
+  ],
+  "title": "GenericProfile",
+  "type": "object"
+}
