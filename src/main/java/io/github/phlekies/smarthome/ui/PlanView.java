@@ -42,6 +42,7 @@ import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
@@ -54,6 +55,7 @@ import io.github.phlekies.smarthome.model.Device;
 import io.github.phlekies.smarthome.model.Hub;
 import io.github.phlekies.smarthome.model.Sensor;
 import io.github.phlekies.smarthome.model.Wall;
+import io.github.phlekies.smarthome.model.template.RoomLabel;
 
 /**
  * Top-down view of the floor plan. Layers, bottom to top: grid, heatmap, walls, sensor-hub
@@ -201,6 +203,22 @@ final class PlanView extends Pane {
             g.setStroke(palette.materialColor(wall.getMaterial()));
             g.setLineWidth(PlanPalette.wallStroke(wall.getThicknessCm()));
             g.strokeLine(toPixelX(wall.getX1()), toPixelY(wall.getY1()), toPixelX(wall.getX2()), toPixelY(wall.getY2()));
+        }
+        drawRoomNames(g);
+    }
+
+    /** Room names of an unedited template, outlined so they stay readable over the heatmap. */
+    private void drawRoomNames(GraphicsContext g) {
+        g.setFont(Font.font(null, FontWeight.SEMI_BOLD, 11));
+        g.setTextAlign(TextAlignment.CENTER);
+        g.setTextBaseline(VPos.CENTER);
+        g.setLineJoin(StrokeLineJoin.ROUND);
+        g.setLineWidth(2.0);
+        g.setStroke(palette.background().deriveColor(0, 1, 1, 0.6));
+        g.setFill(palette.deviceLabel().deriveColor(0, 1, 1, 0.9));
+        for (RoomLabel room : model.roomLabels()) {
+            g.strokeText(room.name(), toPixelX(room.x()), toPixelY(room.y()));
+            g.fillText(room.name(), toPixelX(room.x()), toPixelY(room.y()));
         }
     }
 

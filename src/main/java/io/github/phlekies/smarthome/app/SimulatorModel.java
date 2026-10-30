@@ -16,6 +16,7 @@ import io.github.phlekies.smarthome.model.Sensor;
 import io.github.phlekies.smarthome.model.Wall;
 import io.github.phlekies.smarthome.model.material.Material;
 import io.github.phlekies.smarthome.model.template.FloorPlanTemplate;
+import io.github.phlekies.smarthome.model.template.RoomLabel;
 import io.github.phlekies.smarthome.simulation.Area;
 import io.github.phlekies.smarthome.simulation.CellResult;
 import io.github.phlekies.smarthome.simulation.PropagationEngine;
@@ -243,6 +244,11 @@ public final class SimulatorModel {
         if (walls().isEmpty()) return "There are no walls in the current plan.";
         if (matchesActiveTemplate()) return activeTemplate.description();
         return "The plan has been edited since the template was loaded.";
+    }
+
+    /** Room names of the active template while the plan is unchanged; empty once it has been edited. */
+    public List<RoomLabel> roomLabels() {
+        return matchesActiveTemplate() ? activeTemplate.rooms() : List.of();
     }
 
     // ---------------------------------------------------------------------------------------
