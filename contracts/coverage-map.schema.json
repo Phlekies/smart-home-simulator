@@ -562,6 +562,33 @@
           "minimum": -360,
           "title": "Polarization Deg",
           "type": "number"
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/RadioValueSource"
+              },
+              "propertyNames": {
+                "enum": [
+                  "tx_power_dbm",
+                  "tx_gain_dbi",
+                  "rx_gain_dbi",
+                  "sensitivity_dbm",
+                  "noise_figure_db",
+                  "channel",
+                  "protocol"
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional origin of each value. 'unknown' requires an empty value; measured/declared require one.",
+          "title": "Provenance"
         }
       },
       "required": [
@@ -583,6 +610,42 @@
         "polarization_deg"
       ],
       "title": "Radio",
+      "type": "object"
+    },
+    "RadioValueSource": {
+      "additionalProperties": false,
+      "description": "Where one radio value comes from; documentation only, never a solver input.",
+      "properties": {
+        "provenance": {
+          "enum": [
+            "measured",
+            "declared",
+            "standard-minimum",
+            "inferred",
+            "unknown"
+          ],
+          "title": "Provenance",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "provenance",
+        "source"
+      ],
+      "title": "RadioValueSource",
       "type": "object"
     },
     "ReceiverProfile": {

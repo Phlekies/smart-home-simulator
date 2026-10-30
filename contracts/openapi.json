@@ -2894,6 +2894,32 @@
             "minimum": -360.0,
             "title": "Polarization Deg",
             "default": 0
+          },
+          "provenance": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/RadioValueSource-Input"
+                },
+                "propertyNames": {
+                  "enum": [
+                    "tx_power_dbm",
+                    "tx_gain_dbi",
+                    "rx_gain_dbi",
+                    "sensitivity_dbm",
+                    "noise_figure_db",
+                    "channel",
+                    "protocol"
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provenance",
+            "description": "Optional origin of each value. 'unknown' requires an empty value; measured/declared require one."
           }
         },
         "additionalProperties": false,
@@ -3041,6 +3067,32 @@
             "minimum": -360.0,
             "title": "Polarization Deg",
             "default": 0
+          },
+          "provenance": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/RadioValueSource-Output"
+                },
+                "propertyNames": {
+                  "enum": [
+                    "tx_power_dbm",
+                    "tx_gain_dbi",
+                    "rx_gain_dbi",
+                    "sensitivity_dbm",
+                    "noise_figure_db",
+                    "channel",
+                    "protocol"
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provenance",
+            "description": "Optional origin of each value. 'unknown' requires an empty value; measured/declared require one."
           }
         },
         "additionalProperties": false,
@@ -3064,6 +3116,75 @@
           "polarization_deg"
         ],
         "title": "Radio"
+      },
+      "RadioValueSource-Input": {
+        "properties": {
+          "provenance": {
+            "type": "string",
+            "enum": [
+              "measured",
+              "declared",
+              "standard-minimum",
+              "inferred",
+              "unknown"
+            ],
+            "title": "Provenance"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "provenance"
+        ],
+        "title": "RadioValueSource",
+        "description": "Where one radio value comes from; documentation only, never a solver input."
+      },
+      "RadioValueSource-Output": {
+        "properties": {
+          "provenance": {
+            "type": "string",
+            "enum": [
+              "measured",
+              "declared",
+              "standard-minimum",
+              "inferred",
+              "unknown"
+            ],
+            "title": "Provenance"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "provenance",
+          "source"
+        ],
+        "title": "RadioValueSource",
+        "description": "Where one radio value comes from; documentation only, never a solver input."
       },
       "ReceiverProfile-Input": {
         "properties": {

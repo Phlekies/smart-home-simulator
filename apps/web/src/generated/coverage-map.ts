@@ -39,6 +39,14 @@ export type BeamwidthDeg = number;
 export type PatternSharpness = number;
 export type SideLobeAttenuationDb = number;
 export type PolarizationDeg = number;
+/**
+ * Optional origin of each value. 'unknown' requires an empty value; measured/declared require one.
+ */
+export type Provenance = {
+  [k: string]: RadioValueSource;
+} | null;
+export type Provenance1 = "measured" | "declared" | "standard-minimum" | "inferred" | "unknown";
+export type Source = string | null;
 export type Evidence = string;
 export type OriginXM = number;
 export type OriginYM = number;
@@ -156,6 +164,14 @@ export interface Radio {
   pattern_sharpness: PatternSharpness;
   side_lobe_attenuation_db: SideLobeAttenuationDb;
   polarization_deg: PolarizationDeg;
+  provenance?: Provenance;
+}
+/**
+ * Where one radio value comes from; documentation only, never a solver input.
+ */
+export interface RadioValueSource {
+  provenance: Provenance1;
+  source: Source;
 }
 /**
  * Horizontal sampling plane. Cell (i, j) is evaluated at its centre:
