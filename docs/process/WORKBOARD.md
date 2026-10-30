@@ -31,7 +31,7 @@ validación en viviendas. Los checklists técnico y de producto siguen siendo la
 | ID | Rol | Estado inicial | Entrega y aceptación mínima | Dependencia |
 |---|---|---|---|---|
 | A-101 | A | done | Recuperación local validada, restaurar/descartar, errores/cuota y pruebas; evidencia en AGENT_A y docs/ui/PROJECT_RECOVERY.md | Integrada en I-002; copia por origen/navegador |
-| A-102 | A | ready | Imagen de sesión a escala implementada; completar persistencia, huella y reasociación con contrato B-104 | Contrato integrado en I-002; conservar imagen local y avisar si no está disponible |
+| A-102 | A | review | Persistencia de la imagen de plano con `plan_reference` (B-104): huella SHA-256, reasociación y aviso si falta ([PR #12](https://github.com/Phlekies/smart-home-simulator/pull/12)) | Revisada por B (I-004): solo archivos de A; `main`+#12 con 199 Python, 94 web, build y contratos sin deriva. Falta cambiar su base a `main` y fusionar (usuario) |
 | A-103 | A | done | Paredes por teclado, foco, errores y recorrido crear/editar/guardar verificados | No certifica accesibilidad completa; evidencia en docs/ui/KEYBOARD_WORKFLOW.md |
 | B-101 | B | done | Casos analíticos (espacio libre, pared, reflexión), formato de medidas con procedencia y protocolo piloto; calibración y validación separadas. Ver [registro B](AGENT_B.md) | En `main` por #7 (046ee82); PR #3 cerrado sin fusionar. No son medidas reales; umbral del criterio de fallo pendiente de decisión |
 | B-102 | B | done | Sionna RT 2.2.0 evaluado en WSL/CPU: 18/18 referencias; Windows nativo no ejecuta; benchmark reproducible ([evaluación](../simulation/ADVANCED_ENGINE_EVALUATION.md)) | En `main` por #7; PR #4 cerrado. La API sigue con 501 para Sionna; sin validación experimental |
@@ -46,6 +46,11 @@ validación en viviendas. Los checklists técnico y de producto siguen siendo la
 | B-108 | B | done | Escenarios de puertas desconocidas y materiales con rango; mejor/peor caso y dependencia de hipótesis ([contrato](../simulation/SCENARIOS_CONTRACT.md)) | En `main` por [#9](https://github.com/Phlekies/smart-home-simulator/pull/9) (760e3cd), CI en verde; consumidor pendiente |
 | B-107 | B integrador | review | [Matriz de funciones Java](../migration/FEATURE_MATRIX.md) conservadas/sustituidas/excluidas con motivos (M5) | [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11) |
 | I-003 | B integrador | review | Consolidar documentos comunes tras #7, #8, #9 y #10; cierre de #3–#6 | [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11) |
+| I-004 | B integrador | review | Revisión e integración de A-102 (#12) | Rama local `agent-b/b-109-112` (sobre #11); cambio de base del #12 denegado por permisos: lo hace el usuario |
+| B-109 | B | review | Medidas frente a predicciones y calibración de un desplazamiento solo con datos de calibración ([documento](../simulation/CALIBRATION.md)) | Rama local `agent-b/b-109-112` (sobre #11); sin medidas reales |
+| B-110 | B | review | Caché en memoria por hash de petición para mapas, búsqueda y escenarios | Rama local `agent-b/b-109-112` (sobre #11); contrato aditivo (`cached?`) |
+| B-111 | B | review | E2E de la API con los tres ejemplos Java y un proyecto nuevo; corrige el ciclo de vida del gestor de mapas | Rama local `agent-b/b-109-112` (sobre #11) |
+| B-112 | B | review | Instalación limpia y arranque reproducibles; `dev.py` muestra por qué falla un servicio | Rama local `agent-b/b-109-112` (sobre #11) |
 | I-002 | A (integración por instrucción del usuario) | done | Entregas A-101…A-108 y B-101…B-104 en `main` (046ee82) por [PR #7](https://github.com/Phlekies/smart-home-simulator/pull/7); 162 Python/70 web/build/contratos; CI de migración y Java verde antes y después | AGENTS.md excluido; Java conservado. No volver a fusionar la pila B como entregas nuevas |
 | I-001 | B integrador | done | Base publicada en PR #2 e incluida en `main` por I-002; evidencia histórica en STATUS | Sin force-push; AGENTS.md local |
 

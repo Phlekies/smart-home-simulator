@@ -51,7 +51,7 @@ motivo), **Nueva** (no existía en Java).
 | BER BPSK y capacidad Shannon en pantalla | Excluida | Fórmulas conservadas en Java | PRODUCT_OBJECTIVE: no son requisito y no relacionan con el uso real |
 | Enlaces verde/rojo y tabla potencia/SNR/margen | Sustituida | Ida y vuelta con margen por sentido, «sin verificar» si faltan datos, diagnóstico de paredes (A-106) | Sin semáforo: la reserva de diseño (P2) no está decidida |
 | Optimizador del hub (cada metro, máx-mín) | Sustituida | Búsqueda exhaustiva entre lugares permitidos y márgenes bidireccionales (B-105, PR #8); comparación manual (A-105) | Recomendaciones realizables (P3) |
-| Cálculo cancelable en segundo plano | Conservada | Trabajos de mapa con progreso y cancelación (B-103); búsqueda acotada síncrona (B-105) | Sin caché todavía |
+| Cálculo cancelable en segundo plano | Conservada | Trabajos de mapa con progreso y cancelación (B-103); búsqueda acotada síncrona (B-105); caché por hash de petición (B-110) | Caché solo en memoria, se vacía al reiniciar |
 | Animación de rayos y ondas | Excluida | El diagnóstico muestra paredes atravesadas; trayectos de Sionna disponibles para una vista futura | Ilustrativa, no evidencia numérica |
 | Ventana de validación de fórmulas | Sustituida | Casos analíticos independientes y pruebas (B-101), evidencia en STATUS | Verificar contra referencias, no contra la misma implementación |
 | — | Nueva | Escenarios de puertas y materiales inciertos (B-108, PR #9) | P2 |
