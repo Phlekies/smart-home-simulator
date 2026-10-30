@@ -5,9 +5,10 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — B-108 (escenarios de puertas y materiales) entregada en la rama local
-  `agent-b/b-108-scenarios`, apilada sobre B-105/B-106 ([PR #8](https://github.com/Phlekies/smart-home-simulator/pull/8)).
-  Sin tarea nueva reservada.
+- Estado: **review** — B-105/B-106 en [PR #8](https://github.com/Phlekies/smart-home-simulator/pull/8) (borrador, base
+  `main`) y B-108 en [PR #9](https://github.com/Phlekies/smart-home-simulator/pull/9) (borrador, apilado sobre #8).
+  PR #3–#6 cerrados sin fusionar a petición del usuario: su contenido ya está en `main` por #7
+  (cabezas comprobadas como ancestros de 046ee82); ramas conservadas. Sin tarea nueva reservada.
 - Integración: **I-002 la ejecutó A** por instrucción del usuario; PR #7 fusionado en `main`
   (046ee82). Registro A en `main` aún con I-002 reservada:
   A asume temporalmente Git, documentos comunes y `package.json`. B no integra ni edita
