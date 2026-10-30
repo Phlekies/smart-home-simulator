@@ -5,39 +5,36 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review**, A-104 implementada, verificada y publicada en
-  [PR #10](https://github.com/Phlekies/smart-home-simulator/pull/10); archivos liberados.
+- Estado: **review**, A-102 persistencia implementada, verificada y publicada en
+  [PR #12](https://github.com/Phlekies/smart-home-simulator/pull/12); archivos liberados.
 - Sesión: conversación actual, agente A; 2026-10-30, Europe/Madrid.
-- Worktree aislado: `smart-home-simulator/.local/integration-review`, rama
-  `codex/coverage-map-ui`, basada en main 046ee827. No cambiar la rama del checkout compartido.
-- Archivos A-104: App.tsx, Plan.tsx, styles.css, CoveragePanel.tsx,
-  editor/coverage.ts, coverage.test.ts, coverageRunner.ts, coverageRunner.test.ts,
-  coverageFixture.ts (solo pruebas), docs/ui/COVERAGE_MAP.md, coverage-map.jpg y este registro.
-- I-002 terminada: [PR #7](https://github.com/Phlekies/smart-home-simulator/pull/7)
-  fusionado en main 046ee827ded4f97aebf58e251234fb5175a37dc1. CI de migración y
-  Java Linux/Windows/macOS superadas tanto antes como después del merge.
-- Rol secuencial autorizado por el usuario: integración/revisión de ramas B y Git, después A.
-  Al cerrar esta entrega se asume brevemente integración documental para consolidar el
-  estado real de I-002 en WORKBOARD y STATUS. No se modifica el registro de B ni su código.
-- Siguiente tarea A: **A-102 persistencia**. B-104 ya está en main; consumir su contrato,
-  no volver a solicitarlo ni crear una estructura alternativa. A-104 aún no completa M4.
-- Todas las entregas anteriores A-101/103/105/106/107/108 y A-102 de sesión están en main
-  por I-002; las frases de «sin push» del historial describen aquellas sesiones.
-- AGENTS.md sigue excluido y local. No publicar archivos de imágenes de usuarios.
+- Worktree aislado `smart-home-simulator/.local/integration-review`, rama
+  `codex/persist-plan-reference` sobre `codex/coverage-map-ui` (PR #10, d5e64d3).
+  No cambiar el checkout compartido ni fusionar por inferencia.
+- Archivos reales A-102: App.tsx, CoveragePanel.tsx, PlanReference.tsx, styles.css,
+  editor/referencePersistence.ts y referencePersistence.test.ts, editor/comparison.ts y
+  comparison.test.ts, docs/ui/PLAN_REFERENCE.md, plan-reference-persistence.jpg y este registro.
+- Contrato B-104 consumido sin cambios: metadatos canónicos en JSON/recuperación, archivo
+  local identificado por SHA-256/dimensiones/tipo. Imagen ausente/distinta explícita.
+- 94 pruebas web/editor, build y diff --check correctos; recorrido real de guardar,
+  restaurar/reabrir, rechazar/reasociar, sustituir e historial completado. Servicios detenidos.
+- A-104 en review publicada en [PR #10](https://github.com/Phlekies/smart-home-simulator/pull/10),
+  con CI remota correcta. Esta rama es una entrega apilada, no incorpora aún PR #8/#9.
+- I-002 en main 046ee827 por PR #7. Las entregas antiguas A/B están integradas allí;
+  el historial de cada sesión conserva su estado de publicación en aquel momento.
+- AGENTS.md sigue local/excluido. No backend, contratos/generados, Java ni documentos comunes modificados.
 
-## Siguiente consumidor — persistencia de A-102
+## Siguiente paso y dependencias
 
-La solicitud original a B está resuelta por B-104, integrada en I-002. Leer
-[PLAN_REFERENCE_CONTRACT.md](../simulation/PLAN_REFERENCE_CONTRACT.md) antes de implementar.
-
-- Usar `Project.plan_reference` y los tipos generados: origen, escala, dimensiones,
-  SHA-256 y calibración; imagen como recurso local sin incrustarla en JSON.
-- Guardar/restaurar metadatos por las rutas canónicas existentes. Al abrir sin recurso,
-  mostrar imagen no disponible y permitir reasociación solo con huella/dimensiones válidas.
-- Opacidad y visibilidad son de sesión. Proyectos anteriores sin el campo deben seguir
-  abriendo; una versión anterior de la app puede rechazar proyectos que lo incluyan.
-- Completar pruebas y recorrido de guardar/reabrir/recuperar, imagen ausente/distinta,
-  reasociación y conservación de escala exacta antes de aceptar A-102/M2.
+- Integrador: revisar esta entrega y A-104, consolidar WORKBOARD/STATUS y criterios
+  acreditados de M2. La persistencia A-102 ya no espera contrato ni implementación de B.
+- A puede continuar el recorrido completo por teclado y revisión de accesibilidad de M2;
+  no declarar toda la fase completa por estas funciones.
+- Consumidores de búsqueda/perfiles (PR #8) y escenarios (PR #9) requieren integrar sus
+  contratos y revisar su evidencia. No inventar tipos ni tratar perfiles preliminares
+  como datos de modelos comerciales. No tocar archivos de B durante esa revisión.
+- Quedan motor avanzado en API, informes, mediciones y validación independiente de producto;
+  esta entrega es persistencia visual y no acredita precisión radioeléctrica.
 
 ## Plantilla de entrega — completar al trabajar
 
@@ -261,3 +258,36 @@ Siguiente paso:
 - **Solicitud al integrador:** revisar esta entrega separada en PR #10; mantener el mapa
   avanzado, incertidumbre y medidas reales pendientes. AGENTS.md permanece excluido.
 - Siguiente tarea A: persistir/reasociar referencia calibrada mediante contrato B-104.
+
+
+### A-102 — persistencia y reasociación de referencia, 2026-10-30 (Europe/Madrid)
+
+- Estado **review**, rama `codex/persist-plan-reference` sobre PR #10; archivos reales
+  enumerados arriba, sin ampliar contrato o modificar código de B.
+- SHA-256 local sobre bytes; nombre/MIME/dimensiones, escala/origen y calibración exacta
+  en Project.plan_reference. Sin URLs, bytes ni preferencias visuales en el JSON.
+- Al abrir/recuperar, imagen ausente explícita y reasociación por identidad. Una copia
+  renombrada válida conserva los metadatos guardados; otra con igual nombre/píxeles y
+  bytes distintos se rechaza. No bloquea la vivienda ni borra su referencia.
+- Reemplazo preparado como borrador: fondo guardado conservado hasta aplicar. Descartar
+  no altera proyecto. Retirar, undo/redo y restablecer calibración integrados en historial.
+- URLs de recurso/borrador con dueño y limpieza; cargas tardías descartadas. Opacidad y
+  visibilidad de sesión. Proyectos anteriores sin referencia siguen abriendo.
+- Metadatos de fondo separados de revisiones físicas: preservan mapas/resultados y la
+  comparación. Undo/redo de geometría/radio sí invalida. Exportar comprueba el snapshot
+  completo para descartar validaciones anteriores aunque solo cambie la referencia.
+- **94 pruebas superadas**: 84 anteriores + 9 de persistencia y 1 de comparabilidad.
+  TypeScript/Vite y diff --check correctos; aviso previo del chunk 3D ~933 kB.
+- Navegador/API: fixture 800×600, A=(100.125,300.25), B=(700.375,300.25), distancia12.005 m,
+  escala0.02m/px y origen(-2.125,3.75). JSON descargado y leído; SHA contrastado con disco.
+  Recargar/restaurar y reabrir JSON conservan puntos/escala; reasociación correcta,
+  rechazo de bytes distintos, borrador descartable y undo/redo verificados.
+- Un mapa mantiene identidad al aplicar/deshacer origen visual; X física7→7.125 lo retira.
+  Consola sin errores/advertencias. Evidencia y límites en [PLAN_REFERENCE.md](../ui/PLAN_REFERENCE.md).
+- Servicios propios detenidos, sin listeners finales en5174/8000. Backend no se repite:
+  contrato intacto y consumidor validado contra API real; CI de la rama verificará conjunto.
+- Publicación: código 83d4b89 en `codex/persist-plan-reference`, PR #12 apilado sobre
+  PR #10; sin merge. Comprobaciones remotas consultables en el PR.
+- **Solicitud al integrador:** aceptar consumidor A-102 y consolidar evidencia; M2 y
+  producto siguen parciales. Siguiente trabajo A: recorrido de accesibilidad o consumidores
+  de #8/#9 cuando sus contratos estén integrados y revisados.
