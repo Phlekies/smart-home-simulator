@@ -5,71 +5,38 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **claimed**, integración I-002 por instrucción explícita del usuario.
-- Cambio de rol secuencial: A asume temporalmente integración/Git y documentos comunes
-  para revisar ramas B, verificar la combinación y actualizar main. Esta instrucción
-  del usuario prevalece sobre el reparto ordinario; después vuelve al ámbito A.
-- Ramas B verificadas remotamente: pila B-101→B-102→B-104→B-103, cabeza a5e6ff8;
-  registro B remoto en review, clon separado y sin tarea nueva activa declarada.
-- Reserva I-002: integración de las entregas A/B, package.json (generación de cobertura),
-  documentos compartidos de estado/checklist/tablero y Git. No descartar cambios locales.
-- Trabajo activo I-002 aislado en `smart-home-simulator/.local/integration-review`, rama
-  `codex/integrate-agents`, porque otra sesión creó `agent-a/a-101-a108-ui` y guardó
-  las entregas A en 1b5b596 mientras se iniciaba la revisión. No cambiar la rama del
-  checkout compartido; todas las operaciones siguientes se hacen en este worktree.
-- Tareas: **A-107**, gestión de interfaces de radio, y **A-108**, gestión de enlaces por
-  radio. Usuario pide seguir completando tareas del rol A; contratos vigentes.
-- Sesión/chat: conversación actual, agente A; sin identificador adicional conocido.
-- Rama/worktree: checkout compartido `codex/migrate-web-python`; A no cambia ramas ni prepara commits.
-- Última actualización: 2026-10-30 (Europe/Madrid).
-- Archivos de esta entrega, liberados para integración: `apps/web/src/App.tsx`, `apps/web/src/styles.css`, nuevos
-  `apps/web/src/ConnectionEditor.tsx`, `apps/web/src/editor/connections.ts`,
-  `apps/web/src/editor/connections.test.ts`, `docs/ui/RADIOS_AND_CONNECTIONS.md`,
-  `apps/web/src/PositionComparison.tsx`, `apps/web/src/editor/comparison.ts`,
-  `apps/web/src/editor/comparison.test.ts`,
-  `docs/ui/radios-connections.jpg` y este registro.
-- Archivos de la entrega anterior:
-  `apps/web/src/PositionComparison.tsx`, `apps/web/src/editor/comparison.ts`,
-  `apps/web/src/editor/comparison.test.ts`, `docs/ui/POSITION_COMPARISON.md`,
-  `docs/ui/position-comparison.jpg`, nuevo `apps/web/src/LinkDiagnostics.tsx`,
-  `docs/ui/LINK_DIAGNOSTICS.md`, `docs/ui/link-diagnostics.jpg` y este registro.
-  B puede revisar e integrar estos archivos junto a la base A previa.
-- Archivos de entregas anteriores: `apps/web/src/App.tsx`, `apps/web/src/Plan.tsx`,
-  `apps/web/src/styles.css`, nuevo `apps/web/src/PlanReference.tsx`,
-  `apps/web/src/editor/reference.ts`, `apps/web/src/editor/reference.test.ts`,
-  nuevo `apps/web/src/WallCreator.tsx`, `apps/web/src/editor/wallCreation.ts`,
-  `apps/web/src/editor/wallCreation.test.ts`, `apps/web/src/WallInspector.tsx`,
-  nuevo `apps/web/src/NumberField.tsx`,
-  `docs/ui/PLAN_REFERENCE.md`, `docs/ui/plan-reference.jpg`, `docs/ui/reference-fixture.png`
-  y `docs/ui/KEYBOARD_WORKFLOW.md`, además de este registro.
-  Las entregas previas siguen locales, también entregables; conjunto acumulado: 34 archivos.
-- Alcance A-105: fijar una base calculada, mover equipos, recalcular y comparar cada
-  sentido. Rechazar deltas si cambian radios, paredes, enlaces, condiciones o motor/versión.
-  Base de sesión; no nuevo formato persistido, endpoint o cálculo físico de interfaz.
-  Es un adelanto independiente de comparación, no aceptación de M4/P3 ni motor avanzado.
-- Alcance A-106: presentar distancia, pérdidas y paredes atravesadas ya devueltas por
-  el motor, con selección de pared y datos de radio. Sin atribuciones físicas nuevas.
-- Alcance nuevo: añadir radios genéricas con desconocidos explícitos, respetar mínimo 1
-  y máximo 8 radios, retirar radio/enlaces asociados como acción reversible, elegir radio
-  de destino y quitar enlaces sin borrar equipos; impedir duplicados y máximo 512 enlaces.
-  No catálogo comercial, protocolos nuevos, compatibilidad inventada ni cambios de API.
-- Siguiente paso: B revisa/integra las entregas con evidencia. Persistencia A-102 y
-  mapas A-104 siguen esperando acuerdos/productor de B, sin inventar sus contratos.
+- Estado: **review**, A-104 implementada y verificada; archivos liberados para revisión.
+- Sesión: conversación actual, agente A; 2026-10-30, Europe/Madrid.
+- Worktree aislado: `smart-home-simulator/.local/integration-review`, rama
+  `codex/coverage-map-ui`, basada en main 046ee827. No cambiar la rama del checkout compartido.
+- Archivos A-104: App.tsx, Plan.tsx, styles.css, CoveragePanel.tsx,
+  editor/coverage.ts, coverage.test.ts, coverageRunner.ts, coverageRunner.test.ts,
+  coverageFixture.ts (solo pruebas), docs/ui/COVERAGE_MAP.md, coverage-map.jpg y este registro.
+- I-002 terminada: [PR #7](https://github.com/Phlekies/smart-home-simulator/pull/7)
+  fusionado en main 046ee827ded4f97aebf58e251234fb5175a37dc1. CI de migración y
+  Java Linux/Windows/macOS superadas tanto antes como después del merge.
+- Rol secuencial autorizado por el usuario: integración/revisión de ramas B y Git, después A.
+  Al cerrar esta entrega se asume brevemente integración documental para consolidar el
+  estado real de I-002 en WORKBOARD y STATUS. No se modifica el registro de B ni su código.
+- Siguiente tarea A: **A-102 persistencia**. B-104 ya está en main; consumir su contrato,
+  no volver a solicitarlo ni crear una estructura alternativa. A-104 aún no completa M4.
+- Todas las entregas anteriores A-101/103/105/106/107/108 y A-102 de sesión están en main
+  por I-002; las frases de «sin push» del historial describen aquellas sesiones.
+- AGENTS.md sigue excluido y local. No publicar archivos de imágenes de usuarios.
 
-## Solicitud a B — persistencia de A-102
+## Siguiente consumidor — persistencia de A-102
 
-- Pregunta: conservar la referencia calibrada al guardar/reabrir una vivienda.
-- El contrato actual carece de imagen/transformación. Propuesta: acordar si la imagen
-  queda como recurso local y la transformación (metros por píxel, origen en m, dimensiones
-  en píxeles y huella del recurso) pasa al proyecto exportable mediante cambio aditivo.
-- No se añade una estructura persistida paralela ni campos manuales. B decide contrato,
-  compatibilidad con proyectos v1, límite de importación de 2 MB y transporte de recursos;
-  A integra los tipos generados cuando estén disponibles.
-- Mientras tanto, A implementa referencia solo de sesión, rotulada como no incluida en
-  JSON/recuperación y eliminada al cambiar de proyecto. Las paredes trazadas sí pertenecen
-  al proyecto actual y conservan su guardado/historial normales.
-- Archivos futuros afectados: modelos/contratos/tipos generados (B); consumidor y pruebas
-  de exportación/recuperación (A). Mantener A-102 parcial hasta acordar y verificar persistencia.
+La solicitud original a B está resuelta por B-104, integrada en I-002. Leer
+[PLAN_REFERENCE_CONTRACT.md](../simulation/PLAN_REFERENCE_CONTRACT.md) antes de implementar.
+
+- Usar `Project.plan_reference` y los tipos generados: origen, escala, dimensiones,
+  SHA-256 y calibración; imagen como recurso local sin incrustarla en JSON.
+- Guardar/restaurar metadatos por las rutas canónicas existentes. Al abrir sin recurso,
+  mostrar imagen no disponible y permitir reasociación solo con huella/dimensiones válidas.
+- Opacidad y visibilidad son de sesión. Proyectos anteriores sin el campo deben seguir
+  abriendo; una versión anterior de la app puede rechazar proyectos que lo incluyan.
+- Completar pruebas y recorrido de guardar/reabrir/recuperar, imagen ausente/distinta,
+  reasociación y conservación de escala exacta antes de aceptar A-102/M2.
 
 ## Plantilla de entrega — completar al trabajar
 
@@ -264,3 +231,30 @@ Siguiente paso:
 - **Solicitud B:** integrar A-107/A-108 junto a entregas anteriores y consolidar tablero/
   estado/evidencia sin atribuir soporte físico nuevo. Mantener A-102/A-104 pendientes de
   sus contratos/productores; la migración y las puertas de producto siguen incompletas.
+
+
+### A-104 — mapa por perfil, altura y sentido, 2026-10-30 (Europe/Madrid)
+
+- Estado **review**. Rama `codex/coverage-map-ui`, worktree aislado basado en main
+  046ee827. Archivos previstos y reales enumerados en la reserva actual.
+- API B-103 consumida con trabajos, progreso/cancelación y descarte de respuestas tardías.
+  Comprueba identidad/huella/parámetros/dimensiones/arrays y conserva desconocidos/cero.
+- Capa 2D raster por celda, recorte exacto del borde, límites de raster para rejillas
+  alargadas; señal/margen en ambos sentidos. AP/perfil/frecuencia/altura/resolución y
+  leyenda fija; gris/rayado/sin calcular diferenciados, sin clasificación favorable.
+- Punto exacto fraccionario conserva coordenadas y devuelve sus cuatro valores de la API.
+  Editar proyecto/parámetros/undo retira el mapa. Cambiar métrica no vuelve a calcular.
+- Navegador: caso original parcial, caso sintético asimétrico, punto exacto y cancelación.
+  Mover X del AP retira la capa inmediatamente. Consola final sin errores/advertencias.
+  Cifras y captura en [COVERAGE_MAP.md](../ui/COVERAGE_MAP.md).
+- Pruebas finales: **84 web/editor**, TypeScript/Vite y diff --check correctos.
+  Aviso previo de chunk 3D ~933 kB conservado. Python no se repite para este consumidor:
+  backend/contratos intactos; I-002 ya verificó 162 pruebas y CI remota.
+- Servicios de prueba propios detenidos; comprobación final sin listeners 5174/8000.
+- Integración documental de cierre I-002: WORKBOARD/STATUS reflejan main publicado y su
+  CI, y A-104 en review. Cambio secuencial de rol por instrucción del usuario; se vuelve a A.
+- Límites: parámetros/resultados del mapa de sesión, sin caché ni exportación persistente,
+  un punto exacto en UI, solo estimador directo. No completa M4 ni validación experimental.
+- **Solicitud al integrador:** revisar/publicar esta entrega separada; mantener el mapa
+  avanzado, incertidumbre y medidas reales pendientes. AGENTS.md permanece excluido.
+- Siguiente tarea A: persistir/reasociar referencia calibrada mediante contrato B-104.

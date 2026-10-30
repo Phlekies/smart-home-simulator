@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent } from 'react';
 import type { Point, Project } from './generated/project';
 import type { SimulationResult } from './generated/simulation-result';
 import { referenceBounds } from './editor/reference';
 import type { PlanReference } from './editor/reference';
+import type { CoverageLayer } from './editor/coverage';
+import { mapExtent, metricNames } from './editor/coverage';
 
 type Bounds = { minX: number; minY: number; maxX: number; maxY: number };
 type Drag = {
@@ -14,17 +16,19 @@ type Drag = {
 const snap = (n: number) => Math.round(n * 10) / 10;
 const clamp = (n: number, min = -10000, max = 10000) => Math.max(min, Math.min(max, n));
 
-export default function Plan({ project, selected, onSelect, onMove, result, tool, selectedWallId, reference,
+export default function Plan({ project, selected, onSelect, onMove, result, tool, selectedWallId, reference, coverageLayer,
   onSelectWall, onAddWall, onMoveWall, onGestureStart, onGestureEnd }: {
   project: Project; selected: string; onSelect: (id: string) => void;
   onMove: (id: string, x: number, y: number) => void; result: SimulationResult | null;
   tool: 'select' | 'wall'; selectedWallId: string | null;
   reference: PlanReference | null;
+  coverageLayer: CoverageLayer | null;
   onSelectWall: (id: string) => void; onAddWall: (start: Point, end: Point) => void;
   onMoveWall: (id: string, dx: number, dy: number) => void;
   onGestureStart: () => void; onGestureEnd: () => void;
 }) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const mapClipId = useId();
   const drag = useRef<Drag | null>(null);
   const [frozenBounds, setFrozenBounds] = useState<Bounds | null>(null);
   const [drawingStart, setDrawingStart] = useState<Point | null>(null);
@@ -36,6 +40,8 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
   const allY = project.devices.map(d => d.position.y).concat(project.building.walls.flatMap(w => [w.start.y, w.end.y]));
   const imageBounds = reference?.visible ? referenceBounds(reference.widthPx, reference.heightPx, reference.placement) : null;
   if (imageBounds) { allX.push(imageBounds.minX, imageBounds.maxX); allY.push(imageBounds.minY, imageBounds.maxY); }
+  const mapGrid = coverageLayer ? mapExtent(coverageLayer.result) : null;
+  if (mapGrid) { allX.push(mapGrid.x, mapGrid.x + mapGrid.width); allY.push(mapGrid.y, mapGrid.y + mapGrid.height); }
   const liveBounds = { minX: Math.min(0, ...allX) - 2, minY: Math.min(0, ...allY) - 2,
     maxX: Math.max(project.building.width_m, ...allX) + 2, maxY: Math.max(project.building.depth_m, ...allY) + 2 };
   const bounds = frozenBounds ?? liveBounds;
@@ -147,10 +153,13 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
       }}>
       <defs><pattern id="grid" width="1" height="1" patternUnits="userSpaceOnUse">
         <path d="M 1 0 L 0 0 0 1" fill="none" stroke="#38534b" strokeWidth=".025" />
-      </pattern></defs>
+      </pattern>{mapGrid && <clipPath id={mapClipId}><rect x={mapGrid.x} y={mapGrid.y} width={mapGrid.width} height={mapGrid.height} /></clipPath>}</defs>
       {reference?.visible && imageBounds && <image href={reference.url} x={imageBounds.minX} y={imageBounds.minY}
         width={imageBounds.maxX - imageBounds.minX} height={imageBounds.maxY - imageBounds.minY}
         opacity={reference.opacity} pointerEvents="none" />}
+      {coverageLayer && mapGrid && <image href={coverageLayer.imageUrl} x={mapGrid.x} y={mapGrid.y}
+        width={mapGrid.textureWidth} height={mapGrid.textureHeight}
+        preserveAspectRatio="none" clipPath={`url(#${mapClipId})`} opacity=".8" style={{ imageRendering: 'pixelated' }} pointerEvents="none" />}
       <rect x={bounds.minX} y={bounds.minY} width={bounds.maxX - bounds.minX} height={bounds.maxY - bounds.minY} fill="url(#grid)" />
       {imageBounds && <g pointerEvents="none" aria-hidden="true">
         <line x1={imageBounds.minX} y1={imageBounds.minY - .4} x2={imageBounds.maxX} y2={imageBounds.minY - .4} stroke="#dfcfa0" strokeWidth=".04" />
@@ -194,6 +203,9 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
           textAnchor="middle" fill="#f3cf88" fontSize=".55" paintOrder="stroke" stroke="#142221" strokeWidth=".15">{previewLength.toFixed(2)} m</text>
       </g>}
     </svg>
+    {coverageLayer && <p className="map-caption"><strong>{metricNames[coverageLayer.metric]}</strong> · AP {project.devices.find(device => device.id === coverageLayer.result.parameters.access_point_device_id)?.name}
+      {' · '}Perfil {coverageLayer.result.parameters.profile.name} · {coverageLayer.result.frequency_hz / 1e6} MHz · altura {coverageLayer.result.parameters.grid.height_m} m · celda {coverageLayer.result.parameters.grid.resolution_m} m
+      <br />Sin calibración experimental · rayado: datos parciales · gris: sin valor / sin calcular</p>}
     {tool === 'wall' && <p className="drawing-hint" role="status">{drawingMessage || 'Haz clic en el inicio y el final de la pared. Ajuste: 0,1 m. Escape cancela.'}</p>}
   </>;
 }
