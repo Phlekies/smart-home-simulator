@@ -6,6 +6,8 @@ import { mapColor, metricNames, rasterCellSize } from './editor/coverage';
 import type { CoverageLayer, CoverageRequest, MapMetric } from './editor/coverage';
 import { CoverageRunner } from './editor/coverageRunner';
 import type { MapState } from './editor/coverageRunner';
+import GenericProfilePicker from './GenericProfilePicker';
+import type { ReceiverProfile } from './generated/coverage-map';
 
 async function mapApi(path: string, method: string, body?: unknown): Promise<CoverageMapJob> {
   const response = await fetch(`/api/coverage-maps${path}`, { method,
@@ -17,13 +19,15 @@ async function mapApi(path: string, method: string, body?: unknown): Promise<Cov
 const key = (device: string, radio: string) => JSON.stringify([device, radio]);
 const value = (n: number | null, unit: string) => n === null ? 'Sin datos' : `${n.toFixed(1)} ${unit}`;
 
-export default function CoveragePanel({ project, onLayer, onValidate, disabled }: {
-  project: Project; onLayer: (layer: CoverageLayer | null) => void; onValidate: () => boolean; disabled: boolean;
+export default function CoveragePanel({ project, projectRevision, onLayer, onValidate, disabled }: {
+  project: Project; projectRevision: number; onLayer: (layer: CoverageLayer | null) => void; onValidate: () => boolean; disabled: boolean;
 }) {
   const firstAP = project.devices.find(device => ['access-point', 'controller'].includes(device.role)) ?? project.devices[0];
   const firstProfile = project.devices.find(device => device.id !== firstAP?.id) ?? firstAP;
   const [apKey, setAP] = useState(firstAP ? key(firstAP.id, firstAP.radios[0].id) : '');
   const [profileKey, setProfile] = useState(firstProfile ? key(firstProfile.id, firstProfile.radios[0].id) : '');
+  const [profileMode, setProfileMode] = useState<'device' | 'generic'>('device');
+  const [genericProfile, setGenericProfile] = useState<ReceiverProfile | null>(null);
   const [fields, setFields] = useState({ x: '0', y: '0', width: String(project.building.width_m), depth: String(project.building.depth_m),
     resolution: '0.5', height: String(firstProfile?.position.z ?? 1.4), px: String(firstProfile?.position.x ?? 0),
     py: String(firstProfile?.position.y ?? 0), pz: String(firstProfile?.position.z ?? 1.4) });
@@ -31,20 +35,20 @@ export default function CoveragePanel({ project, onLayer, onValidate, disabled }
   const [metric, setMetric] = useState<MapMetric>('forward_dbm');
   const [error, setError] = useState('');
   const [job, setJob] = useState<MapState>({ state: 'idle', progress: 0, result: null, error: null });
-  const calculatedProject = useRef<Project | null>(null);
+  const calculatedRevision = useRef<number | null>(null);
   const [runner] = useState(() => new CoverageRunner({ create: request => mapApi('', 'POST', request),
     read: id => mapApi(`/${id}`, 'GET'), cancel: id => mapApi(`/${id}`, 'DELETE') }, setJob));
   const options = project.devices.flatMap(device => device.radios.map(radio => ({ device, radio, key: key(device.id, radio.id) })));
   const ap = options.find(option => option.key === apKey), profile = options.find(option => option.key === profileKey);
   const active = ['submitting', 'queued', 'running'].includes(job.state);
 
-  useEffect(() => { runner.invalidate(); calculatedProject.current = null; onLayer(null);
-    return () => runner.invalidate(true); }, [project, runner, onLayer]);
-  function edit(action: () => void) { runner.invalidate(); calculatedProject.current = null; onLayer(null); setError(''); action(); }
+  useEffect(() => { runner.invalidate(); calculatedRevision.current = null; onLayer(null);
+    return () => runner.invalidate(true); }, [projectRevision, runner, onLayer]);
+  function edit(action: () => void) { runner.invalidate(); calculatedRevision.current = null; onLayer(null); setError(''); action(); }
 
   useEffect(() => {
     const result = job.result;
-    if (!result || calculatedProject.current !== project) { onLayer(null); return; }
+    if (!result || calculatedRevision.current !== projectRevision) { onLayer(null); return; }
     const size = rasterCellSize(result.columns, result.rows), canvas = document.createElement('canvas');
     canvas.width = result.columns * size; canvas.height = result.rows * size;
     const ctx = canvas.getContext('2d'); if (!ctx) { setError('El navegador no pudo dibujar el mapa.'); onLayer(null); return; }
@@ -60,12 +64,14 @@ export default function CoveragePanel({ project, onLayer, onValidate, disabled }
     const imageUrl = canvas.toDataURL('image/png');
     if (imageUrl === 'data:,') { setError('El navegador no pudo dibujar estas dimensiones. Reduce el área o aumenta la resolución.'); onLayer(null); return; }
     onLayer({ result, metric, imageUrl });
-  }, [job.result, metric, project, onLayer]);
+  }, [job.result, metric, projectRevision, onLayer]);
 
   function calculate(event: FormEvent) {
     event.preventDefault(); if (disabled || !onValidate()) return;
     try {
-      if (!ap || !profile) throw new Error('Elige un equipo emisor y un perfil con radio. Añade equipos al proyecto si es necesario.');
+      const receiver = profileMode === 'generic' ? genericProfile : profile ? { id: profile.device.id, name: profile.device.name,
+        radio: profile.radio, evidence: profile.device.evidence } : null;
+      if (!ap || !receiver) throw new Error('Elige un emisor y un perfil válido con radio. Revisa los datos pendientes.');
       if (Object.entries(fields).some(([name, raw]) => (exact || !['px', 'py', 'pz'].includes(name)) && (raw.trim() === '' || !Number.isFinite(Number(raw))))) throw new Error('Completa los campos con números finitos.');
       const numbers = Object.fromEntries(Object.entries(fields).map(([name, raw]) => [name, Number(raw)])) as Record<keyof typeof fields, number>;
       const { x, y, width, depth, resolution, height, px, py, pz } = numbers;
@@ -75,11 +81,10 @@ export default function CoveragePanel({ project, onLayer, onValidate, disabled }
       if (cells > 40000 || (cells + (exact ? 1 : 0)) * Math.max(1, project.building.walls.length) > 2000000) throw new Error('El mapa supera el límite de cálculo. Aumenta la resolución o reduce el área.');
       if (exact && (Math.abs(px) > 10000 || Math.abs(py) > 10000 || Math.abs(pz) > 1000)) throw new Error('El punto exacto está fuera de las coordenadas admitidas.');
       const request: CoverageRequest = { project, engine: 'quick-estimate', access_point_device_id: ap.device.id,
-        access_point_radio_id: ap.radio.id, profile: { id: profile.device.id, name: profile.device.name,
-          radio: profile.radio, evidence: profile.device.evidence },
+        access_point_radio_id: ap.radio.id, profile: receiver,
         grid: { origin_x_m: x, origin_y_m: y, width_m: width, depth_m: depth, resolution_m: resolution, height_m: height },
         points: exact ? [{ x: px, y: py, z: pz }] : [] };
-      setError(''); calculatedProject.current = project; void runner.start(request);
+      setError(''); calculatedRevision.current = projectRevision; void runner.start(request);
     } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
   }
   function number(name: keyof typeof fields, label: string, min: number, max: number) {
@@ -92,17 +97,20 @@ export default function CoveragePanel({ project, onLayer, onValidate, disabled }
         {option.device.name} · {option.radio.id} · {option.radio.frequency_hz / 1e6} MHz</option>)}
     </select></label>;
   }
-  const result = job.result && calculatedProject.current === project ? job.result : null;
+  const result = job.result && calculatedRevision.current === projectRevision ? job.result : null;
   const point = result?.points[0];
   return <section className="results-panel panel coverage-panel" aria-labelledby="coverage-title" aria-busy={disabled || active}>
     <span className="eyebrow">SEÑAL EN EL PLANO · TRAYECTO DIRECTO</span><h2 id="coverage-title">Mapa para un equipo y una altura.</h2>
     <p className="helper">Elige qué equipo representa el AP y qué radio representa el cliente. Sus parámetros actuales se usan sin completar datos desconocidos. Un único AP por mapa.</p>
     <form onSubmit={calculate} noValidate><fieldset className="inspector-fields" disabled={disabled}><legend className="sr-only">Parámetros del mapa</legend>
-      <div className="coverage-fields">{choose(apKey, setAP, 'Emisor / AP del mapa')}{choose(profileKey, setProfile, 'Equipo y radio del perfil receptor')}
+      <label className="field"><span>Origen del perfil receptor</span><select aria-label="Origen del perfil receptor" value={profileMode} onChange={event => edit(() => setProfileMode(event.target.value as typeof profileMode))}>
+        <option value="device">Radio de un equipo del proyecto</option><option value="generic">Perfil Wi-Fi genérico con procedencia</option></select></label>
+      <div className="coverage-fields">{choose(apKey, setAP, 'Emisor / AP del mapa')}{profileMode === 'device' && choose(profileKey, setProfile, 'Equipo y radio del perfil receptor')}
         {number('height', 'Altura del mapa · m', -1000, 1000)}{number('resolution', 'Resolución del mapa · m', .1, 5)}
         {number('x', 'Origen X del mapa · m', -10000, 10000)}{number('y', 'Origen Y del mapa · m', -10000, 10000)}
         {number('width', 'Ancho del mapa · m', .000001, 2000)}{number('depth', 'Fondo del mapa · m', .000001, 2000)}
       </div>
+      {profileMode === 'generic' && <GenericProfilePicker apRadio={ap?.radio} onChange={next => edit(() => setGenericProfile(next))} />}
       <label className="reference-toggle"><input type="checkbox" checked={exact} onChange={event => edit(() => setExact(event.target.checked))} /> Evaluar también un punto exacto</label>
       {exact && <div className="coverage-fields">{number('px', 'Punto exacto X · m', -10000, 10000)}{number('py', 'Punto exacto Y · m', -10000, 10000)}{number('pz', 'Altura del punto exacto · m', -1000, 1000)}</div>}
       <div className="coverage-actions"><button className="primary" disabled={active || !options.length} type="submit">Calcular mapa</button>

@@ -10,15 +10,19 @@ import PositionComparison from './PositionComparison';
 import LinkDiagnostics from './LinkDiagnostics';
 import ConnectionEditor from './ConnectionEditor';
 import CoveragePanel from './CoveragePanel';
+import PlacementSearch from './PlacementSearch';
+import ScenarioPanel from './ScenarioPanel';
 import type { CoverageLayer } from './editor/coverage';
 import { linksUsingRadio, MAX_RADIOS, withAddedConnection, withAddedRadio, withRemovedConnection, withRemovedRadio } from './editor/connections';
 import { captureComparison, samePositionConfiguration } from './editor/comparison';
 import type { ComparisonBase } from './editor/comparison';
-import type { PlanReference as Reference } from './editor/reference';
+import { bindReference, defaultReferenceView, sameSimulationProject } from './editor/referencePersistence';
+import type { LocalReferenceImage } from './editor/referencePersistence';
 import { adoptHistory, editHistory, emptyHistory, finishGesture, redoHistory, startGesture, undoHistory } from './editor/history';
 import { translateWall } from './editor/geometry';
+import { doorNames, validatedMaterialPatch } from './editor/uncertainty';
 import { useProjectRecovery } from './useProjectRecovery';
-import type { Device, Point, Project, Radio } from './generated/project';
+import type { Device, PlanReference as SavedReference, Point, Project, Radio } from './generated/project';
 import type { SimulationResult } from './generated/simulation-result';
 
 const Scene3D = lazy(() => import('./Scene3D'));
@@ -49,7 +53,10 @@ export default function App() {
   historyRef.current = history;
   const project = history.present;
   const recovery = useProjectRecovery(project);
-  const [reference, setReference] = useState<Reference | null>(null);
+  const [referenceImage, setReferenceImage] = useState<LocalReferenceImage | null>(null);
+  const [referenceView, setReferenceView] = useState(defaultReferenceView);
+  const reference = bindReference(project?.plan_reference, referenceImage, referenceView);
+  useEffect(() => () => { if (referenceImage) URL.revokeObjectURL(referenceImage.url); }, [referenceImage]);
   const [projectEpoch, setProjectEpoch] = useState(0);
   const gestureChanged = history.gestureBase !== null && JSON.stringify(history.present) !== JSON.stringify(history.gestureBase);
   const canUndo = history.past.length > 0 || gestureChanged;
@@ -89,7 +96,7 @@ export default function App() {
   function adopt(next: Project) {
     setCoverageLayer(null);
     setComparisonBase(null);
-    setReference(null); setProjectEpoch(value => value + 1);
+    setReferenceImage(null); setReferenceView(defaultReferenceView()); setProjectEpoch(value => value + 1);
     revision.current += 1;
     setHistory(previous => adoptHistory(previous, next));
     setSelected(next.devices[0]?.id ?? ''); setSelectedWallId(null); setTool('select'); setRadioId(''); setResult(null); setError(''); setExampleId('');
@@ -133,6 +140,12 @@ export default function App() {
     setError('');
     setHistory(previous => editHistory(previous, edit));
   }
+  function saveReference(saved: SavedReference | null) {
+    if (loading) return;
+    setHistory(previous => editHistory(previous, draft => { draft.plan_reference = saved ? structuredClone(saved) : null; }));
+    setTool('select'); setView('2d'); setError('');
+    setNotice(saved ? 'Referencia calibrada incluida en el proyecto. La geometría de cálculo se conserva.' : 'Referencia retirada. Puedes deshacerlo; la geometría se conserva.');
+  }
   function selectDevice(id: string) { setSelected(id); setSelectedWallId(null); }
   function selectWall(id: string) { setSelected(''); setSelectedWallId(id); }
   function beginGesture() { setHistory(startGesture); }
@@ -141,10 +154,12 @@ export default function App() {
     const current = historyRef.current;
     const changed = current.gestureBase !== null && JSON.stringify(current.present) !== JSON.stringify(current.gestureBase);
     if (direction === 'undo' ? !current.past.length && !changed : !current.future.length || changed) return;
-    revision.current += 1; setResult(null); setTool('select');
-    setCoverageLayer(null);
-    setHistory(previous => direction === 'undo' ? undoHistory(previous) : redoHistory(previous));
-    setNotice(direction === 'undo' ? 'Cambio deshecho. Ejecuta una nueva estimación.' : 'Cambio rehecho. Ejecuta una nueva estimación.');
+    const next = direction === 'undo' ? undoHistory(current) : redoHistory(current);
+    const physicalChange = !sameSimulationProject(current.present, next.present);
+    if (physicalChange) { revision.current += 1; setResult(null); setCoverageLayer(null); }
+    setTool('select'); setHistory(next);
+    setNotice(physicalChange ? direction === 'undo' ? 'Cambio deshecho. Ejecuta una nueva estimación.' : 'Cambio rehecho. Ejecuta una nueva estimación.'
+      : 'Cambio de referencia deshecho o rehecho. Se conservan los resultados de radio; reasocia la imagen si falta.');
   }
   useEffect(() => {
     function keyboard(event: KeyboardEvent) {
@@ -237,10 +252,10 @@ export default function App() {
   }
   async function saveProject() {
     if (!project || !checkEditorFields()) return;
-    const current = revision.current;
+    const current = project;
     try {
       const validated = await api<Project>('/projects/import', project);
-      if (current !== revision.current) { setNotice('El proyecto cambió durante la validación. Guarda de nuevo.'); return; }
+      if (current !== historyRef.current.present) { setNotice('El proyecto cambió durante la validación. Guarda de nuevo.'); return; }
       download(validated, 'entorno.shsim.json'); setNotice('Proyecto validado y guardado como JSON.');
     } catch (e) { setError(`Revisa los datos antes de guardar. ${String(e)}`); }
   }
@@ -347,7 +362,7 @@ export default function App() {
           <button className="add-button" disabled={!project || loading || project.devices.length >= 128} onClick={addDevice}>＋ Añadir dispositivo</button>
           <details className="wall-list"><summary>Paredes · {project?.building.walls.length ?? 0}</summary>
             {project?.building.walls.map((w, index) => <button key={w.id} className={selectedWallId === w.id ? 'selected' : ''} onClick={() => selectWall(w.id)}>
-              Pared {index + 1} · {project.building.materials.find(m => m.id === w.material_id)?.name}
+              Pared {index + 1} · {w.door ? `${doorNames[w.door]} · ` : ''}{project.building.materials.find(m => m.id === w.material_id)?.name}
             </button>)}
           </details>
           <div className="engine-card"><span className="eyebrow">CÁLCULO DISPONIBLE</span><strong>Estimación de enlaces</strong>
@@ -372,7 +387,8 @@ export default function App() {
             <button disabled={!canUndo} onClick={() => travelHistory('undo')} title="Ctrl/Cmd+Z">↶ Deshacer</button>
             <button disabled={!canRedo} onClick={() => travelHistory('redo')} title="Ctrl/Cmd+Shift+Z">↷ Rehacer</button>
           </div>
-          {project && <PlanReference key={`reference-${projectEpoch}`} value={reference} onChange={next => { setReference(next); setTool('select'); if (next) setView('2d'); }} />}
+          {project && <PlanReference key={`reference-${projectEpoch}`} saved={project.plan_reference ?? null} image={referenceImage}
+            view={referenceView} disabled={loading} onImage={setReferenceImage} onSave={saveReference} onView={setReferenceView} />}
           {project && <WallCreator key={`wall-creator-${projectEpoch}`} disabled={loading || project.building.walls.length >= 2000} onCreate={addWall} />}
           <p className="editor-hint" role="status">{tool === 'wall' ? 'Haz clic en el inicio y el final de la pared. Escape cancela. Ajuste a 0.1 m.' : 'Selecciona o arrastra paredes y equipos. Flechas mueven en el plano; Shift amplía el paso.'}</p>
           <div className="scene-content">{project ? view === '2d'
@@ -391,13 +407,18 @@ export default function App() {
             : <div className="scene-error"><h2>{loading ? 'Abriendo el espacio…' : 'Elige tu punto de partida'}</h2><p>Abre un ejemplo, importa un proyecto Java o crea una instalación nueva.</p>
               <button onClick={() => { loadSequence.current += 1; setLoading(false); adopt(newProject()); }}>Crear proyecto local</button></div>}</div>
           <div className="scene-footer"><span>◉ Dispositivo <span className="hub-dot">◆</span> Controlador / AP</span>
-            <span>{view === '2d' ? 'Cuadrícula · 1 m · Una planta, sin forjados' : 'Arrastra para orbitar · Rueda para acercar'}</span></div>
+            <span>{view === '2d' ? 'Cuadrícula · 1 m · Una planta, sin forjados' : 'Arrastra para orbitar · Rueda para acercar'}</span>
+            {project?.building.walls.some(wall => wall.door) && <span>Puerta abierta: discontinua en 2D / transparente en 3D · desconocida: violeta</span>}</div>
         </section>
 
         <aside key={`${selectedWallId ?? selected}-${radio?.id ?? ''}`} className="properties-panel panel">{wall && project ? <WallInspector key={wall.id} project={project} wall={wall}
           onGestureStart={beginGesture} onGestureEnd={endGesture}
           onEdit={next => change(p => { const index = p.building.walls.findIndex(w => w.id === next.id); if (index >= 0) p.building.walls[index] = next; })}
-          onMaterialEdit={(id, patch) => change(p => { const material = p.building.materials.find(m => m.id === id); if (material) Object.assign(material, patch, { evidence: 'Valor editado por el usuario; sin calibración experimental' }); })}
+          onMaterialEdit={(id, patch) => {
+            const current = project.building.materials.find(material => material.id === id); if (!current) return;
+            const validated = validatedMaterialPatch(current, patch);
+            change(p => { const material = p.building.materials.find(m => m.id === id); if (material) Object.assign(material, validated, { evidence: 'Valor editado por el usuario; sin calibración experimental' }); });
+          }}
           onDelete={() => { change(p => { p.building.walls = p.building.walls.filter(w => w.id !== wall.id); }); setSelectedWallId(null); setNotice('Pared eliminada. Puedes deshacer el cambio.'); focusProject(); }} />
           : <><span className="eyebrow">PROPIEDADES</span><h2>{device ? 'Ajusta el dispositivo' : 'Selecciona un objeto'}</h2>
           {device && radio ? <>
@@ -436,7 +457,14 @@ export default function App() {
         </aside>
       </section>
 
-      {project && <CoveragePanel key={`coverage-${projectEpoch}`} project={project} onLayer={setCoverageLayer} onValidate={checkEditorFields} disabled={loading} />}
+      {project && <CoveragePanel key={`coverage-${projectEpoch}`} project={project} projectRevision={revision.current} onLayer={setCoverageLayer} onValidate={checkEditorFields} disabled={loading} />}
+      {project && <PlacementSearch key={`placement-${projectEpoch}`} project={project} revision={revision.current} disabled={loading} onValidate={checkEditorFields}
+        onApply={(deviceId, position) => {
+          change(draft => { const ap = draft.devices.find(device => device.id === deviceId); if (ap) ap.position = { ...position }; });
+          selectDevice(deviceId); setView('2d'); setNotice('Posición del AP aplicada. Puedes deshacerla. Ejecuta una nueva estimación para evaluar la instalación actual.');
+        }} />}
+      {project && <ScenarioPanel key={`scenarios-${projectEpoch}`} project={project} revision={revision.current} disabled={loading} onValidate={checkEditorFields}
+        onInspect={id => { selectWall(id); window.requestAnimationFrame(() => document.querySelector<HTMLInputElement>('.properties-panel input')?.focus()); }} />}
       <section className="results-panel panel">
         <div className="results-heading"><div><span className="eyebrow">DIAGNÓSTICO DE LA INSTALACIÓN</span><h2>Comprueba cada dirección.</h2></div>
           {result && <button onClick={() => download({ project, result }, 'diagnostico.json')}>Exportar diagnóstico</button>}</div>
