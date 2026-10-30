@@ -5,7 +5,7 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review**, cinco consumidores A-109 a A-113 implementados y verificados; archivos liberados.
+- Estado: **review**, A-109 a A-113 implementadas, verificadas y publicadas en [PR #14](https://github.com/Phlekies/smart-home-simulator/pull/14); archivos liberados.
 - Sesión: conversación actual, agente A; 2026-10-30, Europe/Madrid.
 - Worktree aislado `smart-home-simulator/.local/five-ui-tasks`, rama
   `codex/next-five-ui-tasks`, sobre main 6fb42e2 + persistencia de PR #12 (3b7432e).
@@ -29,7 +29,7 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 - B mantiene backend/contratos y documentos comunes; PR #11 documental sigue abierto.
   A no lo fusiona ni modifica sus archivos. Pedir consolidación de estas cinco tareas al entregar.
-- Criterios comprobados: 120 web/editor, 199 Python, build/contratos y navegador/API en5175/8001.
+- Criterios comprobados: 120 web/editor, 199 Python, build/contratos y navegador/API en 5175/8001.
   Sin semáforo de cobertura, probabilidades, rendimiento ni recomendación de compra inventados.
 - La migración y la precisión física siguen parciales después de estos consumidores.
 
@@ -293,7 +293,7 @@ Siguiente paso:
 ### A-109 a A-113 — cinco consumidores, 2026-10-30 (Europe/Madrid)
 
 - Estado **review**, rama codex/next-five-ui-tasks. Usuario pidió explícitamente cinco
-  tareas; consumen B-105/B-106/B-108 integrados en main6fb42e2 y conservan A-102 de PR#12.
+  tareas; consumen B-105/B-106/B-108 integrados en main 6fb42e2 y conservan A-102 de PR #12.
 - A-109: GenericProfilePicker, editor/radioProfiles.ts y pruebas; CoveragePanel acepta
   perfil genérico con fuentes/notas y TX opcional declarada/medida. Canal/banda/ancho
   explícitos, desconocidos preservados y perfiles preliminares identificados.
@@ -312,13 +312,13 @@ Siguiente paso:
   App integra controles y usa su revisión física; cambios de fondo no invalidan radio.
 - Script contracts consume los tres esquemas existentes; generados sin cambios de contenido.
   No backend, contratos canónicos, Java ni documentos comunes modificados.
-- **120 pruebas web/editor** (94 previas+26 nuevas), **199 Python**, build y contratos
+- **120 pruebas web/editor** (94 previas + 26 nuevas), **199 Python**, build y contratos
   correctos. Se corrigió un fixture de zona que excedía el límite de posiciones y el
   tipado literal del fixture de escenarios durante la verificación; no cambios físicos.
-- Navegador/API: perfiles parciales→completos con TX0, rechazo fuera de banda/rango;
-  búsqueda11 posiciones/1 excluida, margen4.94→9.46 y delta+4.52dB, aplicar/undo;
+- Navegador/API: perfiles parciales→completos con TX 0, rechazo fuera de banda/rango;
+  búsqueda 11 posiciones / 1 excluida, margen 4.94→9.46 y delta +4.52 dB, aplicar/undo;
   sin TX, sin orden. Puerta/rangos/fuente/error nominal y JSON/recuperación verificados.
-  Escenarios con margen de retorno10.94→−19.06 según hipótesis, sin garantía de conexión.
+  Escenarios con margen de retorno 10.94→−19.06 según hipótesis, sin garantía de conexión.
   3D abierto/transparente probado. Sin errores; deprecación previa THREE.Clock al abrir3D.
 - Evidencia y fixture sintético: [FIVE_UI_TASKS.md](../ui/FIVE_UI_TASKS.md).
 - **Solicitud B:** revisar condición de delta (mismo conjunto completo, no solo cantidad)
@@ -327,3 +327,10 @@ Siguiente paso:
 - Integrador: revisar esta rama, aceptar criterios por tarea y consolidar documentos
   comunes. Mantener motor avanzado en API, catálogo validado, incertidumbre estadística,
   informes y campaña/validación de viviendas como pendientes.
+
+- Publicación: código 95d4a5c en codex/next-five-ui-tasks; PR #14 contra main, incluye
+  la persistencia ya revisada de PR #12. Sin merge de esta entrega. CI remota en el PR.
+- Vista de usuario: la prueba anterior 5174/8000 sigue intacta. Nueva versión 5175/8001
+  queda activa por la petición de probar el proyecto y estas cinco mejoras; propietarios,
+  PID, rutas y logs en .local/preview-runtime.json y qa-runtime.json de este worktree.
+  No detenerla como servidor huérfano; son servicios identificados para pruebas del usuario.

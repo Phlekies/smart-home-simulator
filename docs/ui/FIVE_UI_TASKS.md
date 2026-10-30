@@ -19,43 +19,43 @@ Abrir [la vivienda sintética](five-tasks-demo.shsim.json). Sus equipos, materia
 potencias son valores de QA, sin datos comerciales ni mediciones.
 
 1. En el mapa, elegir origen genérico y HT20 MCS0. La TX del cliente queda desconocida:
-   mapa de 12×8 m, resolución0.5 m, altura1.4 m →384 celdas parciales, vuelta sin calcular.
-   Declarar TX0 dBm y una fuente sintética produce384 completas. El equipo del proyecto
-   no se modifica. AP a5 GHz o TX200 dBm se rechazan con error, sin fallback.
+   mapa de 12×8 m, resolución 0.5 m, altura 1.4 m → 384 celdas parciales, vuelta sin calcular.
+   Declarar TX 0 dBm y una fuente sintética produce 384 completas. El equipo del proyecto
+   no se modifica. AP a 5 GHz o TX 200 dBm se rechazan con error, sin fallback.
 2. En búsqueda, AP de prueba/r, prioridad Cliente de prueba. Añadir (5.125,4,1.4),
-   otro lugar (6,4,1.4) y zona X2–4/Y3–5/paso1/altura1.4:11 posiciones declaradas,
-   10 evaluadas y1 excluida por pared. Confirmar viabilidad de alimentación/cableado/montaje.
-   Margen limitante actual4.94 dB, alternativa9.46 dB, cambio+4.52 dB; retorno limitante.
-   Aplicar mueve solo el AP a X5.125; deshacer vuelve a X2 y exige recalcular.
+   otro lugar (6,4,1.4) y zona X 2–4 / Y 3–5 / paso 1/altura 1.4: 11 posiciones declaradas,
+   10 evaluadas y 1 excluida por pared. Confirmar viabilidad de alimentación/cableado/montaje.
+   Margen limitante actual 4.94 dB, alternativa 9.46 dB, cambio +4.52 dB; retorno limitante.
+   Aplicar mueve solo el AP a X 5.125; deshacer vuelve a X 2 y exige recalcular.
 3. Vaciar TX del AP y buscar: sin orden, sin margen completo ni delta ficticio; se
    conservan los valores disponibles del retorno. Corregir TX retira la búsqueda anterior.
-4. Seleccionar pared1: puerta desconocida, material de prueba nominal6/8 dB, rangos
-   1–30/1–40 dB y fuente sintética. Una fuente vacía o nominal35 fuera del rango se rechaza.
-5. Comparar escenarios: ida−79.06 a−49.06 dBm, vuelta−104.06 a−74.06 dBm. Márgenes:
-   nominal29.94/4.94, mejor35.94/10.94, peor5.94/−19.06 dB. Se señala cambio de signo,
+4. Seleccionar pared1: puerta desconocida, material de prueba nominal 6/8 dB, rangos
+   1–30/1–40 dB y fuente sintética. Una fuente vacía o nominal 35 fuera del rango se rechaza.
+5. Comparar escenarios: ida −79.06 a−49.06 dBm, vuelta −104.06 a−74.06 dBm. Márgenes:
+   nominal 29.94/4.94, mejor 35.94/10.94, peor 5.94/−19.06 dB. Se señala cambio de signo,
    sin clasificar fiabilidad. Inspeccionar la hipótesis enfoca Centro X y conserva el cálculo.
-6. Marcar puerta abierta: invalida; al recalcular, los tres casos dan−49.06/−74.06 dBm.
+6. Marcar puerta abierta: invalida; al recalcular, los tres casos dan −49.06/−74.06 dBm.
    Deshacer restaura desconocida y retira escenarios. El 3D muestra la puerta abierta
    transparente; el 2D la dibuja discontinua y distingue desconocidas en violeta.
 7. Guardar JSON y recargar/restaurar conserva puerta y rango/fuente. Los resultados y
    opciones de análisis se recalculan. Descarga real verificada: `entorno.shsim (6).json`.
 
 La etiqueta «completas» solo indica disponibilidad de magnitudes; no acredita estabilidad
-ni una reserva de diseño suficiente. Declarar límites de5 GHz no valida esa banda.
+ni una reserva de diseño suficiente. Declarar límites de 5 GHz no valida esa banda.
 
 ## Verificación y evidencia
 
-- **120 pruebas web/editor**:94 anteriores y26 nuevas de perfiles, límites/referencias
+- **120 pruebas web/editor**: 94 anteriores y 26 nuevas de perfiles, límites/referencias
   de ubicaciones, rangos/puertas/historial, coherencia de escenarios y carreras HTTP.
 - **199 pruebas Python**, sin cambios de backend. Aviso conocido httpx/Starlette.
-- TypeScript/Vite correcto; aviso previo del chunk3D≈933 kB. Navegador sin errores;
-  al abrir3D aparece la deprecación ya conocida de THREE.Clock.
+- TypeScript/Vite correcto; aviso previo del chunk 3D ≈933 kB. Navegador sin errores;
+  al abrir 3D aparece la deprecación ya conocida de THREE.Clock.
 - Contratos canónicos sin deriva; script `contracts` ahora incluye placement-search.ts,
   radio-profile.ts y scenario-result.ts. Regenerar no cambia su contenido.
 - Rechazo de respuestas tardías o de otras entradas, abortar transporte, vaciar resultados
   tras errores y desmontaje silencioso comprobados mediante pruebas inyectables.
-- Navegador/API separados en5175/8001 durante QA. La prueba previa5174 se conserva hasta
-  terminar la entrega; el estado del servidor de usuario se registra localmente.
+- Navegador/API separados en 5175/8001 durante QA. La prueba previa 5174 se conserva. La nueva vista 5175 queda disponible para el usuario,
+  con procesos y propietario registrados en .local/preview-runtime.json.
 
 [Perfiles y procedencia](radio-profiles.jpg) · [Búsqueda](placement-search.jpg) ·
 [Puertas/materiales](door-material-editor.jpg) · [Escenarios](scenario-comparison.jpg).
