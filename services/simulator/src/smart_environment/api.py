@@ -14,9 +14,10 @@ from .engines import engine_capabilities, simulate
 from .legacy import import_project
 from .placement import PlacementLimitError, search
 from .profiles import CATALOG
+from .scenarios import evaluate as evaluate_scenarios
 from .models import (
     CoverageMapJob, CoverageMapRequest, GenericProfile, PlacementSearchRequest, PlacementSearchResult, Project,
-    SimulationRequest, SimulationResult,
+    ScenarioRequest, ScenarioResult, SimulationRequest, SimulationResult,
 )
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -135,3 +136,11 @@ def placement_search(request: PlacementSearchRequest) -> PlacementSearchResult:
 def profiles() -> list[GenericProfile]:
     """Generic radio profiles with per-value provenance; approximations, not products."""
     return CATALOG
+
+
+@app.post("/api/scenario-simulations", response_model=ScenarioResult)
+def scenario_simulation(request: ScenarioRequest) -> ScenarioResult:
+    """Nominal, best and worst cases of unresolved doors/materials, plus named scenarios."""
+    if request.engine != "quick-estimate":
+        raise HTTPException(501, f"{request.engine}: scenario adapter not implemented or verified; no fallback executed")
+    return evaluate_scenarios(request)

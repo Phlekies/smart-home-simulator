@@ -5,9 +5,11 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — B-105 y B-106 publicadas en [PR #8](https://github.com/Phlekies/smart-home-simulator/pull/8)
-  (borrador, base `codex/integrate-agents` del PR #7 de A); sin tarea nueva reservada.
-- Integración: **I-002 la ejecuta A** por instrucción del usuario (registro A, 2026-10-30 09:54):
+- Estado: **review** — B-108 (escenarios de puertas y materiales) entregada en la rama local
+  `agent-b/b-108-scenarios`, apilada sobre B-105/B-106 ([PR #8](https://github.com/Phlekies/smart-home-simulator/pull/8)).
+  Sin tarea nueva reservada.
+- Integración: **I-002 la ejecutó A** por instrucción del usuario; PR #7 fusionado en `main`
+  (046ee82). Registro A en `main` aún con I-002 reservada:
   A asume temporalmente Git, documentos comunes y `package.json`. B no integra ni edita
   WORKBOARD/STATUS/CHECKLIST/LOCAL_DEVELOPMENT mientras dure, y solo entrega ramas propias.
 - Pila B publicada (borradores, sin merge): [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) B-101 →
@@ -37,6 +39,29 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### B-108 — escenarios de puertas y materiales inciertos (review)
+
+```text
+Tarea / estado: B-108 / review. Rama local agent-b/b-108-scenarios sobre agent-b/b-105-106-on-integration.
+Archivos: models.py (MaterialUncertainty, Material.uncertainty, Wall.door, _optional_fields,
+  ScenarioAssumptions/Request/Outcome, LinkScenarioResult, ScenarioResult), engines.py
+  (material_loss_db, direction con escenario y puertas abiertas, input_hash estable),
+  scenarios.py (nuevo), api.py (POST /api/scenario-simulations), export_contracts.py,
+  contracts/project.schema.json, openapi.json, scenario-result.schema.json (nuevo),
+  apps/web/src/generated/project.ts y scenario-result.ts (generados), tests/test_scenarios.py,
+  docs/simulation/SCENARIOS_CONTRACT.md.
+Criterio (P2): puertas y materiales inciertos admiten escenarios identificados; mejor/peor caso
+  exactos para el trayecto directo; aviso cuando el signo del margen depende de hipótesis.
+Contrato: aditivo. Wall/Material ganan propiedades opcionales (required sin cambios, comprobado);
+  TS opcional; proyectos sin los campos conservan su hash (la prueba de la plantilla de medidas
+  lo detectó y se corrigió antes de entregar).
+Comandos: pytest → 199 passed; export --check sin deriva; npm run contracts sin más cambios;
+  npm run build correcto; npm test 70/70 (incluye el código de A de main).
+Límites: trayecto directo; puerta abierta = sin pared, sin difracción; sin clasificación.
+Solicitud a A: script `contracts` con scenario-result.ts (y placement-search.ts, radio-profile.ts);
+  inspectores para puerta/estado y rango de material; vista de rangos e hipótesis por enlace.
+```
 
 ### Revisión de las correcciones de A en la integración (79e88f1) — aceptadas
 

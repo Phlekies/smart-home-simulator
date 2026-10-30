@@ -183,6 +183,17 @@
           "default": "Hypothesis: legacy empirical values; not calibrated",
           "title": "Evidence",
           "type": "string"
+        },
+        "uncertainty": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MaterialUncertainty"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         }
       },
       "required": [
@@ -194,6 +205,52 @@
         "evidence"
       ],
       "title": "Material",
+      "type": "object"
+    },
+    "MaterialUncertainty": {
+      "additionalProperties": false,
+      "description": "Reasoned range of a material's loss per crossing: scenario bounds, not a probability interval.",
+      "properties": {
+        "loss_db_24ghz_low": {
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Loss Db 24Ghz Low",
+          "type": "number"
+        },
+        "loss_db_24ghz_high": {
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Loss Db 24Ghz High",
+          "type": "number"
+        },
+        "loss_db_5ghz_low": {
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Loss Db 5Ghz Low",
+          "type": "number"
+        },
+        "loss_db_5ghz_high": {
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Loss Db 5Ghz High",
+          "type": "number"
+        },
+        "source": {
+          "description": "Why the material may lie in this range",
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "loss_db_24ghz_low",
+        "loss_db_24ghz_high",
+        "loss_db_5ghz_low",
+        "loss_db_5ghz_high",
+        "source"
+      ],
+      "title": "MaterialUncertainty",
       "type": "object"
     },
     "PixelPoint": {
@@ -592,6 +649,24 @@
           "minLength": 1,
           "title": "Material Id",
           "type": "string"
+        },
+        "door": {
+          "anyOf": [
+            {
+              "enum": [
+                "open",
+                "closed",
+                "unknown"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "None: not a door. An open door adds no loss; closed or unknown counts as the wall in the nominal estimate, and scenario simulations vary unknown doors.",
+          "title": "Door"
         }
       },
       "required": [
