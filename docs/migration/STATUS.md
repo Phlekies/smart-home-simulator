@@ -14,9 +14,9 @@ Inicio: 2026-10-29. La migración completa está en curso, no terminada.
 - Sin validación experimental en viviendas; el producto completo continúa pendiente.
 - Última evidencia de código: 16 pruebas web/editor y 31 Python, build y contratos correctos;
   192 Java en la entrega de base. Revisar las fechas/secciones antes de atribuir otra ejecución.
-- A: A-101 reservada en el checkout compartido (ver su registro). B: B-101 en `review` en la rama
-  local `agent-b/b-101-reference-cases` (casos analíticos, formato de medidas, protocolo piloto);
-  sin push ni integración en la rama de migración. I-001 publicada; consultar registros por rol.
+- A: A-101 reservada en el checkout compartido (ver su registro). B: B-101 en `review` en
+  `agent-b/b-101-reference-cases`, [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) en borrador contra la rama de migración
+  (casos analíticos, formato de medidas, protocolo piloto); sin merge. I-001 publicada; consultar registros por rol.
 - Entrega publicada en `codex/migrate-web-python` y [PR #2 en borrador](https://github.com/Phlekies/smart-home-simulator/pull/2).
   No se ha fusionado en `main`. Consultar las comprobaciones del PR para el último SHA.
   `AGENTS.md` permanece local y excluido del commit.
@@ -163,8 +163,9 @@ forjados, mapas de cobertura nuevos, Sionna RT ni simulación de tráfico.
 
 ## Entrega B-101 — referencias analíticas y medidas — 2026-10-30
 
-Rama local `agent-b/b-101-reference-cases` desde `ec62675`, clon separado del checkout de A.
-Sin push, PR ni merge. Documentación técnica en `docs/simulation/`.
+Rama `agent-b/b-101-reference-cases` desde `ec62675`, clon separado del checkout de A.
+Commit 263650c publicado y [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) abierto en borrador contra `codex/migrate-web-python`;
+sin merge. CI remota: consultar el PR. Documentación técnica en `docs/simulation/`.
 
 - `references.py`: 19 casos (espacio libre, log-distance, pared ITU-R P.2040-3, reflexión
   especular por imágenes) independientes del motor y arnés `compare()` para cualquier motor.

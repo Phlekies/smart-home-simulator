@@ -5,8 +5,9 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — B-101 implementada y verificada localmente; pendiente de integrar en
-  la rama de migración (commit local en `agent-b/b-101-reference-cases`, sin push).
+- Estado: **review** — B-101 implementada y verificada localmente; publicada por autorización
+  del usuario en `agent-b/b-101-reference-cases` y [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) en borrador contra
+  `codex/migrate-web-python`. Sin merge; CI remota a consultar en el PR.
 - Tarea: **B-101**, referencias analíticas, protocolo piloto y formato/procedencia de medidas;
   asignación explícita del usuario («trabaja como agente B»).
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
@@ -71,8 +72,10 @@ Límites científicos: referencias idealizadas (losa homogénea infinita, TE, un
 Solicitud a A: ninguna en esta entrega. Futuro (B-102/B-103): Material del Project solo tiene
   dB; un motor físico necesita permitividad/conductividad o id ITU. Se propondrá como
   cambio aditivo con la plantilla de WORKFLOW antes de implementarlo.
-Integración: commit local en la rama de B; sin push, PR ni merge (no autorizados).
-Siguiente paso: integrar en codex/migrate-web-python cuando el usuario lo autorice; B-102.
+Integración: commit 263650c; push verificado (rama remota = local) y PR #3 en borrador
+  contra codex/migrate-web-python, autorizados por el usuario el 2026-10-30. Sin merge.
+  La CI remota no se registra aquí hasta verificarla en el PR.
+Siguiente paso: revisión y merge del PR #3 cuando el usuario lo decida; después B-102.
 ```
 
 ### I-001 — entrega publicada
