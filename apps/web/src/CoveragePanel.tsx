@@ -17,8 +17,8 @@ async function mapApi(path: string, method: string, body?: unknown): Promise<Cov
 const key = (device: string, radio: string) => JSON.stringify([device, radio]);
 const value = (n: number | null, unit: string) => n === null ? 'Sin datos' : `${n.toFixed(1)} ${unit}`;
 
-export default function CoveragePanel({ project, onLayer, onValidate, disabled }: {
-  project: Project; onLayer: (layer: CoverageLayer | null) => void; onValidate: () => boolean; disabled: boolean;
+export default function CoveragePanel({ project, projectRevision, onLayer, onValidate, disabled }: {
+  project: Project; projectRevision: number; onLayer: (layer: CoverageLayer | null) => void; onValidate: () => boolean; disabled: boolean;
 }) {
   const firstAP = project.devices.find(device => ['access-point', 'controller'].includes(device.role)) ?? project.devices[0];
   const firstProfile = project.devices.find(device => device.id !== firstAP?.id) ?? firstAP;
@@ -31,20 +31,20 @@ export default function CoveragePanel({ project, onLayer, onValidate, disabled }
   const [metric, setMetric] = useState<MapMetric>('forward_dbm');
   const [error, setError] = useState('');
   const [job, setJob] = useState<MapState>({ state: 'idle', progress: 0, result: null, error: null });
-  const calculatedProject = useRef<Project | null>(null);
+  const calculatedRevision = useRef<number | null>(null);
   const [runner] = useState(() => new CoverageRunner({ create: request => mapApi('', 'POST', request),
     read: id => mapApi(`/${id}`, 'GET'), cancel: id => mapApi(`/${id}`, 'DELETE') }, setJob));
   const options = project.devices.flatMap(device => device.radios.map(radio => ({ device, radio, key: key(device.id, radio.id) })));
   const ap = options.find(option => option.key === apKey), profile = options.find(option => option.key === profileKey);
   const active = ['submitting', 'queued', 'running'].includes(job.state);
 
-  useEffect(() => { runner.invalidate(); calculatedProject.current = null; onLayer(null);
-    return () => runner.invalidate(true); }, [project, runner, onLayer]);
-  function edit(action: () => void) { runner.invalidate(); calculatedProject.current = null; onLayer(null); setError(''); action(); }
+  useEffect(() => { runner.invalidate(); calculatedRevision.current = null; onLayer(null);
+    return () => runner.invalidate(true); }, [projectRevision, runner, onLayer]);
+  function edit(action: () => void) { runner.invalidate(); calculatedRevision.current = null; onLayer(null); setError(''); action(); }
 
   useEffect(() => {
     const result = job.result;
-    if (!result || calculatedProject.current !== project) { onLayer(null); return; }
+    if (!result || calculatedRevision.current !== projectRevision) { onLayer(null); return; }
     const size = rasterCellSize(result.columns, result.rows), canvas = document.createElement('canvas');
     canvas.width = result.columns * size; canvas.height = result.rows * size;
     const ctx = canvas.getContext('2d'); if (!ctx) { setError('El navegador no pudo dibujar el mapa.'); onLayer(null); return; }
@@ -60,7 +60,7 @@ export default function CoveragePanel({ project, onLayer, onValidate, disabled }
     const imageUrl = canvas.toDataURL('image/png');
     if (imageUrl === 'data:,') { setError('El navegador no pudo dibujar estas dimensiones. Reduce el área o aumenta la resolución.'); onLayer(null); return; }
     onLayer({ result, metric, imageUrl });
-  }, [job.result, metric, project, onLayer]);
+  }, [job.result, metric, projectRevision, onLayer]);
 
   function calculate(event: FormEvent) {
     event.preventDefault(); if (disabled || !onValidate()) return;
@@ -79,7 +79,7 @@ export default function CoveragePanel({ project, onLayer, onValidate, disabled }
           radio: profile.radio, evidence: profile.device.evidence },
         grid: { origin_x_m: x, origin_y_m: y, width_m: width, depth_m: depth, resolution_m: resolution, height_m: height },
         points: exact ? [{ x: px, y: py, z: pz }] : [] };
-      setError(''); calculatedProject.current = project; void runner.start(request);
+      setError(''); calculatedRevision.current = projectRevision; void runner.start(request);
     } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
   }
   function number(name: keyof typeof fields, label: string, min: number, max: number) {
@@ -92,7 +92,7 @@ export default function CoveragePanel({ project, onLayer, onValidate, disabled }
         {option.device.name} · {option.radio.id} · {option.radio.frequency_hz / 1e6} MHz</option>)}
     </select></label>;
   }
-  const result = job.result && calculatedProject.current === project ? job.result : null;
+  const result = job.result && calculatedRevision.current === projectRevision ? job.result : null;
   const point = result?.points[0];
   return <section className="results-panel panel coverage-panel" aria-labelledby="coverage-title" aria-busy={disabled || active}>
     <span className="eyebrow">SEÑAL EN EL PLANO · TRAYECTO DIRECTO</span><h2 id="coverage-title">Mapa para un equipo y una altura.</h2>
