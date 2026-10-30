@@ -78,9 +78,9 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 ## M5 — Cierre técnico
 
 - [x] JSON Schema/OpenAPI/TypeScript comprobados por CI remota (PR #2, commit 33f1df8).
-- [ ] Importación y recuperación de los tres ejemplos Java sin pérdida silenciosa.
+- [x] Importación y recuperación de los tres ejemplos Java sin pérdida silenciosa (B-111: original Java íntegro, recuentos, exportar/reimportar idéntico; recuperación local A-101).
 - [ ] Pruebas de fórmulas/geometría y regresiones pertinentes.
-- [ ] E2E de crear/importar, editar, calcular, comparar y guardar.
+- [ ] E2E de crear/importar, editar, calcular, comparar y guardar (API completa en B-111 con los tres ejemplos y un proyecto nuevo; recorrido completo en navegador pendiente).
 - [ ] Instalación limpia y arranque local reproducibles.
 - [x] Matriz de funciones conservadas/sustituidas/excluidas y motivos ([FEATURE_MATRIX](FEATURE_MATRIX.md), B-107; revisar al cerrar cada fase).
 - [ ] Documentación del ámbito real y motores disponibles.

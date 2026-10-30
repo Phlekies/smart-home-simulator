@@ -41,6 +41,8 @@ async def lifespan(_: FastAPI):
         yield
     finally:
         jobs.shutdown()  # cancel queued/running maps so the server stops promptly
+        # Leave a usable manager behind: the same app object may serve again (tests, reloads).
+        coverage_jobs = CoverageJobs()
 
 
 app = FastAPI(title="Smart Environment Simulator", version="0.1.0", lifespan=lifespan,
