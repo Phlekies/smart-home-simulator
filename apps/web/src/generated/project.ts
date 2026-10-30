@@ -89,6 +89,21 @@ export type MigrationNotes = string[];
 export type LegacySource = {
   [k: string]: unknown;
 } | null;
+export type FileName = string;
+export type MediaType = "image/png" | "image/jpeg" | "image/webp";
+/**
+ * SHA-256 of the image file bytes
+ */
+export type Sha256 = string;
+export type WidthPx = number;
+export type HeightPx = number;
+export type MetersPerPixel = number;
+export type OriginXM = number;
+export type OriginYM = number;
+export type X1 = number;
+export type Y1 = number;
+export type DistanceM = number;
+export type Evidence2 = string;
 
 export interface Project {
   format: Format;
@@ -101,6 +116,7 @@ export interface Project {
   settings: Settings;
   migration_notes: MigrationNotes;
   legacy_source: LegacySource;
+  plan_reference?: PlanReference | null;
 }
 export interface Building {
   width_m: WidthM;
@@ -166,4 +182,35 @@ export interface Settings {
   path_loss_exponent: PathLossExponent;
   extra_loss_db_per_m: ExtraLossDbPerM;
   system_gain_db: SystemGainDb;
+}
+/**
+ * Background floor-plan image placed at scale; display aid only, never a solver input.
+ *
+ * The image stays a local file: only its fingerprint travels in the project. Pixel (u, v),
+ * u to the right and v downwards from the top-left corner, maps to
+ * x = origin_x_m + u·meters_per_pixel and y = origin_y_m + v·meters_per_pixel.
+ */
+export interface PlanReference {
+  file_name: FileName;
+  media_type: MediaType;
+  sha256: Sha256;
+  width_px: WidthPx;
+  height_px: HeightPx;
+  meters_per_pixel: MetersPerPixel;
+  origin_x_m: OriginXM;
+  origin_y_m: OriginYM;
+  calibration: PlanReferenceCalibration | null;
+  evidence: Evidence2;
+}
+/**
+ * Two image points and the real distance between them, kept so the scale can be reviewed.
+ */
+export interface PlanReferenceCalibration {
+  point_a_px: PixelPoint;
+  point_b_px: PixelPoint;
+  distance_m: DistanceM;
+}
+export interface PixelPoint {
+  x: X1;
+  y: Y1;
 }

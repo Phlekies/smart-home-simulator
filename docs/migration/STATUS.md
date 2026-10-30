@@ -10,11 +10,14 @@ Inicio: 2026-10-29. La migración completa está en curso, no terminada.
 - M0/base M1 implementados; CI remota de migración superada en PR #2 para 33f1df8.
 - M2 parcial: paredes editables y undo/redo terminados en la entrega correspondiente.
   Faltan imagen de plano calibrada, recuperación automática y accesibilidad completa.
-- API/estimador directo y contratos disponibles; sin mapas nuevos ni Sionna RT integrado.
+- API/estimador directo y contratos disponibles; sin mapas nuevos ni Sionna RT integrado en la API.
+  B-102: Sionna RT evaluado en WSL/CPU contra referencias (18/18); Windows nativo no ejecuta.
 - Sin validación experimental en viviendas; el producto completo continúa pendiente.
 - Última evidencia de código: 16 pruebas web/editor y 31 Python, build y contratos correctos;
   192 Java en la entrega de base. Revisar las fechas/secciones antes de atribuir otra ejecución.
-- A: siguiente tarea propuesta A-101. B: B-101. I-001 publicada; consultar registros por rol.
+- A: A-101 reservada en el checkout compartido (ver su registro). B: B-101 en `review` en
+  `agent-b/b-101-reference-cases`, [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) en borrador contra la rama de migración
+  (casos analíticos, formato de medidas, protocolo piloto); sin merge. I-001 publicada; consultar registros por rol.
 - Entrega publicada en `codex/migrate-web-python` y [PR #2 en borrador](https://github.com/Phlekies/smart-home-simulator/pull/2).
   No se ha fusionado en `main`. Consultar las comprobaciones del PR para el último SHA.
   `AGENTS.md` permanece local y excluido del commit.
@@ -158,6 +161,86 @@ Los valores de señal son resultados del estimador analítico actual, no medicio
 evidencia de precisión experimental. Siguen pendientes imagen de referencia calibrada,
 recuperación automática y evaluación completa de accesibilidad. No se han añadido
 forjados, mapas de cobertura nuevos, Sionna RT ni simulación de tráfico.
+
+## Entrega B-101 — referencias analíticas y medidas — 2026-10-30
+
+Rama `agent-b/b-101-reference-cases` desde `ec62675`, clon separado del checkout de A.
+Commit 263650c publicado y [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) abierto en borrador contra `codex/migrate-web-python`;
+sin merge. CI remota: consultar el PR. Documentación técnica en `docs/simulation/`.
+
+- `references.py`: 19 casos (espacio libre, log-distance, pared ITU-R P.2040-3, reflexión
+  especular por imágenes) independientes del motor y arnés `compare()` para cualquier motor.
+- `measurements.py` y `contracts/measurement-campaign.schema.json`: campañas locales separadas
+  del proyecto, procedencia de parámetros, puntos planificados/medidos/excluidos, recuentos
+  crudos de entrega, criterio congelado y partición por vivienda. Plantilla sintética sin medidas.
+- `PILOT_PROTOCOL.md`: protocolo propuesto, sin ejecutar; umbral de fallo pendiente de decisión.
+
+| Comprobación | Resultado |
+|---|---|
+| `pytest services/simulator/tests -q` | 107 superadas (31 previas + 76 nuevas); aviso httpx/Starlette ya registrado |
+| `scripts/export_contracts.py --check` | Sin deriva; contratos previos idénticos, nuevo esquema de campañas |
+| `npm ci`, `npm run contracts`, `git diff --exit-code src/generated` | Tipos TypeScript sin deriva |
+| `npm run build` / `npm test` | Correcto / 16 superadas |
+| `python -m smart_environment.references` | Estimador = Friis y su propio modelo (Δ < 1e-9 dB); paredes con tabla Java se desvían de la losa ITU entre −3.9 y +0.6 dB; reflexión no modelada (−4.8 / +0.3 dB) |
+
+CI remota de [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) superada para `fc9f062`:
+[migración](https://github.com/Phlekies/smart-home-simulator/actions/runs/41023810988) (python-web) y
+[Java](https://github.com/Phlekies/smart-home-simulator/actions/runs/41023810990) en Linux, Windows y macOS.
+
+Límites: referencias idealizadas, no medidas; tabla ITU contrastada con la reproducción de
+MathWorks (PDF ITU con 404), pendiente de cotejo oficial. Ningún checklist se marca con esta
+entrega: el criterio activo de fallo, los conjuntos reales y el motor avanzado siguen pendientes.
+
+## Entrega B-102 — evaluación aislada de Sionna RT — 2026-10-30
+
+Rama `agent-b/b-102-sionna-evaluation`, [PR #4](https://github.com/Phlekies/smart-home-simulator/pull/4) en borrador apilado sobre #3; sin merge. Informe completo en
+[ADVANCED_ENGINE_EVALUATION](../simulation/ADVANCED_ENGINE_EVALUATION.md) y evidencia JSON en
+`docs/simulation/evidence/`.
+
+| Comprobación | Resultado |
+|---|---|
+| Windows 11, Python 3.13.7, sionna-rt 2.2.0 sin LLVM | `ImportError`: no encuentra `LLVM-C.dll` |
+| Ídem con LLVM 18.1.8 portable (`DRJIT_LIBLLVM_PATH`) | Dr.Jit aborta en un cálculo trivial: `Failed to materialize symbols` (también con objetivo AVX2) |
+| WSL2 Ubuntu 24.04, Python 3.12.3, LLVM 20.1.2, sionna-rt 2.2.0 / mitsuba 3.9.1 / drjit 1.5.0 | Ejecuta en `llvm_ad_mono_polarized` |
+| `sionna_evaluation.py` en WSL | 18/18 casos físicos y de coherencia con |Δ| < 0.001 dB; LD-n3 no modelado; pico 703 MB |
+| Ejemplos Java, `max_depth` 3 | 35–48 ms por enlace; con difracción 68–85 ms; almacén: 3 enlaces sin trayecto (profundidad/metal) |
+| Rejilla de 5307 receptores / mapa planar de 21 525 celdas | 11.7 s / 0.02–0.41 s según rayos (81 %–18 % de celdas vacías) |
+| `pytest services/simulator/tests -q` (venv de la aplicación) | 117 superadas; el adaptador no requiere Sionna para sus pruebas |
+| `scripts/export_contracts.py --check` | Sin deriva; ningún contrato cambia |
+
+Límites: concordancia con física idealizada, no con medidas. Difracción y difusa sin caso de
+referencia. Sin GPU compatible. La API mantiene 501 para `sionna-rt`, sin fallback.
+
+## Entrega B-104 — contrato de la referencia de plano — 2026-10-30
+
+Respuesta a la solicitud de A-102. `Project.plan_reference` opcional (v1 aditivo): nombre,
+tipo, SHA-256, píxeles, metros por píxel, origen y calibración; la imagen no viaja en el JSON
+y el hash de cálculo la excluye. Detalle en [PLAN_REFERENCE_CONTRACT](../simulation/PLAN_REFERENCE_CONTRACT.md).
+
+| Comprobación | Resultado |
+|---|---|
+| `pytest services/simulator/tests -q` | 137 superadas (20 nuevas del contrato) |
+| `export_contracts.py` / `--check` | Esquemas y OpenAPI regenerados; sin deriva |
+| `npm run contracts`, `build`, `test` | Solo `project.ts` cambia (campo opcional); build correcto; 16/16 |
+| Copia del código en curso de A con los tipos nuevos | `tsc --noEmit` correcto; 57/57 pruebas |
+
+M2 «Imagen de referencia con escala y cotas» sigue pendiente: falta el consumidor de A.
+
+## Entrega B-103 — mapas por perfil y altura — 2026-10-30
+
+[PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6) en borrador, apilado sobre [PR #5](https://github.com/Phlekies/smart-home-simulator/pull/5) (B-104). `/api/coverage-maps` (POST/GET/DELETE) calcula, como trabajo cancelable, el presupuesto directo
+AP↔perfil en una rejilla a altura declarada y en puntos exactos. Sin clasificación de cobertura.
+Detalle en [COVERAGE_MAP_CONTRACT](../simulation/COVERAGE_MAP_CONTRACT.md).
+
+| Comprobación | Resultado |
+|---|---|
+| `pytest services/simulator/tests -q` | 157 superadas (20 nuevas de mapas) |
+| Contratos | `coverage-map.schema.json` nuevo; OpenAPI con 2 rutas y 10 esquemas añadidos, ninguno existente modificado |
+| `npm run build` / `npm test` | Correcto / 16/16; `coverage-map.ts` generado con json2ts |
+| Servidor real en 127.0.0.1:8765 | 202 → done en 534 ms (apartamento, 0.25 m); cancelación en cola y en curso; 501 para sionna-rt; 422 por frecuencia distinta |
+| Coste medido | ~600 000 evaluaciones celda×pared/s; límite 2 M por trabajo |
+
+Pendiente: visualización (A-104), clasificación con reserva (P2), caché y motor avanzado en mapas.
 
 ## Reglas de evidencia
 

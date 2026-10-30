@@ -5,15 +5,21 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **idle**, entrega I-001 publicada; sin nueva tarea asignada.
-- Tarea cerrada: **I-001**, integrar y publicar la base acumulada; autorizado por el usuario.
-- Sesión/chat: conversación actual que inició la migración.
-- Rama/worktree: clon actual, `codex/migrate-web-python`.
-- Última actualización: 2026-10-29, cierre de publicación.
-- Archivos reservados: ninguno tras el cierre de la entrega.
-- Siguiente tarea recomendada: **B-101**, referencias analíticas y protocolo piloto.
-- Integración: commit 33f1df8 publicado y PR #2 creado; CI de migración y Java superadas
-  para ese SHA. `AGENTS.md` queda excluido. Sin merge ni force-push.
+- Estado: **review** — B-101, B-102, B-104 y B-103 publicadas en PR apilados en borrador; sin merge.
+- Pila publicada por autorización del usuario (2026-10-30): `agent-b/b-101-reference-cases`
+  [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) → `agent-b/b-102-sionna-evaluation` [PR #4](https://github.com/Phlekies/smart-home-simulator/pull/4) → `agent-b/b-104-plan-reference`
+  [PR #5](https://github.com/Phlekies/smart-home-simulator/pull/5) → `agent-b/b-103-coverage-maps` [PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6). Cada PR tiene como base la rama anterior;
+  fusionar en orden y redirigir el siguiente a `codex/migrate-web-python`. CI: consultar cada PR.
+- Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
+- Rama/worktree: clon separado `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`; ramas
+  apiladas `agent-b/b-101-…` → `agent-b/b-102-…` → siguientes. No usa el checkout compartido de A
+  (`C:/Simulador_smart_homes3D/smart-home-simulator`); A no ve este registro hasta integrar.
+- Última actualización: 2026-10-30 (Europe/Madrid).
+- Archivos reservados: `services/simulator/src/smart_environment/models.py`, contratos generados
+  (`contracts/*.json`, `apps/web/src/generated/**` solo por generación), `scripts/export_contracts.py`,
+  `docs/simulation/**` y este registro.
+- Integración pendiente de A: **A-101** en review, pero A mantiene reservados `App.tsx`/`styles.css`
+  para A-102 y pide no integrarlos aún. No se integra hasta que A los libere.
 
 ## Plantilla de entrega — completar al trabajar
 
@@ -31,6 +37,127 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### B-103 — mapas por perfil y altura como trabajos cancelables (review)
+
+```text
+Tarea / estado: B-103 / review.
+Sesión, rama/worktree, fecha/hora y zona: Claude Code agente B; agent-b/b-103-coverage-maps sobre
+  agent-b/b-104-plan-reference; 2026-10-30, Europe/Madrid.
+Archivos modificados: models.py (ReceiverProfile, MapGrid, CoverageMapParameters/Request/Result,
+  CoverageCells, CoverageSample, CoverageMapJob), coverage.py (nuevo), engines.py
+  (radio_pair_check extraído de simulate sin cambiar comportamiento), api.py (POST/GET/DELETE
+  /api/coverage-maps, lifespan que cancela trabajos), scripts/export_contracts.py,
+  contracts/coverage-map.schema.json (nuevo) y openapi.json, apps/web/src/generated/coverage-map.ts
+  (generado con json2ts), tests/test_coverage.py (nuevo), docs/simulation/COVERAGE_MAP_CONTRACT.md.
+Criterio: mapa por perfil/altura/resolución declarados, ambos sentidos, puntos exactos sin
+  redondeo, AP y perfil identificados, celdas sin calcular explícitas, límites, progreso y
+  cancelación; tipos generados y pruebas.
+Contrato: aditivo (2 rutas, 10 esquemas nuevos; ningún esquema existente cambia, comprobado).
+Comandos: pytest → 157 passed; export --check sin deriva; npm run build correcto; npm test 16/16;
+  servidor uvicorn real en 127.0.0.1:8765: 202 → progreso → done en 534 ms (175×123 celdas),
+  DELETE en cola y en curso → cancelled, sionna-rt → 501, perfil a otra frecuencia → 422.
+  Servidor detenido; sin listener en 8765.
+Límites: trayecto directo del estimador rápido; sin clasificación (reserva pendiente), sin caché
+  persistente, un trabajador local. Sionna en mapas requiere proceso aislado y criterios de B-102.
+Solicitud a A (A-104): añadir coverage-map.ts al script `contracts`, consumir los trabajos con
+  progreso/cancelación, leyenda de celdas parciales/sin calcular y descarte por request_hash.
+Siguiente paso: publicar la pila si el usuario lo autoriza; integrar A-101/A-102 cuando A libere.
+```
+
+### B-104 — contrato de la referencia de plano para A-102 (review)
+
+```text
+Tarea / estado: B-104 / review. Responde a la «Solicitud a B — persistencia de A-102».
+Sesión, rama/worktree, fecha/hora y zona: Claude Code agente B; agent-b/b-104-plan-reference
+  sobre agent-b/b-102-sionna-evaluation; 2026-10-30, Europe/Madrid.
+Archivos modificados: models.py (PlanReference, PlanReferenceCalibration, PixelPoint,
+  Project.plan_reference opcional), engines.py (input_hash excluye plan_reference),
+  contracts/project.schema.json y openapi.json (regenerados), apps/web/src/generated/project.ts
+  (solo por `npm run contracts`), tests/test_plan_reference.py (nuevo),
+  docs/simulation/PLAN_REFERENCE_CONTRACT.md (nuevo).
+Criterio: transformación metros/píxel + origen + dimensiones + huella persistibles; imagen local.
+Contrato: aditivo y opcional en v1, también en TS (`plan_reference?:`). Hash de cálculo intacto.
+  Archivos con el campo no se abren en versiones anteriores (extra=forbid), documentado.
+Comandos: pytest → 137 passed; export_contracts.py → regenerado y --check sin deriva;
+  npm run contracts → solo project.ts cambia; npm run build correcto; npm test 16/16.
+  Copia del código en curso de A con los tipos nuevos: tsc --noEmit correcto, 57/57 pruebas.
+Solicitud a A (A-102): rellenar plan_reference con SHA-256 local, exportar/recuperar el campo,
+  re-asociar la imagen por huella al abrir y mostrar «imagen no disponible» si no coincide.
+  Detalle en docs/simulation/PLAN_REFERENCE_CONTRACT.md. Opacidad/visibilidad fuera del contrato.
+Siguiente paso: integrar la pila de ramas de B y avisar a A (vía usuario) de que los tipos existen.
+```
+
+### B-102 — evaluación aislada de Sionna RT (review)
+
+```text
+Tarea / estado: B-102 / review.
+Sesión, rama/worktree, fecha/hora y zona: Claude Code agente B; rama agent-b/b-102-sionna-evaluation
+  sobre agent-b/b-101-reference-cases; 2026-10-30, Europe/Madrid.
+Archivos modificados: services/simulator/src/smart_environment/sionna_adapter.py (nuevo),
+  references.py (compare_predictions; reflexión con R de losa), engines.py (descripción de
+  sionna-rt), services/simulator/benchmarks/{sionna_evaluation.py, wsl/setup.sh, wsl/run.sh}
+  (nuevos), tests/test_sionna_adapter.py (nuevo), docs/simulation/ADVANCED_ENGINE_EVALUATION.md
+  y evidence/sionna-rt-2.2.0-wsl-cpu.json (nuevos), REFERENCE_CASES.md; como integrador
+  WORKBOARD, STATUS y CHECKLIST.
+Criterio de aceptación: motor ejecutado en entorno aislado con versiones/hardware registrados;
+  interacciones verificadas con B-101; benchmark reproducible; error explícito donde no ejecuta.
+Cambios de contrato: ninguno. La API sigue con 501 para sionna-rt; el adaptador no se importa
+  al arrancar y no hay fallback (EngineUnavailable).
+Comandos y resultados: Windows nativo (Python 3.13.7, LLVM 18.1.8 portable) → Dr.Jit aborta con
+  "JIT session error: Failed to materialize symbols". WSL2 Ubuntu 24.04 (Python 3.12.3, LLVM
+  20.1.2, sionna-rt 2.2.0, mitsuba 3.9.1, drjit 1.5.0) → 18/18 casos físicos y de coherencia con
+  |Δ| < 0.001 dB; LD-n3 not-modelled. Pico 703 MB. pytest → 117 passed; export --check sin deriva.
+Descargas autorizadas por el usuario: LLVM 18.1.8 (981 666 720 B, archivo borrado tras extraer
+  LLVM-C.dll en .local/) y libatomic1 14.2.0-4ubuntu2~24.04.1 (10.5 kB, sin sudo).
+Límites: sin medidas; difracción/difusa sin referencia; Windows nativo y GPU no disponibles.
+Hallazgos para B-103: desvanecimiento coherente, max_depth limita cruces de pared, metal opaco,
+  mapa planar ruidoso sin suelo/techo, Material sin ε/σ y DirectionResult no apto para trazadores.
+Solicitud a A: ninguna en esta entrega.
+Siguiente paso: B-104 (contrato pedido por A-102), luego B-103 con propuesta de contrato previa.
+```
+
+### B-101 — referencias analíticas, formato de medidas y protocolo piloto (review)
+
+```text
+Tarea / estado: B-101 / review.
+Sesión, rama/worktree, fecha/hora y zona: Claude Code agente B; clon separado en
+  C:/Users/ibane/Desktop/Programación/SmartHomeSimulator, rama agent-b/b-101-reference-cases
+  desde ec62675; 2026-10-30, Europe/Madrid.
+Archivos modificados: services/simulator/src/smart_environment/{references,measurements}.py (nuevos),
+  engines.py (MODELLED_INTERACTIONS, input_hash() extraído, "interactions" en capacidades),
+  services/simulator/tests/test_{references,measurements}.py (nuevos),
+  services/simulator/examples/measurement-campaign.template.json (nuevo, sintético),
+  scripts/export_contracts.py, contracts/measurement-campaign.schema.json (nuevo),
+  docs/simulation/{REFERENCE_CASES,MEASUREMENT_FORMAT,PILOT_PROTOCOL}.md (nuevos),
+  y como integrador docs/process/WORKBOARD.md y docs/migration/STATUS.md.
+Criterio de aceptación: 19 casos de espacio libre (incl. 3D y canal 11), log-distance,
+  pared (6 materiales normales + 60°, 2 de coherencia) y reflexión (rasante, casi normal,
+  fuera de pared); arnés compare() para cualquier motor; formato de medida con procedencia,
+  partición por vivienda y criterio congelado; protocolo piloto. Calibración y validación
+  separadas por vivienda; ninguna medida inventada.
+Cambios de contrato: aditivo. Nuevo measurement-campaign.schema.json; Project,
+  SimulationResult y OpenAPI sin cambios (export --check sin deriva). /api/engines añade el
+  campo "interactions" (respuesta sin tipar en OpenAPI; la UI lo ignora).
+Comandos y resultados (Windows x64, Python 3.13.7, Node 22.20.0):
+  pytest services/simulator/tests -q → 107 passed (31 previas + 76 nuevas), aviso httpx ya conocido.
+  scripts/export_contracts.py --check → Contracts checked.
+  npm ci + npm run contracts → git diff --exit-code src/generated sin deriva.
+  npm run build → correcto (aviso de tamaño de chunk ya registrado). npm test → 16/16.
+  python -m smart_environment.references → tabla publicada en docs/simulation/REFERENCE_CASES.md.
+  git diff --check → sin errores.
+Límites científicos: referencias idealizadas (losa homogénea infinita, TE, un rebote); la
+  tabla ITU-R P.2040-3 se contrastó con la reproducción de MathWorks porque el PDF de la ITU
+  devolvió 404 — pendiente de cotejo oficial. Sin medidas reales; umbral del criterio activo
+  de fallo pendiente de decisión del usuario.
+Solicitud a A: ninguna en esta entrega. Futuro (B-102/B-103): Material del Project solo tiene
+  dB; un motor físico necesita permitividad/conductividad o id ITU. Se propondrá como
+  cambio aditivo con la plantilla de WORKFLOW antes de implementarlo.
+Integración: commit 263650c; push verificado (rama remota = local) y PR #3 en borrador
+  contra codex/migrate-web-python, autorizados por el usuario el 2026-10-30. Sin merge.
+  La CI remota no se registra aquí hasta verificarla en el PR.
+Siguiente paso: revisión y merge del PR #3 cuando el usuario lo decida; después B-102.
+```
 
 ### I-001 — entrega publicada
 
