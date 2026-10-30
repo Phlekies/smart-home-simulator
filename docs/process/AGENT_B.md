@@ -54,7 +54,8 @@ Comandos: pytest 244; export --check sin deriva; npm test 84; build correcto. C�
 Solicitud a A: añadir installation-report.ts, measurement-campaign.ts y measurement-check.ts al script
   contracts; mostrar procedencia (B-113), mapa de peor/mejor caso (B-114), descarga del informe
   (B-115) e importación de campañas (B-116).
-Siguiente paso: publicar si el usuario lo autoriza; merges pendientes del usuario (#11, #13, #12).
+Publicación: [PR #15](https://github.com/Phlekies/smart-home-simulator/pull/15) en borrador, apilado sobre #13, por autorización
+  del usuario. Merges pendientes del usuario: #11 → #13 → #15 (cambiando la base a main), y #12.
 ```
 
 ### I-004 y B-109…B-112 — cinco tareas (review)
