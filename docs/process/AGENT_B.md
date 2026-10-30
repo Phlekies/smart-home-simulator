@@ -56,6 +56,8 @@ Fusiones autorizadas por el usuario en el orden propuesto: #8 → 6d7e69f, #9 �
   cambiada a `main`), #10 (A-104, cabeza verificada) → 6fb42e2; CI de `main` en verde. Conflictos de
   STATUS/WORKBOARD con #10 resueltos consolidando ambos textos; checklists M4/P1 marcados con la
   evidencia de A-104 y B-103.
+  Incidencia: GitHub devolvió 500 en `git-receive-pack` en tres intentos; el cuarto entró, pero el
+  PR #11 no se sincronizó con la rama, y un commit posterior forzó la sincronización y la CI.
 ```
 
 ### B-108 — escenarios de puertas y materiales inciertos (review)
