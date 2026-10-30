@@ -12,7 +12,8 @@ Inicio: 2026-10-29. La migración completa está en curso, no terminada.
   implementados. Referencia de imagen de sesión disponible; persistencia del consumidor
   A-102 y evaluación completa de accesibilidad pendientes.
 - API de mapas B-103 y tipos en main; visualización A-104 implementada en rama de revisión
-  `codex/coverage-map-ui`, con [evidencia UI](../ui/COVERAGE_MAP.md). Sionna RT no está integrado en la API.
+  `codex/coverage-map-ui`, [PR #10](https://github.com/Phlekies/smart-home-simulator/pull/10),
+  con [evidencia UI](../ui/COVERAGE_MAP.md). Sionna RT no está integrado en la API.
   B-102: Sionna RT evaluado en WSL/CPU contra referencias (18/18); Windows nativo no ejecuta.
 - Sin validación experimental en viviendas; el producto completo continúa pendiente.
 - Última evidencia conjunta local: **162 pruebas Python, 70 web/editor, build y contratos

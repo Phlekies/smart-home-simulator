@@ -5,7 +5,8 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review**, A-104 implementada y verificada; archivos liberados para revisión.
+- Estado: **review**, A-104 implementada, verificada y publicada en
+  [PR #10](https://github.com/Phlekies/smart-home-simulator/pull/10); archivos liberados.
 - Sesión: conversación actual, agente A; 2026-10-30, Europe/Madrid.
 - Worktree aislado: `smart-home-simulator/.local/integration-review`, rama
   `codex/coverage-map-ui`, basada en main 046ee827. No cambiar la rama del checkout compartido.
@@ -255,6 +256,8 @@ Siguiente paso:
   CI, y A-104 en review. Cambio secuencial de rol por instrucción del usuario; se vuelve a A.
 - Límites: parámetros/resultados del mapa de sesión, sin caché ni exportación persistente,
   un punto exacto en UI, solo estimador directo. No completa M4 ni validación experimental.
-- **Solicitud al integrador:** revisar/publicar esta entrega separada; mantener el mapa
+- Publicación: código 9868ae8 en `codex/coverage-map-ui`, PR #10 abierto contra main.
+  CI remota de esta entrega consultable en el PR; no se ha fusionado este consumidor.
+- **Solicitud al integrador:** revisar esta entrega separada en PR #10; mantener el mapa
   avanzado, incertidumbre y medidas reales pendientes. AGENTS.md permanece excluido.
 - Siguiente tarea A: persistir/reasociar referencia calibrada mediante contrato B-104.
