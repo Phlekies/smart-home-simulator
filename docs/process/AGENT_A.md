@@ -5,36 +5,33 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review**, A-102 persistencia implementada, verificada y publicada en
-  [PR #12](https://github.com/Phlekies/smart-home-simulator/pull/12); archivos liberados.
+- Estado: **review**, cinco consumidores A-109 a A-113 implementados y verificados; archivos liberados.
 - Sesión: conversación actual, agente A; 2026-10-30, Europe/Madrid.
-- Worktree aislado `smart-home-simulator/.local/integration-review`, rama
-  `codex/persist-plan-reference` sobre `codex/coverage-map-ui` (PR #10, d5e64d3).
-  No cambiar el checkout compartido ni fusionar por inferencia.
-- Archivos reales A-102: App.tsx, CoveragePanel.tsx, PlanReference.tsx, styles.css,
-  editor/referencePersistence.ts y referencePersistence.test.ts, editor/comparison.ts y
-  comparison.test.ts, docs/ui/PLAN_REFERENCE.md, plan-reference-persistence.jpg y este registro.
-- Contrato B-104 consumido sin cambios: metadatos canónicos en JSON/recuperación, archivo
-  local identificado por SHA-256/dimensiones/tipo. Imagen ausente/distinta explícita.
-- 94 pruebas web/editor, build y diff --check correctos; recorrido real de guardar,
-  restaurar/reabrir, rechazar/reasociar, sustituir e historial completado. Servicios detenidos.
-- A-104 en review publicada en [PR #10](https://github.com/Phlekies/smart-home-simulator/pull/10),
-  con CI remota correcta. Esta rama es una entrega apilada, no incorpora aún PR #8/#9.
-- I-002 en main 046ee827 por PR #7. Las entregas antiguas A/B están integradas allí;
-  el historial de cada sesión conserva su estado de publicación en aquel momento.
-- AGENTS.md sigue local/excluido. No backend, contratos/generados, Java ni documentos comunes modificados.
+- Worktree aislado `smart-home-simulator/.local/five-ui-tasks`, rama
+  `codex/next-five-ui-tasks`, sobre main 6fb42e2 + persistencia de PR #12 (3b7432e).
+  La versión de prueba en integration-review/5174 no se modifica durante el desarrollo.
+- A-109: perfiles Wi-Fi en mapas con procedencia, desconocidos y parámetros explícitos.
+- A-110: búsqueda entre posiciones/zonas permitidas y equipos prioritarios, comparación
+  bidireccional, aplicar alternativa explícita y deshacible, descarte de resultados antiguos.
+- A-111: editor de puerta/estado en inspector de pared; historial e invalidación normales.
+- A-112: editor de incertidumbre de material con rangos y fuente; validación nominal/rango.
+- A-113: vista de escenarios y rangos por enlace/sentido, hipótesis y datos incompletos.
+- Contratos B-105/B-106/B-108 integrados por PR #8/#9, mapa A-104 por #10. No rediseñar
+  física/contratos ni tratar los perfiles preliminares como datos de productos certificados.
+- Reserva: apps/web/src/{App,CoveragePanel,Plan,Scene3D,WallInspector,styles,api,useAnalysis} y componentes nuevos
+  de perfiles, búsqueda, incertidumbre y escenarios; módulos/pruebas editor asociados;
+  apps/web/package.json (script contracts solicitado por B); docs/ui y este registro.
+  Tipos generados intactos: solo consumir los existentes. No documentos comunes ni backend.
+- A-102 persistencia publicada en PR #12 con 94 pruebas/build; esta rama la conserva.
+  AGENTS.md sigue local/excluido; no publicar planos del usuario.
 
-## Siguiente paso y dependencias
+## Entrega y coordinación
 
-- Integrador: revisar esta entrega y A-104, consolidar WORKBOARD/STATUS y criterios
-  acreditados de M2. La persistencia A-102 ya no espera contrato ni implementación de B.
-- A puede continuar el recorrido completo por teclado y revisión de accesibilidad de M2;
-  no declarar toda la fase completa por estas funciones.
-- Consumidores de búsqueda/perfiles (PR #8) y escenarios (PR #9) requieren integrar sus
-  contratos y revisar su evidencia. No inventar tipos ni tratar perfiles preliminares
-  como datos de modelos comerciales. No tocar archivos de B durante esa revisión.
-- Quedan motor avanzado en API, informes, mediciones y validación independiente de producto;
-  esta entrega es persistencia visual y no acredita precisión radioeléctrica.
+- B mantiene backend/contratos y documentos comunes; PR #11 documental sigue abierto.
+  A no lo fusiona ni modifica sus archivos. Pedir consolidación de estas cinco tareas al entregar.
+- Criterios comprobados: 120 web/editor, 199 Python, build/contratos y navegador/API en5175/8001.
+  Sin semáforo de cobertura, probabilidades, rendimiento ni recomendación de compra inventados.
+- La migración y la precisión física siguen parciales después de estos consumidores.
 
 ## Plantilla de entrega — completar al trabajar
 
@@ -291,3 +288,42 @@ Siguiente paso:
 - **Solicitud al integrador:** aceptar consumidor A-102 y consolidar evidencia; M2 y
   producto siguen parciales. Siguiente trabajo A: recorrido de accesibilidad o consumidores
   de #8/#9 cuando sus contratos estén integrados y revisados.
+
+
+### A-109 a A-113 — cinco consumidores, 2026-10-30 (Europe/Madrid)
+
+- Estado **review**, rama codex/next-five-ui-tasks. Usuario pidió explícitamente cinco
+  tareas; consumen B-105/B-106/B-108 integrados en main6fb42e2 y conservan A-102 de PR#12.
+- A-109: GenericProfilePicker, editor/radioProfiles.ts y pruebas; CoveragePanel acepta
+  perfil genérico con fuentes/notas y TX opcional declarada/medida. Canal/banda/ancho
+  explícitos, desconocidos preservados y perfiles preliminares identificados.
+- A-110: PlacementSearch, editor/placement.ts y pruebas. Puntos/zonas/prioridades,
+  viabilidad confirmada por la persona, límites sin enumeración gigante, base/delta y
+  cada sentido por enlace. Aplicar posición es explícito, solo mueve AP y permite undo.
+- A-111: WallInspector/Plan/Scene3D y editor/uncertainty.ts. Estados de puerta y dibujo
+  distinguibles, segmento completo explicado; guardado e historial, invalidación normal.
+- A-112: MaterialUncertaintyEditor y pruebas de incertidumbre; rangos/fuente compartidos,
+  nominal dentro del rango, rechazo de datos incompletos y retirada reversible.
+- A-113: ScenarioPanel, editor/scenarios.ts y pruebas. Tres casos automáticos, rangos,
+  márgenes de ambos sentidos, hipótesis inspeccionables y signo coherente/incompleto.
+  No semáforo, probabilidades, intervalo estadístico ni compra favorable inventados.
+- Infraestructura compartida: latestAnalysis/useAnalysis y pruebas de carreras/errores;
+  api admite AbortSignal. Respuestas de otra revisión/otros parámetros se descartan.
+  App integra controles y usa su revisión física; cambios de fondo no invalidan radio.
+- Script contracts consume los tres esquemas existentes; generados sin cambios de contenido.
+  No backend, contratos canónicos, Java ni documentos comunes modificados.
+- **120 pruebas web/editor** (94 previas+26 nuevas), **199 Python**, build y contratos
+  correctos. Se corrigió un fixture de zona que excedía el límite de posiciones y el
+  tipado literal del fixture de escenarios durante la verificación; no cambios físicos.
+- Navegador/API: perfiles parciales→completos con TX0, rechazo fuera de banda/rango;
+  búsqueda11 posiciones/1 excluida, margen4.94→9.46 y delta+4.52dB, aplicar/undo;
+  sin TX, sin orden. Puerta/rangos/fuente/error nominal y JSON/recuperación verificados.
+  Escenarios con margen de retorno10.94→−19.06 según hipótesis, sin garantía de conexión.
+  3D abierto/transparente probado. Sin errores; deprecación previa THREE.Clock al abrir3D.
+- Evidencia y fixture sintético: [FIVE_UI_TASKS.md](../ui/FIVE_UI_TASKS.md).
+- **Solicitud B:** revisar condición de delta (mismo conjunto completo, no solo cantidad)
+  y contar límites de zonas antes de enumerar posiciones. A tiene guardas y regresiones;
+  no se envió una petición de tamaño peligroso. Detalle en la evidencia.
+- Integrador: revisar esta rama, aceptar criterios por tarea y consolidar documentos
+  comunes. Mantener motor avanzado en API, catálogo validado, incertidumbre estadística,
+  informes y campaña/validación de viviendas como pendientes.

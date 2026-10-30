@@ -1,0 +1,127 @@
+{
+  "format": "smart-environment-simulator",
+  "version": 1,
+  "name": "Demostración sintética · cinco tareas",
+  "units": "m",
+  "building": {
+    "width_m": 12,
+    "depth_m": 8,
+    "walls": [
+      {
+        "id": "test-door",
+        "start": {
+          "x": 6,
+          "y": 0,
+          "z": 0
+        },
+        "end": {
+          "x": 6,
+          "y": 8,
+          "z": 0
+        },
+        "height_m": 2.6,
+        "thickness_m": 0.1,
+        "material_id": "test-wall",
+        "door": "unknown"
+      }
+    ],
+    "materials": [
+      {
+        "id": "test-wall",
+        "name": "Material de prueba",
+        "loss_db_24ghz": 6,
+        "loss_db_5ghz": 8,
+        "extra_loss_db_per_cm": 0,
+        "evidence": "Valor editado por el usuario; sin calibración experimental",
+        "uncertainty": {
+          "loss_db_24ghz_low": 1,
+          "loss_db_24ghz_high": 30,
+          "loss_db_5ghz_low": 1,
+          "loss_db_5ghz_high": 40,
+          "source": "Hipótesis sintética de QA; pérdida desconocida entre 1 y 30 dB"
+        }
+      }
+    ]
+  },
+  "devices": [
+    {
+      "id": "ap",
+      "name": "AP de prueba",
+      "role": "access-point",
+      "position": {
+        "x": 2,
+        "y": 4,
+        "z": 1.4
+      },
+      "radios": [
+        {
+          "id": "r",
+          "protocol": "wifi",
+          "frequency_hz": 2412000000,
+          "bandwidth_hz": 20000000,
+          "channel": 1,
+          "tx_power_dbm": 10,
+          "tx_gain_dbi": 0,
+          "rx_gain_dbi": 0,
+          "sensitivity_dbm": -85,
+          "noise_figure_db": 7,
+          "antenna": "omnidirectional",
+          "orientation_deg": 0,
+          "beamwidth_deg": 360,
+          "pattern_sharpness": 1.8,
+          "side_lobe_attenuation_db": 18,
+          "polarization_deg": 0
+        }
+      ],
+      "evidence": "Equipo sintético para QA; no producto ni medición"
+    },
+    {
+      "id": "a",
+      "name": "Cliente de prueba",
+      "role": "endpoint",
+      "position": {
+        "x": 10,
+        "y": 4,
+        "z": 1.4
+      },
+      "radios": [
+        {
+          "id": "client",
+          "protocol": "wifi",
+          "frequency_hz": 2412000000,
+          "bandwidth_hz": 20000000,
+          "channel": 1,
+          "tx_power_dbm": -15,
+          "tx_gain_dbi": 0,
+          "rx_gain_dbi": 0,
+          "sensitivity_dbm": -85,
+          "noise_figure_db": 7,
+          "antenna": "omnidirectional",
+          "orientation_deg": 0,
+          "beamwidth_deg": 360,
+          "pattern_sharpness": 1.8,
+          "side_lobe_attenuation_db": 18,
+          "polarization_deg": 0
+        }
+      ],
+      "evidence": "Equipo sintético para QA; no producto ni medición"
+    }
+  ],
+  "links": [
+    {
+      "id": "link-a",
+      "source_device_id": "ap",
+      "source_radio_id": "r",
+      "target_device_id": "a",
+      "target_radio_id": "client"
+    }
+  ],
+  "settings": {
+    "path_loss_exponent": 2.1,
+    "extra_loss_db_per_m": 0,
+    "system_gain_db": 0
+  },
+  "migration_notes": [],
+  "legacy_source": null,
+  "plan_reference": null
+}

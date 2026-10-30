@@ -10,6 +10,8 @@ import PositionComparison from './PositionComparison';
 import LinkDiagnostics from './LinkDiagnostics';
 import ConnectionEditor from './ConnectionEditor';
 import CoveragePanel from './CoveragePanel';
+import PlacementSearch from './PlacementSearch';
+import ScenarioPanel from './ScenarioPanel';
 import type { CoverageLayer } from './editor/coverage';
 import { linksUsingRadio, MAX_RADIOS, withAddedConnection, withAddedRadio, withRemovedConnection, withRemovedRadio } from './editor/connections';
 import { captureComparison, samePositionConfiguration } from './editor/comparison';
@@ -18,6 +20,7 @@ import { bindReference, defaultReferenceView, sameSimulationProject } from './ed
 import type { LocalReferenceImage } from './editor/referencePersistence';
 import { adoptHistory, editHistory, emptyHistory, finishGesture, redoHistory, startGesture, undoHistory } from './editor/history';
 import { translateWall } from './editor/geometry';
+import { doorNames, validatedMaterialPatch } from './editor/uncertainty';
 import { useProjectRecovery } from './useProjectRecovery';
 import type { Device, PlanReference as SavedReference, Point, Project, Radio } from './generated/project';
 import type { SimulationResult } from './generated/simulation-result';
@@ -359,7 +362,7 @@ export default function App() {
           <button className="add-button" disabled={!project || loading || project.devices.length >= 128} onClick={addDevice}>＋ Añadir dispositivo</button>
           <details className="wall-list"><summary>Paredes · {project?.building.walls.length ?? 0}</summary>
             {project?.building.walls.map((w, index) => <button key={w.id} className={selectedWallId === w.id ? 'selected' : ''} onClick={() => selectWall(w.id)}>
-              Pared {index + 1} · {project.building.materials.find(m => m.id === w.material_id)?.name}
+              Pared {index + 1} · {w.door ? `${doorNames[w.door]} · ` : ''}{project.building.materials.find(m => m.id === w.material_id)?.name}
             </button>)}
           </details>
           <div className="engine-card"><span className="eyebrow">CÁLCULO DISPONIBLE</span><strong>Estimación de enlaces</strong>
@@ -404,13 +407,18 @@ export default function App() {
             : <div className="scene-error"><h2>{loading ? 'Abriendo el espacio…' : 'Elige tu punto de partida'}</h2><p>Abre un ejemplo, importa un proyecto Java o crea una instalación nueva.</p>
               <button onClick={() => { loadSequence.current += 1; setLoading(false); adopt(newProject()); }}>Crear proyecto local</button></div>}</div>
           <div className="scene-footer"><span>◉ Dispositivo <span className="hub-dot">◆</span> Controlador / AP</span>
-            <span>{view === '2d' ? 'Cuadrícula · 1 m · Una planta, sin forjados' : 'Arrastra para orbitar · Rueda para acercar'}</span></div>
+            <span>{view === '2d' ? 'Cuadrícula · 1 m · Una planta, sin forjados' : 'Arrastra para orbitar · Rueda para acercar'}</span>
+            {project?.building.walls.some(wall => wall.door) && <span>Puerta abierta: discontinua en 2D / transparente en 3D · desconocida: violeta</span>}</div>
         </section>
 
         <aside key={`${selectedWallId ?? selected}-${radio?.id ?? ''}`} className="properties-panel panel">{wall && project ? <WallInspector key={wall.id} project={project} wall={wall}
           onGestureStart={beginGesture} onGestureEnd={endGesture}
           onEdit={next => change(p => { const index = p.building.walls.findIndex(w => w.id === next.id); if (index >= 0) p.building.walls[index] = next; })}
-          onMaterialEdit={(id, patch) => change(p => { const material = p.building.materials.find(m => m.id === id); if (material) Object.assign(material, patch, { evidence: 'Valor editado por el usuario; sin calibración experimental' }); })}
+          onMaterialEdit={(id, patch) => {
+            const current = project.building.materials.find(material => material.id === id); if (!current) return;
+            const validated = validatedMaterialPatch(current, patch);
+            change(p => { const material = p.building.materials.find(m => m.id === id); if (material) Object.assign(material, validated, { evidence: 'Valor editado por el usuario; sin calibración experimental' }); });
+          }}
           onDelete={() => { change(p => { p.building.walls = p.building.walls.filter(w => w.id !== wall.id); }); setSelectedWallId(null); setNotice('Pared eliminada. Puedes deshacer el cambio.'); focusProject(); }} />
           : <><span className="eyebrow">PROPIEDADES</span><h2>{device ? 'Ajusta el dispositivo' : 'Selecciona un objeto'}</h2>
           {device && radio ? <>
@@ -450,6 +458,13 @@ export default function App() {
       </section>
 
       {project && <CoveragePanel key={`coverage-${projectEpoch}`} project={project} projectRevision={revision.current} onLayer={setCoverageLayer} onValidate={checkEditorFields} disabled={loading} />}
+      {project && <PlacementSearch key={`placement-${projectEpoch}`} project={project} revision={revision.current} disabled={loading} onValidate={checkEditorFields}
+        onApply={(deviceId, position) => {
+          change(draft => { const ap = draft.devices.find(device => device.id === deviceId); if (ap) ap.position = { ...position }; });
+          selectDevice(deviceId); setView('2d'); setNotice('Posición del AP aplicada. Puedes deshacerla. Ejecuta una nueva estimación para evaluar la instalación actual.');
+        }} />}
+      {project && <ScenarioPanel key={`scenarios-${projectEpoch}`} project={project} revision={revision.current} disabled={loading} onValidate={checkEditorFields}
+        onInspect={id => { selectWall(id); window.requestAnimationFrame(() => document.querySelector<HTMLInputElement>('.properties-panel input')?.focus()); }} />}
       <section className="results-panel panel">
         <div className="results-heading"><div><span className="eyebrow">DIAGNÓSTICO DE LA INSTALACIÓN</span><h2>Comprueba cada dirección.</h2></div>
           {result && <button onClick={() => download({ project, result }, 'diagnostico.json')}>Exportar diagnóstico</button>}</div>
