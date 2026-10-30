@@ -22,6 +22,12 @@ Entorno inicial probado: Windows x64, Python 3.13.7, Node 22.20.0. Las versiones
 resueltas están en el lock Python y `apps/web/package-lock.json`. Otros entornos
 se deben verificar antes de anunciar soporte.
 
+Instalación limpia comprobada el 2026-10-30 (B-112) en un clon nuevo, con estos mismos pasos:
+dependencias Python en 27 s y `npm ci` en 5 s; `pip check` sin conflictos; 216 pruebas Python,
+contratos sin deriva, typecheck, build y 84 pruebas web; API (`/api/health`, `/docs`, simulación y
+perfiles) y web compilada respondiendo en loopback. La CI de migración repite la instalación desde
+el lock en Linux en cada ejecución.
+
 ## Arranque conjunto
 
 ```powershell
@@ -31,6 +37,8 @@ se deben verificar antes de anunciar soporte.
 Abrir http://127.0.0.1:5174/ . API interactiva: http://127.0.0.1:8000/docs .
 Ctrl+C detiene los procesos creados por el lanzador. Si un puerto está ocupado, el
 servicio falla de forma visible; no se busca un puerto alternativo silenciosamente.
+El lanzador pasa su propia salida a los servicios, así que el motivo (por ejemplo
+«Port 5174 is already in use») aparece junto al aviso «A service stopped».
 
 Para desarrollo también pueden ejecutarse en dos terminales:
 
