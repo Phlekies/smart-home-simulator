@@ -5,14 +5,15 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — B-105 y B-106 entregadas en ramas locales; sin tarea nueva reservada.
+- Estado: **review** — B-105 y B-106 publicadas en [PR #8](https://github.com/Phlekies/smart-home-simulator/pull/8)
+  (borrador, base `codex/integrate-agents` del PR #7 de A); sin tarea nueva reservada.
 - Integración: **I-002 la ejecuta A** por instrucción del usuario (registro A, 2026-10-30 09:54):
   A asume temporalmente Git, documentos comunes y `package.json`. B no integra ni edita
   WORKBOARD/STATUS/CHECKLIST/LOCAL_DEVELOPMENT mientras dure, y solo entrega ramas propias.
 - Pila B publicada (borradores, sin merge): [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) B-101 →
   [PR #4](https://github.com/Phlekies/smart-home-simulator/pull/4) B-102 → [PR #5](https://github.com/Phlekies/smart-home-simulator/pull/5) B-104 →
   [PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6) B-103. B-105/B-106 recolocadas sobre la integración de A (`codex/integrate-agents`, PR #7) en
-  `agent-b/b-105-106-on-integration`; incluyen las correcciones de A revisadas (abajo).
+  `agent-b/b-105-106-on-integration` (publicada, PR #8); incluyen las correcciones de A revisadas (abajo).
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
 - Rama/worktree: clon B `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`; no escribe en el
   checkout compartido de A.
