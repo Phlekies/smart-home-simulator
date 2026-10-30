@@ -23,8 +23,8 @@ from typing import Literal
 from pydantic import Field
 
 from .engines import direction
-from .measurements import MeasurementCampaign, partition_issues, project_issues
-from .models import Device, Model, Project, Radio, ScenarioAssumptions
+from .measurements import MeasurementCampaign, partition_issues, project_issues, summarize
+from .models import Device, Model, Point, Project, Radio, ScenarioAssumptions
 
 Direction = Literal["ap-to-device", "device-to-ap"]
 
@@ -199,3 +199,67 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
+
+# --- Single-campaign check for the API (B-116) ------------------------------------------
+
+class RssiSummary(Model):
+    samples: int
+    median_dbm: float
+    min_dbm: float
+    max_dbm: float
+
+
+class DeliverySummary(Model):
+    criterion_id: str
+    direction: str
+    sent: int
+    received: int
+    outcome: Literal["pass", "fail", "inconclusive"]
+
+
+class PointSummary(Model):
+    point_id: str
+    position: Point
+    rssi: dict[str, RssiSummary]
+    delivery: list[DeliverySummary]
+
+
+class MeasurementCheckRequest(Model):
+    campaign: MeasurementCampaign
+    project: Project | None = None
+
+
+class MeasurementCheckResult(Model):
+    campaign_id: str
+    site_id: str
+    split: str
+    synthetic: bool
+    points: dict[str, int] = Field(description="Count of planned, measured and excluded points")
+    summary: list[PointSummary]
+    project_issues: list[str] | None = Field(description="None when no project was sent")
+    residuals: list[PointResidual] | None
+    skipped: list[SkippedObservation]
+    notes: list[str]
+
+
+def check(request: MeasurementCheckRequest) -> MeasurementCheckResult:
+    """Validate one campaign, describe what it measured and, with its project, compare predictions."""
+    campaign, project = request.campaign, request.project
+    counts = {status: sum(p.status == status for p in campaign.points) for status in ("planned", "measured", "excluded")}
+    notes, issues, found, skipped = [], None, None, []
+    if project is None:
+        notes.append("Sin proyecto: no se comprueba el encaje ni se calculan residuos.")
+    else:
+        issues = project_issues(campaign, project)
+        if campaign.synthetic:
+            notes.append("Campaña sintética de formato: no es evidencia y no se calculan residuos.")
+        elif issues:
+            notes.append("El proyecto no encaja con la campaña: no se calculan residuos.")
+        else:
+            found, skipped = residuals(campaign, project)
+            notes.append("Residuos = medido − predicho por el estimador rápido; no son una validación.")
+    return MeasurementCheckResult(
+        campaign_id=campaign.id, site_id=campaign.site_id, split=campaign.split, synthetic=campaign.synthetic,
+        points=counts, summary=[PointSummary.model_validate(row) for row in summarize(campaign)],
+        project_issues=issues, residuals=found, skipped=skipped, notes=notes)

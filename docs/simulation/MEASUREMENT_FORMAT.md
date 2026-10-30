@@ -13,8 +13,10 @@ hash SHA-256 del JSON canónico (`input_hash`, el mismo que devuelven las simula
 el plano cambia, el hash deja de coincidir y `project_issues()` lo informa: las posiciones
 pueden referirse a otra versión.
 
-No hay endpoint HTTP para campañas en esta entrega. Si la interfaz necesita importarlas,
-B propondrá un endpoint aditivo y A implementará el consumidor.
+`POST /api/measurements/check` (B-116) valida una campaña con `{ campaign, project? }` y devuelve el
+recuento de puntos, el resumen tipado de lo medido y, si se envía su proyecto, los problemas de encaje
+y los residuos frente al estimador ([calibración](CALIBRATION.md)). No guarda nada: la campaña sigue
+siendo un archivo local. Tipos TS: `measurement-campaign.ts` y `measurement-check.ts`.
 
 ## Privacidad
 

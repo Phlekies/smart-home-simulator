@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import ValidationError
 
 from .cache import ResultCache
+from .calibration import MeasurementCheckRequest, MeasurementCheckResult, check as check_measurements
 from .coverage import CoverageJobs, CoverageLimitError
 from .engines import engine_capabilities, simulate
 from .legacy import import_project
@@ -174,3 +175,9 @@ def report(request: ReportRequest) -> InstallationReport:
           responses={200: {"content": {"text/markdown": {}}}})
 def report_markdown(request: ReportRequest) -> PlainTextResponse:
     return PlainTextResponse(to_markdown(build_report(request)), media_type="text/markdown; charset=utf-8")
+
+
+@app.post("/api/measurements/check", response_model=MeasurementCheckResult)
+def measurement_check(request: MeasurementCheckRequest) -> MeasurementCheckResult:
+    """Validate a local measurement campaign and, with its project, compare it with predictions."""
+    return check_measurements(request)
