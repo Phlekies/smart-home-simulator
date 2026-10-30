@@ -5,7 +5,8 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review**, A-102 persistencia implementada y verificada; archivos liberados.
+- Estado: **review**, A-102 persistencia implementada, verificada y publicada en
+  [PR #12](https://github.com/Phlekies/smart-home-simulator/pull/12); archivos liberados.
 - Sesión: conversación actual, agente A; 2026-10-30, Europe/Madrid.
 - Worktree aislado `smart-home-simulator/.local/integration-review`, rama
   `codex/persist-plan-reference` sobre `codex/coverage-map-ui` (PR #10, d5e64d3).
@@ -285,6 +286,8 @@ Siguiente paso:
   Consola sin errores/advertencias. Evidencia y límites en [PLAN_REFERENCE.md](../ui/PLAN_REFERENCE.md).
 - Servicios propios detenidos, sin listeners finales en5174/8000. Backend no se repite:
   contrato intacto y consumidor validado contra API real; CI de la rama verificará conjunto.
+- Publicación: código 83d4b89 en `codex/persist-plan-reference`, PR #12 apilado sobre
+  PR #10; sin merge. Comprobaciones remotas consultables en el PR.
 - **Solicitud al integrador:** aceptar consumidor A-102 y consolidar evidencia; M2 y
   producto siguen parciales. Siguiente trabajo A: recorrido de accesibilidad o consumidores
   de #8/#9 cuando sus contratos estén integrados y revisados.
