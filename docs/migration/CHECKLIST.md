@@ -57,13 +57,13 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 
 ## M3 — Sustitución del motor
 
-- [ ] Candidato avanzado ejecutado, versiones y entorno CPU/GPU documentados.
-- [ ] Conversión de unidades, ejes, geometría, radios y materiales probada.
-- [ ] Interacciones físicas y omisiones de la versión seleccionada documentadas.
-- [ ] Espacio libre, pared y reflexión contrastados con referencias.
-- [ ] Diferencias respecto a Java explicadas; errores antiguos no se conservan como requisito.
+- [x] Candidato avanzado ejecutado, versiones y entorno CPU/GPU documentados (Sionna RT 2.2.0 en WSL/CPU; Windows nativo y GPU documentados como no disponibles; B-102).
+- [ ] Conversión de unidades, ejes, geometría, radios y materiales probada (parcial B-102: unidades, ejes, paredes y materiales ITU; antenas direccionales y polarizaciones distintas pendientes).
+- [x] Interacciones físicas y omisiones de la versión seleccionada documentadas (B-102).
+- [x] Espacio libre, pared y reflexión contrastados con referencias (B-101 + B-102: 18/18).
+- [ ] Diferencias respecto a Java explicadas; errores antiguos no se conservan como requisito (parcial: tabla de materiales y fase de reflexión documentadas; motor multipath Java no contrastado).
 - [ ] Progreso, cancelación, caché y límites para cálculo pesado.
-- [ ] Benchmark inicial reproducible de tiempo y memoria.
+- [x] Benchmark inicial reproducible de tiempo y memoria (script y evidencia JSON de B-102; un equipo, una ejecución).
 
 ## M4 — Mapas y comparación básica
 

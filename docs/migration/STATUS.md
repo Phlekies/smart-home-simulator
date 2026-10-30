@@ -10,7 +10,8 @@ Inicio: 2026-10-29. La migración completa está en curso, no terminada.
 - M0/base M1 implementados; CI remota de migración superada en PR #2 para 33f1df8.
 - M2 parcial: paredes editables y undo/redo terminados en la entrega correspondiente.
   Faltan imagen de plano calibrada, recuperación automática y accesibilidad completa.
-- API/estimador directo y contratos disponibles; sin mapas nuevos ni Sionna RT integrado.
+- API/estimador directo y contratos disponibles; sin mapas nuevos ni Sionna RT integrado en la API.
+  B-102: Sionna RT evaluado en WSL/CPU contra referencias (18/18); Windows nativo no ejecuta.
 - Sin validación experimental en viviendas; el producto completo continúa pendiente.
 - Última evidencia de código: 16 pruebas web/editor y 31 Python, build y contratos correctos;
   192 Java en la entrega de base. Revisar las fechas/secciones antes de atribuir otra ejecución.
@@ -185,6 +186,26 @@ sin merge. CI remota: consultar el PR. Documentación técnica en `docs/simulati
 Límites: referencias idealizadas, no medidas; tabla ITU contrastada con la reproducción de
 MathWorks (PDF ITU con 404), pendiente de cotejo oficial. Ningún checklist se marca con esta
 entrega: el criterio activo de fallo, los conjuntos reales y el motor avanzado siguen pendientes.
+
+## Entrega B-102 — evaluación aislada de Sionna RT — 2026-10-30
+
+Rama local `agent-b/b-102-sionna-evaluation`, apilada sobre B-101; sin push. Informe completo en
+[ADVANCED_ENGINE_EVALUATION](../simulation/ADVANCED_ENGINE_EVALUATION.md) y evidencia JSON en
+`docs/simulation/evidence/`.
+
+| Comprobación | Resultado |
+|---|---|
+| Windows 11, Python 3.13.7, sionna-rt 2.2.0 sin LLVM | `ImportError`: no encuentra `LLVM-C.dll` |
+| Ídem con LLVM 18.1.8 portable (`DRJIT_LIBLLVM_PATH`) | Dr.Jit aborta en un cálculo trivial: `Failed to materialize symbols` (también con objetivo AVX2) |
+| WSL2 Ubuntu 24.04, Python 3.12.3, LLVM 20.1.2, sionna-rt 2.2.0 / mitsuba 3.9.1 / drjit 1.5.0 | Ejecuta en `llvm_ad_mono_polarized` |
+| `sionna_evaluation.py` en WSL | 18/18 casos físicos y de coherencia con |Δ| < 0.001 dB; LD-n3 no modelado; pico 703 MB |
+| Ejemplos Java, `max_depth` 3 | 35–48 ms por enlace; con difracción 68–85 ms; almacén: 3 enlaces sin trayecto (profundidad/metal) |
+| Rejilla de 5307 receptores / mapa planar de 21 525 celdas | 11.7 s / 0.02–0.41 s según rayos (81 %–18 % de celdas vacías) |
+| `pytest services/simulator/tests -q` (venv de la aplicación) | 117 superadas; el adaptador no requiere Sionna para sus pruebas |
+| `scripts/export_contracts.py --check` | Sin deriva; ningún contrato cambia |
+
+Límites: concordancia con física idealizada, no con medidas. Difracción y difusa sin caso de
+referencia. Sin GPU compatible. La API mantiene 501 para `sionna-rt`, sin fallback.
 
 ## Reglas de evidencia
 

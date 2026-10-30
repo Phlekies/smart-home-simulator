@@ -1,0 +1,1298 @@
+{
+  "runner": "services/simulator/benchmarks/sionna_evaluation.py",
+  "created_utc": "2026-10-30T08:31:24+00:00",
+  "environment": {
+    "os": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "cpu": "AMD Ryzen 9 7900X 12-Core Processor",
+    "logical_cpus": 24,
+    "total_ram_gb": 15.2,
+    "drjit_libllvm_path": "/usr/lib/x86_64-linux-gnu/libLLVM-20.so",
+    "versions": {
+      "sionna-rt": "2.2.0",
+      "mitsuba": "3.9.1",
+      "drjit": "1.5.0"
+    }
+  },
+  "import_s": 1.1207742619999976,
+  "variant": "llvm_ad_mono_polarized",
+  "references": {
+    "interactions": [
+      "free-space",
+      "wall-penetration",
+      "specular-reflection"
+    ],
+    "results": [
+      {
+        "case_id": "FS-1m",
+        "interaction": "free-space",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -20.095329291245648,
+        "engine_dbm": -20.095328767386782,
+        "delta_db": 5.238588656197862e-07,
+        "note": ""
+      },
+      {
+        "case_id": "FS-5m",
+        "interaction": "free-space",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -34.07472937796602,
+        "engine_dbm": -34.07472824070949,
+        "delta_db": 1.1372565325018513e-06,
+        "note": ""
+      },
+      {
+        "case_id": "FS-10m",
+        "interaction": "free-space",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -40.09532929124565,
+        "engine_dbm": -40.095328153989115,
+        "delta_db": 1.1372565325018513e-06,
+        "note": ""
+      },
+      {
+        "case_id": "FS-30m",
+        "interaction": "free-space",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -49.637754385638885,
+        "engine_dbm": -49.63775273721767,
+        "delta_db": 1.6484212181921976e-06,
+        "note": ""
+      },
+      {
+        "case_id": "FS-ch11",
+        "interaction": "free-space",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -40.27354419378932,
+        "engine_dbm": -40.273544410737905,
+        "delta_db": -2.169485853187325e-07,
+        "note": ""
+      },
+      {
+        "case_id": "FS-3D",
+        "interaction": "free-space",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -36.206186625394366,
+        "engine_dbm": -36.206185796431896,
+        "delta_db": 8.289624702229048e-07,
+        "note": ""
+      },
+      {
+        "case_id": "LD-n3",
+        "interaction": "log-distance",
+        "kind": "model-consistency",
+        "verdict": "not-modelled",
+        "expected_dbm": -50.09532929124565,
+        "engine_dbm": -40.095328153989115,
+        "delta_db": 10.000001137256533,
+        "note": ""
+      },
+      {
+        "case_id": "WALL-concrete-100mm",
+        "interaction": "wall-penetration",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -48.18422649817363,
+        "engine_dbm": -48.18422054370748,
+        "delta_db": 5.954466146818049e-06,
+        "note": ""
+      },
+      {
+        "case_id": "WALL-concrete-200mm",
+        "interaction": "wall-penetration",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -54.72690981200425,
+        "engine_dbm": -54.72689968386652,
+        "delta_db": 1.0128137731157949e-05,
+        "note": ""
+      },
+      {
+        "case_id": "WALL-brick-100mm",
+        "interaction": "wall-penetration",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -43.17548719840481,
+        "engine_dbm": -43.17548102481225,
+        "delta_db": 6.173592559832741e-06,
+        "note": ""
+      },
+      {
+        "case_id": "WALL-drywall-12.5mm",
+        "interaction": "wall-penetration",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -41.172025451284775,
+        "engine_dbm": -41.17202231832876,
+        "delta_db": 3.1329560172821402e-06,
+        "note": ""
+      },
+      {
+        "case_id": "WALL-glass-6mm",
+        "interaction": "wall-penetration",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -42.01293900698484,
+        "engine_dbm": -42.01293968468775,
+        "delta_db": -6.77702914231304e-07,
+        "note": ""
+      },
+      {
+        "case_id": "WALL-wood-40mm",
+        "interaction": "wall-penetration",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -40.70798218241692,
+        "engine_dbm": -40.70797813595125,
+        "delta_db": 4.04646566920519e-06,
+        "note": ""
+      },
+      {
+        "case_id": "WALL-concrete-100mm-60deg",
+        "interaction": "wall-penetration",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -51.96307528600842,
+        "engine_dbm": -51.963070196205734,
+        "delta_db": 5.089802684210554e-06,
+        "note": ""
+      },
+      {
+        "case_id": "WALL-fit-single",
+        "interaction": "wall-penetration",
+        "kind": "model-consistency",
+        "verdict": "agrees",
+        "expected_dbm": -54.72690981200425,
+        "engine_dbm": -54.72689968386652,
+        "delta_db": 1.0128137731157949e-05,
+        "note": ""
+      },
+      {
+        "case_id": "WALL-fit-series",
+        "interaction": "wall-penetration",
+        "kind": "model-consistency",
+        "verdict": "agrees",
+        "expected_dbm": -55.80360597204338,
+        "engine_dbm": -55.80359408582852,
+        "delta_db": 1.1886214856815513e-05,
+        "note": ""
+      },
+      {
+        "case_id": "REFL-grazing",
+        "interaction": "specular-reflection",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -35.31619734185245,
+        "engine_dbm": -35.316220285777966,
+        "delta_db": -2.2943925515050978e-05,
+        "note": ""
+      },
+      {
+        "case_id": "REFL-steep",
+        "interaction": "specular-reflection",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -26.392949684249633,
+        "engine_dbm": -26.392947408612876,
+        "delta_db": 2.275636756365884e-06,
+        "note": ""
+      },
+      {
+        "case_id": "REFL-miss",
+        "interaction": "specular-reflection",
+        "kind": "physical-reference",
+        "verdict": "agrees",
+        "expected_dbm": -40.09532929124565,
+        "engine_dbm": -40.095328153989115,
+        "delta_db": 1.1372565325018513e-06,
+        "note": ""
+      }
+    ],
+    "details": [
+      {
+        "case_id": "FS-1m",
+        "elapsed_ms": 78.46179999998526,
+        "incoherent_power_dbm": -20.095328767386782,
+        "wideband_power_dbm": -20.095328767386782,
+        "paths": [
+          {
+            "interactions": [
+              "line-of-sight"
+            ],
+            "delay_ns": 3.335640874624346,
+            "power_db": -40.09532876738678
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "FS-5m",
+        "elapsed_ms": 12.906136999987439,
+        "incoherent_power_dbm": -34.07472824070949,
+        "wideband_power_dbm": -34.07472824070949,
+        "paths": [
+          {
+            "interactions": [
+              "line-of-sight"
+            ],
+            "delay_ns": 16.678203706987915,
+            "power_db": -54.07472824070949
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "FS-10m",
+        "elapsed_ms": 12.232087000001002,
+        "incoherent_power_dbm": -40.095328153989115,
+        "wideband_power_dbm": -40.095328153989115,
+        "paths": [
+          {
+            "interactions": [
+              "line-of-sight"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -60.095328153989115
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "FS-30m",
+        "elapsed_ms": 12.105789999992567,
+        "incoherent_power_dbm": -49.63775273721767,
+        "wideband_power_dbm": -49.63775273721767,
+        "paths": [
+          {
+            "interactions": [
+              "line-of-sight"
+            ],
+            "delay_ns": 100.06922934735485,
+            "power_db": -69.63775273721767
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "FS-ch11",
+        "elapsed_ms": 11.718685999994705,
+        "incoherent_power_dbm": -40.273544410737905,
+        "wideband_power_dbm": -40.273544410737905,
+        "paths": [
+          {
+            "interactions": [
+              "line-of-sight"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -60.273544410737905
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "FS-3D",
+        "elapsed_ms": 11.007018999976026,
+        "incoherent_power_dbm": -36.206185796431896,
+        "wideband_power_dbm": -36.206185796431896,
+        "paths": [
+          {
+            "interactions": [
+              "line-of-sight"
+            ],
+            "delay_ns": 21.316807874427468,
+            "power_db": -56.206185796431896
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "LD-n3",
+        "elapsed_ms": 11.17570999997497,
+        "incoherent_power_dbm": -40.095328153989115,
+        "wideband_power_dbm": -40.095328153989115,
+        "paths": [
+          {
+            "interactions": [
+              "line-of-sight"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -60.095328153989115
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "WALL-concrete-100mm",
+        "elapsed_ms": 31.50769399999831,
+        "incoherent_power_dbm": -48.18422054370748,
+        "wideband_power_dbm": -48.18422054370748,
+        "paths": [
+          {
+            "interactions": [
+              "refraction"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -68.18422054370748
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "WALL-concrete-200mm",
+        "elapsed_ms": 26.231230999997024,
+        "incoherent_power_dbm": -54.72689968386652,
+        "wideband_power_dbm": -54.72689968386652,
+        "paths": [
+          {
+            "interactions": [
+              "refraction"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -74.72689968386652
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "WALL-brick-100mm",
+        "elapsed_ms": 24.73459000000844,
+        "incoherent_power_dbm": -43.17548102481225,
+        "wideband_power_dbm": -43.17548102481225,
+        "paths": [
+          {
+            "interactions": [
+              "refraction"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -63.17548102481225
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "WALL-drywall-12.5mm",
+        "elapsed_ms": 25.51304599998616,
+        "incoherent_power_dbm": -41.17202231832876,
+        "wideband_power_dbm": -41.17202231832876,
+        "paths": [
+          {
+            "interactions": [
+              "refraction"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -61.17202231832876
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "WALL-glass-6mm",
+        "elapsed_ms": 24.256059999999025,
+        "incoherent_power_dbm": -42.01293968468775,
+        "wideband_power_dbm": -42.01293968468775,
+        "paths": [
+          {
+            "interactions": [
+              "refraction"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -62.01293968468775
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "WALL-wood-40mm",
+        "elapsed_ms": 23.568954000012354,
+        "incoherent_power_dbm": -40.70797813595125,
+        "wideband_power_dbm": -40.70797813595125,
+        "paths": [
+          {
+            "interactions": [
+              "refraction"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -60.70797813595125
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "WALL-concrete-100mm-60deg",
+        "elapsed_ms": 21.89190899997584,
+        "incoherent_power_dbm": -51.963070196205734,
+        "wideband_power_dbm": -51.963070196205734,
+        "paths": [
+          {
+            "interactions": [
+              "refraction"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -71.96307019620573
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "WALL-fit-single",
+        "elapsed_ms": 21.200053999990587,
+        "incoherent_power_dbm": -54.72689968386652,
+        "wideband_power_dbm": -54.72689968386652,
+        "paths": [
+          {
+            "interactions": [
+              "refraction"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -74.72689968386652
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "WALL-fit-series",
+        "elapsed_ms": 27.954867999994804,
+        "incoherent_power_dbm": -55.80359408582852,
+        "wideband_power_dbm": -55.80359408582852,
+        "paths": [
+          {
+            "interactions": [
+              "refraction",
+              "refraction"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -75.80359408582852
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "REFL-grazing",
+        "elapsed_ms": 28.061271000012766,
+        "incoherent_power_dbm": -37.875261082785045,
+        "wideband_power_dbm": -35.316775351207916,
+        "paths": [
+          {
+            "interactions": [
+              "line-of-sight"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -60.095328153989115
+          },
+          {
+            "interactions": [
+              "specular"
+            ],
+            "delay_ns": 34.01699544269832,
+            "power_db": -61.85229288362537
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "REFL-steep",
+        "elapsed_ms": 24.17674299999817,
+        "incoherent_power_dbm": -26.040249432969745,
+        "wideband_power_dbm": -26.34494606048957,
+        "paths": [
+          {
+            "interactions": [
+              "line-of-sight"
+            ],
+            "delay_ns": 6.671281749248692,
+            "power_db": -46.11592868066641
+          },
+          {
+            "interactions": [
+              "specular"
+            ],
+            "delay_ns": 21.09644547942935,
+            "power_db": -63.666109158863264
+          }
+        ],
+        "reasons": []
+      },
+      {
+        "case_id": "REFL-miss",
+        "elapsed_ms": 26.85145499998498,
+        "incoherent_power_dbm": -40.095328153989115,
+        "wideband_power_dbm": -40.095328153989115,
+        "paths": [
+          {
+            "interactions": [
+              "line-of-sight"
+            ],
+            "delay_ns": 33.35640741397583,
+            "power_db": -60.095328153989115
+          }
+        ],
+        "reasons": []
+      }
+    ]
+  },
+  "examples": [
+    {
+      "example": "smart-apartment",
+      "walls": 11,
+      "links": 6,
+      "material_mapping": {
+        "brick": "brick (inferred-from-legacy-id)",
+        "drywall": "plasterboard (inferred-from-legacy-id)",
+        "wood": "wood (inferred-from-legacy-id)"
+      },
+      "max_depth": 3,
+      "diffraction": false,
+      "edge_diffraction": false,
+      "total_s": 0.22694092500000806,
+      "first_link_ms": 42.34496300000501,
+      "median_link_ms": 35.4900549999968,
+      "links_detail": [
+        {
+          "link_id": "link-S1",
+          "sionna_coherent_dbm": -55.52447313367139,
+          "sionna_incoherent_dbm": -57.467445631679624,
+          "sionna_wideband_dbm": -56.694904828467145,
+          "quick_estimate_dbm": -59.294022192000384,
+          "num_paths": 23,
+          "elapsed_ms": 42.34496300000501,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S2",
+          "sionna_coherent_dbm": -70.38450856513337,
+          "sionna_incoherent_dbm": -65.02064543413964,
+          "sionna_wideband_dbm": -68.9397315536083,
+          "quick_estimate_dbm": -69.91857401436778,
+          "num_paths": 12,
+          "elapsed_ms": 36.82298800001149,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S3",
+          "sionna_coherent_dbm": -88.19146612305136,
+          "sionna_incoherent_dbm": -70.03028015511201,
+          "sionna_wideband_dbm": -85.88953903324216,
+          "quick_estimate_dbm": -78.78119518775709,
+          "num_paths": 5,
+          "elapsed_ms": 34.7001089999992,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S4",
+          "sionna_coherent_dbm": -72.25129785281992,
+          "sionna_incoherent_dbm": -65.88499370075974,
+          "sionna_wideband_dbm": -73.64049792295889,
+          "quick_estimate_dbm": -71.25239033298668,
+          "num_paths": 14,
+          "elapsed_ms": 35.62274299997625,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S5",
+          "sionna_coherent_dbm": -62.952865535938386,
+          "sionna_incoherent_dbm": -66.70323429332697,
+          "sionna_wideband_dbm": -63.29323057585735,
+          "quick_estimate_dbm": -72.69855593174037,
+          "num_paths": 9,
+          "elapsed_ms": 35.35736700001735,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S6",
+          "sionna_coherent_dbm": null,
+          "sionna_incoherent_dbm": null,
+          "sionna_wideband_dbm": null,
+          "quick_estimate_dbm": -70.9051238680393,
+          "num_paths": 0,
+          "elapsed_ms": 0.0,
+          "reasons": [
+            "Radio radio-1: patrón direccional sin traducir al adaptador."
+          ]
+        }
+      ]
+    },
+    {
+      "example": "office-floor",
+      "walls": 21,
+      "links": 7,
+      "material_mapping": {
+        "concrete": "concrete (inferred-from-legacy-id)",
+        "glass": "glass (inferred-from-legacy-id)",
+        "drywall": "plasterboard (inferred-from-legacy-id)",
+        "wood": "wood (inferred-from-legacy-id)"
+      },
+      "max_depth": 3,
+      "diffraction": false,
+      "edge_diffraction": false,
+      "total_s": 0.42906801099999825,
+      "first_link_ms": 48.13325099999588,
+      "median_link_ms": 47.55553700002224,
+      "links_detail": [
+        {
+          "link_id": "link-S1",
+          "sionna_coherent_dbm": -65.54317740594335,
+          "sionna_incoherent_dbm": -60.83041059679779,
+          "sionna_wideband_dbm": -62.77293459420238,
+          "quick_estimate_dbm": -62.84006417168213,
+          "num_paths": 23,
+          "elapsed_ms": 48.13325099999588,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S2",
+          "sionna_coherent_dbm": -63.003603924482896,
+          "sionna_incoherent_dbm": -59.448221781993496,
+          "sionna_wideband_dbm": -59.56701007290961,
+          "quick_estimate_dbm": -61.23129656806411,
+          "num_paths": 23,
+          "elapsed_ms": 44.19874699999582,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S3",
+          "sionna_coherent_dbm": -73.25714216808359,
+          "sionna_incoherent_dbm": -69.85330686300931,
+          "sionna_wideband_dbm": -70.86732023959573,
+          "quick_estimate_dbm": -72.98523628051414,
+          "num_paths": 5,
+          "elapsed_ms": 45.5137959999945,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S4",
+          "sionna_coherent_dbm": -65.11123291316652,
+          "sionna_incoherent_dbm": -67.72891493789393,
+          "sionna_wideband_dbm": -66.41894395040276,
+          "quick_estimate_dbm": -71.141593190982,
+          "num_paths": 3,
+          "elapsed_ms": 51.79722899998751,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S5",
+          "sionna_coherent_dbm": -75.60708864618249,
+          "sionna_incoherent_dbm": -70.01095822973191,
+          "sionna_wideband_dbm": -72.71000461548327,
+          "quick_estimate_dbm": -72.73634977207394,
+          "num_paths": 4,
+          "elapsed_ms": 50.75693699998851,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S6",
+          "sionna_coherent_dbm": -62.829059554262145,
+          "sionna_incoherent_dbm": -58.216900001528444,
+          "sionna_wideband_dbm": -60.10659923949774,
+          "quick_estimate_dbm": -62.26761024167129,
+          "num_paths": 14,
+          "elapsed_ms": 44.58651199999508,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S7",
+          "sionna_coherent_dbm": -61.56725915398563,
+          "sionna_incoherent_dbm": -65.00454496282454,
+          "sionna_wideband_dbm": -61.76693260162169,
+          "quick_estimate_dbm": -68.39128430257288,
+          "num_paths": 20,
+          "elapsed_ms": 47.55553700002224,
+          "reasons": []
+        }
+      ]
+    },
+    {
+      "example": "warehouse",
+      "walls": 21,
+      "links": 5,
+      "material_mapping": {
+        "concrete": "concrete (inferred-from-legacy-id)",
+        "drywall": "plasterboard (inferred-from-legacy-id)",
+        "metal-door": "metal (inferred-from-legacy-id)",
+        "wood": "wood (inferred-from-legacy-id)"
+      },
+      "max_depth": 3,
+      "diffraction": false,
+      "edge_diffraction": false,
+      "total_s": 0.2564471700000013,
+      "first_link_ms": 49.067826999987574,
+      "median_link_ms": 44.66856700000221,
+      "links_detail": [
+        {
+          "link_id": "link-S1",
+          "sionna_coherent_dbm": -70.90081334389521,
+          "sionna_incoherent_dbm": -73.44899902217392,
+          "sionna_wideband_dbm": -70.94413724778008,
+          "quick_estimate_dbm": -82.76834933925322,
+          "num_paths": 2,
+          "elapsed_ms": 49.067826999987574,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S2",
+          "sionna_coherent_dbm": null,
+          "sionna_incoherent_dbm": null,
+          "sionna_wideband_dbm": null,
+          "quick_estimate_dbm": -113.44654554790141,
+          "num_paths": 0,
+          "elapsed_ms": 48.65656999999146,
+          "reasons": [
+            "Sin trayectos con max_depth=3: cada pared atravesada cuenta como una interacción; no equivale a ausencia de señal."
+          ]
+        },
+        {
+          "link_id": "link-S3",
+          "sionna_coherent_dbm": null,
+          "sionna_incoherent_dbm": null,
+          "sionna_wideband_dbm": null,
+          "quick_estimate_dbm": -131.9677289718752,
+          "num_paths": 0,
+          "elapsed_ms": 30.951952999998866,
+          "reasons": [
+            "Sin trayectos con max_depth=3: cada pared atravesada cuenta como una interacción; no equivale a ausencia de señal."
+          ]
+        },
+        {
+          "link_id": "link-S4",
+          "sionna_coherent_dbm": null,
+          "sionna_incoherent_dbm": null,
+          "sionna_wideband_dbm": null,
+          "quick_estimate_dbm": -152.83568736070674,
+          "num_paths": 0,
+          "elapsed_ms": 28.6859560000039,
+          "reasons": [
+            "Sin trayectos con max_depth=3: cada pared atravesada cuenta como una interacción; no equivale a ausencia de señal."
+          ]
+        },
+        {
+          "link_id": "link-S5",
+          "sionna_coherent_dbm": -71.44330582604758,
+          "sionna_incoherent_dbm": -70.22599281782371,
+          "sionna_wideband_dbm": -72.5428117219633,
+          "quick_estimate_dbm": -103.83047974699426,
+          "num_paths": 4,
+          "elapsed_ms": 44.66856700000221,
+          "reasons": []
+        }
+      ]
+    }
+  ],
+  "examples_with_diffraction": [
+    {
+      "example": "smart-apartment",
+      "walls": 11,
+      "links": 6,
+      "material_mapping": {
+        "brick": "brick (inferred-from-legacy-id)",
+        "drywall": "plasterboard (inferred-from-legacy-id)",
+        "wood": "wood (inferred-from-legacy-id)"
+      },
+      "max_depth": 3,
+      "diffraction": true,
+      "edge_diffraction": true,
+      "total_s": 0.43025430099999085,
+      "first_link_ms": 101.51260000000661,
+      "median_link_ms": 67.9974645000101,
+      "links_detail": [
+        {
+          "link_id": "link-S1",
+          "sionna_coherent_dbm": -55.64271382399204,
+          "sionna_incoherent_dbm": -57.46373503665254,
+          "sionna_wideband_dbm": -56.769003083663506,
+          "quick_estimate_dbm": -59.294022192000384,
+          "num_paths": 132,
+          "elapsed_ms": 101.51260000000661,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S2",
+          "sionna_coherent_dbm": -69.57097858591497,
+          "sionna_incoherent_dbm": -64.73431112893826,
+          "sionna_wideband_dbm": -67.57782121183192,
+          "quick_estimate_dbm": -69.91857401436778,
+          "num_paths": 101,
+          "elapsed_ms": 67.58337200000142,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S3",
+          "sionna_coherent_dbm": -84.14971652083865,
+          "sionna_incoherent_dbm": -69.69054270554108,
+          "sionna_wideband_dbm": -81.44721553799266,
+          "quick_estimate_dbm": -78.78119518775709,
+          "num_paths": 55,
+          "elapsed_ms": 66.83348300001057,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S4",
+          "sionna_coherent_dbm": -73.59221195993324,
+          "sionna_incoherent_dbm": -65.79007538935753,
+          "sionna_wideband_dbm": -74.68218602220576,
+          "quick_estimate_dbm": -71.25239033298668,
+          "num_paths": 105,
+          "elapsed_ms": 68.41155700001877,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S5",
+          "sionna_coherent_dbm": -67.47211740643979,
+          "sionna_incoherent_dbm": -66.09696082862027,
+          "sionna_wideband_dbm": -66.8529484285294,
+          "quick_estimate_dbm": -72.69855593174037,
+          "num_paths": 88,
+          "elapsed_ms": 69.82556200000545,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S6",
+          "sionna_coherent_dbm": null,
+          "sionna_incoherent_dbm": null,
+          "sionna_wideband_dbm": null,
+          "quick_estimate_dbm": -70.9051238680393,
+          "num_paths": 0,
+          "elapsed_ms": 0.0,
+          "reasons": [
+            "Radio radio-1: patrón direccional sin traducir al adaptador."
+          ]
+        }
+      ]
+    },
+    {
+      "example": "office-floor",
+      "walls": 21,
+      "links": 7,
+      "material_mapping": {
+        "concrete": "concrete (inferred-from-legacy-id)",
+        "glass": "glass (inferred-from-legacy-id)",
+        "drywall": "plasterboard (inferred-from-legacy-id)",
+        "wood": "wood (inferred-from-legacy-id)"
+      },
+      "max_depth": 3,
+      "diffraction": true,
+      "edge_diffraction": true,
+      "total_s": 0.6835342739999817,
+      "first_link_ms": 90.30871600000978,
+      "median_link_ms": 85.4249129999971,
+      "links_detail": [
+        {
+          "link_id": "link-S1",
+          "sionna_coherent_dbm": -66.26492448539506,
+          "sionna_incoherent_dbm": -60.81548069131885,
+          "sionna_wideband_dbm": -62.82361235085517,
+          "quick_estimate_dbm": -62.84006417168213,
+          "num_paths": 161,
+          "elapsed_ms": 90.30871600000978,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S2",
+          "sionna_coherent_dbm": -63.63275176692306,
+          "sionna_incoherent_dbm": -59.43034259000797,
+          "sionna_wideband_dbm": -59.36719866748844,
+          "quick_estimate_dbm": -61.23129656806411,
+          "num_paths": 173,
+          "elapsed_ms": 86.09213100001512,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S3",
+          "sionna_coherent_dbm": -70.91869479309908,
+          "sionna_incoherent_dbm": -69.59555541382517,
+          "sionna_wideband_dbm": -69.97872081084186,
+          "quick_estimate_dbm": -72.98523628051414,
+          "num_paths": 55,
+          "elapsed_ms": 77.51989400000525,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S4",
+          "sionna_coherent_dbm": -65.6614734132877,
+          "sionna_incoherent_dbm": -67.5299951203627,
+          "sionna_wideband_dbm": -66.94804452311105,
+          "quick_estimate_dbm": -71.141593190982,
+          "num_paths": 42,
+          "elapsed_ms": 83.28026099999875,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S5",
+          "sionna_coherent_dbm": -73.14600826683085,
+          "sionna_incoherent_dbm": -69.41196081378969,
+          "sionna_wideband_dbm": -71.20857847453335,
+          "quick_estimate_dbm": -72.73634977207394,
+          "num_paths": 50,
+          "elapsed_ms": 83.03438699999788,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S6",
+          "sionna_coherent_dbm": -62.93858613671244,
+          "sionna_incoherent_dbm": -58.180604678472136,
+          "sionna_wideband_dbm": -60.48456766200146,
+          "quick_estimate_dbm": -62.26761024167129,
+          "num_paths": 133,
+          "elapsed_ms": 85.4249129999971,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S7",
+          "sionna_coherent_dbm": -61.72287697859388,
+          "sionna_incoherent_dbm": -64.80531861870384,
+          "sionna_wideband_dbm": -62.162772100941865,
+          "quick_estimate_dbm": -68.39128430257288,
+          "num_paths": 142,
+          "elapsed_ms": 88.95285600002012,
+          "reasons": []
+        }
+      ]
+    },
+    {
+      "example": "warehouse",
+      "walls": 21,
+      "links": 5,
+      "material_mapping": {
+        "concrete": "concrete (inferred-from-legacy-id)",
+        "drywall": "plasterboard (inferred-from-legacy-id)",
+        "metal-door": "metal (inferred-from-legacy-id)",
+        "wood": "wood (inferred-from-legacy-id)"
+      },
+      "max_depth": 3,
+      "diffraction": true,
+      "edge_diffraction": true,
+      "total_s": 0.484073670000015,
+      "first_link_ms": 96.54280999998832,
+      "median_link_ms": 82.70831199999407,
+      "links_detail": [
+        {
+          "link_id": "link-S1",
+          "sionna_coherent_dbm": -69.94166653776367,
+          "sionna_incoherent_dbm": -72.81101505340236,
+          "sionna_wideband_dbm": -70.08157580017124,
+          "quick_estimate_dbm": -82.76834933925322,
+          "num_paths": 51,
+          "elapsed_ms": 96.54280999998832,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S2",
+          "sionna_coherent_dbm": -97.3726301407203,
+          "sionna_incoherent_dbm": -97.42344998714324,
+          "sionna_wideband_dbm": -95.75816910118627,
+          "quick_estimate_dbm": -113.44654554790141,
+          "num_paths": 3,
+          "elapsed_ms": 82.70831199999407,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S3",
+          "sionna_coherent_dbm": -104.70422083380733,
+          "sionna_incoherent_dbm": -105.77126618255983,
+          "sionna_wideband_dbm": -105.035499307414,
+          "quick_estimate_dbm": -131.9677289718752,
+          "num_paths": 3,
+          "elapsed_ms": 81.87311099999306,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S4",
+          "sionna_coherent_dbm": -141.06487571017905,
+          "sionna_incoherent_dbm": -141.06487571017905,
+          "sionna_wideband_dbm": -141.06487571017905,
+          "quick_estimate_dbm": -152.83568736070674,
+          "num_paths": 1,
+          "elapsed_ms": 82.539727000011,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S5",
+          "sionna_coherent_dbm": -70.32465554581765,
+          "sionna_incoherent_dbm": -68.68600484015606,
+          "sionna_wideband_dbm": -69.91492205371846,
+          "quick_estimate_dbm": -103.83047974699426,
+          "num_paths": 40,
+          "elapsed_ms": 85.18923500000142,
+          "reasons": []
+        }
+      ]
+    }
+  ],
+  "receiver_grid": {
+    "example": "smart-apartment",
+    "height_m": 1.2,
+    "spacing_m": 0.5,
+    "receivers": 5307,
+    "max_depth": 3,
+    "receivers_without_paths": 550,
+    "max_paths_per_receiver": 24,
+    "median_coherent_path_gain_db": -69.09060121625703,
+    "elapsed_s": 11.694614480000013,
+    "note": "Coste de cálculo de trayectos a puntos; no es una evaluación de cobertura."
+  },
+  "depth_sweep": [
+    {
+      "max_depth": 3,
+      "example": "warehouse",
+      "walls": 21,
+      "links": 5,
+      "material_mapping": {
+        "concrete": "concrete (inferred-from-legacy-id)",
+        "drywall": "plasterboard (inferred-from-legacy-id)",
+        "metal-door": "metal (inferred-from-legacy-id)",
+        "wood": "wood (inferred-from-legacy-id)"
+      },
+      "diffraction": false,
+      "edge_diffraction": false,
+      "total_s": 0.24463834999997403,
+      "first_link_ms": 46.40183600000114,
+      "median_link_ms": 42.46559399999228,
+      "links_detail": [
+        {
+          "link_id": "link-S1",
+          "sionna_coherent_dbm": -70.90081334389521,
+          "sionna_incoherent_dbm": -73.44899902217392,
+          "sionna_wideband_dbm": -70.94413724778008,
+          "quick_estimate_dbm": -82.76834933925322,
+          "num_paths": 2,
+          "elapsed_ms": 46.40183600000114,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S2",
+          "sionna_coherent_dbm": null,
+          "sionna_incoherent_dbm": null,
+          "sionna_wideband_dbm": null,
+          "quick_estimate_dbm": -113.44654554790141,
+          "num_paths": 0,
+          "elapsed_ms": 43.601092999978164,
+          "reasons": [
+            "Sin trayectos con max_depth=3: cada pared atravesada cuenta como una interacción; no equivale a ausencia de señal."
+          ]
+        },
+        {
+          "link_id": "link-S3",
+          "sionna_coherent_dbm": null,
+          "sionna_incoherent_dbm": null,
+          "sionna_wideband_dbm": null,
+          "quick_estimate_dbm": -131.9677289718752,
+          "num_paths": 0,
+          "elapsed_ms": 29.19517499998392,
+          "reasons": [
+            "Sin trayectos con max_depth=3: cada pared atravesada cuenta como una interacción; no equivale a ausencia de señal."
+          ]
+        },
+        {
+          "link_id": "link-S4",
+          "sionna_coherent_dbm": null,
+          "sionna_incoherent_dbm": null,
+          "sionna_wideband_dbm": null,
+          "quick_estimate_dbm": -152.83568736070674,
+          "num_paths": 0,
+          "elapsed_ms": 28.14895399998818,
+          "reasons": [
+            "Sin trayectos con max_depth=3: cada pared atravesada cuenta como una interacción; no equivale a ausencia de señal."
+          ]
+        },
+        {
+          "link_id": "link-S5",
+          "sionna_coherent_dbm": -71.44330582604758,
+          "sionna_incoherent_dbm": -70.22599281782371,
+          "sionna_wideband_dbm": -72.5428117219633,
+          "quick_estimate_dbm": -103.83047974699426,
+          "num_paths": 4,
+          "elapsed_ms": 42.46559399999228,
+          "reasons": []
+        }
+      ]
+    },
+    {
+      "max_depth": 5,
+      "example": "warehouse",
+      "walls": 21,
+      "links": 5,
+      "material_mapping": {
+        "concrete": "concrete (inferred-from-legacy-id)",
+        "drywall": "plasterboard (inferred-from-legacy-id)",
+        "metal-door": "metal (inferred-from-legacy-id)",
+        "wood": "wood (inferred-from-legacy-id)"
+      },
+      "diffraction": false,
+      "edge_diffraction": false,
+      "total_s": 0.3697564869999894,
+      "first_link_ms": 110.39459799999918,
+      "median_link_ms": 56.445164000024306,
+      "links_detail": [
+        {
+          "link_id": "link-S1",
+          "sionna_coherent_dbm": -71.41084364164121,
+          "sionna_incoherent_dbm": -71.59321213234237,
+          "sionna_wideband_dbm": -71.26871788451992,
+          "quick_estimate_dbm": -82.76834933925322,
+          "num_paths": 11,
+          "elapsed_ms": 110.39459799999918,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S2",
+          "sionna_coherent_dbm": -107.32049842981064,
+          "sionna_incoherent_dbm": -107.32049842981064,
+          "sionna_wideband_dbm": -107.32049842981064,
+          "quick_estimate_dbm": -113.44654554790141,
+          "num_paths": 1,
+          "elapsed_ms": 56.445164000024306,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S3",
+          "sionna_coherent_dbm": null,
+          "sionna_incoherent_dbm": null,
+          "sionna_wideband_dbm": null,
+          "quick_estimate_dbm": -131.9677289718752,
+          "num_paths": 0,
+          "elapsed_ms": 51.43016200000261,
+          "reasons": [
+            "Sin trayectos con max_depth=5: cada pared atravesada cuenta como una interacción; no equivale a ausencia de señal."
+          ]
+        },
+        {
+          "link_id": "link-S4",
+          "sionna_coherent_dbm": null,
+          "sionna_incoherent_dbm": null,
+          "sionna_wideband_dbm": null,
+          "quick_estimate_dbm": -152.83568736070674,
+          "num_paths": 0,
+          "elapsed_ms": 41.14611600002149,
+          "reasons": [
+            "Sin trayectos con max_depth=5: cada pared atravesada cuenta como una interacción; no equivale a ausencia de señal."
+          ]
+        },
+        {
+          "link_id": "link-S5",
+          "sionna_coherent_dbm": -70.30795108442065,
+          "sionna_incoherent_dbm": -70.09577503304031,
+          "sionna_wideband_dbm": -72.24627604023499,
+          "quick_estimate_dbm": -103.83047974699426,
+          "num_paths": 11,
+          "elapsed_ms": 58.01591200000189,
+          "reasons": []
+        }
+      ]
+    },
+    {
+      "max_depth": 8,
+      "example": "warehouse",
+      "walls": 21,
+      "links": 5,
+      "material_mapping": {
+        "concrete": "concrete (inferred-from-legacy-id)",
+        "drywall": "plasterboard (inferred-from-legacy-id)",
+        "metal-door": "metal (inferred-from-legacy-id)",
+        "wood": "wood (inferred-from-legacy-id)"
+      },
+      "diffraction": false,
+      "edge_diffraction": false,
+      "total_s": 0.4644650480000223,
+      "first_link_ms": 113.70025799999439,
+      "median_link_ms": 73.55415000000676,
+      "links_detail": [
+        {
+          "link_id": "link-S1",
+          "sionna_coherent_dbm": -69.3309547110733,
+          "sionna_incoherent_dbm": -71.2312920628008,
+          "sionna_wideband_dbm": -70.3322482555278,
+          "quick_estimate_dbm": -82.76834933925322,
+          "num_paths": 43,
+          "elapsed_ms": 113.70025799999439,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S2",
+          "sionna_coherent_dbm": -83.54718706257599,
+          "sionna_incoherent_dbm": -81.30456021175286,
+          "sionna_wideband_dbm": -80.48450766352234,
+          "quick_estimate_dbm": -113.44654554790141,
+          "num_paths": 8,
+          "elapsed_ms": 73.55415000000676,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S3",
+          "sionna_coherent_dbm": -81.99801671924591,
+          "sionna_incoherent_dbm": -81.99801671924591,
+          "sionna_wideband_dbm": -81.99801671924591,
+          "quick_estimate_dbm": -131.9677289718752,
+          "num_paths": 1,
+          "elapsed_ms": 73.17794799999433,
+          "reasons": []
+        },
+        {
+          "link_id": "link-S4",
+          "sionna_coherent_dbm": null,
+          "sionna_incoherent_dbm": null,
+          "sionna_wideband_dbm": null,
+          "quick_estimate_dbm": -152.83568736070674,
+          "num_paths": 0,
+          "elapsed_ms": 66.66003600000181,
+          "reasons": [
+            "Sin trayectos con max_depth=8: cada pared atravesada cuenta como una interacción; no equivale a ausencia de señal."
+          ]
+        },
+        {
+          "link_id": "link-S5",
+          "sionna_coherent_dbm": -67.0536043242039,
+          "sionna_incoherent_dbm": -68.89875561293346,
+          "sionna_wideband_dbm": -69.94805311281712,
+          "quick_estimate_dbm": -103.83047974699426,
+          "num_paths": 37,
+          "elapsed_ms": 83.29394599999773,
+          "reasons": []
+        }
+      ]
+    }
+  ],
+  "radio_map": [
+    {
+      "example": "smart-apartment",
+      "height_m": 1.2,
+      "cell_m": 0.25,
+      "samples_per_tx": 1000000,
+      "max_depth": 3,
+      "cells": 21525,
+      "cells_without_rays": 17346,
+      "median_path_gain_db": -55.60578834359012,
+      "elapsed_s": 0.0199580830000059,
+      "note": "Coste de cálculo; el mapa no se presenta como cobertura ni se compara con medidas."
+    },
+    {
+      "example": "smart-apartment",
+      "height_m": 1.2,
+      "cell_m": 0.25,
+      "samples_per_tx": 10000000,
+      "max_depth": 3,
+      "cells": 21525,
+      "cells_without_rays": 10520,
+      "median_path_gain_db": -62.791231475668326,
+      "elapsed_s": 0.04757391800001187,
+      "note": "Coste de cálculo; el mapa no se presenta como cobertura ni se compara con medidas."
+    },
+    {
+      "example": "smart-apartment",
+      "height_m": 1.2,
+      "cell_m": 0.25,
+      "samples_per_tx": 100000000,
+      "max_depth": 3,
+      "cells": 21525,
+      "cells_without_rays": 3860,
+      "median_path_gain_db": -66.44844405679387,
+      "elapsed_s": 0.4062844620000021,
+      "note": "Coste de cálculo; el mapa no se presenta como cobertura ni se compara con medidas."
+    }
+  ],
+  "peak_working_set_mb": 702.67578125,
+  "status": "executed"
+}

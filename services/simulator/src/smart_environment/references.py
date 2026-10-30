@@ -350,15 +350,15 @@ def reference_cases() -> list[ReferenceCase]:
                     material_id="concrete")
         bounce = specular_reflection(tx, rx, wall)
         direct = math.dist((tx.x, tx.y, tx.z), (rx.x, rx.y, rx.z))
-        gamma = interface_reflection(concrete.relative_permittivity(FREQUENCY_HZ), bounce.incidence_deg, "TE")
+        gamma, _ = slab_coefficients(concrete, wall.thickness_m, FREQUENCY_HZ, bounce.incidence_deg, "TE")
         cases.append(ReferenceCase(
             id=case_id, title=title, interaction="specular-reflection", kind="physical-reference",
             project=_project(title, tx, rx, [wall], reflection_material),
             expected_dbm=two_ray_received_dbm(TX_POWER_DBM, FREQUENCY_HZ, direct, bounce.path_length_m, gamma),
-            formula="Suma fasorial directo + Γ_TE·e^{−jkd₂}/d₂ (método de imágenes)",
-            source="Fresnel en una interfaz; materiales ITU-R P.2040-3",
+            formula="Suma fasorial directo + R_TE·e^{−jkd₂}/d₂ (método de imágenes, R de losa)",
+            source="Coeficiente de reflexión de una capa; materiales ITU-R P.2040-3",
             assumptions=slab_assumptions[:3] + (
-                "Pared semiinfinita: Γ de una interfaz, sin la contribución de la cara posterior.",
+                "Pared de 0.20 m como losa homogénea: R incluye los rebotes internos.",
                 "Sin otras paredes, suelo ni techo: solo un rebote.",
                 "La suma coherente es sensible a desplazamientos de centímetros (desvanecimiento)."),
             components={"direct_only_dbm": TX_POWER_DBM - free_space_loss_db(direct, FREQUENCY_HZ),
@@ -396,18 +396,32 @@ class CaseResult:
     note: str = ""
 
 
+Prediction = tuple[float | None, str]  # forward received power (dBm) or None, and why
+
+
 def compare(cases: Iterable[ReferenceCase], run: Callable[[Project], SimulationResult],
             modelled: Iterable[Interaction]) -> list[CaseResult]:
     """Run each case through an engine and classify the forward received power."""
+    def predict(case: ReferenceCase) -> Prediction:
+        link = run(case.project).links[0]
+        if link.forward is None:
+            return None, f"Estado del motor: {link.status}"
+        return link.forward.received_power_dbm, ""
+
+    return compare_predictions(cases, predict, modelled)
+
+
+def compare_predictions(cases: Iterable[ReferenceCase], predict: Callable[[ReferenceCase], Prediction],
+                        modelled: Iterable[Interaction]) -> list[CaseResult]:
+    """Classify any predictor of forward received power, e.g. an adapter under evaluation."""
     modelled = set(modelled)
     results = []
     for case in cases:
-        link = run(case.project).links[0]
-        if link.forward is None:
+        value, reason = predict(case)
+        if value is None:
             results.append(CaseResult(case.id, case.interaction, case.kind, "no-result", case.expected_dbm, None, None,
-                                      f"Estado del motor: {link.status}"))
+                                      reason))
             continue
-        value = link.forward.received_power_dbm
         delta = value - case.expected_dbm
         notes = [f"coincide con {key}" for key, component in case.components.items()
                  if key.endswith("_dbm") and abs(value - component) <= case.tolerance_db]

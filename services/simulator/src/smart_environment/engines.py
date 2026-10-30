@@ -39,7 +39,8 @@ def engine_capabilities() -> list[dict]:
          "description": "Modelo analítico probado con casos sintéticos; sin validación experimental."},
         {"id": "sionna-rt", "name": "Sionna RT", "implemented": False,
          "available": False, "verified": False, "version": version,
-         "description": "Adaptador pendiente; instalar el paquete no verifica el motor ni el hardware."},
+         "description": "Adaptador de evaluación (B-102) contrastado con casos analíticos en WSL/CPU; "
+                        "no integrado en la API ni validado con medidas. Instalar el paquete no lo activa."},
         {"id": "ns-3", "name": "ns-3", "implemented": False,
          "available": False, "verified": False, "version": None,
          "executable_detected": shutil.which("ns3") is not None,

@@ -5,19 +5,19 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — B-101 implementada y verificada localmente; publicada por autorización
-  del usuario en `agent-b/b-101-reference-cases` y [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) en borrador contra
-  `codex/migrate-web-python`. Sin merge; CI remota a consultar en el PR.
-- Tarea: **B-101**, referencias analíticas, protocolo piloto y formato/procedencia de medidas;
-  asignación explícita del usuario («trabaja como agente B»).
+- Estado: **claimed** — B-104 (contrato de la referencia de plano pedido por A-102), después B-103.
+- Entregas en `review`: **B-101** ([PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3), publicada) y **B-102** (commit local en
+  `agent-b/b-102-sionna-evaluation`, apilada sobre B-101; sin push hasta autorización).
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
-- Rama/worktree: clon separado `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`,
-  rama local `agent-b/b-101-reference-cases` desde `ec62675`. No usa el checkout compartido
-  de A (`C:/Simulador_smart_homes3D/smart-home-simulator`, donde A tiene A-101 en curso);
-  A no ve esta reserva en su checkout hasta que se integre la rama.
+- Rama/worktree: clon separado `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`; ramas
+  apiladas `agent-b/b-101-…` → `agent-b/b-102-…` → siguientes. No usa el checkout compartido de A
+  (`C:/Simulador_smart_homes3D/smart-home-simulator`); A no ve este registro hasta integrar.
 - Última actualización: 2026-10-30 (Europe/Madrid).
-- Archivos reservados hasta integrar: los listados en la entrega B-101 del historial.
-- Siguiente tarea recomendada: **B-102**, prueba aislada del motor avanzado con el arnés de B-101.
+- Archivos reservados: `services/simulator/src/smart_environment/models.py`, contratos generados
+  (`contracts/*.json`, `apps/web/src/generated/**` solo por generación), `scripts/export_contracts.py`,
+  `docs/simulation/**` y este registro.
+- Integración pendiente de A: **A-101** en review, pero A mantiene reservados `App.tsx`/`styles.css`
+  para A-102 y pide no integrarlos aún. No se integra hasta que A los libere.
 
 ## Plantilla de entrega — completar al trabajar
 
@@ -35,6 +35,35 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### B-102 — evaluación aislada de Sionna RT (review)
+
+```text
+Tarea / estado: B-102 / review.
+Sesión, rama/worktree, fecha/hora y zona: Claude Code agente B; rama agent-b/b-102-sionna-evaluation
+  sobre agent-b/b-101-reference-cases; 2026-10-30, Europe/Madrid.
+Archivos modificados: services/simulator/src/smart_environment/sionna_adapter.py (nuevo),
+  references.py (compare_predictions; reflexión con R de losa), engines.py (descripción de
+  sionna-rt), services/simulator/benchmarks/{sionna_evaluation.py, wsl/setup.sh, wsl/run.sh}
+  (nuevos), tests/test_sionna_adapter.py (nuevo), docs/simulation/ADVANCED_ENGINE_EVALUATION.md
+  y evidence/sionna-rt-2.2.0-wsl-cpu.json (nuevos), REFERENCE_CASES.md; como integrador
+  WORKBOARD, STATUS y CHECKLIST.
+Criterio de aceptación: motor ejecutado en entorno aislado con versiones/hardware registrados;
+  interacciones verificadas con B-101; benchmark reproducible; error explícito donde no ejecuta.
+Cambios de contrato: ninguno. La API sigue con 501 para sionna-rt; el adaptador no se importa
+  al arrancar y no hay fallback (EngineUnavailable).
+Comandos y resultados: Windows nativo (Python 3.13.7, LLVM 18.1.8 portable) → Dr.Jit aborta con
+  "JIT session error: Failed to materialize symbols". WSL2 Ubuntu 24.04 (Python 3.12.3, LLVM
+  20.1.2, sionna-rt 2.2.0, mitsuba 3.9.1, drjit 1.5.0) → 18/18 casos físicos y de coherencia con
+  |Δ| < 0.001 dB; LD-n3 not-modelled. Pico 703 MB. pytest → 117 passed; export --check sin deriva.
+Descargas autorizadas por el usuario: LLVM 18.1.8 (981 666 720 B, archivo borrado tras extraer
+  LLVM-C.dll en .local/) y libatomic1 14.2.0-4ubuntu2~24.04.1 (10.5 kB, sin sudo).
+Límites: sin medidas; difracción/difusa sin referencia; Windows nativo y GPU no disponibles.
+Hallazgos para B-103: desvanecimiento coherente, max_depth limita cruces de pared, metal opaco,
+  mapa planar ruidoso sin suelo/techo, Material sin ε/σ y DirectionResult no apto para trazadores.
+Solicitud a A: ninguna en esta entrega.
+Siguiente paso: B-104 (contrato pedido por A-102), luego B-103 con propuesta de contrato previa.
+```
 
 ### B-101 — referencias analíticas, formato de medidas y protocolo piloto (review)
 

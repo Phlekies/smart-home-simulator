@@ -40,8 +40,9 @@ B-102 debe conectar aquí el adaptador candidato, sin modificar las referencias.
   `R = Γ(1 − e^{−2jq}) / (1 − Γ²e^{−2jq})`. Solo se usan |T| y |R|.
 - **Reflexión especular:** método de imágenes sobre el plano vertical de la pared, con
   comprobación de que el punto especular cae dentro del segmento y de su altura.
-  Referencia coherente `|e^{−jkd₁}/d₁ + Γ·e^{−jkd₂}/d₂|²`; también se publican la componente
-  directa, la reflejada y la suma incoherente.
+  Referencia coherente `|e^{−jkd₁}/d₁ + R_TE·e^{−jkd₂}/d₂|²`, con R de la losa del espesor de
+  la pared (0.20 m); también se publican la componente directa, la reflejada y la suma incoherente.
+  (Revisado en B-102: la primera versión usaba Γ de una interfaz semiinfinita, 0.05 dB menor.)
 
 Las fórmulas se comprueban con identidades que no reutilizan la implementación:
 conservación de energía en losa sin pérdidas (TE/TM, varios ángulos y espesores), losa
@@ -68,7 +69,7 @@ P.2040-3, agosto de 2023). **Pendiente:** cotejar con el PDF oficial o con P.204
 
 ## Resultado actual del estimador rápido
 
-Salida real del comando anterior el 2026-10-30, rama `agent-b/b-101-reference-cases`.
+Salida real del comando anterior el 2026-10-30 (filas REFL regeneradas en `agent-b/b-102-sionna-evaluation`).
 Frecuencia 2.412 GHz, 20 dBm, antenas de 0 dBi, enlace a 1.2 m de altura salvo `FS-3D`.
 
 | Caso | Tipo | Referencia (dBm) | Motor (dBm) | Δ (dB) | Veredicto | Nota |
@@ -89,8 +90,8 @@ Frecuencia 2.412 GHz, 20 dBm, antenas de 0 dBi, enlace a 1.2 m de altura salvo `
 | WALL-concrete-100mm-60deg | physical-reference | -51.963 | -52.095 | -0.132 | deviates |  |
 | WALL-fit-single | model-consistency | -54.727 | -54.727 | +0.000 | agrees |  |
 | WALL-fit-series | model-consistency | -55.804 | -55.804 | +0.000 | agrees |  |
-| REFL-grazing | physical-reference | -35.326 | -40.095 | -4.770 | not-modelled | coincide con direct_only_dbm |
-| REFL-steep | physical-reference | -26.431 | -26.116 | +0.315 | not-modelled | coincide con direct_only_dbm |
+| REFL-grazing | physical-reference | -35.316 | -40.095 | -4.779 | not-modelled | coincide con direct_only_dbm |
+| REFL-steep | physical-reference | -26.393 | -26.116 | +0.277 | not-modelled | coincide con direct_only_dbm |
 | REFL-miss | physical-reference | -40.095 | -40.095 | +0.000 | agrees | interacción no modelada: coincidencia trivial |
 
 Tolerancia de coincidencia: 0.01 dB. Es una tolerancia numérica para el mismo modelo
@@ -112,6 +113,8 @@ Tolerancia de coincidencia: 0.01 dB. Es una tolerancia numérica para el mismo m
 - Java modela la reflexión con pérdidas empíricas (`reflectionBiasDb`) y un desfase fijo de
   un cuarto de ciclo; Fresnel da Γ ≈ −0.39 (fase ≈ π) en incidencia normal sobre hormigón.
   Ese desfase no se conserva como requisito de la migración.
+- Sionna RT 2.2.0 reproduce los 18 casos físicos y de coherencia con |Δ| < 0.001 dB: ver
+  [evaluación del motor avanzado](ADVANCED_ENGINE_EVALUATION.md).
 
 ## Limitaciones y trabajo pendiente
 
