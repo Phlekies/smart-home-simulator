@@ -23,7 +23,7 @@ consolidada). Una tarea que espera su turno no implica que el proyecto entero es
 - `PROCESS-001`: instrucciones, reparto, tablero y registros creados en esta entrega.
 - `main` (046ee82): base de migración, entregas A-101…A-108 y B-101…B-104 fusionadas por #7.
 
-Esto no significa que M2 esté completa, ni que existan mapas nuevos, motor avanzado o
+Esto no significa que M2 esté completa ni que exista un motor avanzado integrado o
 validación en viviendas. Los checklists técnico y de producto siguen siendo la aceptación.
 
 ## Próximas tareas disjuntas
@@ -33,26 +33,26 @@ validación en viviendas. Los checklists técnico y de producto siguen siendo la
 | A-101 | A | done | Recuperación local validada, restaurar/descartar, errores/cuota y pruebas; evidencia en AGENT_A y docs/ui/PROJECT_RECOVERY.md | Integrada en I-002; copia por origen/navegador |
 | A-102 | A | ready | Imagen de sesión a escala implementada; completar persistencia, huella y reasociación con contrato B-104 | Contrato integrado en I-002; conservar imagen local y avisar si no está disponible |
 | A-103 | A | done | Paredes por teclado, foco, errores y recorrido crear/editar/guardar verificados | No certifica accesibilidad completa; evidencia en docs/ui/KEYBOARD_WORKFLOW.md |
-| B-101 | B | done | Casos analíticos (espacio libre, pared, reflexión), formato de medidas con procedencia y protocolo piloto | fusionada en `main` por #7 (046ee82; CI de migración y Java en verde para ese commit); PR #3 cerrado sin fusionar. Umbral del criterio de fallo pendiente de decisión |
-| B-102 | B | done | Sionna RT evaluado en WSL/CPU (18/18 referencias); Windows nativo no ejecuta; benchmark reproducible ([evaluación](../simulation/ADVANCED_ENGINE_EVALUATION.md)) | fusionada en `main` por #7 (046ee82; CI de migración y Java en verde para ese commit); PR #4 cerrado. No integrado en la API |
-| B-103 | B | done | Mapas por perfil/altura como trabajos cancelables, ambos sentidos, puntos exactos ([contrato](../simulation/COVERAGE_MAP_CONTRACT.md)) | fusionada en `main` por #7 (046ee82; CI de migración y Java en verde para ese commit), con correcciones de A (bordes, cancelación, ciclo de vida); PR #6 cerrado |
-| B-104 | B | done | Contrato aditivo `plan_reference` (imagen local, huella y escala) ([contrato](../simulation/PLAN_REFERENCE_CONTRACT.md)) | fusionada en `main` por #7 (046ee82; CI de migración y Java en verde para ese commit); PR #5 cerrado; consumidor en A-102 |
-| A-104 | A | claimed | Mostrar mapa, leyenda/resolución/perfil/altura, puntos sin calcular y obsolescencia de resultados | A trabaja en su worktree (`codex/coverage-map-ui`); ver registro A |
+| B-101 | B | done | Casos analíticos (espacio libre, pared, reflexión), formato de medidas con procedencia y protocolo piloto; calibración y validación separadas. Ver [registro B](AGENT_B.md) | En `main` por #7 (046ee82); PR #3 cerrado sin fusionar. No son medidas reales; umbral del criterio de fallo pendiente de decisión |
+| B-102 | B | done | Sionna RT 2.2.0 evaluado en WSL/CPU: 18/18 referencias; Windows nativo no ejecuta; benchmark reproducible ([evaluación](../simulation/ADVANCED_ENGINE_EVALUATION.md)) | En `main` por #7; PR #4 cerrado. La API sigue con 501 para Sionna; sin validación experimental |
+| B-103 | B | done | `/api/coverage-maps`: trabajos cancelables por perfil/altura, ambos sentidos y puntos exactos ([contrato](../simulation/COVERAGE_MAP_CONTRACT.md)) | En `main` por #7, con las correcciones de A en I-002 (bordes, reinicio, cancelación); PR #6 cerrado |
+| B-104 | B | done | Contrato aditivo `plan_reference`, imagen local sin incrustar ([contrato](../simulation/PLAN_REFERENCE_CONTRACT.md)) | En `main` por #7; PR #5 cerrado; consumidor A-102 pendiente |
+| A-104 | A | done | Capa 2D por métrica/sentido, perfil/frecuencia/altura/resolución, datos parciales y punto exacto; progreso/cancelación e invalidación ([evidencia](../ui/COVERAGE_MAP.md)) | En `main` por [#10](https://github.com/Phlekies/smart-home-simulator/pull/10) (6fb42e2), CI del PR en verde; B verificó la combinación con #8/#9 (199 Python, 84 web, build). Mapas de sesión, sin motor físico nuevo |
 | A-105 | A | done | Comparación manual de posiciones con los mismos perfiles/condiciones; ambos sentidos y datos ausentes | Base de sesión; no optimización ni persistencia de variantes |
 | A-106 | A | done | Diagnóstico del trayecto directo y paredes inspeccionables, datos de ambos sentidos | Consume resultados existentes; no multipath nuevo |
 | A-107/A-108 | A | done | Radios 1–8 y enlaces por interfaz; límites, cascada, undo y recuperación verificados | Sin nuevos protocolos ni compatibilidad funcional |
-| I-002 | A (integración por instrucción del usuario) | done | Entregas A-101…A-108 y B-101…B-104 combinadas y publicadas | PR #7 fusionado en `main` (046ee82); CI verde en el PR y en `main`; A volvió a su rol |
-| B-105 | B | review | Búsqueda exhaustiva de ubicación del AP entre lugares permitidos, máx-mín del margen bidireccional ([contrato](../simulation/PLACEMENT_SEARCH_CONTRACT.md)) | [PR #8](https://github.com/Phlekies/smart-home-simulator/pull/8) en borrador, base `main`, CI verde; A consume después |
-| B-106 | B | review | Perfiles Wi-Fi 2.4 GHz genéricos con procedencia por valor ([perfiles](../simulation/RADIO_PROFILES.md)) | PR #8; tabla HT de 2.4 GHz no cotejada (declarado) |
-| B-108 | B | review | Escenarios de puertas desconocidas y materiales con rango; mejor/peor caso y dependencia de hipótesis ([contrato](../simulation/SCENARIOS_CONTRACT.md)) | [PR #9](https://github.com/Phlekies/smart-home-simulator/pull/9) en borrador, apilado sobre #8 |
-| B-107 | B integrador | review | [Matriz de funciones Java](../migration/FEATURE_MATRIX.md) conservadas/sustituidas/excluidas con motivos (M5) | Rama `agent-b/i-003-b-107-docs` |
-| I-003 | B integrador | review | Consolidar tablero, STATUS y checklists tras #7; registrar PR #8/#9 y cierre de #3–#6 | Rama `agent-b/i-003-b-107-docs`, apilada sobre #9 |
-| I-001 | B integrador | done | Base publicada en `codex/migrate-web-python`, PR #2 en borrador; pruebas locales y CI de código 33f1df8 superadas | Sin merge ni force-push; AGENTS.md local; consultar el PR para revisiones posteriores |
+| B-105 | B | done | Búsqueda exhaustiva de ubicación del AP entre lugares permitidos, máx-mín del margen bidireccional ([contrato](../simulation/PLACEMENT_SEARCH_CONTRACT.md)) | En `main` por [#8](https://github.com/Phlekies/smart-home-simulator/pull/8) (6d7e69f), CI en verde; consumidor de interfaz pendiente |
+| B-106 | B | done | Perfiles Wi-Fi 2.4 GHz genéricos con procedencia por valor ([perfiles](../simulation/RADIO_PROFILES.md)) | En `main` por #8; tabla HT de 2.4 GHz no cotejada (declarado); consumidor pendiente |
+| B-108 | B | done | Escenarios de puertas desconocidas y materiales con rango; mejor/peor caso y dependencia de hipótesis ([contrato](../simulation/SCENARIOS_CONTRACT.md)) | En `main` por [#9](https://github.com/Phlekies/smart-home-simulator/pull/9) (760e3cd), CI en verde; consumidor pendiente |
+| B-107 | B integrador | review | [Matriz de funciones Java](../migration/FEATURE_MATRIX.md) conservadas/sustituidas/excluidas con motivos (M5) | [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11) |
+| I-003 | B integrador | review | Consolidar documentos comunes tras #7, #8, #9 y #10; cierre de #3–#6 | [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11) |
+| I-002 | A (integración por instrucción del usuario) | done | Entregas A-101…A-108 y B-101…B-104 en `main` (046ee82) por [PR #7](https://github.com/Phlekies/smart-home-simulator/pull/7); 162 Python/70 web/build/contratos; CI de migración y Java verde antes y después | AGENTS.md excluido; Java conservado. No volver a fusionar la pila B como entregas nuevas |
+| I-001 | B integrador | done | Base publicada en PR #2 e incluida en `main` por I-002; evidencia histórica en STATUS | Sin force-push; AGENTS.md local |
 
 `ready` indica que puede comenzar el trabajo independiente; los criterios de salida
-siguen requiriendo sus dependencias. Ahora: A en A-104 y después A-102 (persistencia) y los consumidores de
-B-105/B-106/B-108; B revisa e integra. Después elegir
-según avance y registros. No ejecutar todas las filas como un único cambio gigante.
+siguen requiriendo sus dependencias. Siguientes para A: A-102 (persistencia de la imagen) y los
+consumidores de B-105/B-106/B-108 (lugares permitidos, perfiles, escenarios). B revisa e integra y
+retoma su ámbito. Consultar las reservas antes de editar. No ejecutar todas las filas como un único cambio gigante.
 
 ## Trabajo posterior
 

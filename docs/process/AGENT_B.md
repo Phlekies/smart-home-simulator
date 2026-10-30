@@ -8,8 +8,8 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 - Estado: **review** — **I-003** (consolidar documentos comunes tras el merge de #7) y **B-107**
   (matriz de funciones Java conservadas/sustituidas/excluidas). Integrador: B de nuevo, porque A
   declaró I-002 terminada y volvió a su rol (registro A en su worktree, 2026-10-30).
-- Entregas en review: B-105/B-106 [PR #8](https://github.com/Phlekies/smart-home-simulator/pull/8) (base `main`),
-  B-108 [PR #9](https://github.com/Phlekies/smart-home-simulator/pull/9) (sobre #8). Auto-fix activo en ambos.
+- B-105/B-106 (#8) y B-108 (#9) fusionadas en `main`. En review solo I-003/B-107 en
+  [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11).
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
 - Rama/worktree: clon B `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`, rama
   `agent-b/i-003-b-107-docs` apilada sobre #9. No escribe en el checkout ni el worktree de A.
@@ -52,8 +52,10 @@ Marcado: B-101…B-104 e I-002 done; M5 «matriz de funciones» [x]; el resto so
 Límites: la matriz se basa en el README y los paquetes Java de eff803c y en el código actual;
   conviene revisarla al cerrar cada fase.
 Publicación: [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11) en borrador, apilado sobre #9, por autorización del usuario.
-Conflicto conocido: el PR #10 de A (A-104) también edita STATUS.md y WORKBOARD.md; quien se
-  fusione después debe consolidar ambos textos. B propone el orden al usuario.
+Fusiones autorizadas por el usuario en el orden propuesto: #8 → 6d7e69f, #9 → 760e3cd (base
+  cambiada a `main`), #10 (A-104, cabeza verificada) → 6fb42e2; CI de `main` en verde. Conflictos de
+  STATUS/WORKBOARD con #10 resueltos consolidando ambos textos; checklists M4/P1 marcados con la
+  evidencia de A-104 y B-103.
 ```
 
 ### B-108 — escenarios de puertas y materiales inciertos (review)

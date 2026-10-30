@@ -67,12 +67,12 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 
 ## M4 — Mapas y comparación básica
 
-- [ ] Muestreo de cobertura por altura con resolución declarada (API B-103; visualización A-104 pendiente).
-- [ ] Presupuesto de ambos sentidos para puntos individuales (API B-103: `points` exactos; interfaz pendiente).
-- [ ] AP/emisor y receptor/perfil identificados en cada resultado (API B-103; interfaz pendiente).
-- [ ] Energía agregada no se presenta como señal de una conexión (API B-103: un AP por mapa; interfaz pendiente).
-- [ ] Comparación de posiciones y optimización básica con restricciones (comparación manual A-105 en `main`; búsqueda con lugares permitidos B-105 en PR #8; interfaz pendiente).
-- [ ] Mapas guardables y resultados invalidados al editar.
+- [x] Muestreo de cobertura por altura con resolución declarada (B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
+- [x] Presupuesto de ambos sentidos para puntos individuales (punto exacto sin redondeo; B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
+- [x] AP/emisor y receptor/perfil identificados en cada resultado (B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
+- [x] Energía agregada no se presenta como señal de una conexión (un AP por mapa; B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
+- [ ] Comparación de posiciones y optimización básica con restricciones (comparación manual A-105 y API de lugares permitidos B-105 en `main`; falta su interfaz).
+- [ ] Mapas guardables y resultados invalidados al editar (invalidación verificada en A-104; los mapas son de sesión y no se guardan).
 - [ ] Predicción técnica separada de recomendación de compra validada.
 
 ## M5 — Cierre técnico
