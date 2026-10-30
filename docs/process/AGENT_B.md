@@ -5,10 +5,11 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — B-101 (PR #3), B-102, B-104 y B-103 entregadas; ramas B-102+ solo locales.
-- Pila de ramas: `agent-b/b-101-reference-cases` (publicada, [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3)) →
-  `agent-b/b-102-sionna-evaluation` → `agent-b/b-104-plan-reference` → `agent-b/b-103-coverage-maps`;
-  las tres últimas sin push hasta autorización del usuario.
+- Estado: **review** — B-101, B-102, B-104 y B-103 publicadas en PR apilados en borrador; sin merge.
+- Pila publicada por autorización del usuario (2026-10-30): `agent-b/b-101-reference-cases`
+  [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) → `agent-b/b-102-sionna-evaluation` [PR #4](https://github.com/Phlekies/smart-home-simulator/pull/4) → `agent-b/b-104-plan-reference`
+  [PR #5](https://github.com/Phlekies/smart-home-simulator/pull/5) → `agent-b/b-103-coverage-maps` [PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6). Cada PR tiene como base la rama anterior;
+  fusionar en orden y redirigir el siguiente a `codex/migrate-web-python`. CI: consultar cada PR.
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
 - Rama/worktree: clon separado `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`; ramas
   apiladas `agent-b/b-101-…` → `agent-b/b-102-…` → siguientes. No usa el checkout compartido de A

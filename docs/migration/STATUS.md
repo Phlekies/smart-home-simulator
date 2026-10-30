@@ -193,7 +193,7 @@ entrega: el criterio activo de fallo, los conjuntos reales y el motor avanzado s
 
 ## Entrega B-102 — evaluación aislada de Sionna RT — 2026-10-30
 
-Rama local `agent-b/b-102-sionna-evaluation`, apilada sobre B-101; sin push. Informe completo en
+Rama `agent-b/b-102-sionna-evaluation`, [PR #4](https://github.com/Phlekies/smart-home-simulator/pull/4) en borrador apilado sobre #3; sin merge. Informe completo en
 [ADVANCED_ENGINE_EVALUATION](../simulation/ADVANCED_ENGINE_EVALUATION.md) y evidencia JSON en
 `docs/simulation/evidence/`.
 
@@ -228,7 +228,7 @@ M2 «Imagen de referencia con escala y cotas» sigue pendiente: falta el consumi
 
 ## Entrega B-103 — mapas por perfil y altura — 2026-10-30
 
-`/api/coverage-maps` (POST/GET/DELETE) calcula, como trabajo cancelable, el presupuesto directo
+[PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6) en borrador, apilado sobre [PR #5](https://github.com/Phlekies/smart-home-simulator/pull/5) (B-104). `/api/coverage-maps` (POST/GET/DELETE) calcula, como trabajo cancelable, el presupuesto directo
 AP↔perfil en una rejilla a altura declarada y en puntos exactos. Sin clasificación de cobertura.
 Detalle en [COVERAGE_MAP_CONTRACT](../simulation/COVERAGE_MAP_CONTRACT.md).
 
