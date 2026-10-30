@@ -776,6 +776,17 @@
             ],
             "title": "Engine",
             "default": "quick-estimate"
+          },
+          "scenario": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScenarioAssumptions-Output"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Door states and material bounds applied to every cell, e.g. the best or worst case of /api/scenario-simulations; None evaluates the project as it is"
           }
         },
         "additionalProperties": false,
@@ -829,6 +840,17 @@
             ],
             "title": "Engine",
             "default": "quick-estimate"
+          },
+          "scenario": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScenarioAssumptions-Input"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Door states and material bounds applied to every cell, e.g. the best or worst case of /api/scenario-simulations; None evaluates the project as it is"
           },
           "project": {
             "$ref": "#/components/schemas/Project-Input"

@@ -123,6 +123,18 @@
           ],
           "title": "Engine",
           "type": "string"
+        },
+        "scenario": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScenarioAssumptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Door states and material bounds applied to every cell, e.g. the best or worst case of /api/scenario-simulations; None evaluates the project as it is"
         }
       },
       "required": [
@@ -680,6 +692,63 @@
         "evidence"
       ],
       "title": "ReceiverProfile",
+      "type": "object"
+    },
+    "ScenarioAssumptions": {
+      "additionalProperties": false,
+      "description": "Named scenario: door states and material bounds that replace the nominal project values.",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "doors": {
+          "additionalProperties": {
+            "enum": [
+              "open",
+              "closed"
+            ],
+            "type": "string"
+          },
+          "propertyNames": {
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "title": "Doors",
+          "type": "object"
+        },
+        "materials": {
+          "additionalProperties": {
+            "enum": [
+              "low",
+              "nominal",
+              "high"
+            ],
+            "type": "string"
+          },
+          "propertyNames": {
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "title": "Materials",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "doors",
+        "materials"
+      ],
+      "title": "ScenarioAssumptions",
       "type": "object"
     }
   },

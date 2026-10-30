@@ -216,7 +216,7 @@ def test_edge_cells_are_evaluated_at_the_centre_of_the_requested_extent(monkeypa
     from smart_environment.models import CoverageSample
     positions = []
 
-    def sample(project, ap, ap_radio, profile_radio, point):
+    def sample(project, ap, ap_radio, profile_radio, point, scenario=None):
         positions.append((point.x, point.y))
         return CoverageSample(forward_dbm=None, reverse_dbm=None, forward_margin_db=None,
                               reverse_margin_db=None, status="partial")

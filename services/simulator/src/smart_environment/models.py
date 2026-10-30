@@ -357,6 +357,8 @@ class MapGrid(Model):
 class CoverageMapParameters(Model):
     """Everything that defines a map except the project; echoed in the result for staleness checks."""
 
+    model_config = ConfigDict(json_schema_extra=_optional_fields("scenario"))
+
     access_point_device_id: Identifier
     access_point_radio_id: Identifier
     profile: ReceiverProfile
@@ -364,6 +366,9 @@ class CoverageMapParameters(Model):
     points: list[Point] = Field(default_factory=list, max_length=MAX_MAP_POINTS,
                                 description="Exact positions evaluated without snapping to the grid")
     engine: Literal["quick-estimate", "sionna-rt", "ns-3"] = "quick-estimate"
+    scenario: ScenarioAssumptions | None = Field(default=None, description=(
+        "Door states and material bounds applied to every cell, e.g. the best or worst case of "
+        "/api/scenario-simulations; None evaluates the project as it is"))
 
 
 class CoverageMapRequest(CoverageMapParameters):
@@ -376,6 +381,8 @@ class CoverageMapRequest(CoverageMapParameters):
             raise ValueError(f"Unknown access point device: {self.access_point_device_id}")
         if self.access_point_radio_id not in {r.id for r in device.radios}:
             raise ValueError(f"Unknown access point radio: {self.access_point_radio_id}")
+        if self.scenario is not None and (issue := scenario_issue(self.project, self.scenario)):
+            raise ValueError(issue)
         return self
 
 
@@ -643,17 +650,24 @@ class ScenarioRequest(Model):
 
     @model_validator(mode="after")
     def known_references(self) -> ScenarioRequest:
-        doors = {w.id for w in self.project.building.walls if w.door is not None}
-        uncertain = {m.id for m in self.project.building.materials if m.uncertainty is not None}
         ids = [s.id for s in self.scenarios]
         if len(ids) != len(set(ids)) or set(ids) & set(RESERVED_SCENARIOS):
             raise ValueError(f"Scenario IDs must be unique and not one of {RESERVED_SCENARIOS}")
         for scenario in self.scenarios:
-            if unknown := sorted(set(scenario.doors) - doors):
-                raise ValueError(f"Scenario {scenario.id}: walls that are not doors: {unknown}")
-            if unknown := sorted(set(scenario.materials) - uncertain):
-                raise ValueError(f"Scenario {scenario.id}: materials without an uncertainty range: {unknown}")
+            if issue := scenario_issue(self.project, scenario):
+                raise ValueError(issue)
         return self
+
+
+def scenario_issue(project: Project, scenario: ScenarioAssumptions) -> str | None:
+    """A scenario may only set walls that are doors and materials that declare a range."""
+    doors = {w.id for w in project.building.walls if w.door is not None}
+    uncertain = {m.id for m in project.building.materials if m.uncertainty is not None}
+    if unknown := sorted(set(scenario.doors) - doors):
+        return f"Scenario {scenario.id}: walls that are not doors: {unknown}"
+    if unknown := sorted(set(scenario.materials) - uncertain):
+        return f"Scenario {scenario.id}: materials without an uncertainty range: {unknown}"
+    return None
 
 
 class ScenarioOutcome(Model):
@@ -682,3 +696,8 @@ class ScenarioResult(Model):
     elapsed_ms: float
     scope: str
     limitations: list[str]
+
+
+# Coverage-map models reference ScenarioAssumptions, defined after them.
+for _model in (CoverageMapParameters, CoverageMapRequest, CoverageMapResult, CoverageMapJob):
+    _model.model_rebuild()

@@ -64,6 +64,8 @@ export type Z = number;
  */
 export type Points = Point[];
 export type Engine1 = "quick-estimate" | "sionna-rt" | "ns-3";
+export type Id2 = string;
+export type Name1 = string;
 export type Metric = "direct-path-received-power";
 export type FrequencyHz1 = number;
 export type Compatibility = "radio-compatible" | "unverified";
@@ -137,6 +139,10 @@ export interface CoverageMapParameters {
   grid: MapGrid;
   points: Points;
   engine: Engine1;
+  /**
+   * Door states and material bounds applied to every cell, e.g. the best or worst case of /api/scenario-simulations; None evaluates the project as it is
+   */
+  scenario?: ScenarioAssumptions | null;
 }
 /**
  * Radio of the candidate device as it would be installed; drives both link directions.
@@ -190,6 +196,21 @@ export interface Point {
   x: X;
   y: Y;
   z: Z;
+}
+/**
+ * Named scenario: door states and material bounds that replace the nominal project values.
+ */
+export interface ScenarioAssumptions {
+  id: Id2;
+  name: Name1;
+  doors: Doors;
+  materials: Materials;
+}
+export interface Doors {
+  [k: string]: "open" | "closed";
+}
+export interface Materials {
+  [k: string]: "low" | "nominal" | "high";
 }
 /**
  * Row-major arrays (index = j·columns + i), one entry per cell, same meaning as CoverageSample.
