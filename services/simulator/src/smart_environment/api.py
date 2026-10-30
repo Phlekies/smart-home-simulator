@@ -12,7 +12,12 @@ from pydantic import ValidationError
 from .coverage import CoverageJobs, CoverageLimitError
 from .engines import engine_capabilities, simulate
 from .legacy import import_project
-from .models import CoverageMapJob, CoverageMapRequest, Project, SimulationRequest, SimulationResult
+from .placement import PlacementLimitError, search
+from .profiles import CATALOG
+from .models import (
+    CoverageMapJob, CoverageMapRequest, GenericProfile, PlacementSearchRequest, PlacementSearchResult, Project,
+    SimulationRequest, SimulationResult,
+)
 
 ROOT = Path(__file__).resolve().parents[4]
 EXAMPLES = {"apartment": "smart-apartment.shsim.json", "office": "office-floor.shsim.json",
@@ -113,3 +118,20 @@ def coverage_map_cancel(job_id: str) -> CoverageMapJob:
     if (job := coverage_jobs.cancel(job_id)) is None:
         raise HTTPException(404, "Unknown coverage map job")
     return job
+
+
+@app.post("/api/placement-searches", response_model=PlacementSearchResult)
+def placement_search(request: PlacementSearchRequest) -> PlacementSearchResult:
+    """Bounded exhaustive comparison of allowed AP places; synchronous because it is capped."""
+    if request.engine != "quick-estimate":
+        raise HTTPException(501, f"{request.engine}: placement adapter not implemented or verified; no fallback executed")
+    try:
+        return search(request)
+    except PlacementLimitError as error:
+        raise HTTPException(422, str(error)) from error
+
+
+@app.get("/api/profiles", response_model=list[GenericProfile])
+def profiles() -> list[GenericProfile]:
+    """Generic radio profiles with per-value provenance; approximations, not products."""
+    return CATALOG

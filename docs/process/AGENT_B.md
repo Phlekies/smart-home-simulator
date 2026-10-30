@@ -5,21 +5,21 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — B-101, B-102, B-104 y B-103 publicadas en PR apilados en borrador; sin merge.
-- Pila publicada por autorización del usuario (2026-10-30): `agent-b/b-101-reference-cases`
-  [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) → `agent-b/b-102-sionna-evaluation` [PR #4](https://github.com/Phlekies/smart-home-simulator/pull/4) → `agent-b/b-104-plan-reference`
-  [PR #5](https://github.com/Phlekies/smart-home-simulator/pull/5) → `agent-b/b-103-coverage-maps` [PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6). Cada PR tiene como base la rama anterior;
-  fusionar en orden y redirigir el siguiente a `codex/migrate-web-python`. CI: consultar cada PR.
+- Estado: **review** — B-105 y B-106 publicadas en [PR #8](https://github.com/Phlekies/smart-home-simulator/pull/8)
+  (borrador, base `codex/integrate-agents` del PR #7 de A); sin tarea nueva reservada.
+- Integración: **I-002 la ejecuta A** por instrucción del usuario (registro A, 2026-10-30 09:54):
+  A asume temporalmente Git, documentos comunes y `package.json`. B no integra ni edita
+  WORKBOARD/STATUS/CHECKLIST/LOCAL_DEVELOPMENT mientras dure, y solo entrega ramas propias.
+- Pila B publicada (borradores, sin merge): [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3) B-101 →
+  [PR #4](https://github.com/Phlekies/smart-home-simulator/pull/4) B-102 → [PR #5](https://github.com/Phlekies/smart-home-simulator/pull/5) B-104 →
+  [PR #6](https://github.com/Phlekies/smart-home-simulator/pull/6) B-103. B-105/B-106 recolocadas sobre la integración de A (`codex/integrate-agents`, PR #7) en
+  `agent-b/b-105-106-on-integration` (publicada, PR #8); incluyen las correcciones de A revisadas (abajo).
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
-- Rama/worktree: clon separado `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`; ramas
-  apiladas `agent-b/b-101-…` → `agent-b/b-102-…` → siguientes. No usa el checkout compartido de A
-  (`C:/Simulador_smart_homes3D/smart-home-simulator`); A no ve este registro hasta integrar.
+- Rama/worktree: clon B `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`; no escribe en el
+  checkout compartido de A.
 - Última actualización: 2026-10-30 (Europe/Madrid).
-- Archivos reservados: `services/simulator/src/smart_environment/models.py`, contratos generados
-  (`contracts/*.json`, `apps/web/src/generated/**` solo por generación), `scripts/export_contracts.py`,
-  `docs/simulation/**` y este registro.
-- Integración pendiente de A: **A-101** en review, pero A mantiene reservados `App.tsx`/`styles.css`
-  para A-102 y pide no integrarlos aún. No se integra hasta que A los libere.
+- Archivos reservados: `services/simulator/**` (código y pruebas de B), contratos generados,
+  `scripts/export_contracts.py`, `docs/simulation/**` y este registro.
 
 ## Plantilla de entrega — completar al trabajar
 
@@ -37,6 +37,62 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### Revisión de las correcciones de A en la integración (79e88f1) — aceptadas
+
+- Celdas de borde recortadas: centro de la parte dentro del área pedida (antes podía caer fuera).
+- Trabajo cancelado mientras terminaba: ahora queda `cancelled`, no `done` (carrera real).
+- Gestor de trabajos creado por ciclo de vida de la app y extensión del mapa limitada a ±10000 m.
+- Script `contracts` de la web ya genera `coverage-map.ts`. Falta añadir `placement-search.ts` y
+  `radio-profile.ts` (B-105/B-106). Sobre esa base: pytest 187, contratos y generados sin deriva,
+  npm test 70/70 y build correcto.
+
+### B-106 — perfiles Wi-Fi genéricos con procedencia (review)
+
+```text
+Tarea / estado: B-106 / review. Rama local agent-b/b-106-radio-profiles sobre B-105.
+Archivos: models.py (ProfileValue, GenericProfile.receiver_profile), profiles.py (catálogo nuevo),
+  api.py (GET /api/profiles), scripts/export_contracts.py, contracts/radio-profile.schema.json
+  (nuevo), openapi.json, apps/web/src/generated/radio-profile.ts (json2ts), tests/test_profiles.py,
+  docs/simulation/RADIO_PROFILES.md.
+Criterio: perfiles 2.4 GHz con parámetros trazables; desconocidos e inferidos diferenciados.
+Valores: HT20 MCS0/MCS3/MCS7 = −82/−74/−64 dBm, mínimos de IEEE 802.11-2020 tabla 21-25
+  (verificados en la reproducción de MathWorks); tabla HT de 2.4 GHz no cotejada (declarado en
+  la fuente). Potencia TX desconocida; ganancia 0 dBi y NF 7 dB inferidas con motivo.
+Contrato: aditivo (1 ruta, 1 esquema; ningún esquema existente cambia).
+Comandos: pytest → 182 passed; export --check sin deriva; npm run build correcto; npm test 16/16.
+Límites: no son datos de producto; sin 802.11b/g, 5 GHz, Zigbee ni Thread.
+Solicitud a A: añadir radio-profile.ts al script `contracts`; ofrecer el catálogo al elegir perfil
+  del mapa mostrando la procedencia de cada valor y pidiendo la potencia TX si se conoce.
+```
+
+### B-105 — búsqueda de ubicación del AP entre lugares permitidos (review)
+
+```text
+Tarea / estado: B-105 / review. Rama local agent-b/b-105-placement-search sobre B-103 (a5e6ff8).
+Archivos: models.py (PlacementCandidate, PlacementZone, PlacementSearchParameters/Request/Result,
+  TargetEvaluation, CandidateEvaluation, ExcludedCandidate), placement.py (nuevo), api.py
+  (POST /api/placement-searches), scripts/export_contracts.py, contracts/placement-search.schema.json
+  (nuevo), openapi.json, apps/web/src/generated/placement-search.ts (json2ts), tests/test_placement.py,
+  docs/simulation/PLACEMENT_SEARCH_CONTRACT.md.
+Criterio: comparar lugares permitidos (puntos/zonas) del AP con búsqueda exhaustiva acotada;
+  máx-mín del margen limitante bidireccional de equipos prioritarios; línea base y deltas;
+  datos ausentes declarados y sin orden; lugares dentro de paredes excluidos.
+Contrato: aditivo (1 ruta, esquemas nuevos; ningún esquema existente cambia, comprobado).
+Comandos: pytest → 174 passed; export --check sin deriva; npm run build correcto; npm test 16/16
+  (rama B sin las entregas de A). Ejemplos: 1262–1491 lugares en 0.14–0.26 s.
+Límites: un AP, trayecto directo, sin clasificación ni enlace de datos para AP nuevos.
+Solicitud a A: añadir placement-search.ts y coverage-map.ts al script `contracts`; consumidor
+  de lugares permitidos y comparación por equipo/sentido (detalle en el contrato).
+```
+
+### Incidente de integración concurrente — 2026-10-30 09:54
+
+B hizo commit de las 34 entregas de A en `agent-a/a-101-a108-ui` (`1b5b596`) en el checkout
+compartido, sin tocar el árbol. 17 s después, A (con instrucción del usuario para integrar)
+añadió `347691e` y fusionó la pila B publicada (`90ff7ba`). B detectó las dos escrituras, no
+cambió de rama ese checkout, retiró la referencia `integration/i-002` que había traído y dejó
+su integración local sin publicar. I-002 queda a cargo de A; B no repite esa integración.
 
 ### B-103 — mapas por perfil y altura como trabajos cancelables (review)
 

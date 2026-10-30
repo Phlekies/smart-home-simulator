@@ -1,0 +1,522 @@
+{
+  "$defs": {
+    "CandidateEvaluation": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "current",
+            "candidate",
+            "zone"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Point"
+        },
+        "targets": {
+          "items": {
+            "$ref": "#/$defs/TargetEvaluation"
+          },
+          "title": "Targets",
+          "type": "array"
+        },
+        "complete_targets": {
+          "title": "Complete Targets",
+          "type": "integer"
+        },
+        "worst_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Worst Margin Db"
+        },
+        "mean_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Mean Margin Db"
+        },
+        "worst_target_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Worst Target Id"
+        },
+        "delta_worst_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Change of the worst margin against the current place",
+          "title": "Delta Worst Margin Db"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "label",
+        "source",
+        "position",
+        "targets",
+        "complete_targets",
+        "worst_margin_db",
+        "mean_margin_db",
+        "worst_target_id",
+        "delta_worst_margin_db"
+      ],
+      "title": "CandidateEvaluation",
+      "type": "object"
+    },
+    "ExcludedCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Point"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "position",
+        "reason"
+      ],
+      "title": "ExcludedCandidate",
+      "type": "object"
+    },
+    "PlacementCandidate": {
+      "additionalProperties": false,
+      "description": "A place where the AP may physically go (power, cabling and mounting already checked).",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Point"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "position"
+      ],
+      "title": "PlacementCandidate",
+      "type": "object"
+    },
+    "PlacementSearchParameters": {
+      "additionalProperties": false,
+      "description": "Everything that defines a search except the project; echoed in the result.",
+      "properties": {
+        "access_point_device_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Access Point Device Id",
+          "type": "string"
+        },
+        "access_point_radio_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Access Point Radio Id",
+          "type": "string"
+        },
+        "target_device_ids": {
+          "description": "Priority devices; empty means every device linked to the AP radio",
+          "items": {
+            "maxLength": 120,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 128,
+          "title": "Target Device Ids",
+          "type": "array"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/PlacementCandidate"
+          },
+          "maxItems": 2000,
+          "title": "Candidates",
+          "type": "array"
+        },
+        "zones": {
+          "items": {
+            "$ref": "#/$defs/PlacementZone"
+          },
+          "maxItems": 32,
+          "title": "Zones",
+          "type": "array"
+        },
+        "engine": {
+          "default": "quick-estimate",
+          "enum": [
+            "quick-estimate",
+            "sionna-rt",
+            "ns-3"
+          ],
+          "title": "Engine",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_point_device_id",
+        "access_point_radio_id",
+        "target_device_ids",
+        "candidates",
+        "zones",
+        "engine"
+      ],
+      "title": "PlacementSearchParameters",
+      "type": "object"
+    },
+    "PlacementZone": {
+      "additionalProperties": false,
+      "description": "Rectangle of allowed places, sampled every step_m at a fixed height.",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "min_x_m": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Min X M",
+          "type": "number"
+        },
+        "min_y_m": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Min Y M",
+          "type": "number"
+        },
+        "max_x_m": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Max X M",
+          "type": "number"
+        },
+        "max_y_m": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Max Y M",
+          "type": "number"
+        },
+        "height_m": {
+          "maximum": 1000,
+          "minimum": -1000,
+          "title": "Height M",
+          "type": "number"
+        },
+        "step_m": {
+          "default": 0.5,
+          "maximum": 10,
+          "minimum": 0.25,
+          "title": "Step M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "min_x_m",
+        "min_y_m",
+        "max_x_m",
+        "max_y_m",
+        "height_m",
+        "step_m"
+      ],
+      "title": "PlacementZone",
+      "type": "object"
+    },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Y",
+          "type": "number"
+        },
+        "z": {
+          "default": 0,
+          "maximum": 1000,
+          "minimum": -1000,
+          "title": "Z",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
+    "TargetEvaluation": {
+      "additionalProperties": false,
+      "properties": {
+        "device_id": {
+          "title": "Device Id",
+          "type": "string"
+        },
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        },
+        "forward_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "AP → device",
+          "title": "Forward Margin Db"
+        },
+        "reverse_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "device → AP",
+          "title": "Reverse Margin Db"
+        },
+        "limiting_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Limiting Margin Db"
+        },
+        "limiting_direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "forward",
+                "reverse"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Limiting Direction"
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "not-computed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "device_id",
+        "link_id",
+        "forward_margin_db",
+        "reverse_margin_db",
+        "limiting_margin_db",
+        "limiting_direction",
+        "status",
+        "reason"
+      ],
+      "title": "TargetEvaluation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "engine": {
+      "title": "Engine",
+      "type": "string"
+    },
+    "engine_version": {
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "input_hash": {
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "request_hash": {
+      "title": "Request Hash",
+      "type": "string"
+    },
+    "access_point_device_id": {
+      "title": "Access Point Device Id",
+      "type": "string"
+    },
+    "access_point_radio_id": {
+      "title": "Access Point Radio Id",
+      "type": "string"
+    },
+    "parameters": {
+      "$ref": "#/$defs/PlacementSearchParameters"
+    },
+    "criterion": {
+      "const": "max-min-bidirectional-margin",
+      "title": "Criterion",
+      "type": "string"
+    },
+    "ranked": {
+      "description": "False when no candidate has complete margins: nothing is ordered",
+      "title": "Ranked",
+      "type": "boolean"
+    },
+    "target_device_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Target Device Ids",
+      "type": "array"
+    },
+    "baseline": {
+      "$ref": "#/$defs/CandidateEvaluation"
+    },
+    "ranking": {
+      "description": "Best first; at most 50 entries",
+      "items": {
+        "$ref": "#/$defs/CandidateEvaluation"
+      },
+      "title": "Ranking",
+      "type": "array"
+    },
+    "evaluated": {
+      "title": "Evaluated",
+      "type": "integer"
+    },
+    "excluded": {
+      "items": {
+        "$ref": "#/$defs/ExcludedCandidate"
+      },
+      "title": "Excluded",
+      "type": "array"
+    },
+    "elapsed_ms": {
+      "title": "Elapsed Ms",
+      "type": "number"
+    },
+    "scope": {
+      "title": "Scope",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    },
+    "reasons": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Reasons",
+      "type": "array"
+    }
+  },
+  "required": [
+    "engine",
+    "engine_version",
+    "input_hash",
+    "request_hash",
+    "access_point_device_id",
+    "access_point_radio_id",
+    "parameters",
+    "criterion",
+    "ranked",
+    "target_device_ids",
+    "baseline",
+    "ranking",
+    "evaluated",
+    "excluded",
+    "elapsed_ms",
+    "scope",
+    "limitations",
+    "reasons"
+  ],
+  "title": "PlacementSearchResult",
+  "type": "object"
+}

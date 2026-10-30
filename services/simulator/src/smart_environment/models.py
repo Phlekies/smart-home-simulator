@@ -374,3 +374,180 @@ class CoverageMapJob(Model):
     request_hash: str
     result: CoverageMapResult | None = None
     error: str | None = None
+
+
+# --- Access-point placement search (B-105) ---------------------------------------------
+
+MAX_PLACEMENT_CANDIDATES = 2000
+
+
+class PlacementCandidate(Model):
+    """A place where the AP may physically go (power, cabling and mounting already checked)."""
+
+    id: Identifier
+    label: str = Field(min_length=1, max_length=160)
+    position: Point
+
+
+class PlacementZone(Model):
+    """Rectangle of allowed places, sampled every step_m at a fixed height."""
+
+    id: Identifier
+    label: str = Field(min_length=1, max_length=160)
+    min_x_m: Finite = Field(ge=-10000, le=10000)
+    min_y_m: Finite = Field(ge=-10000, le=10000)
+    max_x_m: Finite = Field(ge=-10000, le=10000)
+    max_y_m: Finite = Field(ge=-10000, le=10000)
+    height_m: Finite = Field(ge=-1000, le=1000)
+    step_m: Finite = Field(default=0.5, ge=0.25, le=10)
+
+    def positions(self) -> list[tuple[float, float]]:
+        def axis(low: float, high: float) -> list[float]:
+            count = int(math.floor((high - low) / self.step_m + 1e-9)) + 1
+            return [low + k * self.step_m for k in range(count)]
+        return [(x, y) for y in axis(self.min_y_m, self.max_y_m) for x in axis(self.min_x_m, self.max_x_m)]
+
+    @model_validator(mode="after")
+    def ordered(self) -> PlacementZone:
+        if self.max_x_m < self.min_x_m or self.max_y_m < self.min_y_m:
+            raise ValueError(f"Zone {self.id}: max must not be below min")
+        return self
+
+
+class PlacementSearchParameters(Model):
+    """Everything that defines a search except the project; echoed in the result."""
+
+    access_point_device_id: Identifier
+    access_point_radio_id: Identifier
+    target_device_ids: list[Identifier] = Field(
+        default_factory=list, max_length=128,
+        description="Priority devices; empty means every device linked to the AP radio")
+    candidates: list[PlacementCandidate] = Field(default_factory=list, max_length=MAX_PLACEMENT_CANDIDATES)
+    zones: list[PlacementZone] = Field(default_factory=list, max_length=32)
+    engine: Literal["quick-estimate", "sionna-rt", "ns-3"] = "quick-estimate"
+
+
+class PlacementSearchRequest(PlacementSearchParameters):
+    project: Project
+
+    @model_validator(mode="after")
+    def consistent(self) -> PlacementSearchRequest:
+        device = next((d for d in self.project.devices if d.id == self.access_point_device_id), None)
+        if device is None:
+            raise ValueError(f"Unknown access point device: {self.access_point_device_id}")
+        if self.access_point_radio_id not in {r.id for r in device.radios}:
+            raise ValueError(f"Unknown access point radio: {self.access_point_radio_id}")
+        if not self.candidates and not self.zones:
+            raise ValueError("Provide at least one allowed candidate or zone")
+        ids = [c.id for c in self.candidates] + [z.id for z in self.zones]
+        if len(ids) != len(set(ids)) or "current" in ids:
+            raise ValueError("Candidate and zone IDs must be unique and different from 'current'")
+        if len(self.candidates) + sum(len(z.positions()) for z in self.zones) > MAX_PLACEMENT_CANDIDATES:
+            raise ValueError(f"At most {MAX_PLACEMENT_CANDIDATES} candidate positions per search")
+        known = {d.id for d in self.project.devices}
+        if unknown := [t for t in self.target_device_ids if t not in known]:
+            raise ValueError(f"Unknown target devices: {unknown}")
+        return self
+
+
+class TargetEvaluation(Model):
+    device_id: str
+    link_id: str
+    forward_margin_db: float | None = Field(description="AP → device")
+    reverse_margin_db: float | None = Field(description="device → AP")
+    limiting_margin_db: float | None
+    limiting_direction: Literal["forward", "reverse"] | None
+    status: Literal["complete", "incomplete", "not-computed"]
+    reason: str | None = None
+
+
+class CandidateEvaluation(Model):
+    candidate_id: str
+    label: str
+    source: Literal["current", "candidate", "zone"]
+    position: Point
+    targets: list[TargetEvaluation]
+    complete_targets: int
+    worst_margin_db: float | None
+    mean_margin_db: float | None
+    worst_target_id: str | None
+    delta_worst_margin_db: float | None = Field(description="Change of the worst margin against the current place")
+
+
+class ExcludedCandidate(Model):
+    candidate_id: str
+    position: Point
+    reason: str
+
+
+class PlacementSearchResult(Model):
+    engine: str
+    engine_version: str
+    input_hash: str
+    request_hash: str
+    access_point_device_id: str
+    access_point_radio_id: str
+    parameters: PlacementSearchParameters
+    criterion: Literal["max-min-bidirectional-margin"]
+    ranked: bool = Field(description="False when no candidate has complete margins: nothing is ordered")
+    target_device_ids: list[str]
+    baseline: CandidateEvaluation
+    ranking: list[CandidateEvaluation] = Field(description="Best first; at most 50 entries")
+    evaluated: int
+    excluded: list[ExcludedCandidate]
+    elapsed_ms: float
+    scope: str
+    limitations: list[str]
+    reasons: list[str]
+
+
+# --- Generic radio profiles with provenance (B-106) ------------------------------------
+
+class ProfileValue(Model):
+    """A profile parameter and where it comes from; ``unknown`` never carries a value."""
+
+    value: Finite | None = None
+    provenance: Literal["standard-minimum", "declared", "measured", "inferred", "unknown"] = "unknown"
+    source: str | None = Field(default=None, max_length=500)
+
+    @model_validator(mode="after")
+    def value_matches_provenance(self) -> ProfileValue:
+        if (self.value is None) != (self.provenance == "unknown"):
+            raise ValueError("A value needs a known provenance, and 'unknown' cannot carry a value")
+        return self
+
+
+class GenericProfile(Model):
+    """Generic client radio for a band and mode; an approximation, never a certified product."""
+
+    id: Identifier
+    name: str = Field(min_length=1, max_length=160)
+    description: str = Field(max_length=1000)
+    protocol: Literal["wifi"]
+    band: Literal["2.4GHz"]
+    mode: str = Field(max_length=160, description="PHY, bandwidth and rate the values refer to")
+    bandwidth_hz: Positive
+    sensitivity_dbm: ProfileValue
+    tx_power_dbm: ProfileValue
+    antenna_gain_dbi: ProfileValue
+    noise_figure_db: ProfileValue
+    notes: list[str] = Field(default_factory=list, max_length=32)
+
+    def receiver_profile(self, access_point_radio: Radio) -> ReceiverProfile:
+        """Profile radio on the AP's channel: a Wi-Fi client follows the AP's frequency and channel."""
+        if not 2.4e9 <= access_point_radio.frequency_hz <= 2.5e9:
+            raise ValueError("This profile only describes the 2.4 GHz band")
+        if abs(access_point_radio.bandwidth_hz - self.bandwidth_hz) > 1:
+            raise ValueError("The AP bandwidth differs from the profile mode")
+        if self.antenna_gain_dbi.value is None or self.noise_figure_db.value is None:
+            raise ValueError("Antenna gain and noise figure need a declared or inferred value")
+        gain = self.antenna_gain_dbi.value
+        return ReceiverProfile(
+            id=self.id, name=self.name,
+            evidence=f"Generic profile {self.id}: sensitivity {self.sensitivity_dbm.provenance}, "
+                     f"tx power {self.tx_power_dbm.provenance}, antenna gain {self.antenna_gain_dbi.provenance}",
+            radio=Radio(id=f"profile-{self.id}", protocol="wifi", frequency_hz=access_point_radio.frequency_hz,
+                        bandwidth_hz=self.bandwidth_hz, channel=access_point_radio.channel,
+                        tx_power_dbm=self.tx_power_dbm.value, tx_gain_dbi=gain, rx_gain_dbi=gain,
+                        sensitivity_dbm=self.sensitivity_dbm.value,
+                        noise_figure_db=self.noise_figure_db.value))
