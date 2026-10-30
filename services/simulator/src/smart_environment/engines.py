@@ -7,7 +7,9 @@ import math
 import shutil
 import time
 
-from .models import Device, DirectionResult, LinkResult, Point, Project, Radio, SimulationResult, Wall
+from .models import (
+    Device, DirectionResult, LinkResult, Material, Point, Project, Radio, ScenarioAssumptions, SimulationResult, Wall,
+)
 
 LIMITATIONS = [
     "Estimación analítica no calibrada: no garantiza conexión ni compatibilidad funcional.",
@@ -26,8 +28,16 @@ def input_hash(project: Project) -> str:
 
     The plan reference image is a display aid that no solver reads, so it is left out: adding or
     moving it neither changes the hash of existing projects nor invalidates their results.
+    Optional fields added later (door state, material uncertainty) count only when set, so
+    projects that do not use them keep the hash they had before those fields existed.
     """
     data = project.model_dump(mode="json", exclude={"plan_reference"})
+    for wall in data["building"]["walls"]:
+        if wall.get("door") is None:
+            wall.pop("door", None)
+    for material in data["building"]["materials"]:
+        if material.get("uncertainty") is None:
+            material.pop("uncertainty", None)
     canonical = json.dumps(data, sort_keys=True, separators=(",", ":"), allow_nan=False)
     return hashlib.sha256(canonical.encode()).hexdigest()
 
@@ -81,8 +91,20 @@ def antenna_gain(radio: Radio, peak_gain: float, angle_deg: float) -> float:
     return floor - 6 * min(1, (delta - half) / max(1, 180 - half))
 
 
-def direction(project: Project, tx: Device, tx_radio: Radio,
-              rx: Device, rx_radio: Radio) -> DirectionResult | None:
+def material_loss_db(material: Material, frequency_hz: float, bound: str = "nominal") -> float:
+    """Loss per crossing before thickness; 'low'/'high' use the uncertainty range when present."""
+    high_band = frequency_hz >= 3e9
+    u = material.uncertainty
+    if bound == "nominal" or u is None:
+        return material.loss_db_5ghz if high_band else material.loss_db_24ghz
+    if bound == "low":
+        return u.loss_db_5ghz_low if high_band else u.loss_db_24ghz_low
+    return u.loss_db_5ghz_high if high_band else u.loss_db_24ghz_high
+
+
+def direction(project: Project, tx: Device, tx_radio: Radio, rx: Device, rx_radio: Radio,
+              scenario: ScenarioAssumptions | None = None) -> DirectionResult | None:
+    """One-way budget. ``scenario`` overrides door states and material bounds; open doors add no loss."""
     if tx_radio.tx_power_dbm is None:
         return None
     distance = math.dist((tx.position.x, tx.position.y, tx.position.z),
@@ -95,9 +117,13 @@ def direction(project: Project, tx: Device, tx_radio: Radio,
     wall_loss = 0.0
     crossed = []
     for wall in project.building.walls:
+        door = (scenario.doors.get(wall.id) if scenario else None) or wall.door
+        if door == "open":
+            continue
         if crossing_parameter(tx.position, rx.position, wall) is not None:
             material = materials[wall.material_id]
-            base = material.loss_db_24ghz if tx_radio.frequency_hz < 3e9 else material.loss_db_5ghz
+            bound = scenario.materials.get(material.id, "nominal") if scenario else "nominal"
+            base = material_loss_db(material, tx_radio.frequency_hz, bound)
             wall_loss += base + wall.thickness_m * 100 * material.extra_loss_db_per_cm
             crossed.append(wall.id)
     angle = math.degrees(math.atan2(rx.position.y - tx.position.y, rx.position.x - tx.position.x))

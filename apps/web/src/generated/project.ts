@@ -19,6 +19,10 @@ export type HeightM = number;
 export type ThicknessM = number;
 export type MaterialId = string;
 /**
+ * None: not a door. An open door adds no loss; closed or unknown counts as the wall in the nominal estimate, and scenario simulations vary unknown doors.
+ */
+export type Door = ("open" | "closed" | "unknown") | null;
+/**
  * @maxItems 2000
  */
 export type Walls = Wall[];
@@ -33,6 +37,14 @@ export type LossDb24Ghz = number;
 export type LossDb5Ghz = number;
 export type ExtraLossDbPerCm = number;
 export type Evidence = string;
+export type LossDb24GhzLow = number;
+export type LossDb24GhzHigh = number;
+export type LossDb5GhzLow = number;
+export type LossDb5GhzHigh = number;
+/**
+ * Why the material may lie in this range
+ */
+export type Source = string;
 export type Id2 = string;
 export type Name2 = string;
 export type Role = "endpoint" | "access-point" | "controller" | "router" | "bridge" | "unknown";
@@ -131,6 +143,7 @@ export interface Wall {
   height_m: HeightM;
   thickness_m: ThicknessM;
   material_id: MaterialId;
+  door?: Door;
 }
 export interface Point {
   x: X;
@@ -144,6 +157,17 @@ export interface Material {
   loss_db_5ghz: LossDb5Ghz;
   extra_loss_db_per_cm: ExtraLossDbPerCm;
   evidence: Evidence;
+  uncertainty?: MaterialUncertainty | null;
+}
+/**
+ * Reasoned range of a material's loss per crossing: scenario bounds, not a probability interval.
+ */
+export interface MaterialUncertainty {
+  loss_db_24ghz_low: LossDb24GhzLow;
+  loss_db_24ghz_high: LossDb24GhzHigh;
+  loss_db_5ghz_low: LossDb5GhzLow;
+  loss_db_5ghz_high: LossDb5GhzHigh;
+  source: Source;
 }
 export interface Device {
   id: Id2;

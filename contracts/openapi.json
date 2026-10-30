@@ -365,6 +365,45 @@
           }
         }
       }
+    },
+    "/api/scenario-simulations": {
+      "post": {
+        "summary": "Scenario Simulation",
+        "description": "Nominal, best and worst cases of unresolved doors/materials, plus named scenarios.",
+        "operationId": "scenario_simulation_api_scenario_simulations_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScenarioRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScenarioResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1406,6 +1445,97 @@
         ],
         "title": "LinkResult"
       },
+      "LinkScenarioResult": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "compatibility": {
+            "type": "string",
+            "enum": [
+              "radio-compatible",
+              "incompatible",
+              "unverified"
+            ],
+            "title": "Compatibility"
+          },
+          "outcomes": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioOutcome"
+            },
+            "type": "array",
+            "title": "Outcomes",
+            "description": "nominal, best, worst, then the requested scenarios"
+          },
+          "forward_range_dbm": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forward Range Dbm",
+            "description": "[min, max] across scenarios; None if not computed"
+          },
+          "reverse_range_dbm": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reverse Range Dbm"
+          },
+          "hypotheses": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Hypotheses",
+            "description": "Crossed walls with an unknown door or uncertain material"
+          },
+          "margin_sign": {
+            "type": "string",
+            "enum": [
+              "consistent",
+              "depends-on-hypotheses",
+              "incomplete"
+            ],
+            "title": "Margin Sign"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "compatibility",
+          "outcomes",
+          "forward_range_dbm",
+          "reverse_range_dbm",
+          "hypotheses",
+          "margin_sign",
+          "reasons"
+        ],
+        "title": "LinkScenarioResult"
+      },
       "MapGrid-Input": {
         "properties": {
           "origin_x_m": {
@@ -1550,6 +1680,16 @@
             "type": "string",
             "title": "Evidence",
             "default": "Hypothesis: legacy empirical values; not calibrated"
+          },
+          "uncertainty": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MaterialUncertainty"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "additionalProperties": false,
@@ -1599,6 +1739,16 @@
             "type": "string",
             "title": "Evidence",
             "default": "Hypothesis: legacy empirical values; not calibrated"
+          },
+          "uncertainty": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MaterialUncertainty"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "additionalProperties": false,
@@ -1612,6 +1762,52 @@
           "evidence"
         ],
         "title": "Material"
+      },
+      "MaterialUncertainty": {
+        "properties": {
+          "loss_db_24ghz_low": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Loss Db 24Ghz Low"
+          },
+          "loss_db_24ghz_high": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Loss Db 24Ghz High"
+          },
+          "loss_db_5ghz_low": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Loss Db 5Ghz Low"
+          },
+          "loss_db_5ghz_high": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Loss Db 5Ghz High"
+          },
+          "source": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Source",
+            "description": "Why the material may lie in this range"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "loss_db_24ghz_low",
+          "loss_db_24ghz_high",
+          "loss_db_5ghz_low",
+          "loss_db_5ghz_high",
+          "source"
+        ],
+        "title": "MaterialUncertainty",
+        "description": "Reasoned range of a material's loss per crossing: scenario bounds, not a probability interval."
       },
       "PixelPoint": {
         "properties": {
@@ -2930,6 +3126,244 @@
         "title": "ReceiverProfile",
         "description": "Radio of the candidate device as it would be installed; drives both link directions."
       },
+      "ScenarioAssumptions-Input": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "doors": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "open",
+                "closed"
+              ]
+            },
+            "propertyNames": {
+              "maxLength": 120,
+              "minLength": 1
+            },
+            "type": "object",
+            "title": "Doors"
+          },
+          "materials": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "low",
+                "nominal",
+                "high"
+              ]
+            },
+            "propertyNames": {
+              "maxLength": 120,
+              "minLength": 1
+            },
+            "type": "object",
+            "title": "Materials"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "ScenarioAssumptions",
+        "description": "Named scenario: door states and material bounds that replace the nominal project values."
+      },
+      "ScenarioAssumptions-Output": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "doors": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "open",
+                "closed"
+              ]
+            },
+            "propertyNames": {
+              "maxLength": 120,
+              "minLength": 1
+            },
+            "type": "object",
+            "title": "Doors"
+          },
+          "materials": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "low",
+                "nominal",
+                "high"
+              ]
+            },
+            "propertyNames": {
+              "maxLength": 120,
+              "minLength": 1
+            },
+            "type": "object",
+            "title": "Materials"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "doors",
+          "materials"
+        ],
+        "title": "ScenarioAssumptions",
+        "description": "Named scenario: door states and material bounds that replace the nominal project values."
+      },
+      "ScenarioOutcome": {
+        "properties": {
+          "scenario_id": {
+            "type": "string",
+            "title": "Scenario Id"
+          },
+          "forward": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DirectionResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reverse": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DirectionResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "scenario_id",
+          "forward",
+          "reverse"
+        ],
+        "title": "ScenarioOutcome"
+      },
+      "ScenarioRequest": {
+        "properties": {
+          "project": {
+            "$ref": "#/components/schemas/Project-Input"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioAssumptions-Input"
+            },
+            "type": "array",
+            "maxItems": 16,
+            "title": "Scenarios"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "quick-estimate",
+              "sionna-rt",
+              "ns-3"
+            ],
+            "title": "Engine",
+            "default": "quick-estimate"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "project"
+        ],
+        "title": "ScenarioRequest"
+      },
+      "ScenarioResult": {
+        "properties": {
+          "engine": {
+            "type": "string",
+            "title": "Engine"
+          },
+          "engine_version": {
+            "type": "string",
+            "title": "Engine Version"
+          },
+          "input_hash": {
+            "type": "string",
+            "title": "Input Hash"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioAssumptions-Output"
+            },
+            "type": "array",
+            "title": "Scenarios",
+            "description": "Every evaluated scenario, automatic ones included"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/LinkScenarioResult"
+            },
+            "type": "array",
+            "title": "Links"
+          },
+          "elapsed_ms": {
+            "type": "number",
+            "title": "Elapsed Ms"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "engine",
+          "engine_version",
+          "input_hash",
+          "scenarios",
+          "links",
+          "elapsed_ms",
+          "scope",
+          "limitations"
+        ],
+        "title": "ScenarioResult"
+      },
       "Settings-Input": {
         "properties": {
           "path_loss_exponent": {
@@ -3232,6 +3666,23 @@
             "maxLength": 120,
             "minLength": 1,
             "title": "Material Id"
+          },
+          "door": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "open",
+                  "closed",
+                  "unknown"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Door",
+            "description": "None: not a door. An open door adds no loss; closed or unknown counts as the wall in the nominal estimate, and scenario simulations vary unknown doors."
           }
         },
         "additionalProperties": false,
@@ -3277,6 +3728,23 @@
             "maxLength": 120,
             "minLength": 1,
             "title": "Material Id"
+          },
+          "door": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "open",
+                  "closed",
+                  "unknown"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Door",
+            "description": "None: not a door. An open door adds no loss; closed or unknown counts as the wall in the nominal estimate, and scenario simulations vary unknown doors."
           }
         },
         "additionalProperties": false,

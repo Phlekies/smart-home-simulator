@@ -1,0 +1,314 @@
+{
+  "$defs": {
+    "DirectionResult": {
+      "additionalProperties": false,
+      "properties": {
+        "tx_device_id": {
+          "title": "Tx Device Id",
+          "type": "string"
+        },
+        "rx_device_id": {
+          "title": "Rx Device Id",
+          "type": "string"
+        },
+        "distance_m": {
+          "title": "Distance M",
+          "type": "number"
+        },
+        "path_loss_db": {
+          "title": "Path Loss Db",
+          "type": "number"
+        },
+        "wall_loss_db": {
+          "title": "Wall Loss Db",
+          "type": "number"
+        },
+        "crossed_wall_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Crossed Wall Ids",
+          "type": "array"
+        },
+        "received_power_dbm": {
+          "title": "Received Power Dbm",
+          "type": "number"
+        },
+        "noise_dbm": {
+          "title": "Noise Dbm",
+          "type": "number"
+        },
+        "snr_db": {
+          "title": "Snr Db",
+          "type": "number"
+        },
+        "margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Margin Db"
+        }
+      },
+      "required": [
+        "tx_device_id",
+        "rx_device_id",
+        "distance_m",
+        "path_loss_db",
+        "wall_loss_db",
+        "crossed_wall_ids",
+        "received_power_dbm",
+        "noise_dbm",
+        "snr_db",
+        "margin_db"
+      ],
+      "title": "DirectionResult",
+      "type": "object"
+    },
+    "LinkScenarioResult": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "title": "Id",
+          "type": "string"
+        },
+        "compatibility": {
+          "enum": [
+            "radio-compatible",
+            "incompatible",
+            "unverified"
+          ],
+          "title": "Compatibility",
+          "type": "string"
+        },
+        "outcomes": {
+          "description": "nominal, best, worst, then the requested scenarios",
+          "items": {
+            "$ref": "#/$defs/ScenarioOutcome"
+          },
+          "title": "Outcomes",
+          "type": "array"
+        },
+        "forward_range_dbm": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "[min, max] across scenarios; None if not computed",
+          "title": "Forward Range Dbm"
+        },
+        "reverse_range_dbm": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reverse Range Dbm"
+        },
+        "hypotheses": {
+          "description": "Crossed walls with an unknown door or uncertain material",
+          "items": {
+            "type": "string"
+          },
+          "title": "Hypotheses",
+          "type": "array"
+        },
+        "margin_sign": {
+          "enum": [
+            "consistent",
+            "depends-on-hypotheses",
+            "incomplete"
+          ],
+          "title": "Margin Sign",
+          "type": "string"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "compatibility",
+        "outcomes",
+        "forward_range_dbm",
+        "reverse_range_dbm",
+        "hypotheses",
+        "margin_sign",
+        "reasons"
+      ],
+      "title": "LinkScenarioResult",
+      "type": "object"
+    },
+    "ScenarioAssumptions": {
+      "additionalProperties": false,
+      "description": "Named scenario: door states and material bounds that replace the nominal project values.",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "doors": {
+          "additionalProperties": {
+            "enum": [
+              "open",
+              "closed"
+            ],
+            "type": "string"
+          },
+          "propertyNames": {
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "title": "Doors",
+          "type": "object"
+        },
+        "materials": {
+          "additionalProperties": {
+            "enum": [
+              "low",
+              "nominal",
+              "high"
+            ],
+            "type": "string"
+          },
+          "propertyNames": {
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "title": "Materials",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "doors",
+        "materials"
+      ],
+      "title": "ScenarioAssumptions",
+      "type": "object"
+    },
+    "ScenarioOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "scenario_id": {
+          "title": "Scenario Id",
+          "type": "string"
+        },
+        "forward": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DirectionResult"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reverse": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DirectionResult"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "scenario_id",
+        "forward",
+        "reverse"
+      ],
+      "title": "ScenarioOutcome",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "engine": {
+      "title": "Engine",
+      "type": "string"
+    },
+    "engine_version": {
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "input_hash": {
+      "title": "Input Hash",
+      "type": "string"
+    },
+    "scenarios": {
+      "description": "Every evaluated scenario, automatic ones included",
+      "items": {
+        "$ref": "#/$defs/ScenarioAssumptions"
+      },
+      "title": "Scenarios",
+      "type": "array"
+    },
+    "links": {
+      "items": {
+        "$ref": "#/$defs/LinkScenarioResult"
+      },
+      "title": "Links",
+      "type": "array"
+    },
+    "elapsed_ms": {
+      "title": "Elapsed Ms",
+      "type": "number"
+    },
+    "scope": {
+      "title": "Scope",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "engine",
+    "engine_version",
+    "input_hash",
+    "scenarios",
+    "links",
+    "elapsed_ms",
+    "scope",
+    "limitations"
+  ],
+  "title": "ScenarioResult",
+  "type": "object"
+}

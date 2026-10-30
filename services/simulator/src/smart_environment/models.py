@@ -24,22 +24,58 @@ class Point(Model):
     z: Finite = Field(default=0, ge=-1000, le=1000)
 
 
+def _optional_fields(*names: str):
+    """Additive v1 fields: generated clients must not have to send them."""
+    def drop(schema: dict[str, Any]) -> None:
+        schema["required"] = [name for name in schema.get("required", []) if name not in names]
+    return drop
+
+
+class MaterialUncertainty(Model):
+    """Reasoned range of a material's loss per crossing: scenario bounds, not a probability interval."""
+
+    loss_db_24ghz_low: Finite = Field(ge=0, le=1000)
+    loss_db_24ghz_high: Finite = Field(ge=0, le=1000)
+    loss_db_5ghz_low: Finite = Field(ge=0, le=1000)
+    loss_db_5ghz_high: Finite = Field(ge=0, le=1000)
+    source: str = Field(min_length=1, max_length=500, description="Why the material may lie in this range")
+
+
 class Material(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("uncertainty"))
+
     id: Identifier
     name: str = Field(min_length=1, max_length=160)
     loss_db_24ghz: Finite = Field(ge=0, le=1000)
     loss_db_5ghz: Finite = Field(ge=0, le=1000)
     extra_loss_db_per_cm: Finite = Field(default=0, ge=0, le=100)
     evidence: str = "Hypothesis: legacy empirical values; not calibrated"
+    uncertainty: MaterialUncertainty | None = None
+
+    @model_validator(mode="after")
+    def nominal_within_range(self) -> Material:
+        u = self.uncertainty
+        if u is not None and not (u.loss_db_24ghz_low <= self.loss_db_24ghz <= u.loss_db_24ghz_high
+                                  and u.loss_db_5ghz_low <= self.loss_db_5ghz <= u.loss_db_5ghz_high):
+            raise ValueError(f"Material {self.id}: nominal losses must lie within the uncertainty range")
+        return self
+
+
+DoorState = Literal["open", "closed", "unknown"]
 
 
 class Wall(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("door"))
+
     id: Identifier
     start: Point
     end: Point
     height_m: Positive = Field(default=2.6, le=100)
     thickness_m: Positive = Field(default=0.12, le=10)
     material_id: Identifier
+    door: DoorState | None = Field(default=None, description=(
+        "None: not a door. An open door adds no loss; closed or unknown counts as the wall in the "
+        "nominal estimate, and scenario simulations vary unknown doors."))
 
     @model_validator(mode="after")
     def valid_segment(self) -> Wall:
@@ -152,13 +188,8 @@ class PlanReference(Model):
         return self
 
 
-def _plan_reference_optional(schema: dict[str, Any]) -> None:
-    # Additive v1 field: generated clients must not have to send it.
-    schema["required"] = [name for name in schema.get("required", []) if name != "plan_reference"]
-
-
 class Project(Model):
-    model_config = ConfigDict(json_schema_extra=_plan_reference_optional)
+    model_config = ConfigDict(json_schema_extra=_optional_fields("plan_reference"))
 
     format: Literal["smart-environment-simulator"] = "smart-environment-simulator"
     version: Literal[1] = 1
@@ -551,3 +582,65 @@ class GenericProfile(Model):
                         tx_power_dbm=self.tx_power_dbm.value, tx_gain_dbi=gain, rx_gain_dbi=gain,
                         sensitivity_dbm=self.sensitivity_dbm.value,
                         noise_figure_db=self.noise_figure_db.value))
+
+
+# --- Scenarios for unresolved hypotheses (B-108) ----------------------------------------
+
+RESERVED_SCENARIOS = ("nominal", "best", "worst")
+
+
+class ScenarioAssumptions(Model):
+    """Named scenario: door states and material bounds that replace the nominal project values."""
+
+    id: Identifier
+    name: str = Field(min_length=1, max_length=160)
+    doors: dict[Identifier, Literal["open", "closed"]] = Field(default_factory=dict)
+    materials: dict[Identifier, Literal["low", "nominal", "high"]] = Field(default_factory=dict)
+
+
+class ScenarioRequest(Model):
+    project: Project
+    scenarios: list[ScenarioAssumptions] = Field(default_factory=list, max_length=16)
+    engine: Literal["quick-estimate", "sionna-rt", "ns-3"] = "quick-estimate"
+
+    @model_validator(mode="after")
+    def known_references(self) -> ScenarioRequest:
+        doors = {w.id for w in self.project.building.walls if w.door is not None}
+        uncertain = {m.id for m in self.project.building.materials if m.uncertainty is not None}
+        ids = [s.id for s in self.scenarios]
+        if len(ids) != len(set(ids)) or set(ids) & set(RESERVED_SCENARIOS):
+            raise ValueError(f"Scenario IDs must be unique and not one of {RESERVED_SCENARIOS}")
+        for scenario in self.scenarios:
+            if unknown := sorted(set(scenario.doors) - doors):
+                raise ValueError(f"Scenario {scenario.id}: walls that are not doors: {unknown}")
+            if unknown := sorted(set(scenario.materials) - uncertain):
+                raise ValueError(f"Scenario {scenario.id}: materials without an uncertainty range: {unknown}")
+        return self
+
+
+class ScenarioOutcome(Model):
+    scenario_id: str
+    forward: DirectionResult | None
+    reverse: DirectionResult | None
+
+
+class LinkScenarioResult(Model):
+    id: str
+    compatibility: Literal["radio-compatible", "incompatible", "unverified"]
+    outcomes: list[ScenarioOutcome] = Field(description="nominal, best, worst, then the requested scenarios")
+    forward_range_dbm: list[float] | None = Field(description="[min, max] across scenarios; None if not computed")
+    reverse_range_dbm: list[float] | None
+    hypotheses: list[str] = Field(description="Crossed walls with an unknown door or uncertain material")
+    margin_sign: Literal["consistent", "depends-on-hypotheses", "incomplete"]
+    reasons: list[str] = Field(default_factory=list)
+
+
+class ScenarioResult(Model):
+    engine: str
+    engine_version: str
+    input_hash: str
+    scenarios: list[ScenarioAssumptions] = Field(description="Every evaluated scenario, automatic ones included")
+    links: list[LinkScenarioResult]
+    elapsed_ms: float
+    scope: str
+    limitations: list[str]
