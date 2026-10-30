@@ -7,8 +7,7 @@ Esquema generado: `contracts/measurement-campaign.schema.json`. Plantilla:
 ## Decisión de persistencia
 
 Una campaña es un **archivo local separado** del proyecto exportable. No se incrusta en
-`Project`, no cambia `project.schema.json`, `simulation-result.schema.json` ni OpenAPI, y la
-interfaz (A) no necesita cambios. La campaña referencia el proyecto por nombre y por el
+`Project` ni cambia `project.schema.json` ni `simulation-result.schema.json`. La campaña referencia el proyecto por nombre y por el
 hash SHA-256 del JSON canónico (`input_hash`, el mismo que devuelven las simulaciones). Si
 el plano cambia, el hash deja de coincidir y `project_issues()` lo informa: las posiciones
 pueden referirse a otra versión.
