@@ -53,7 +53,8 @@ B-112: clon limpio según LOCAL_DEVELOPMENT; dev.py ahora muestra la causa del f
   servicio en Windows. M5 «instalación limpia» marcado.
 Comandos (rama completa): pytest 216; export --check sin deriva; npm test 84; build correcto.
 Límites: residuos sin datos reales; caché solo en memoria; E2E solo de API.
-Siguiente paso: publicar la rama si el usuario lo autoriza; el usuario cambia la base de #12 y lo fusiona.
+Publicación: [PR #13](https://github.com/Phlekies/smart-home-simulator/pull/13) en borrador, apilado sobre #11, por autorización
+  del usuario. Al fusionar #11, cambiar la base de #13 a main. El usuario cambia la base de #12 y lo fusiona.
 ```
 
 ### I-003 y B-107 — consolidación tras #7 y matriz de funciones Java (review)
