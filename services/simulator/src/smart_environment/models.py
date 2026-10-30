@@ -374,3 +374,128 @@ class CoverageMapJob(Model):
     request_hash: str
     result: CoverageMapResult | None = None
     error: str | None = None
+
+
+# --- Access-point placement search (B-105) ---------------------------------------------
+
+MAX_PLACEMENT_CANDIDATES = 2000
+
+
+class PlacementCandidate(Model):
+    """A place where the AP may physically go (power, cabling and mounting already checked)."""
+
+    id: Identifier
+    label: str = Field(min_length=1, max_length=160)
+    position: Point
+
+
+class PlacementZone(Model):
+    """Rectangle of allowed places, sampled every step_m at a fixed height."""
+
+    id: Identifier
+    label: str = Field(min_length=1, max_length=160)
+    min_x_m: Finite = Field(ge=-10000, le=10000)
+    min_y_m: Finite = Field(ge=-10000, le=10000)
+    max_x_m: Finite = Field(ge=-10000, le=10000)
+    max_y_m: Finite = Field(ge=-10000, le=10000)
+    height_m: Finite = Field(ge=-1000, le=1000)
+    step_m: Finite = Field(default=0.5, ge=0.25, le=10)
+
+    def positions(self) -> list[tuple[float, float]]:
+        def axis(low: float, high: float) -> list[float]:
+            count = int(math.floor((high - low) / self.step_m + 1e-9)) + 1
+            return [low + k * self.step_m for k in range(count)]
+        return [(x, y) for y in axis(self.min_y_m, self.max_y_m) for x in axis(self.min_x_m, self.max_x_m)]
+
+    @model_validator(mode="after")
+    def ordered(self) -> PlacementZone:
+        if self.max_x_m < self.min_x_m or self.max_y_m < self.min_y_m:
+            raise ValueError(f"Zone {self.id}: max must not be below min")
+        return self
+
+
+class PlacementSearchParameters(Model):
+    """Everything that defines a search except the project; echoed in the result."""
+
+    access_point_device_id: Identifier
+    access_point_radio_id: Identifier
+    target_device_ids: list[Identifier] = Field(
+        default_factory=list, max_length=128,
+        description="Priority devices; empty means every device linked to the AP radio")
+    candidates: list[PlacementCandidate] = Field(default_factory=list, max_length=MAX_PLACEMENT_CANDIDATES)
+    zones: list[PlacementZone] = Field(default_factory=list, max_length=32)
+    engine: Literal["quick-estimate", "sionna-rt", "ns-3"] = "quick-estimate"
+
+
+class PlacementSearchRequest(PlacementSearchParameters):
+    project: Project
+
+    @model_validator(mode="after")
+    def consistent(self) -> PlacementSearchRequest:
+        device = next((d for d in self.project.devices if d.id == self.access_point_device_id), None)
+        if device is None:
+            raise ValueError(f"Unknown access point device: {self.access_point_device_id}")
+        if self.access_point_radio_id not in {r.id for r in device.radios}:
+            raise ValueError(f"Unknown access point radio: {self.access_point_radio_id}")
+        if not self.candidates and not self.zones:
+            raise ValueError("Provide at least one allowed candidate or zone")
+        ids = [c.id for c in self.candidates] + [z.id for z in self.zones]
+        if len(ids) != len(set(ids)) or "current" in ids:
+            raise ValueError("Candidate and zone IDs must be unique and different from 'current'")
+        if len(self.candidates) + sum(len(z.positions()) for z in self.zones) > MAX_PLACEMENT_CANDIDATES:
+            raise ValueError(f"At most {MAX_PLACEMENT_CANDIDATES} candidate positions per search")
+        known = {d.id for d in self.project.devices}
+        if unknown := [t for t in self.target_device_ids if t not in known]:
+            raise ValueError(f"Unknown target devices: {unknown}")
+        return self
+
+
+class TargetEvaluation(Model):
+    device_id: str
+    link_id: str
+    forward_margin_db: float | None = Field(description="AP → device")
+    reverse_margin_db: float | None = Field(description="device → AP")
+    limiting_margin_db: float | None
+    limiting_direction: Literal["forward", "reverse"] | None
+    status: Literal["complete", "incomplete", "not-computed"]
+    reason: str | None = None
+
+
+class CandidateEvaluation(Model):
+    candidate_id: str
+    label: str
+    source: Literal["current", "candidate", "zone"]
+    position: Point
+    targets: list[TargetEvaluation]
+    complete_targets: int
+    worst_margin_db: float | None
+    mean_margin_db: float | None
+    worst_target_id: str | None
+    delta_worst_margin_db: float | None = Field(description="Change of the worst margin against the current place")
+
+
+class ExcludedCandidate(Model):
+    candidate_id: str
+    position: Point
+    reason: str
+
+
+class PlacementSearchResult(Model):
+    engine: str
+    engine_version: str
+    input_hash: str
+    request_hash: str
+    access_point_device_id: str
+    access_point_radio_id: str
+    parameters: PlacementSearchParameters
+    criterion: Literal["max-min-bidirectional-margin"]
+    ranked: bool = Field(description="False when no candidate has complete margins: nothing is ordered")
+    target_device_ids: list[str]
+    baseline: CandidateEvaluation
+    ranking: list[CandidateEvaluation] = Field(description="Best first; at most 50 entries")
+    evaluated: int
+    excluded: list[ExcludedCandidate]
+    elapsed_ms: float
+    scope: str
+    limitations: list[str]
+    reasons: list[str]

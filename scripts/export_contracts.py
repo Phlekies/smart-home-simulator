@@ -6,7 +6,7 @@ from pathlib import Path
 
 from smart_environment.api import app
 from smart_environment.measurements import MeasurementCampaign
-from smart_environment.models import CoverageMapJob, Project, SimulationResult
+from smart_environment.models import CoverageMapJob, PlacementSearchResult, Project, SimulationResult
 
 root = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
@@ -16,6 +16,7 @@ contracts = {"project.schema.json": Project.model_json_schema(mode="serializatio
              "simulation-result.schema.json": SimulationResult.model_json_schema(mode="serialization"),
              "measurement-campaign.schema.json": MeasurementCampaign.model_json_schema(mode="serialization"),
              "coverage-map.schema.json": CoverageMapJob.model_json_schema(mode="serialization"),
+             "placement-search.schema.json": PlacementSearchResult.model_json_schema(mode="serialization"),
              "openapi.json": app.openapi()}
 for name, schema in contracts.items():
     path = root / "contracts" / name
