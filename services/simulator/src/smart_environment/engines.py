@@ -114,6 +114,29 @@ def direction(project: Project, tx: Device, tx_radio: Radio,
                            margin_db=None if rx_radio.sensitivity_dbm is None else received - rx_radio.sensitivity_dbm)
 
 
+def radio_pair_check(a: Radio, b: Radio) -> tuple[str, str | None, list[str]]:
+    """Radio compatibility and model scope: (compatibility, blocking status or None, reasons)."""
+    reasons = []
+    compatibility = "radio-compatible"
+    if a.protocol != "unknown" and b.protocol != "unknown" and a.protocol != b.protocol:
+        compatibility = "incompatible"
+        reasons.append("Los protocolos de radio son distintos; se necesita una ruta o puente adecuado.")
+    if abs(a.frequency_hz - b.frequency_hz) > 1 or (a.channel is not None and b.channel is not None and a.channel != b.channel):
+        compatibility = "incompatible"
+        reasons.append("Las radios no usan la misma frecuencia/canal configurado.")
+    if compatibility == "incompatible":
+        return compatibility, "incompatible", reasons
+    if a.protocol == "unknown" or b.protocol == "unknown" or a.channel is None or b.channel is None:
+        compatibility = "unverified"
+        reasons.append("Falta verificar protocolo o canal; el presupuesto físico no demuestra compatibilidad.")
+    if abs(a.bandwidth_hz - b.bandwidth_hz) > 1:
+        return "unverified", "unsupported", reasons + ["Anchos de banda diferentes: negociación aún no modelada."]
+    # The legacy material model has two empirical bands only.
+    if not (2.4e9 <= a.frequency_hz <= 2.5e9 or 5e9 <= a.frequency_hz <= 5.9e9):
+        return compatibility, "unsupported", reasons + ["La frecuencia queda fuera de las bandas empíricas del estimador."]
+    return compatibility, None, reasons
+
+
 def simulate(project: Project) -> SimulationResult:
     started = time.perf_counter()
     devices = {d.id: d for d in project.devices}
@@ -122,28 +145,9 @@ def simulate(project: Project) -> SimulationResult:
         source, target = devices[link.source_device_id], devices[link.target_device_id]
         a = next(r for r in source.radios if r.id == link.source_radio_id)
         b = next(r for r in target.radios if r.id == link.target_radio_id)
-        reasons = []
-        compatibility = "radio-compatible"
-        if a.protocol != "unknown" and b.protocol != "unknown" and a.protocol != b.protocol:
-            compatibility = "incompatible"
-            reasons.append("Los protocolos de radio son distintos; se necesita una ruta o puente adecuado.")
-        if abs(a.frequency_hz - b.frequency_hz) > 1 or (a.channel is not None and b.channel is not None and a.channel != b.channel):
-            compatibility = "incompatible"
-            reasons.append("Las radios no usan la misma frecuencia/canal configurado.")
-        if compatibility == "incompatible":
-            results.append(LinkResult(id=link.id, compatibility=compatibility, status="incompatible", reasons=reasons))
-            continue
-        if a.protocol == "unknown" or b.protocol == "unknown" or a.channel is None or b.channel is None:
-            compatibility = "unverified"
-            reasons.append("Falta verificar protocolo o canal; el presupuesto físico no demuestra compatibilidad.")
-        if abs(a.bandwidth_hz - b.bandwidth_hz) > 1:
-            results.append(LinkResult(id=link.id, compatibility="unverified", status="unsupported",
-                                      reasons=reasons + ["Anchos de banda diferentes: negociación aún no modelada."]))
-            continue
-        # The legacy material model has two empirical bands only.
-        if not (2.4e9 <= a.frequency_hz <= 2.5e9 or 5e9 <= a.frequency_hz <= 5.9e9):
-            results.append(LinkResult(id=link.id, compatibility=compatibility, status="unsupported",
-                                      reasons=reasons + ["La frecuencia queda fuera de las bandas empíricas del estimador."]))
+        compatibility, blocked, reasons = radio_pair_check(a, b)
+        if blocked is not None:
+            results.append(LinkResult(id=link.id, compatibility=compatibility, status=blocked, reasons=reasons))
             continue
         forward = direction(project, source, a, target, b)
         reverse = direction(project, target, b, source, a)

@@ -222,6 +222,22 @@ y el hash de cálculo la excluye. Detalle en [PLAN_REFERENCE_CONTRACT](../simula
 
 M2 «Imagen de referencia con escala y cotas» sigue pendiente: falta el consumidor de A.
 
+## Entrega B-103 — mapas por perfil y altura — 2026-10-30
+
+`/api/coverage-maps` (POST/GET/DELETE) calcula, como trabajo cancelable, el presupuesto directo
+AP↔perfil en una rejilla a altura declarada y en puntos exactos. Sin clasificación de cobertura.
+Detalle en [COVERAGE_MAP_CONTRACT](../simulation/COVERAGE_MAP_CONTRACT.md).
+
+| Comprobación | Resultado |
+|---|---|
+| `pytest services/simulator/tests -q` | 157 superadas (20 nuevas de mapas) |
+| Contratos | `coverage-map.schema.json` nuevo; OpenAPI con 2 rutas y 10 esquemas añadidos, ninguno existente modificado |
+| `npm run build` / `npm test` | Correcto / 16/16; `coverage-map.ts` generado con json2ts |
+| Servidor real en 127.0.0.1:8765 | 202 → done en 534 ms (apartamento, 0.25 m); cancelación en cola y en curso; 501 para sionna-rt; 422 por frecuencia distinta |
+| Coste medido | ~600 000 evaluaciones celda×pared/s; límite 2 M por trabajo |
+
+Pendiente: visualización (A-104), clasificación con reserva (P2), caché y motor avanzado en mapas.
+
 ## Reglas de evidencia
 
 Registrar comando, fecha, resultado y limitaciones de cada verificación. Detectar una

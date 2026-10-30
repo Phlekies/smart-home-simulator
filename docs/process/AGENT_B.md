@@ -5,9 +5,10 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **claimed** — B-103 (mapas por perfil/altura). B-104 entregada en review.
-- Entregas en `review`: **B-101** ([PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3), publicada) y **B-102** (commit local en
-  `agent-b/b-102-sionna-evaluation`, apilada sobre B-101; sin push hasta autorización).
+- Estado: **review** — B-101 (PR #3), B-102, B-104 y B-103 entregadas; ramas B-102+ solo locales.
+- Pila de ramas: `agent-b/b-101-reference-cases` (publicada, [PR #3](https://github.com/Phlekies/smart-home-simulator/pull/3)) →
+  `agent-b/b-102-sionna-evaluation` → `agent-b/b-104-plan-reference` → `agent-b/b-103-coverage-maps`;
+  las tres últimas sin push hasta autorización del usuario.
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
 - Rama/worktree: clon separado `C:/Users/ibane/Desktop/Programación/SmartHomeSimulator`; ramas
   apiladas `agent-b/b-101-…` → `agent-b/b-102-…` → siguientes. No usa el checkout compartido de A
@@ -35,6 +36,33 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### B-103 — mapas por perfil y altura como trabajos cancelables (review)
+
+```text
+Tarea / estado: B-103 / review.
+Sesión, rama/worktree, fecha/hora y zona: Claude Code agente B; agent-b/b-103-coverage-maps sobre
+  agent-b/b-104-plan-reference; 2026-10-30, Europe/Madrid.
+Archivos modificados: models.py (ReceiverProfile, MapGrid, CoverageMapParameters/Request/Result,
+  CoverageCells, CoverageSample, CoverageMapJob), coverage.py (nuevo), engines.py
+  (radio_pair_check extraído de simulate sin cambiar comportamiento), api.py (POST/GET/DELETE
+  /api/coverage-maps, lifespan que cancela trabajos), scripts/export_contracts.py,
+  contracts/coverage-map.schema.json (nuevo) y openapi.json, apps/web/src/generated/coverage-map.ts
+  (generado con json2ts), tests/test_coverage.py (nuevo), docs/simulation/COVERAGE_MAP_CONTRACT.md.
+Criterio: mapa por perfil/altura/resolución declarados, ambos sentidos, puntos exactos sin
+  redondeo, AP y perfil identificados, celdas sin calcular explícitas, límites, progreso y
+  cancelación; tipos generados y pruebas.
+Contrato: aditivo (2 rutas, 10 esquemas nuevos; ningún esquema existente cambia, comprobado).
+Comandos: pytest → 157 passed; export --check sin deriva; npm run build correcto; npm test 16/16;
+  servidor uvicorn real en 127.0.0.1:8765: 202 → progreso → done en 534 ms (175×123 celdas),
+  DELETE en cola y en curso → cancelled, sionna-rt → 501, perfil a otra frecuencia → 422.
+  Servidor detenido; sin listener en 8765.
+Límites: trayecto directo del estimador rápido; sin clasificación (reserva pendiente), sin caché
+  persistente, un trabajador local. Sionna en mapas requiere proceso aislado y criterios de B-102.
+Solicitud a A (A-104): añadir coverage-map.ts al script `contracts`, consumir los trabajos con
+  progreso/cancelación, leyenda de celdas parciales/sin calcular y descarte por request_hash.
+Siguiente paso: publicar la pila si el usuario lo autoriza; integrar A-101/A-102 cuando A libere.
+```
 
 ### B-104 — contrato de la referencia de plano para A-102 (review)
 

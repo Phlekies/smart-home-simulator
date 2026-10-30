@@ -62,15 +62,15 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] Interacciones físicas y omisiones de la versión seleccionada documentadas (B-102).
 - [x] Espacio libre, pared y reflexión contrastados con referencias (B-101 + B-102: 18/18).
 - [ ] Diferencias respecto a Java explicadas; errores antiguos no se conservan como requisito (parcial: tabla de materiales y fase de reflexión documentadas; motor multipath Java no contrastado).
-- [ ] Progreso, cancelación, caché y límites para cálculo pesado.
+- [ ] Progreso, cancelación, caché y límites para cálculo pesado (parcial B-103: progreso, cancelación y límites de mapas; sin caché).
 - [x] Benchmark inicial reproducible de tiempo y memoria (script y evidencia JSON de B-102; un equipo, una ejecución).
 
 ## M4 — Mapas y comparación básica
 
-- [ ] Muestreo de cobertura por altura con resolución declarada.
-- [ ] Presupuesto de ambos sentidos para puntos individuales.
-- [ ] AP/emisor y receptor/perfil identificados en cada resultado.
-- [ ] Energía agregada no se presenta como señal de una conexión.
+- [ ] Muestreo de cobertura por altura con resolución declarada (API B-103; visualización A-104 pendiente).
+- [ ] Presupuesto de ambos sentidos para puntos individuales (API B-103: `points` exactos; interfaz pendiente).
+- [ ] AP/emisor y receptor/perfil identificados en cada resultado (API B-103; interfaz pendiente).
+- [ ] Energía agregada no se presenta como señal de una conexión (API B-103: un AP por mapa; interfaz pendiente).
 - [ ] Comparación de posiciones y optimización básica con restricciones.
 - [ ] Mapas guardables y resultados invalidados al editar.
 - [ ] Predicción técnica separada de recomendación de compra validada.

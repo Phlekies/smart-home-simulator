@@ -1,6 +1,7 @@
 """Local HTTP boundary. Heavy solvers will use separate job adapters."""
 
 import json
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Any
 
@@ -8,14 +9,24 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import ValidationError
 
+from .coverage import CoverageJobs, CoverageLimitError
 from .engines import engine_capabilities, simulate
 from .legacy import import_project
-from .models import Project, SimulationRequest, SimulationResult
+from .models import CoverageMapJob, CoverageMapRequest, Project, SimulationRequest, SimulationResult
 
 ROOT = Path(__file__).resolve().parents[4]
 EXAMPLES = {"apartment": "smart-apartment.shsim.json", "office": "office-floor.shsim.json",
             "warehouse": "warehouse.shsim.json"}
-app = FastAPI(title="Smart Environment Simulator", version="0.1.0",
+coverage_jobs = CoverageJobs()
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    yield
+    coverage_jobs.shutdown()  # cancel queued/running maps so the server stops promptly
+
+
+app = FastAPI(title="Smart Environment Simulator", version="0.1.0", lifespan=lifespan,
               description="API local. Estimación analítica; sin garantía de precisión experimental.")
 
 
@@ -70,3 +81,30 @@ def simulation(request: SimulationRequest) -> SimulationResult:
     if request.engine != "quick-estimate":
         raise HTTPException(501, f"{request.engine}: adapter not implemented or verified; no fallback executed")
     return simulate(request.project)
+
+
+@app.post("/api/coverage-maps", response_model=CoverageMapJob, status_code=202)
+def coverage_map(request: CoverageMapRequest) -> CoverageMapJob:
+    """Queue a map; poll it with GET and stop it with DELETE."""
+    if request.engine != "quick-estimate":
+        raise HTTPException(501, f"{request.engine}: map adapter not implemented or verified; no fallback executed")
+    try:
+        return coverage_jobs.submit(request)
+    except CoverageLimitError as error:
+        raise HTTPException(422, str(error)) from error
+    except OverflowError as error:
+        raise HTTPException(429, str(error)) from error
+
+
+@app.get("/api/coverage-maps/{job_id}", response_model=CoverageMapJob)
+def coverage_map_status(job_id: str) -> CoverageMapJob:
+    if (job := coverage_jobs.get(job_id)) is None:
+        raise HTTPException(404, "Unknown coverage map job")
+    return job
+
+
+@app.delete("/api/coverage-maps/{job_id}", response_model=CoverageMapJob)
+def coverage_map_cancel(job_id: str) -> CoverageMapJob:
+    if (job := coverage_jobs.cancel(job_id)) is None:
+        raise HTTPException(404, "Unknown coverage map job")
+    return job

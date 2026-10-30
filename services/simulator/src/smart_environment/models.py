@@ -250,3 +250,124 @@ class SimulationResult(Model):
 class SimulationRequest(Model):
     project: Project
     engine: Literal["quick-estimate", "sionna-rt", "ns-3"] = "quick-estimate"
+
+
+# --- Coverage maps (B-103) -------------------------------------------------------------
+
+MAX_MAP_CELLS = 40_000
+MAX_MAP_POINTS = 256
+
+
+class ReceiverProfile(Model):
+    """Radio of the candidate device as it would be installed; drives both link directions."""
+
+    id: Identifier
+    name: str = Field(min_length=1, max_length=160)
+    radio: Radio
+    evidence: str = "Generic profile; not a certified product"
+
+
+class MapGrid(Model):
+    """Horizontal sampling plane. Cell (i, j) is evaluated at its centre:
+    x = origin_x_m + (i + 0.5)·resolution_m, y = origin_y_m + (j + 0.5)·resolution_m, z = height_m."""
+
+    origin_x_m: Finite = Field(default=0, ge=-10000, le=10000)
+    origin_y_m: Finite = Field(default=0, ge=-10000, le=10000)
+    width_m: Positive = Field(le=2000)
+    depth_m: Positive = Field(le=2000)
+    resolution_m: Finite = Field(default=0.5, ge=0.1, le=5)
+    height_m: Finite = Field(ge=-1000, le=1000)
+
+    @property
+    def columns(self) -> int:
+        return max(1, math.ceil(self.width_m / self.resolution_m - 1e-9))
+
+    @property
+    def rows(self) -> int:
+        return max(1, math.ceil(self.depth_m / self.resolution_m - 1e-9))
+
+    @model_validator(mode="after")
+    def bounded(self) -> MapGrid:
+        if self.columns * self.rows > MAX_MAP_CELLS:
+            raise ValueError(f"Grid exceeds {MAX_MAP_CELLS} cells; increase resolution_m or reduce the area")
+        return self
+
+
+class CoverageMapParameters(Model):
+    """Everything that defines a map except the project; echoed in the result for staleness checks."""
+
+    access_point_device_id: Identifier
+    access_point_radio_id: Identifier
+    profile: ReceiverProfile
+    grid: MapGrid
+    points: list[Point] = Field(default_factory=list, max_length=MAX_MAP_POINTS,
+                                description="Exact positions evaluated without snapping to the grid")
+    engine: Literal["quick-estimate", "sionna-rt", "ns-3"] = "quick-estimate"
+
+
+class CoverageMapRequest(CoverageMapParameters):
+    project: Project
+
+    @model_validator(mode="after")
+    def known_access_point(self) -> CoverageMapRequest:
+        device = next((d for d in self.project.devices if d.id == self.access_point_device_id), None)
+        if device is None:
+            raise ValueError(f"Unknown access point device: {self.access_point_device_id}")
+        if self.access_point_radio_id not in {r.id for r in device.radios}:
+            raise ValueError(f"Unknown access point radio: {self.access_point_radio_id}")
+        return self
+
+
+CellStatus = Literal["computed", "partial", "not-computed"]
+
+
+class CoverageSample(Model):
+    """One evaluated position. Forward is AP→profile, reverse is profile→AP; no classification."""
+
+    forward_dbm: float | None
+    reverse_dbm: float | None
+    forward_margin_db: float | None
+    reverse_margin_db: float | None
+    status: CellStatus
+    reason: str | None = None
+
+
+class CoverageCells(Model):
+    """Row-major arrays (index = j·columns + i), one entry per cell, same meaning as CoverageSample."""
+
+    forward_dbm: list[float | None]
+    reverse_dbm: list[float | None]
+    forward_margin_db: list[float | None]
+    reverse_margin_db: list[float | None]
+    status: list[CellStatus]
+
+
+class CoverageMapResult(Model):
+    engine: str
+    engine_version: str
+    input_hash: str = Field(description="Hash of the project (same as simulation results)")
+    request_hash: str = Field(description="Hash of the project and every map parameter")
+    parameters: CoverageMapParameters
+    metric: Literal["direct-path-received-power"]
+    frequency_hz: float
+    compatibility: Literal["radio-compatible", "unverified"]
+    columns: int
+    rows: int
+    cells: CoverageCells
+    points: list[CoverageSample]
+    computed_cells: int
+    partial_cells: int
+    not_computed_cells: int
+    elapsed_ms: float
+    scope: str
+    limitations: list[str]
+    reasons: list[str] = Field(description="Map-level notes: missing data, unverified compatibility, etc.")
+
+
+class CoverageMapJob(Model):
+    job_id: str
+    state: Literal["queued", "running", "done", "cancelled", "failed"]
+    progress: float = Field(ge=0, le=1)
+    request_hash: str
+    result: CoverageMapResult | None = None
+    error: str | None = None

@@ -188,6 +188,121 @@
           }
         }
       }
+    },
+    "/api/coverage-maps": {
+      "post": {
+        "summary": "Coverage Map",
+        "description": "Queue a map; poll it with GET and stop it with DELETE.",
+        "operationId": "coverage_map_api_coverage_maps_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CoverageMapRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoverageMapJob"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/coverage-maps/{job_id}": {
+      "get": {
+        "summary": "Coverage Map Status",
+        "operationId": "coverage_map_status_api_coverage_maps__job_id__get",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoverageMapJob"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Coverage Map Cancel",
+        "operationId": "coverage_map_cancel_api_coverage_maps__job_id__delete",
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoverageMapJob"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -276,6 +391,456 @@
           "materials"
         ],
         "title": "Building"
+      },
+      "CoverageCells": {
+        "properties": {
+          "forward_dbm": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Forward Dbm"
+          },
+          "reverse_dbm": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Reverse Dbm"
+          },
+          "forward_margin_db": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Forward Margin Db"
+          },
+          "reverse_margin_db": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Reverse Margin Db"
+          },
+          "status": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "computed",
+                "partial",
+                "not-computed"
+              ]
+            },
+            "type": "array",
+            "title": "Status"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "forward_dbm",
+          "reverse_dbm",
+          "forward_margin_db",
+          "reverse_margin_db",
+          "status"
+        ],
+        "title": "CoverageCells",
+        "description": "Row-major arrays (index = j·columns + i), one entry per cell, same meaning as CoverageSample."
+      },
+      "CoverageMapJob": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job Id"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "running",
+              "done",
+              "cancelled",
+              "failed"
+            ],
+            "title": "State"
+          },
+          "progress": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Progress"
+          },
+          "request_hash": {
+            "type": "string",
+            "title": "Request Hash"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CoverageMapResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "job_id",
+          "state",
+          "progress",
+          "request_hash",
+          "result",
+          "error"
+        ],
+        "title": "CoverageMapJob"
+      },
+      "CoverageMapParameters": {
+        "properties": {
+          "access_point_device_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Access Point Device Id"
+          },
+          "access_point_radio_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Access Point Radio Id"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/ReceiverProfile-Output"
+          },
+          "grid": {
+            "$ref": "#/components/schemas/MapGrid-Output"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/Point-Output"
+            },
+            "type": "array",
+            "maxItems": 256,
+            "title": "Points",
+            "description": "Exact positions evaluated without snapping to the grid"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "quick-estimate",
+              "sionna-rt",
+              "ns-3"
+            ],
+            "title": "Engine",
+            "default": "quick-estimate"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "access_point_device_id",
+          "access_point_radio_id",
+          "profile",
+          "grid",
+          "points",
+          "engine"
+        ],
+        "title": "CoverageMapParameters",
+        "description": "Everything that defines a map except the project; echoed in the result for staleness checks."
+      },
+      "CoverageMapRequest": {
+        "properties": {
+          "access_point_device_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Access Point Device Id"
+          },
+          "access_point_radio_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Access Point Radio Id"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/ReceiverProfile-Input"
+          },
+          "grid": {
+            "$ref": "#/components/schemas/MapGrid-Input"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/Point-Input"
+            },
+            "type": "array",
+            "maxItems": 256,
+            "title": "Points",
+            "description": "Exact positions evaluated without snapping to the grid"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "quick-estimate",
+              "sionna-rt",
+              "ns-3"
+            ],
+            "title": "Engine",
+            "default": "quick-estimate"
+          },
+          "project": {
+            "$ref": "#/components/schemas/Project-Input"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "access_point_device_id",
+          "access_point_radio_id",
+          "profile",
+          "grid",
+          "project"
+        ],
+        "title": "CoverageMapRequest"
+      },
+      "CoverageMapResult": {
+        "properties": {
+          "engine": {
+            "type": "string",
+            "title": "Engine"
+          },
+          "engine_version": {
+            "type": "string",
+            "title": "Engine Version"
+          },
+          "input_hash": {
+            "type": "string",
+            "title": "Input Hash",
+            "description": "Hash of the project (same as simulation results)"
+          },
+          "request_hash": {
+            "type": "string",
+            "title": "Request Hash",
+            "description": "Hash of the project and every map parameter"
+          },
+          "parameters": {
+            "$ref": "#/components/schemas/CoverageMapParameters"
+          },
+          "metric": {
+            "type": "string",
+            "const": "direct-path-received-power",
+            "title": "Metric"
+          },
+          "frequency_hz": {
+            "type": "number",
+            "title": "Frequency Hz"
+          },
+          "compatibility": {
+            "type": "string",
+            "enum": [
+              "radio-compatible",
+              "unverified"
+            ],
+            "title": "Compatibility"
+          },
+          "columns": {
+            "type": "integer",
+            "title": "Columns"
+          },
+          "rows": {
+            "type": "integer",
+            "title": "Rows"
+          },
+          "cells": {
+            "$ref": "#/components/schemas/CoverageCells"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/CoverageSample"
+            },
+            "type": "array",
+            "title": "Points"
+          },
+          "computed_cells": {
+            "type": "integer",
+            "title": "Computed Cells"
+          },
+          "partial_cells": {
+            "type": "integer",
+            "title": "Partial Cells"
+          },
+          "not_computed_cells": {
+            "type": "integer",
+            "title": "Not Computed Cells"
+          },
+          "elapsed_ms": {
+            "type": "number",
+            "title": "Elapsed Ms"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons",
+            "description": "Map-level notes: missing data, unverified compatibility, etc."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "engine",
+          "engine_version",
+          "input_hash",
+          "request_hash",
+          "parameters",
+          "metric",
+          "frequency_hz",
+          "compatibility",
+          "columns",
+          "rows",
+          "cells",
+          "points",
+          "computed_cells",
+          "partial_cells",
+          "not_computed_cells",
+          "elapsed_ms",
+          "scope",
+          "limitations",
+          "reasons"
+        ],
+        "title": "CoverageMapResult"
+      },
+      "CoverageSample": {
+        "properties": {
+          "forward_dbm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forward Dbm"
+          },
+          "reverse_dbm": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reverse Dbm"
+          },
+          "forward_margin_db": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forward Margin Db"
+          },
+          "reverse_margin_db": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reverse Margin Db"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "computed",
+              "partial",
+              "not-computed"
+            ],
+            "title": "Status"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "forward_dbm",
+          "reverse_dbm",
+          "forward_margin_db",
+          "reverse_margin_db",
+          "status",
+          "reason"
+        ],
+        "title": "CoverageSample",
+        "description": "One evaluated position. Forward is AP→profile, reverse is profile→AP; no classification."
       },
       "Device-Input": {
         "properties": {
@@ -580,6 +1145,113 @@
           "reasons"
         ],
         "title": "LinkResult"
+      },
+      "MapGrid-Input": {
+        "properties": {
+          "origin_x_m": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "Origin X M",
+            "default": 0
+          },
+          "origin_y_m": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "Origin Y M",
+            "default": 0
+          },
+          "width_m": {
+            "type": "number",
+            "maximum": 2000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Width M"
+          },
+          "depth_m": {
+            "type": "number",
+            "maximum": 2000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Depth M"
+          },
+          "resolution_m": {
+            "type": "number",
+            "maximum": 5.0,
+            "minimum": 0.1,
+            "title": "Resolution M",
+            "default": 0.5
+          },
+          "height_m": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": -1000.0,
+            "title": "Height M"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "width_m",
+          "depth_m",
+          "height_m"
+        ],
+        "title": "MapGrid",
+        "description": "Horizontal sampling plane. Cell (i, j) is evaluated at its centre:\nx = origin_x_m + (i + 0.5)·resolution_m, y = origin_y_m + (j + 0.5)·resolution_m, z = height_m."
+      },
+      "MapGrid-Output": {
+        "properties": {
+          "origin_x_m": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "Origin X M",
+            "default": 0
+          },
+          "origin_y_m": {
+            "type": "number",
+            "maximum": 10000.0,
+            "minimum": -10000.0,
+            "title": "Origin Y M",
+            "default": 0
+          },
+          "width_m": {
+            "type": "number",
+            "maximum": 2000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Width M"
+          },
+          "depth_m": {
+            "type": "number",
+            "maximum": 2000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Depth M"
+          },
+          "resolution_m": {
+            "type": "number",
+            "maximum": 5.0,
+            "minimum": 0.1,
+            "title": "Resolution M",
+            "default": 0.5
+          },
+          "height_m": {
+            "type": "number",
+            "maximum": 1000.0,
+            "minimum": -1000.0,
+            "title": "Height M"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "origin_x_m",
+          "origin_y_m",
+          "width_m",
+          "depth_m",
+          "resolution_m",
+          "height_m"
+        ],
+        "title": "MapGrid",
+        "description": "Horizontal sampling plane. Cell (i, j) is evaluated at its centre:\nx = origin_x_m + (i + 0.5)·resolution_m, y = origin_y_m + (j + 0.5)·resolution_m, z = height_m."
       },
       "Material-Input": {
         "properties": {
@@ -1449,6 +2121,73 @@
           "polarization_deg"
         ],
         "title": "Radio"
+      },
+      "ReceiverProfile-Input": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "radio": {
+            "$ref": "#/components/schemas/Radio-Input"
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence",
+            "default": "Generic profile; not a certified product"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "radio"
+        ],
+        "title": "ReceiverProfile",
+        "description": "Radio of the candidate device as it would be installed; drives both link directions."
+      },
+      "ReceiverProfile-Output": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "radio": {
+            "$ref": "#/components/schemas/Radio-Output"
+          },
+          "evidence": {
+            "type": "string",
+            "title": "Evidence",
+            "default": "Generic profile; not a certified product"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "radio",
+          "evidence"
+        ],
+        "title": "ReceiverProfile",
+        "description": "Radio of the candidate device as it would be installed; drives both link directions."
       },
       "Settings-Input": {
         "properties": {
