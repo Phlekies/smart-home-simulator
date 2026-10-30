@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { KeyboardEvent, PointerEvent } from 'react';
 import type { Point, Project } from './generated/project';
 import type { SimulationResult } from './generated/simulation-result';
+import { referenceBounds } from './editor/reference';
+import type { PlanReference } from './editor/reference';
 
 type Bounds = { minX: number; minY: number; maxX: number; maxY: number };
 type Drag = {
@@ -12,11 +14,12 @@ type Drag = {
 const snap = (n: number) => Math.round(n * 10) / 10;
 const clamp = (n: number, min = -10000, max = 10000) => Math.max(min, Math.min(max, n));
 
-export default function Plan({ project, selected, onSelect, onMove, result, tool, selectedWallId,
+export default function Plan({ project, selected, onSelect, onMove, result, tool, selectedWallId, reference,
   onSelectWall, onAddWall, onMoveWall, onGestureStart, onGestureEnd }: {
   project: Project; selected: string; onSelect: (id: string) => void;
   onMove: (id: string, x: number, y: number) => void; result: SimulationResult | null;
   tool: 'select' | 'wall'; selectedWallId: string | null;
+  reference: PlanReference | null;
   onSelectWall: (id: string) => void; onAddWall: (start: Point, end: Point) => void;
   onMoveWall: (id: string, dx: number, dy: number) => void;
   onGestureStart: () => void; onGestureEnd: () => void;
@@ -31,6 +34,8 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
   endGesture.current = onGestureEnd;
   const allX = project.devices.map(d => d.position.x).concat(project.building.walls.flatMap(w => [w.start.x, w.end.x]));
   const allY = project.devices.map(d => d.position.y).concat(project.building.walls.flatMap(w => [w.start.y, w.end.y]));
+  const imageBounds = reference?.visible ? referenceBounds(reference.widthPx, reference.heightPx, reference.placement) : null;
+  if (imageBounds) { allX.push(imageBounds.minX, imageBounds.maxX); allY.push(imageBounds.minY, imageBounds.maxY); }
   const liveBounds = { minX: Math.min(0, ...allX) - 2, minY: Math.min(0, ...allY) - 2,
     maxX: Math.max(project.building.width_m, ...allX) + 2, maxY: Math.max(project.building.depth_m, ...allY) + 2 };
   const bounds = frozenBounds ?? liveBounds;
@@ -127,7 +132,7 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
   }
   const previewLength = drawingStart && drawingEnd ? Math.hypot(drawingEnd.x - drawingStart.x, drawingEnd.y - drawingStart.y) : 0;
   return <>
-    <svg ref={svgRef} className={`plan ${tool === 'wall' ? 'is-drawing' : ''}`} tabIndex={0}
+    <svg ref={svgRef} className={`plan ${tool === 'wall' ? 'is-drawing' : ''}`} tabIndex={0} role="group"
       aria-label="Plano de la vivienda. Selecciona y arrastra paredes o dispositivos; usa Dibujar pared para crear obstáculos."
       viewBox={`${bounds.minX} ${bounds.minY} ${bounds.maxX - bounds.minX} ${bounds.maxY - bounds.minY}`}
       onPointerDown={draw} onPointerMove={move} onPointerUp={finishDrag} onPointerCancel={finishDrag}
@@ -143,7 +148,16 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
       <defs><pattern id="grid" width="1" height="1" patternUnits="userSpaceOnUse">
         <path d="M 1 0 L 0 0 0 1" fill="none" stroke="#38534b" strokeWidth=".025" />
       </pattern></defs>
+      {reference?.visible && imageBounds && <image href={reference.url} x={imageBounds.minX} y={imageBounds.minY}
+        width={imageBounds.maxX - imageBounds.minX} height={imageBounds.maxY - imageBounds.minY}
+        opacity={reference.opacity} pointerEvents="none" />}
       <rect x={bounds.minX} y={bounds.minY} width={bounds.maxX - bounds.minX} height={bounds.maxY - bounds.minY} fill="url(#grid)" />
+      {imageBounds && <g pointerEvents="none" aria-hidden="true">
+        <line x1={imageBounds.minX} y1={imageBounds.minY - .4} x2={imageBounds.maxX} y2={imageBounds.minY - .4} stroke="#dfcfa0" strokeWidth=".04" />
+        <text x={(imageBounds.minX + imageBounds.maxX) / 2} y={imageBounds.minY - .6} textAnchor="middle" fontSize=".4" fill="#dfcfa0">
+          Imagen · {(imageBounds.maxX - imageBounds.minX).toFixed(2)} m
+        </text>
+      </g>}
       {project.links.map(link => {
         const a = project.devices.find(d => d.id === link.source_device_id), b = project.devices.find(d => d.id === link.target_device_id);
         if (!a || !b) return null;

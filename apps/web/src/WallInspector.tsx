@@ -1,5 +1,6 @@
 import type { Project, Wall } from './generated/project';
 import { transformWall, wallLength } from './editor/geometry';
+import NumberField from './NumberField';
 
 export default function WallInspector({ project, wall, onEdit, onMaterialEdit, onDelete, onGestureStart, onGestureEnd }: {
   project: Project; wall: Wall; onEdit: (next: Wall) => void;
@@ -12,15 +13,10 @@ export default function WallInspector({ project, wall, onEdit, onMaterialEdit, o
   const material = project.building.materials.find(m => m.id === wall.material_id)!;
   function transform(cx = centerX, cy = centerY, len = length, degrees = angle) {
     try { onEdit(transformWall(wall, cx, cy, len, degrees)); }
-    catch { /* Keep the last valid geometry when the field is temporarily outside limits. */ }
+    catch { throw new Error('La pared completa debe quedar entre −10000 y 10000 m y conservar extremos distintos.'); }
   }
   function number(label: string, value: number, update: (n: number) => void, min: number, max: number, step = .1) {
-    return <label className="field"><span>{label}</span><input type="number" value={Number(value.toFixed(4))}
-      min={min} max={max} step={step} onChange={event => {
-        if (!event.target.value) return;
-        const n = Number(event.target.value);
-        if (Number.isFinite(n) && n >= min && n <= max) update(n);
-      }} /></label>;
+    return <NumberField label={label} value={value} min={min} max={max} step={step} onChange={n => { if (n !== null) update(n); }} />;
   }
   return <>
     <span className="eyebrow">PARED SELECCIONADA</span><h2>Geometría y material</h2>
