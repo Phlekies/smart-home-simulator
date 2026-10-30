@@ -5,7 +5,7 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **claimed** — cinco tareas pedidas por el usuario el 2026-10-30: **I-004** (revisar e integrar
+- Estado: **review** — cinco tareas pedidas por el usuario el 2026-10-30, entregadas: **I-004** (revisar e integrar
   A-102, PR #12), **B-109** (medidas frente a predicciones y calibración), **B-110** (caché de
   resultados), **B-111** (E2E de la API con los ejemplos Java) y **B-112** (instalación limpia).
 - En review: I-003/B-107 en [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11), pendiente de que el usuario lo fusione.
@@ -33,6 +33,28 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### I-004 y B-109…B-112 — cinco tareas (review)
+
+```text
+Tareas / estado: I-004, B-109, B-110, B-111, B-112 / review. Rama local agent-b/b-109-112 sobre #11.
+I-004: #12 (A-102) revisado: solo archivos de A; main+#12 verde (199 Python, 94 web, build,
+  contratos). Cambio de base a main denegado por el control de permisos (escritura externa en un
+  PR ajeno): lo hace el usuario junto con el merge.
+B-109: calibration.py + CLI; residuos por punto/sentido con potencia declarada y puertas registradas;
+  desplazamiento único ajustado en calibración y evaluado en validación; rechaza fugas, hash
+  distinto y datos sintéticos. docs/simulation/CALIBRATION.md. Sin medidas reales.
+B-110: cache.py; LRU por versión+hash de petición para mapas (cached opcional en CoverageMapJob),
+  búsqueda y escenarios. Contrato aditivo; M3 «caché» marcado.
+B-111: test_e2e_api.py con los tres ejemplos y un proyecto nuevo. Fallo real corregido en api.py
+  (gestor de mapas apagado tras el ciclo de vida). M5 «importación sin pérdida» marcado; E2E de
+  navegador sigue pendiente.
+B-112: clon limpio según LOCAL_DEVELOPMENT; dev.py ahora muestra la causa del fallo de un
+  servicio en Windows. M5 «instalación limpia» marcado.
+Comandos (rama completa): pytest 216; export --check sin deriva; npm test 84; build correcto.
+Límites: residuos sin datos reales; caché solo en memoria; E2E solo de API.
+Siguiente paso: publicar la rama si el usuario lo autoriza; el usuario cambia la base de #12 y lo fusiona.
+```
 
 ### I-003 y B-107 — consolidación tras #7 y matriz de funciones Java (review)
 
