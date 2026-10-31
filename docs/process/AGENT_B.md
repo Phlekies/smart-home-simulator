@@ -5,9 +5,9 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — I-005 (revisión de A-109…A-113, PR #14) consolidada en la rama local
-  `agent-b/i-005-review-a109-a113`, apilada sobre #15. Sin tarea nueva reservada.
-- Pendiente del usuario: merges #11 → #13 → #15 (cambiando bases a `main`) y #14 (incluye #12).
+- Estado: **review** — I-005 (revisión de A-109…A-113, PR #14) publicada en [PR #16](https://github.com/Phlekies/smart-home-simulator/pull/16) en borrador,
+  apilado sobre #15. Sin tarea nueva reservada.
+- Pendiente del usuario: merges #11 → #13 → #15 → #16 (cambiando bases a `main`) y #14 (incluye #12).
   El control de permisos impide a esta sesión fusionar o cambiar la base de PR ajenos.
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
 - Rama/worktree: clon B; no escribe en el checkout ni en los worktrees de A.
@@ -41,6 +41,7 @@ Combinación pila B + #14 (rama temporal, borrada): pytest 244; contratos y gene
   script contracts de A; npm test 120; build correcto. Navegador: «Comparar escenarios» con la API
   de B, valores coherentes y consola limpia; servidores detenidos.
 Documentos: WORKBOARD (A-109…A-113 review, I-005), STATUS, anotaciones de checklists (sin marcar).
+Publicación: PR #16 en borrador, apilado sobre #15, por autorización del usuario.
 Siguiente paso: tras los merges, marcar done y los criterios acreditados (M4 comparación, P2 escenarios).
 ```
 

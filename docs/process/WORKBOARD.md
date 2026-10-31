@@ -60,7 +60,7 @@ validación en viviendas. Los checklists técnico y de producto siguen siendo la
 | B-114 | B | review | Mapas de cobertura bajo un escenario de puertas/materiales (p. ej. peor y mejor caso) | [PR #15](https://github.com/Phlekies/smart-home-simulator/pull/15) (sobre #13); contrato aditivo |
 | B-115 | B | review | Informe por enlace en JSON y Markdown, sin veredicto ([contrato](../simulation/REPORT_CONTRACT.md)) | [PR #15](https://github.com/Phlekies/smart-home-simulator/pull/15) (sobre #13); A ofrece la descarga |
 | B-116 | B | review | Comprobar una campaña de medida y sus residuos desde la API | [PR #15](https://github.com/Phlekies/smart-home-simulator/pull/15) (sobre #13); A puede importar campañas |
-| I-005 | B integrador | review | Revisión de A-109…A-113 (#14) con `main` y la pila B (#11, #13, #15) | Rama local `agent-b/i-005-review-a109-a113` (sobre #15); merges del usuario |
+| I-005 | B integrador | review | Revisión de A-109…A-113 (#14) con `main` y la pila B (#11, #13, #15) | [PR #16](https://github.com/Phlekies/smart-home-simulator/pull/16) (sobre #15); merges del usuario |
 | I-002 | A (integración por instrucción del usuario) | done | Entregas A-101…A-108 y B-101…B-104 en `main` (046ee82) por [PR #7](https://github.com/Phlekies/smart-home-simulator/pull/7); 162 Python/70 web/build/contratos; CI de migración y Java verde antes y después | AGENTS.md excluido; Java conservado. No volver a fusionar la pila B como entregas nuevas |
 | I-001 | B integrador | done | Base publicada en PR #2 e incluida en `main` por I-002; evidencia histórica en STATUS | Sin force-push; AGENTS.md local |
 
