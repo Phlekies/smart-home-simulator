@@ -5,19 +5,14 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — **B-113** (procedencia por parámetro de radio), **B-114** (mapas bajo un
-  escenario), **B-115** (informe por equipo) y **B-116** (comprobar campañas de medida por API).
-  Todas aditivas; no cambian contratos que A esté consumiendo en A-109…A-113.
-- En review, pendientes de merge por el usuario: [#11](https://github.com/Phlekies/smart-home-simulator/pull/11)
-  (documentos comunes), [#13](https://github.com/Phlekies/smart-home-simulator/pull/13) (B-109…B-112, I-004) y el
-  [#12](https://github.com/Phlekies/smart-home-simulator/pull/12) de A (revisado en I-004).
+- Estado: **review** — I-005 (revisión de A-109…A-113, PR #14) consolidada en la rama local
+  `agent-b/i-005-review-a109-a113`, apilada sobre #15. Sin tarea nueva reservada.
+- Pendiente del usuario: merges #11 → #13 → #15 (cambiando bases a `main`) y #14 (incluye #12).
+  El control de permisos impide a esta sesión fusionar o cambiar la base de PR ajenos.
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
-- Rama/worktree: clon B, rama local `agent-b/b-113-116` apilada sobre #13. No escribe en el checkout
-  ni en los worktrees de A (`integration-review`, `five-ui-tasks`).
-- Última actualización: 2026-10-30 (Europe/Madrid).
-- Archivos reservados: `services/simulator/**` (models, engines, coverage, nuevos `report.py`, pruebas),
-  `scripts/export_contracts.py`, `contracts/**`, `apps/web/src/generated/**` solo por generación,
-  `docs/simulation/**`, documentos comunes de integración y este registro.
+- Rama/worktree: clon B; no escribe en el checkout ni en los worktrees de A.
+- Última actualización: 2026-10-31 (Europe/Madrid).
+- Archivos reservados: documentos comunes de integración y este registro.
 
 ## Plantilla de entrega — completar al trabajar
 
@@ -35,6 +30,19 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### I-005 — revisión de A-109…A-113 (review)
+
+```text
+Tarea / estado: I-005 / review (integrador). Rama local agent-b/i-005-review-a109-a113 sobre #15.
+Revisado: PR #14 (codex/next-five-ui-tasks): 38 archivos de A, ninguno de B; incluye A-102 (#12).
+  Proyecto de demostración sintético; capturas sin datos personales.
+Combinación pila B + #14 (rama temporal, borrada): pytest 244; contratos y generados sin deriva con el
+  script contracts de A; npm test 120; build correcto. Navegador: «Comparar escenarios» con la API
+  de B, valores coherentes y consola limpia; servidores detenidos.
+Documentos: WORKBOARD (A-109…A-113 review, I-005), STATUS, anotaciones de checklists (sin marcar).
+Siguiente paso: tras los merges, marcar done y los criterios acreditados (M4 comparación, P2 escenarios).
+```
 
 ### B-113…B-116 — procedencia, mapas con escenario, informe y medidas (review)
 
