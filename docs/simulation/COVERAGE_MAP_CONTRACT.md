@@ -41,6 +41,9 @@ resolución 0.1–5 m y **altura obligatoria**), `points` (hasta 256 posiciones 
   `input_hash` (el mismo hash de proyecto que las simulaciones) y `request_hash` (proyecto y
   todos los parámetros). Un mapa con otro `request_hash` es de otro escenario.
 - **Un solo AP:** no se suma la energía de otros AP como si fuese señal de esta conexión.
+- **Camino de datos del AP (B-117):** si el AP del mapa es un equipo de red cuya conexión de datos no
+  está definida, es desconocida, forma un bucle o tiene un salto sin margen o con margen negativo,
+  `reasons` lo indica. Ver [conexión de datos](DATA_CONNECTION_CONTRACT.md).
 - **Escenario opcional (B-114):** `scenario` aplica a todas las celdas y puntos los estados de puerta y
   límites de material de un escenario de [B-108](SCENARIOS_CONTRACT.md); por ejemplo, el `worst` o el `best`
   que devuelve `/api/scenario-simulations`. Se valida igual que allí, entra en `request_hash` y el

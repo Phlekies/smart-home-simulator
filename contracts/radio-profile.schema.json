@@ -52,7 +52,7 @@
     }
   },
   "additionalProperties": false,
-  "description": "Generic client radio for a band and mode; an approximation, never a certified product.",
+  "description": "Generic radio for a band and mode; an approximation, never a certified product.",
   "properties": {
     "id": {
       "maxLength": 120,
@@ -110,6 +110,20 @@
       },
       "maxItems": 32,
       "title": "Notes",
+      "type": "array"
+    },
+    "roles": {
+      "description": "Where the profile may be applied (B-118)",
+      "items": {
+        "enum": [
+          "client",
+          "access-point"
+        ],
+        "type": "string"
+      },
+      "maxItems": 2,
+      "minItems": 1,
+      "title": "Roles",
       "type": "array"
     }
   },

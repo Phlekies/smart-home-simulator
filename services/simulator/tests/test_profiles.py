@@ -20,7 +20,8 @@ def ap_radio(**changes):
 def test_catalog_values_and_provenance():
     by_id = {p.id: p for p in CATALOG}
     assert {k: by_id[k].sensitivity_dbm.value for k in by_id} == {
-        "wifi4-ht20-mcs0": -82, "wifi4-ht20-mcs3": -74, "wifi4-ht20-mcs7": -64}
+        "wifi4-ht20-mcs0": -82, "wifi4-ht20-mcs3": -74, "wifi4-ht20-mcs7": -64,
+        "wifi4-ht20-ap-mcs0": -82, "wifi4-ht20-ap-mcs3": -74, "wifi4-ht20-ap-mcs7": -64}
     for profile in CATALOG:
         assert profile.sensitivity_dbm.provenance == "standard-minimum"
         assert "802.11-2020" in profile.sensitivity_dbm.source and "no se ha cotejado" in profile.sensitivity_dbm.source
@@ -69,4 +70,42 @@ def test_profile_in_a_map_leaves_the_return_path_uncomputed():
 def test_api_lists_the_catalog():
     response = client.get("/api/profiles")
     assert response.status_code == 200
-    assert [p["id"] for p in response.json()] == [p.id for p in CATALOG]
+    assert [p["id"] for p in response.json()] == [p.id for p in CATALOG if "client" in p.roles]
+
+
+# --- Access-point profiles (B-118) -------------------------------------------------------
+
+def test_access_point_profiles_keep_power_unknown_and_state_the_legal_limit():
+    aps = [p for p in CATALOG if p.roles == ["access-point"]]
+    assert [p.id for p in aps] == ["wifi4-ht20-ap-mcs0", "wifi4-ht20-ap-mcs3", "wifi4-ht20-ap-mcs7"]
+    for profile in aps:
+        assert profile.tx_power_dbm.value is None and "20 dBm" in profile.tx_power_dbm.source
+        assert any("MIMO" in note for note in profile.notes)
+        with pytest.raises(ValueError, match="does not describe a client"):
+            profile.receiver_profile(ap_radio())
+
+
+def test_profile_radio_on_a_channel_keeps_every_provenance():
+    radio = CATALOG[3].radio("radio-1", 2.437e9, 6)
+    assert radio.sensitivity_dbm == -82 and radio.tx_power_dbm is None
+    assert radio.provenance["sensitivity_dbm"].provenance == "standard-minimum"
+    assert radio.provenance["tx_power_dbm"].provenance == "unknown"
+    assert radio.provenance["rx_gain_dbi"].provenance == "inferred"
+
+
+@pytest.mark.parametrize("channel, frequency", [(1, 2.412e9), (6, 2.437e9), (13, 2.472e9)])
+def test_api_applies_a_profile_on_a_channel(channel, frequency):
+    response = client.post("/api/profiles/wifi4-ht20-ap-mcs0/radio",
+                           json={"role": "access-point", "channel": channel, "radio_id": "wlan"})
+    assert response.status_code == 200
+    radio = Radio.model_validate(response.json())
+    assert (radio.id, radio.channel, radio.frequency_hz, radio.bandwidth_hz) == ("wlan", channel, frequency, 20e6)
+    assert radio.provenance["tx_power_dbm"].provenance == "unknown"
+
+
+def test_api_rejects_wrong_roles_channels_and_profiles():
+    assert client.get("/api/profiles?role=access-point").json()[0]["id"] == "wifi4-ht20-ap-mcs0"
+    assert client.post("/api/profiles/wifi4-ht20-mcs0/radio",
+                       json={"role": "access-point", "channel": 6}).status_code == 422
+    assert client.post("/api/profiles/wifi4-ht20-mcs0/radio", json={"role": "client", "channel": 14}).status_code == 422
+    assert client.post("/api/profiles/nope/radio", json={"role": "client", "channel": 6}).status_code == 404

@@ -86,11 +86,25 @@ class Wall(Model):
         return self
 
 
+class Fixture(Model):
+    """A fixed point of the dwelling that limits where equipment can go (B-119)."""
+
+    id: Identifier
+    label: str = Field(min_length=1, max_length=160)
+    position: Point
+
+
 class Building(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("power_outlets", "network_ports"))
+
     width_m: Positive = Field(default=20, le=1000)
     depth_m: Positive = Field(default=15, le=1000)
     walls: list[Wall] = Field(default_factory=list, max_length=2000)
     materials: list[Material] = Field(min_length=1, max_length=64)
+    power_outlets: list[Fixture] = Field(default_factory=list, max_length=512, description=(
+        "Power outlets; only placement searches read them, so they never enter input_hash"))
+    network_ports: list[Fixture] = Field(default_factory=list, max_length=512, description=(
+        "Wired network sockets for access points with a cable; only placement searches read them"))
 
 
 RadioParameter = Literal["tx_power_dbm", "tx_gain_dbi", "rx_gain_dbi", "sensitivity_dbm", "noise_figure_db",
@@ -139,13 +153,37 @@ class Radio(Model):
         return self
 
 
+NETWORK_ROLES = ("access-point", "router", "bridge")
+
+
+class DataConnection(Model):
+    """How a device that offers a network reaches the rest of it (B-117). Only wireless hops are evaluated."""
+
+    kind: Literal["gateway", "wired", "wireless", "unknown"] = Field(description=(
+        "gateway: the network exit itself (e.g. the ISP router); wired: a declared cable, not evaluated; "
+        "wireless: a project link carries the data; unknown: not known yet"))
+    link_id: Identifier | None = Field(default=None, description="The wireless link; required only for 'wireless'")
+    note: str | None = Field(default=None, max_length=500, description="e.g. Ethernet, PLC, mesh; documentation only")
+
+    @model_validator(mode="after")
+    def link_only_when_wireless(self) -> DataConnection:
+        if (self.kind == "wireless") != (self.link_id is not None):
+            raise ValueError("A wireless data connection needs its link_id, and only a wireless one has it")
+        return self
+
+
 class Device(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("data_connection"))
+
     id: Identifier
     name: str = Field(min_length=1, max_length=160)
     role: Literal["endpoint", "access-point", "controller", "router", "bridge", "unknown"] = "unknown"
     position: Point
     radios: list[Radio] = Field(min_length=1, max_length=8)
     evidence: str = "User-defined generic device; functional compatibility unverified"
+    data_connection: DataConnection | None = Field(default=None, description=(
+        "How this device reaches the network. Expected for access points, routers and bridges; "
+        "None means not defined yet and is reported as such"))
 
 
 class Link(Model):
@@ -252,6 +290,7 @@ class Project(Model):
 
         unique([m.id for m in self.building.materials], "material")
         unique([w.id for w in self.building.walls], "wall")
+        unique([f.id for f in self.building.power_outlets + self.building.network_ports], "outlet/port")
         unique([d.id for d in self.devices], "device")
         unique([link.id for link in self.links], "link")
         materials = {m.id for m in self.building.materials}
@@ -270,6 +309,16 @@ class Project(Model):
                     raise ValueError(f"Unknown device: {device_id}")
                 if radio_id not in {r.id for r in devices[device_id].radios}:
                     raise ValueError(f"Unknown radio: {device_id}/{radio_id}")
+        links = {link.id: link for link in self.links}
+        for device in self.devices:
+            connection = device.data_connection
+            if connection is None or connection.link_id is None:
+                continue
+            link = links.get(connection.link_id)
+            if link is None:
+                raise ValueError(f"Device {device.id}: unknown data link {connection.link_id}")
+            if device.id not in (link.source_device_id, link.target_device_id):
+                raise ValueError(f"Device {device.id}: data link {link.id} does not reach this device")
         return self
 
 
@@ -295,7 +344,31 @@ class LinkResult(Model):
     reasons: list[str] = Field(default_factory=list)
 
 
+class BackhaulHop(Model):
+    """One wireless link that carries an access point's data towards the gateway."""
+
+    link_id: str
+    from_device_id: str = Field(description="Device whose data travels over this link")
+    to_device_id: str = Field(description="Next device towards the gateway")
+    status: str = Field(description="Status of the link in the same simulation")
+    limiting_margin_db: float | None = Field(description="Lower margin of both directions; None if either is missing")
+
+
+class AccessPointConnection(Model):
+    """Data path of a network device: its wireless hops and what the chain reaches. No verdict."""
+
+    device_id: str
+    kind: Literal["gateway", "wired", "wireless", "unknown", "undefined"]
+    hops: list[BackhaulHop] = Field(description="Wireless links from this device towards the gateway, in order")
+    ends_at: Literal["gateway", "wired", "unknown", "undefined", "loop"]
+    end_device_id: str = Field(description="Last device reached; its connection is 'ends_at'")
+    weakest_margin_db: float | None = Field(description="Lowest hop margin; None without hops or if one is missing")
+    reasons: list[str]
+
+
 class SimulationResult(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("access_points"))
+
     engine: str
     engine_version: str
     input_hash: str
@@ -303,6 +376,8 @@ class SimulationResult(Model):
     scope: str
     limitations: list[str]
     links: list[LinkResult]
+    access_points: list[AccessPointConnection] = Field(default_factory=list, description=(
+        "Data path of every access point, router or bridge, and of any device with a data connection"))
 
 
 class SimulationRequest(Model):
@@ -485,6 +560,8 @@ class PlacementZone(Model):
 class PlacementSearchParameters(Model):
     """Everything that defines a search except the project; echoed in the result."""
 
+    model_config = ConfigDict(json_schema_extra=_optional_fields("max_power_distance_m", "max_network_distance_m"))
+
     access_point_device_id: Identifier
     access_point_radio_id: Identifier
     target_device_ids: list[Identifier] = Field(
@@ -493,6 +570,10 @@ class PlacementSearchParameters(Model):
     candidates: list[PlacementCandidate] = Field(default_factory=list, max_length=MAX_PLACEMENT_CANDIDATES)
     zones: list[PlacementZone] = Field(default_factory=list, max_length=32)
     engine: Literal["quick-estimate", "sionna-rt", "ns-3"] = "quick-estimate"
+    max_power_distance_m: Positive | None = Field(default=None, le=100, description=(
+        "Discard places farther than this straight-line distance from every power outlet (B-119)"))
+    max_network_distance_m: Positive | None = Field(default=None, le=100, description=(
+        "Discard places farther than this straight-line distance from every network socket (B-119)"))
 
 
 class PlacementSearchRequest(PlacementSearchParameters):
@@ -515,12 +596,20 @@ class PlacementSearchRequest(PlacementSearchParameters):
         known = {d.id for d in self.project.devices}
         if unknown := [t for t in self.target_device_ids if t not in known]:
             raise ValueError(f"Unknown target devices: {unknown}")
+        if self.max_power_distance_m is not None and not self.project.building.power_outlets:
+            raise ValueError("max_power_distance_m needs at least one power outlet in the project")
+        if self.max_network_distance_m is not None and not self.project.building.network_ports:
+            raise ValueError("max_network_distance_m needs at least one network socket in the project")
         return self
 
 
 class TargetEvaluation(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("backhaul"))
+
     device_id: str
     link_id: str
+    backhaul: bool = Field(default=False, description=(
+        "True for the AP's own wireless data link (B-117): it moves with the AP and always counts"))
     forward_margin_db: float | None = Field(description="AP → device")
     reverse_margin_db: float | None = Field(description="device → AP")
     limiting_margin_db: float | None
@@ -585,8 +674,20 @@ class ProfileValue(Model):
         return self
 
 
+ProfileRole = Literal["client", "access-point"]
+
+
+def wifi24_channel_frequency_hz(channel: int) -> float:
+    """Centre frequency of 2.4 GHz Wi-Fi channels 1–13 (channel 14 is DSSS-only and excluded)."""
+    if not 1 <= channel <= 13:
+        raise ValueError("2.4 GHz OFDM channels are 1 to 13")
+    return (2407 + 5 * channel) * 1e6
+
+
 class GenericProfile(Model):
-    """Generic client radio for a band and mode; an approximation, never a certified product."""
+    """Generic radio for a band and mode; an approximation, never a certified product."""
+
+    model_config = ConfigDict(json_schema_extra=_optional_fields("roles"))
 
     id: Identifier
     name: str = Field(min_length=1, max_length=160)
@@ -600,33 +701,49 @@ class GenericProfile(Model):
     antenna_gain_dbi: ProfileValue
     noise_figure_db: ProfileValue
     notes: list[str] = Field(default_factory=list, max_length=32)
+    roles: list[ProfileRole] = Field(default_factory=lambda: ["client"], min_length=1, max_length=2,
+                                     description="Where the profile may be applied (B-118)")
 
-    def receiver_profile(self, access_point_radio: Radio) -> ReceiverProfile:
-        """Profile radio on the AP's channel: a Wi-Fi client follows the AP's frequency and channel."""
-        if not 2.4e9 <= access_point_radio.frequency_hz <= 2.5e9:
+    def radio(self, radio_id: str, frequency_hz: float, channel: int | None) -> Radio:
+        """The profile as a project radio, with the provenance of every value."""
+        if not 2.4e9 <= frequency_hz <= 2.5e9:
             raise ValueError("This profile only describes the 2.4 GHz band")
-        if abs(access_point_radio.bandwidth_hz - self.bandwidth_hz) > 1:
-            raise ValueError("The AP bandwidth differs from the profile mode")
         if self.antenna_gain_dbi.value is None or self.noise_figure_db.value is None:
             raise ValueError("Antenna gain and noise figure need a declared or inferred value")
         gain = self.antenna_gain_dbi.value
+
         def origin(value: ProfileValue) -> RadioValueSource:
             return RadioValueSource(provenance=value.provenance, source=value.source)
 
+        return Radio(id=radio_id, protocol="wifi", frequency_hz=frequency_hz, bandwidth_hz=self.bandwidth_hz,
+                     channel=channel, tx_power_dbm=self.tx_power_dbm.value, tx_gain_dbi=gain, rx_gain_dbi=gain,
+                     sensitivity_dbm=self.sensitivity_dbm.value, noise_figure_db=self.noise_figure_db.value,
+                     provenance={"tx_power_dbm": origin(self.tx_power_dbm),
+                                 "tx_gain_dbi": origin(self.antenna_gain_dbi),
+                                 "rx_gain_dbi": origin(self.antenna_gain_dbi),
+                                 "sensitivity_dbm": origin(self.sensitivity_dbm),
+                                 "noise_figure_db": origin(self.noise_figure_db)})
+
+    def receiver_profile(self, access_point_radio: Radio) -> ReceiverProfile:
+        """Profile radio on the AP's channel: a Wi-Fi client follows the AP's frequency and channel."""
+        if "client" not in self.roles:
+            raise ValueError(f"Profile {self.id} does not describe a client")
+        if abs(access_point_radio.bandwidth_hz - self.bandwidth_hz) > 1:
+            raise ValueError("The AP bandwidth differs from the profile mode")
+        radio = self.radio(f"profile-{self.id}", access_point_radio.frequency_hz, access_point_radio.channel)
         return ReceiverProfile(
             id=self.id, name=self.name,
             evidence=f"Generic profile {self.id}: sensitivity {self.sensitivity_dbm.provenance}, "
                      f"tx power {self.tx_power_dbm.provenance}, antenna gain {self.antenna_gain_dbi.provenance}",
-            radio=Radio(id=f"profile-{self.id}", protocol="wifi", frequency_hz=access_point_radio.frequency_hz,
-                        bandwidth_hz=self.bandwidth_hz, channel=access_point_radio.channel,
-                        tx_power_dbm=self.tx_power_dbm.value, tx_gain_dbi=gain, rx_gain_dbi=gain,
-                        sensitivity_dbm=self.sensitivity_dbm.value,
-                        noise_figure_db=self.noise_figure_db.value,
-                        provenance={"tx_power_dbm": origin(self.tx_power_dbm),
-                                    "tx_gain_dbi": origin(self.antenna_gain_dbi),
-                                    "rx_gain_dbi": origin(self.antenna_gain_dbi),
-                                    "sensitivity_dbm": origin(self.sensitivity_dbm),
-                                    "noise_figure_db": origin(self.noise_figure_db)}))
+            radio=radio)
+
+
+class ProfileRadioRequest(Model):
+    """Apply a catalogue profile to a project radio on a given 2.4 GHz channel (B-118)."""
+
+    role: ProfileRole
+    channel: int = Field(ge=1, le=13)
+    radio_id: Identifier = "radio-1"
 
 
 # --- Scenarios for unresolved hypotheses (B-108) ----------------------------------------

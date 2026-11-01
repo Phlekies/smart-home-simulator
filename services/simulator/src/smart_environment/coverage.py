@@ -17,9 +17,10 @@ from collections import OrderedDict
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 
+from .backhaul import connection, is_network_device, path_note
 from .cache import ResultCache
 
-from .engines import LIMITATIONS, direction, input_hash, radio_pair_check
+from .engines import LIMITATIONS, direction, input_hash, link_result, radio_pair_check
 from .models import (
     CoverageCells, CoverageMapJob, CoverageMapRequest, CoverageMapResult, CoverageSample, Device, Point, Project,
     ScenarioAssumptions,
@@ -50,6 +51,12 @@ def request_hash(request: CoverageMapRequest) -> str:
     return hashlib.sha256(canonical.encode()).hexdigest()
 
 
+def map_work(request: CoverageMapRequest) -> int:
+    """Cell × wall evaluations a map needs; the unit of every cost bound."""
+    samples = request.grid.columns * request.grid.rows + len(request.points)
+    return samples * max(1, len(request.project.building.walls))
+
+
 def preflight(request: CoverageMapRequest) -> None:
     """Reject before queueing: incompatible radios or a cost above the accepted bound."""
     ap = next(d for d in request.project.devices if d.id == request.access_point_device_id)
@@ -57,9 +64,7 @@ def preflight(request: CoverageMapRequest) -> None:
     _, blocked, reasons = radio_pair_check(ap_radio, request.profile.radio)
     if blocked is not None:
         raise CoverageLimitError("El perfil no puede evaluarse con esta radio del AP: " + " ".join(reasons))
-    samples = request.grid.columns * request.grid.rows + len(request.points)
-    work = samples * max(1, len(request.project.building.walls))
-    if work > MAX_WORK:
+    if (work := map_work(request)) > MAX_WORK:
         raise CoverageLimitError(f"El mapa requiere {work} evaluaciones celda×pared (máximo {MAX_WORK}); "
                                  "aumenta la resolución, reduce el área o el número de paredes.")
 
@@ -111,6 +116,11 @@ def compute(request: CoverageMapRequest, progress: Callable[[float], None] = lam
         reasons.append("Falta la potencia de transmisión del perfil: sentido equipo→AP no calculado.")
     if profile_radio.sensitivity_dbm is None or ap_radio.sensitivity_dbm is None:
         reasons.append("Falta alguna sensibilidad: los márgenes de ese sentido no se calculan.")
+    if is_network_device(ap):
+        links = {link.id: link for link in project.links}
+        path = connection(project, ap, lambda link_id: link_result(project, links[link_id]))
+        if note := path_note(path):
+            reasons.append(note)
     columns, rows = grid.columns, grid.rows
     total = rows + (1 if request.points else 0)
     samples: list[CoverageSample] = []

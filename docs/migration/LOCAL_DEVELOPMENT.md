@@ -106,7 +106,8 @@ API local (documentación interactiva en http://127.0.0.1:8000/docs):
 | `POST /api/simulations` | Presupuesto de cada enlace en ambos sentidos | `SimulationResult` |
 | `POST/GET/DELETE /api/coverage-maps` | Mapa por perfil y altura como trabajo cancelable | [mapas](../simulation/COVERAGE_MAP_CONTRACT.md) |
 | `POST /api/placement-searches` | Comparar lugares permitidos para el AP | [ubicación](../simulation/PLACEMENT_SEARCH_CONTRACT.md) |
-| `GET /api/profiles` | Perfiles Wi-Fi genéricos con procedencia | [perfiles](../simulation/RADIO_PROFILES.md) |
+| `GET /api/profiles?role=` | Perfiles Wi-Fi genéricos con procedencia (clientes por defecto, `access-point` para AP) | [perfiles](../simulation/RADIO_PROFILES.md) |
+| `POST /api/profiles/{id}/radio` | Radio de un perfil en un canal de 2.4 GHz | [perfiles](../simulation/RADIO_PROFILES.md) |
 | `POST /api/scenario-simulations` | Mejor/peor caso de puertas y materiales inciertos | [escenarios](../simulation/SCENARIOS_CONTRACT.md) |
 | `POST /api/reports`, `POST /api/reports/markdown` | Informe por enlace (JSON o documento) | [informe](../simulation/REPORT_CONTRACT.md) |
 | `POST /api/measurements/check` | Validar una campaña de medida y ver sus residuos | [medidas](../simulation/MEASUREMENT_FORMAT.md) |

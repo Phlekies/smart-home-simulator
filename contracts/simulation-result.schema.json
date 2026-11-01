@@ -1,5 +1,126 @@
 {
   "$defs": {
+    "AccessPointConnection": {
+      "additionalProperties": false,
+      "description": "Data path of a network device: its wireless hops and what the chain reaches. No verdict.",
+      "properties": {
+        "device_id": {
+          "title": "Device Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "gateway",
+            "wired",
+            "wireless",
+            "unknown",
+            "undefined"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "hops": {
+          "description": "Wireless links from this device towards the gateway, in order",
+          "items": {
+            "$ref": "#/$defs/BackhaulHop"
+          },
+          "title": "Hops",
+          "type": "array"
+        },
+        "ends_at": {
+          "enum": [
+            "gateway",
+            "wired",
+            "unknown",
+            "undefined",
+            "loop"
+          ],
+          "title": "Ends At",
+          "type": "string"
+        },
+        "end_device_id": {
+          "description": "Last device reached; its connection is 'ends_at'",
+          "title": "End Device Id",
+          "type": "string"
+        },
+        "weakest_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lowest hop margin; None without hops or if one is missing",
+          "title": "Weakest Margin Db"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "device_id",
+        "kind",
+        "hops",
+        "ends_at",
+        "end_device_id",
+        "weakest_margin_db",
+        "reasons"
+      ],
+      "title": "AccessPointConnection",
+      "type": "object"
+    },
+    "BackhaulHop": {
+      "additionalProperties": false,
+      "description": "One wireless link that carries an access point's data towards the gateway.",
+      "properties": {
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        },
+        "from_device_id": {
+          "description": "Device whose data travels over this link",
+          "title": "From Device Id",
+          "type": "string"
+        },
+        "to_device_id": {
+          "description": "Next device towards the gateway",
+          "title": "To Device Id",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status of the link in the same simulation",
+          "title": "Status",
+          "type": "string"
+        },
+        "limiting_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lower margin of both directions; None if either is missing",
+          "title": "Limiting Margin Db"
+        }
+      },
+      "required": [
+        "link_id",
+        "from_device_id",
+        "to_device_id",
+        "status",
+        "limiting_margin_db"
+      ],
+      "title": "BackhaulHop",
+      "type": "object"
+    },
     "DirectionResult": {
       "additionalProperties": false,
       "properties": {
@@ -172,6 +293,14 @@
         "$ref": "#/$defs/LinkResult"
       },
       "title": "Links",
+      "type": "array"
+    },
+    "access_points": {
+      "description": "Data path of every access point, router or bridge, and of any device with a data connection",
+      "items": {
+        "$ref": "#/$defs/AccessPointConnection"
+      },
+      "title": "Access Points",
       "type": "array"
     }
   },

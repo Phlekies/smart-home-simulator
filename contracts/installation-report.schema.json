@@ -1,5 +1,872 @@
 {
   "$defs": {
+    "AccessPointConnection": {
+      "additionalProperties": false,
+      "description": "Data path of a network device: its wireless hops and what the chain reaches. No verdict.",
+      "properties": {
+        "device_id": {
+          "title": "Device Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "gateway",
+            "wired",
+            "wireless",
+            "unknown",
+            "undefined"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "hops": {
+          "description": "Wireless links from this device towards the gateway, in order",
+          "items": {
+            "$ref": "#/$defs/BackhaulHop"
+          },
+          "title": "Hops",
+          "type": "array"
+        },
+        "ends_at": {
+          "enum": [
+            "gateway",
+            "wired",
+            "unknown",
+            "undefined",
+            "loop"
+          ],
+          "title": "Ends At",
+          "type": "string"
+        },
+        "end_device_id": {
+          "description": "Last device reached; its connection is 'ends_at'",
+          "title": "End Device Id",
+          "type": "string"
+        },
+        "weakest_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lowest hop margin; None without hops or if one is missing",
+          "title": "Weakest Margin Db"
+        },
+        "reasons": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "device_id",
+        "kind",
+        "hops",
+        "ends_at",
+        "end_device_id",
+        "weakest_margin_db",
+        "reasons"
+      ],
+      "title": "AccessPointConnection",
+      "type": "object"
+    },
+    "BackhaulHop": {
+      "additionalProperties": false,
+      "description": "One wireless link that carries an access point's data towards the gateway.",
+      "properties": {
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        },
+        "from_device_id": {
+          "description": "Device whose data travels over this link",
+          "title": "From Device Id",
+          "type": "string"
+        },
+        "to_device_id": {
+          "description": "Next device towards the gateway",
+          "title": "To Device Id",
+          "type": "string"
+        },
+        "status": {
+          "description": "Status of the link in the same simulation",
+          "title": "Status",
+          "type": "string"
+        },
+        "limiting_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Lower margin of both directions; None if either is missing",
+          "title": "Limiting Margin Db"
+        }
+      },
+      "required": [
+        "link_id",
+        "from_device_id",
+        "to_device_id",
+        "status",
+        "limiting_margin_db"
+      ],
+      "title": "BackhaulHop",
+      "type": "object"
+    },
+    "CoverageCells": {
+      "additionalProperties": false,
+      "description": "Row-major arrays (index = j·columns + i), one entry per cell, same meaning as CoverageSample.",
+      "properties": {
+        "forward_dbm": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Forward Dbm",
+          "type": "array"
+        },
+        "reverse_dbm": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Reverse Dbm",
+          "type": "array"
+        },
+        "forward_margin_db": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Forward Margin Db",
+          "type": "array"
+        },
+        "reverse_margin_db": {
+          "items": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": "Reverse Margin Db",
+          "type": "array"
+        },
+        "status": {
+          "items": {
+            "enum": [
+              "computed",
+              "partial",
+              "not-computed"
+            ],
+            "type": "string"
+          },
+          "title": "Status",
+          "type": "array"
+        }
+      },
+      "required": [
+        "forward_dbm",
+        "reverse_dbm",
+        "forward_margin_db",
+        "reverse_margin_db",
+        "status"
+      ],
+      "title": "CoverageCells",
+      "type": "object"
+    },
+    "CoverageMapParameters": {
+      "additionalProperties": false,
+      "description": "Everything that defines a map except the project; echoed in the result for staleness checks.",
+      "properties": {
+        "access_point_device_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Access Point Device Id",
+          "type": "string"
+        },
+        "access_point_radio_id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Access Point Radio Id",
+          "type": "string"
+        },
+        "profile": {
+          "$ref": "#/$defs/ReceiverProfile"
+        },
+        "grid": {
+          "$ref": "#/$defs/MapGrid"
+        },
+        "points": {
+          "description": "Exact positions evaluated without snapping to the grid",
+          "items": {
+            "$ref": "#/$defs/Point"
+          },
+          "maxItems": 256,
+          "title": "Points",
+          "type": "array"
+        },
+        "engine": {
+          "default": "quick-estimate",
+          "enum": [
+            "quick-estimate",
+            "sionna-rt",
+            "ns-3"
+          ],
+          "title": "Engine",
+          "type": "string"
+        },
+        "scenario": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScenarioAssumptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Door states and material bounds applied to every cell, e.g. the best or worst case of /api/scenario-simulations; None evaluates the project as it is"
+        }
+      },
+      "required": [
+        "access_point_device_id",
+        "access_point_radio_id",
+        "profile",
+        "grid",
+        "points",
+        "engine"
+      ],
+      "title": "CoverageMapParameters",
+      "type": "object"
+    },
+    "CoverageMapResult": {
+      "additionalProperties": false,
+      "properties": {
+        "engine": {
+          "title": "Engine",
+          "type": "string"
+        },
+        "engine_version": {
+          "title": "Engine Version",
+          "type": "string"
+        },
+        "input_hash": {
+          "description": "Hash of the project (same as simulation results)",
+          "title": "Input Hash",
+          "type": "string"
+        },
+        "request_hash": {
+          "description": "Hash of the project and every map parameter",
+          "title": "Request Hash",
+          "type": "string"
+        },
+        "parameters": {
+          "$ref": "#/$defs/CoverageMapParameters"
+        },
+        "metric": {
+          "const": "direct-path-received-power",
+          "title": "Metric",
+          "type": "string"
+        },
+        "frequency_hz": {
+          "title": "Frequency Hz",
+          "type": "number"
+        },
+        "compatibility": {
+          "enum": [
+            "radio-compatible",
+            "unverified"
+          ],
+          "title": "Compatibility",
+          "type": "string"
+        },
+        "columns": {
+          "title": "Columns",
+          "type": "integer"
+        },
+        "rows": {
+          "title": "Rows",
+          "type": "integer"
+        },
+        "cells": {
+          "$ref": "#/$defs/CoverageCells"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/CoverageSample"
+          },
+          "title": "Points",
+          "type": "array"
+        },
+        "computed_cells": {
+          "title": "Computed Cells",
+          "type": "integer"
+        },
+        "partial_cells": {
+          "title": "Partial Cells",
+          "type": "integer"
+        },
+        "not_computed_cells": {
+          "title": "Not Computed Cells",
+          "type": "integer"
+        },
+        "elapsed_ms": {
+          "title": "Elapsed Ms",
+          "type": "number"
+        },
+        "scope": {
+          "title": "Scope",
+          "type": "string"
+        },
+        "limitations": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Limitations",
+          "type": "array"
+        },
+        "reasons": {
+          "description": "Map-level notes: missing data, unverified compatibility, etc.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "engine",
+        "engine_version",
+        "input_hash",
+        "request_hash",
+        "parameters",
+        "metric",
+        "frequency_hz",
+        "compatibility",
+        "columns",
+        "rows",
+        "cells",
+        "points",
+        "computed_cells",
+        "partial_cells",
+        "not_computed_cells",
+        "elapsed_ms",
+        "scope",
+        "limitations",
+        "reasons"
+      ],
+      "title": "CoverageMapResult",
+      "type": "object"
+    },
+    "CoverageSample": {
+      "additionalProperties": false,
+      "description": "One evaluated position. Forward is AP→profile, reverse is profile→AP; no classification.",
+      "properties": {
+        "forward_dbm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Forward Dbm"
+        },
+        "reverse_dbm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reverse Dbm"
+        },
+        "forward_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Forward Margin Db"
+        },
+        "reverse_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reverse Margin Db"
+        },
+        "status": {
+          "enum": [
+            "computed",
+            "partial",
+            "not-computed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "forward_dbm",
+        "reverse_dbm",
+        "forward_margin_db",
+        "reverse_margin_db",
+        "status",
+        "reason"
+      ],
+      "title": "CoverageSample",
+      "type": "object"
+    },
+    "MapGrid": {
+      "additionalProperties": false,
+      "description": "Horizontal sampling plane. Cell (i, j) is evaluated at its centre:\nx = origin_x_m + (i + 0.5)·resolution_m, y = origin_y_m + (j + 0.5)·resolution_m, z = height_m.\nEdge cells narrower than resolution_m use the centre of their clipped extent.",
+      "properties": {
+        "origin_x_m": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Origin X M",
+          "type": "number"
+        },
+        "origin_y_m": {
+          "default": 0,
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Origin Y M",
+          "type": "number"
+        },
+        "width_m": {
+          "exclusiveMinimum": 0,
+          "maximum": 2000,
+          "title": "Width M",
+          "type": "number"
+        },
+        "depth_m": {
+          "exclusiveMinimum": 0,
+          "maximum": 2000,
+          "title": "Depth M",
+          "type": "number"
+        },
+        "resolution_m": {
+          "default": 0.5,
+          "maximum": 5,
+          "minimum": 0.1,
+          "title": "Resolution M",
+          "type": "number"
+        },
+        "height_m": {
+          "maximum": 1000,
+          "minimum": -1000,
+          "title": "Height M",
+          "type": "number"
+        }
+      },
+      "required": [
+        "origin_x_m",
+        "origin_y_m",
+        "width_m",
+        "depth_m",
+        "resolution_m",
+        "height_m"
+      ],
+      "title": "MapGrid",
+      "type": "object"
+    },
+    "MapSummary": {
+      "additionalProperties": false,
+      "description": "Counts and spread of a map; not a coverage percentage (no failure criterion or design reserve yet).",
+      "properties": {
+        "cells": {
+          "title": "Cells",
+          "type": "integer"
+        },
+        "computed_cells": {
+          "title": "Computed Cells",
+          "type": "integer"
+        },
+        "partial_cells": {
+          "title": "Partial Cells",
+          "type": "integer"
+        },
+        "not_computed_cells": {
+          "title": "Not Computed Cells",
+          "type": "integer"
+        },
+        "limiting_margin_db": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "[min, median, max] of the lower margin of both directions over computed cells; None without any",
+          "title": "Limiting Margin Db"
+        },
+        "negative_limiting_cells": {
+          "description": "Computed cells whose lower margin is below 0 dB",
+          "title": "Negative Limiting Cells",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "cells",
+        "computed_cells",
+        "partial_cells",
+        "not_computed_cells",
+        "limiting_margin_db",
+        "negative_limiting_cells"
+      ],
+      "title": "MapSummary",
+      "type": "object"
+    },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Y",
+          "type": "number"
+        },
+        "z": {
+          "default": 0,
+          "maximum": 1000,
+          "minimum": -1000,
+          "title": "Z",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
+    "Radio": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "protocol": {
+          "default": "unknown",
+          "enum": [
+            "wifi",
+            "thread",
+            "zigbee",
+            "ble",
+            "zwave",
+            "unknown"
+          ],
+          "title": "Protocol",
+          "type": "string"
+        },
+        "frequency_hz": {
+          "exclusiveMinimum": 0,
+          "maximum": 100000000000.0,
+          "title": "Frequency Hz",
+          "type": "number"
+        },
+        "bandwidth_hz": {
+          "exclusiveMinimum": 0,
+          "maximum": 1000000000.0,
+          "title": "Bandwidth Hz",
+          "type": "number"
+        },
+        "channel": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel"
+        },
+        "tx_power_dbm": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": -100,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Tx Power Dbm"
+        },
+        "tx_gain_dbi": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": -100,
+          "title": "Tx Gain Dbi",
+          "type": "number"
+        },
+        "rx_gain_dbi": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": -100,
+          "title": "Rx Gain Dbi",
+          "type": "number"
+        },
+        "sensitivity_dbm": {
+          "anyOf": [
+            {
+              "maximum": 0,
+              "minimum": -200,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sensitivity Dbm"
+        },
+        "noise_figure_db": {
+          "default": 7,
+          "maximum": 60,
+          "minimum": 0,
+          "title": "Noise Figure Db",
+          "type": "number"
+        },
+        "antenna": {
+          "default": "omnidirectional",
+          "enum": [
+            "omnidirectional",
+            "directional"
+          ],
+          "title": "Antenna",
+          "type": "string"
+        },
+        "orientation_deg": {
+          "default": 0,
+          "maximum": 360,
+          "minimum": -360,
+          "title": "Orientation Deg",
+          "type": "number"
+        },
+        "beamwidth_deg": {
+          "default": 360,
+          "exclusiveMinimum": 0,
+          "maximum": 360,
+          "title": "Beamwidth Deg",
+          "type": "number"
+        },
+        "pattern_sharpness": {
+          "default": 1.8,
+          "maximum": 100,
+          "minimum": 0.5,
+          "title": "Pattern Sharpness",
+          "type": "number"
+        },
+        "side_lobe_attenuation_db": {
+          "default": 18,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Side Lobe Attenuation Db",
+          "type": "number"
+        },
+        "polarization_deg": {
+          "default": 0,
+          "maximum": 360,
+          "minimum": -360,
+          "title": "Polarization Deg",
+          "type": "number"
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/RadioValueSource"
+              },
+              "propertyNames": {
+                "enum": [
+                  "tx_power_dbm",
+                  "tx_gain_dbi",
+                  "rx_gain_dbi",
+                  "sensitivity_dbm",
+                  "noise_figure_db",
+                  "channel",
+                  "protocol"
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional origin of each value. 'unknown' requires an empty value; measured/declared require one.",
+          "title": "Provenance"
+        }
+      },
+      "required": [
+        "id",
+        "protocol",
+        "frequency_hz",
+        "bandwidth_hz",
+        "channel",
+        "tx_power_dbm",
+        "tx_gain_dbi",
+        "rx_gain_dbi",
+        "sensitivity_dbm",
+        "noise_figure_db",
+        "antenna",
+        "orientation_deg",
+        "beamwidth_deg",
+        "pattern_sharpness",
+        "side_lobe_attenuation_db",
+        "polarization_deg"
+      ],
+      "title": "Radio",
+      "type": "object"
+    },
+    "RadioValueSource": {
+      "additionalProperties": false,
+      "description": "Where one radio value comes from; documentation only, never a solver input.",
+      "properties": {
+        "provenance": {
+          "enum": [
+            "measured",
+            "declared",
+            "standard-minimum",
+            "inferred",
+            "unknown"
+          ],
+          "title": "Provenance",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "provenance",
+        "source"
+      ],
+      "title": "RadioValueSource",
+      "type": "object"
+    },
+    "ReceiverProfile": {
+      "additionalProperties": false,
+      "description": "Radio of the candidate device as it would be installed; drives both link directions.",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "radio": {
+          "$ref": "#/$defs/Radio"
+        },
+        "evidence": {
+          "default": "Generic profile; not a certified product",
+          "title": "Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "radio",
+        "evidence"
+      ],
+      "title": "ReceiverProfile",
+      "type": "object"
+    },
     "ReportDirection": {
       "additionalProperties": false,
       "properties": {
@@ -193,6 +1060,29 @@
       "title": "ReportLink",
       "type": "object"
     },
+    "ReportMap": {
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "summary": {
+          "$ref": "#/$defs/MapSummary"
+        },
+        "result": {
+          "$ref": "#/$defs/CoverageMapResult",
+          "description": "Full map, so the report file keeps it for drawing and staleness"
+        }
+      },
+      "required": [
+        "title",
+        "summary",
+        "result"
+      ],
+      "title": "ReportMap",
+      "type": "object"
+    },
     "ReportWall": {
       "additionalProperties": false,
       "properties": {
@@ -227,6 +1117,63 @@
         "door"
       ],
       "title": "ReportWall",
+      "type": "object"
+    },
+    "ScenarioAssumptions": {
+      "additionalProperties": false,
+      "description": "Named scenario: door states and material bounds that replace the nominal project values.",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "doors": {
+          "additionalProperties": {
+            "enum": [
+              "open",
+              "closed"
+            ],
+            "type": "string"
+          },
+          "propertyNames": {
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "title": "Doors",
+          "type": "object"
+        },
+        "materials": {
+          "additionalProperties": {
+            "enum": [
+              "low",
+              "nominal",
+              "high"
+            ],
+            "type": "string"
+          },
+          "propertyNames": {
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "title": "Materials",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "doors",
+        "materials"
+      ],
+      "title": "ScenarioAssumptions",
       "type": "object"
     }
   },
@@ -289,6 +1236,22 @@
         "type": "string"
       },
       "title": "Limitations",
+      "type": "array"
+    },
+    "access_points": {
+      "description": "Data path of each access point (B-117), as in the simulation result",
+      "items": {
+        "$ref": "#/$defs/AccessPointConnection"
+      },
+      "title": "Access Points",
+      "type": "array"
+    },
+    "maps": {
+      "description": "Requested coverage maps (B-120)",
+      "items": {
+        "$ref": "#/$defs/ReportMap"
+      },
+      "title": "Maps",
       "type": "array"
     }
   },
