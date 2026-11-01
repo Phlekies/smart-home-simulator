@@ -6,6 +6,7 @@ from pathlib import Path
 
 from smart_environment.api import app
 from smart_environment.calibration import MeasurementCheckResult
+from smart_environment.differences import DifferenceResult
 from smart_environment.measurements import MeasurementCampaign
 from smart_environment.report import InstallationReport
 from smart_environment.models import (
@@ -25,6 +26,7 @@ contracts = {"project.schema.json": Project.model_json_schema(mode="serializatio
              "scenario-result.schema.json": ScenarioResult.model_json_schema(mode="serialization"),
              "installation-report.schema.json": InstallationReport.model_json_schema(mode="serialization"),
              "measurement-check.schema.json": MeasurementCheckResult.model_json_schema(mode="serialization"),
+             "link-difference.schema.json": DifferenceResult.model_json_schema(mode="serialization"),
              "openapi.json": app.openapi()}
 for name, schema in contracts.items():
     path = root / "contracts" / name

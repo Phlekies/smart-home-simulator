@@ -47,3 +47,24 @@ def test_api_endpoint_and_validation():
     assert response.status_code == 200 and len(response.json()["residuals"]) == 6
     body["campaign"]["points"][0]["rssi"][0]["samples_dbm"] = [12]
     assert client.post("/api/measurements/check", json=body).status_code == 422
+
+
+# --- Stand-in instruments (B-124) ----------------------------------------------------------
+
+def test_phone_readings_are_explained_against_the_candidate():
+    result = check(MeasurementCheckRequest(campaign=campaign("home-a", "pilot", predictions()), project=project()))
+    notes = [note for note in result.notes if "es un móvil" in note]
+    assert len(notes) == 1 and "no para concluir que el candidato funcionará" in notes[0]
+    assert all(r.device_instrument_kind == "phone" for r in result.residuals)
+    alone = check(MeasurementCheckRequest(campaign=campaign("home-a", "pilot", predictions())))
+    assert any("es un móvil" in note for note in alone.notes), "explained even without a project"
+
+
+def test_the_candidate_itself_needs_no_stand_in_note():
+    data = campaign("home-a", "pilot", predictions()).model_dump(mode="json")
+    for instrument in data["instruments"]:
+        if instrument["kind"] == "phone":
+            instrument["kind"] = "candidate-device"
+    result = check(MeasurementCheckRequest.model_validate({"campaign": data, "project": project().model_dump()}))
+    assert not any("es un" in note and "candidato" in note for note in result.notes)
+    assert all(not any("medido con" in a for a in r.assumptions) for r in result.residuals)

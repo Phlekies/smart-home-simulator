@@ -83,7 +83,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [ ] E2E de crear/importar, editar, calcular, comparar y guardar (API completa en B-111 con los tres ejemplos y un proyecto nuevo; recorrido completo en navegador pendiente).
 - [x] Instalación limpia y arranque local reproducibles (B-112: clon nuevo en Windows x64 siguiendo LOCAL_DEVELOPMENT; Linux en cada CI de migración desde el lock).
 - [x] Matriz de funciones conservadas/sustituidas/excluidas y motivos ([FEATURE_MATRIX](FEATURE_MATRIX.md), B-107; revisar al cerrar cada fase).
-- [ ] Documentación del ámbito real y motores disponibles.
+- [ ] Documentación del ámbito real y motores disponibles ([ámbito real y motores](SCOPE_AND_ENGINES.md), B-125 en revisión).
 - [ ] Java preservado como referencia hasta superar las puertas de sustitución.
 
 ## Puertas separadas del producto

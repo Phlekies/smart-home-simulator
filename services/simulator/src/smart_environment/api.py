@@ -12,6 +12,7 @@ from pydantic import ValidationError
 from .cache import ResultCache
 from .calibration import MeasurementCheckRequest, MeasurementCheckResult, check as check_measurements
 from .coverage import CoverageJobs, CoverageLimitError
+from .differences import DifferenceRequest, DifferenceResult, compare
 from .engines import engine_capabilities, simulate
 from .legacy import import_project
 from .placement import ENGINE_VERSION as PLACEMENT_VERSION, PlacementLimitError, search
@@ -189,6 +190,14 @@ def report(request: ReportRequest) -> InstallationReport:
           responses={200: {"content": {"text/markdown": {}}}})
 def report_markdown(request: ReportRequest) -> PlainTextResponse:
     return PlainTextResponse(to_markdown(build_report(request)), media_type="text/markdown; charset=utf-8")
+
+
+@app.post("/api/link-differences", response_model=DifferenceResult)
+def link_differences(request: DifferenceRequest) -> DifferenceResult:
+    """Change of every shared link between two project versions, split into exact budget terms."""
+    if request.engine != "quick-estimate":
+        raise HTTPException(501, f"{request.engine}: difference adapter not implemented or verified; no fallback executed")
+    return compare(request)
 
 
 @app.post("/api/measurements/check", response_model=MeasurementCheckResult)

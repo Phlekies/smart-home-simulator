@@ -5,9 +5,19 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — B-117…B-121 publicadas en [PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17) en borrador, apilado sobre #16.
-  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 (cambiando bases a `main`) y #14.
-- Contratos (todos aditivos y opcionales; ningún consumidor existente cambia):
+- Estado: **review** — B-117…B-121 en [PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17) y B-122…B-125 en [PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), ambos en borrador.
+  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 (cambiando bases a `main`) y #14.
+  PR #18–#21 son de Dependabot (acciones de CI y Gradle): sin revisar ni fusionar por B.
+- **review** — B-122…B-125 ([PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), apilado sobre #17):
+  - **B-122** geometría fuera del modelo (equipo dentro de una pared, por encima o por debajo de todas las
+    paredes) sin conclusión favorable; lugares de búsqueda por encima de las paredes descartados.
+  - **B-123** diferencia exacta entre dos versiones del proyecto por enlace y sentido: términos del
+    presupuesto que suman el cambio, paredes que entran o salen y riesgos residuales.
+  - **B-124** medidas con móvil, portátil u otro instrumento explicadas frente al equipo candidato.
+  - **B-125** documento del ámbito real y de los motores disponibles.
+  - Contratos previstos (aditivos): `PointResidual.device_instrument_kind` opcional; nueva ruta
+    `POST /api/link-differences` con esquema `link-difference.schema.json`. Sin cambios en `Project`.
+- Contratos de B-117…B-121 (todos aditivos y opcionales; ningún consumidor existente cambia):
   `Device.data_connection`, `Building.power_outlets`/`network_ports` (fuera de `input_hash`),
   `PlacementSearchParameters.max_power_distance_m`/`max_network_distance_m`, `TargetEvaluation.backhaul`,
   `SimulationResult.access_points`, `GenericProfile.roles`, `ReportRequest.maps`,
@@ -37,6 +47,32 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### B-122…B-125 — geometría fuera del modelo, diferencias, instrumentos y ámbito (review)
+
+```text
+Tareas / estado: B-122…B-125 / review. Rama local agent-b/b-122-125 sobre #17. 2026-11-01, Europe/Madrid.
+B-122: engines.geometry_issue (dentro de una pared, por encima o por debajo de todas las paredes);
+  link_result nunca da above-threshold con un extremo fuera del modelo. Notas en mapas (AP y altura) y
+  búsqueda (posición actual); los lugares fuera de la altura de las paredes se descartan
+  (outside-wall-heights). inside_wall pasa a engines y coverage lo reexporta. Pruebas del criterio P2
+  «un retorno insuficiente impide concluir favorable».
+B-123: engines.budget (términos del presupuesto; direction lo usa con el mismo orden de operaciones,
+  resultados idénticos); differences.py y POST /api/link-differences; términos que suman el cambio,
+  paredes que salen o entran, margen limitante y riesgos residuales.
+B-124: measurements.stand_in / instrument_notes; supuesto y device_instrument_kind en cada residuo;
+  notas en la comprobación y la calibración. Prueba de calibración ajustada al supuesto nuevo.
+B-125: docs/migration/SCOPE_AND_ENGINES.md enlazado desde el README; descripción de quick-estimate.
+Contratos: ruta nueva con link-difference.schema.json; PointResidual.device_instrument_kind opcional.
+Comandos: pytest 373; export --check sin deriva; 10 .ts regenerados; npm test 84; build (tsc + vite)
+  correcto; rama de #14 con los tipos nuevos: 120 pruebas y build; worktree temporal eliminado.
+Sin cambios de interfaz: no hay recorrido de navegador que verificar en esta entrega.
+Solicitud a A: añadir link-difference.ts al script contracts y mostrar la diferencia en la comparación
+  (A-105/A-110) con lenguaje de modelo; mostrar notas de instrumentos al importar campañas.
+Publicación: PR #22 en borrador, apilado sobre #17, por autorización del usuario.
+Siguiente paso: lo restante depende del usuario (merges, umbral del criterio de fallo, medidas reales)
+  o de A (interfaz).
+```
 
 ### B-117…B-121 — conexión de datos, perfiles de AP, cableado, mapas en el informe y paridad Java (review)
 

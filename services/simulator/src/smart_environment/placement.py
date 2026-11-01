@@ -16,8 +16,7 @@ import time
 from typing import NamedTuple
 
 from .backhaul import is_network_device
-from .coverage import inside_wall
-from .engines import LIMITATIONS, direction, input_hash, radio_pair_check
+from .engines import LIMITATIONS, direction, geometry_issue, input_hash, inside_wall, radio_pair_check, wall_heights
 from .models import (
     CandidateEvaluation, Device, ExcludedCandidate, Fixture, Link, PlacementSearchRequest, PlacementSearchResult,
     Point, Project, Radio, TargetEvaluation,
@@ -64,6 +63,14 @@ def request_hash(request: PlacementSearchRequest) -> str:
 
 def _nearest_m(place: Point, fixtures: list[Fixture]) -> float:
     return min(math.dist((place.x, place.y, place.z), (f.position.x, f.position.y, f.position.z)) for f in fixtures)
+
+
+def _outside_storey(project: Project, place: Point) -> str | None:
+    """Above or below every wall nothing is crossed, so such a place would look falsely good (B-122)."""
+    heights = wall_heights(project)
+    if heights is None or heights[0] <= place.z <= heights[1]:
+        return None
+    return f"outside-wall-heights:{heights[0]:g}-{heights[1]:g}m"
 
 
 def _out_of_reach(request: PlacementSearchRequest, place: Point) -> str | None:
@@ -168,7 +175,7 @@ def search(request: PlacementSearchRequest) -> PlacementSearchResult:
     evaluated, excluded = [], []
     for candidate_id, label, source, place in places:
         wall = next((w for w in project.building.walls if inside_wall(place, w)), None)
-        reason = f"inside-wall:{wall.id}" if wall is not None else _out_of_reach(request, place)
+        reason = f"inside-wall:{wall.id}" if wall is not None else _outside_storey(project, place)             or _out_of_reach(request, place)
         if reason is not None:
             excluded.append(ExcludedCandidate(candidate_id=candidate_id, position=place, reason=reason))
             continue
@@ -192,12 +199,15 @@ def search(request: PlacementSearchRequest) -> PlacementSearchResult:
     elif not ranked:
         reasons.append("Ningún lugar tiene márgenes completos: no se ordenan los candidatos.")
     for prefix, text in (("inside-wall", "por quedar dentro de una pared"),
+                         ("outside-wall-heights", "por quedar a una altura sin paredes ni forjados modelados"),
                          ("no-power-outlet", f"por no tener un enchufe a {request.max_power_distance_m or 0:g} m "
                                              "o menos en línea recta"),
                          ("no-network-port", f"por no tener una toma de red a {request.max_network_distance_m or 0:g} m "
                                              "o menos en línea recta")):
         if count := sum(e.reason.startswith(prefix) for e in excluded):
             reasons.append(f"{count} lugares descartados {text}.")
+    if issue := geometry_issue(project, ap.position, "La posición actual del AP"):
+        reasons.append(issue)
     if (reach := _out_of_reach(request, ap.position)) is not None:
         reasons.append(f"La posición actual no cumple el límite de cableado ({reach}).")
     if (request.max_power_distance_m or request.max_network_distance_m) and evaluated:

@@ -41,6 +41,9 @@ resolución 0.1–5 m y **altura obligatoria**), `points` (hasta 256 posiciones 
   `input_hash` (el mismo hash de proyecto que las simulaciones) y `request_hash` (proyecto y
   todos los parámetros). Un mapa con otro `request_hash` es de otro escenario.
 - **Un solo AP:** no se suma la energía de otros AP como si fuese señal de esta conexión.
+- **Geometría fuera del modelo (B-122):** si el AP está dentro de una pared o fuera de la altura de las
+  paredes, o si la altura del mapa queda fuera de ese rango, `reasons` lo indica: sin forjados modelados,
+  esas celdas no describen otra planta.
 - **Camino de datos del AP (B-117):** si el AP del mapa es un equipo de red cuya conexión de datos no
   está definida, es desconocida, forma un bucle o tiene un salto sin margen o con margen negativo,
   `reasons` lo indica. Ver [conexión de datos](DATA_CONNECTION_CONTRACT.md).
