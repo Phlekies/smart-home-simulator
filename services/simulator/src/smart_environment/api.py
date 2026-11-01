@@ -21,8 +21,9 @@ from .report import InstallationReport, ReportRequest, build_report, to_markdown
 from .scenarios import ENGINE_VERSION as SCENARIO_VERSION, evaluate as evaluate_scenarios
 from .scenarios import request_hash as scenario_hash
 from .models import (
-    CoverageMapJob, CoverageMapRequest, GenericProfile, PlacementSearchRequest, PlacementSearchResult, Project,
-    ScenarioRequest, ScenarioResult, SimulationRequest, SimulationResult,
+    CoverageMapJob, CoverageMapRequest, GenericProfile, PlacementSearchRequest, PlacementSearchResult,
+    ProfileRadioRequest, ProfileRole, Project, Radio, ScenarioRequest, ScenarioResult, SimulationRequest,
+    SimulationResult, wifi24_channel_frequency_hz,
 )
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -148,9 +149,22 @@ def placement_search(request: PlacementSearchRequest) -> PlacementSearchResult:
 
 
 @app.get("/api/profiles", response_model=list[GenericProfile])
-def profiles() -> list[GenericProfile]:
-    """Generic radio profiles with per-value provenance; approximations, not products."""
-    return CATALOG
+def profiles(role: ProfileRole = "client") -> list[GenericProfile]:
+    """Generic radio profiles with per-value provenance; approximations, not products.
+
+    Clients by default, as before B-118, so existing map selectors never list access points."""
+    return [profile for profile in CATALOG if role in profile.roles]
+
+
+@app.post("/api/profiles/{profile_id}/radio", response_model=Radio)
+def profile_radio(profile_id: str, request: ProfileRadioRequest) -> Radio:
+    """A catalogue profile as a project radio on a 2.4 GHz channel; unknown values stay empty."""
+    profile = next((p for p in CATALOG if p.id == profile_id), None)
+    if profile is None:
+        raise HTTPException(404, "Unknown profile")
+    if request.role not in profile.roles:
+        raise HTTPException(422, f"Profile {profile_id} does not describe a {request.role}")
+    return profile.radio(request.radio_id, wifi24_channel_frequency_hz(request.channel), request.channel)
 
 
 @app.post("/api/scenario-simulations", response_model=ScenarioResult)

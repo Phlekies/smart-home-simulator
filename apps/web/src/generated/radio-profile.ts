@@ -22,9 +22,16 @@ export type Source = string | null;
  * @maxItems 32
  */
 export type Notes = string[];
+/**
+ * Where the profile may be applied (B-118)
+ *
+ * @minItems 1
+ * @maxItems 2
+ */
+export type Roles = ["client" | "access-point"] | ["client" | "access-point", "client" | "access-point"];
 
 /**
- * Generic client radio for a band and mode; an approximation, never a certified product.
+ * Generic radio for a band and mode; an approximation, never a certified product.
  */
 export interface GenericProfile {
   id: Id;
@@ -39,6 +46,7 @@ export interface GenericProfile {
   antenna_gain_dbi: ProfileValue;
   noise_figure_db: ProfileValue;
   notes: Notes;
+  roles?: Roles;
 }
 /**
  * A profile parameter and where it comes from; ``unknown`` never carries a value.

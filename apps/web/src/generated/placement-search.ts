@@ -41,6 +41,14 @@ export type StepM = number;
  */
 export type Zones = PlacementZone[];
 export type Engine1 = "quick-estimate" | "sionna-rt" | "ns-3";
+/**
+ * Discard places farther than this straight-line distance from every power outlet (B-119)
+ */
+export type MaxPowerDistanceM = number | null;
+/**
+ * Discard places farther than this straight-line distance from every network socket (B-119)
+ */
+export type MaxNetworkDistanceM = number | null;
 export type Criterion = "max-min-bidirectional-margin";
 /**
  * False when no candidate has complete margins: nothing is ordered
@@ -52,6 +60,10 @@ export type Label2 = string;
 export type Source = "current" | "candidate" | "zone";
 export type DeviceId = string;
 export type LinkId = string;
+/**
+ * True for the AP's own wireless data link (B-117): it moves with the AP and always counts
+ */
+export type Backhaul = boolean;
 /**
  * AP → device
  */
@@ -116,6 +128,8 @@ export interface PlacementSearchParameters {
   candidates: Candidates;
   zones: Zones;
   engine: Engine1;
+  max_power_distance_m?: MaxPowerDistanceM;
+  max_network_distance_m?: MaxNetworkDistanceM;
 }
 /**
  * A place where the AP may physically go (power, cabling and mounting already checked).
@@ -158,6 +172,7 @@ export interface CandidateEvaluation {
 export interface TargetEvaluation {
   device_id: DeviceId;
   link_id: LinkId;
+  backhaul?: Backhaul;
   forward_margin_db: ForwardMarginDb;
   reverse_margin_db: ReverseMarginDb;
   limiting_margin_db: LimitingMarginDb;

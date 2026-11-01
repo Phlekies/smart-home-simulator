@@ -7,8 +7,10 @@ import math
 import shutil
 import time
 
+from .backhaul import access_point_connections
 from .models import (
-    Device, DirectionResult, LinkResult, Material, Point, Project, Radio, ScenarioAssumptions, SimulationResult, Wall,
+    Device, DirectionResult, Link, LinkResult, Material, Point, Project, Radio, ScenarioAssumptions,
+    SimulationResult, Wall,
 )
 
 LIMITATIONS = [
@@ -31,11 +33,15 @@ def input_hash(project: Project) -> str:
     Optional fields added later (door state, material uncertainty) count only when set, so
     projects that do not use them keep the hash they had before those fields existed. Radio
     provenance labels describe values without changing them, so they never enter the hash.
+    Power outlets and network sockets only limit placement searches, which hash them separately.
     """
-    data = project.model_dump(mode="json", exclude={"plan_reference"})
+    data = project.model_dump(mode="json", exclude={"plan_reference": True,
+                                                    "building": {"power_outlets", "network_ports"}})
     for device in data["devices"]:
         for radio in device["radios"]:
             radio.pop("provenance", None)
+        if device.get("data_connection") is None:
+            device.pop("data_connection", None)
     for wall in data["building"]["walls"]:
         if wall.get("door") is None:
             wall.pop("door", None)
@@ -180,41 +186,45 @@ def sensitivity_note(radio: Radio, device_id: str) -> str | None:
     return None
 
 
+def link_result(project: Project, link: Link) -> LinkResult:
+    """Both directions of one project link, with every missing value stated."""
+    devices = {d.id: d for d in project.devices}
+    source, target = devices[link.source_device_id], devices[link.target_device_id]
+    a = next(r for r in source.radios if r.id == link.source_radio_id)
+    b = next(r for r in target.radios if r.id == link.target_radio_id)
+    compatibility, blocked, reasons = radio_pair_check(a, b)
+    if blocked is not None:
+        return LinkResult(id=link.id, compatibility=compatibility, status=blocked, reasons=reasons)
+    forward = direction(project, source, a, target, b)
+    reverse = direction(project, target, b, source, a)
+    for result, tx in [(forward, source), (reverse, target)]:
+        if result is None:
+            reasons.append(f"Falta potencia de transmisión de {tx.name}; no se calcula esa dirección.")
+        elif result.margin_db is None:
+            reasons.append(f"Falta sensibilidad del receptor {result.rx_device_id}.")
+        elif note := sensitivity_note(b if result.rx_device_id == target.id else a, result.rx_device_id):
+            reasons.append(note)
+        elif result.distance_m < 0.1:
+            reasons.append("Distancia inferior a 0.1 m: fuera del alcance del modelo; pérdida acotada.")
+    complete = (forward is not None and reverse is not None and forward.margin_db is not None
+                and reverse.margin_db is not None and forward.distance_m >= .1)
+    if any(d is not None and d.margin_db is not None and d.margin_db < 0 for d in (forward, reverse)):
+        status = "below-threshold"
+    elif complete and compatibility == "radio-compatible":
+        status = "above-threshold"
+    else:
+        status = "unverified"
+    return LinkResult(id=link.id, compatibility=compatibility, status=status,
+                      forward=forward, reverse=reverse, reasons=reasons)
+
+
 def simulate(project: Project) -> SimulationResult:
     started = time.perf_counter()
-    devices = {d.id: d for d in project.devices}
-    results = []
-    for link in project.links:
-        source, target = devices[link.source_device_id], devices[link.target_device_id]
-        a = next(r for r in source.radios if r.id == link.source_radio_id)
-        b = next(r for r in target.radios if r.id == link.target_radio_id)
-        compatibility, blocked, reasons = radio_pair_check(a, b)
-        if blocked is not None:
-            results.append(LinkResult(id=link.id, compatibility=compatibility, status=blocked, reasons=reasons))
-            continue
-        forward = direction(project, source, a, target, b)
-        reverse = direction(project, target, b, source, a)
-        for result, tx in [(forward, source), (reverse, target)]:
-            if result is None:
-                reasons.append(f"Falta potencia de transmisión de {tx.name}; no se calcula esa dirección.")
-            elif result.margin_db is None:
-                reasons.append(f"Falta sensibilidad del receptor {result.rx_device_id}.")
-            elif note := sensitivity_note(b if result.rx_device_id == target.id else a, result.rx_device_id):
-                reasons.append(note)
-            elif result.distance_m < 0.1:
-                reasons.append("Distancia inferior a 0.1 m: fuera del alcance del modelo; pérdida acotada.")
-        complete = (forward is not None and reverse is not None and forward.margin_db is not None
-                    and reverse.margin_db is not None and forward.distance_m >= .1)
-        if any(d is not None and d.margin_db is not None and d.margin_db < 0 for d in (forward, reverse)):
-            status = "below-threshold"
-        elif complete and compatibility == "radio-compatible":
-            status = "above-threshold"
-        else:
-            status = "unverified"
-        results.append(LinkResult(id=link.id, compatibility=compatibility, status=status,
-                                  forward=forward, reverse=reverse, reasons=reasons))
+    results = [link_result(project, link) for link in project.links]
+    by_id = {result.id: result for result in results}
     return SimulationResult(engine="quick-estimate", engine_version="0.1.0",
                             input_hash=input_hash(project),
                             elapsed_ms=(time.perf_counter() - started) * 1000,
                             scope="Presupuesto de enlace directo; compatibilidad funcional no evaluada",
-                            limitations=LIMITATIONS, links=results)
+                            limitations=LIMITATIONS, links=results,
+                            access_points=access_point_connections(project, by_id.__getitem__))

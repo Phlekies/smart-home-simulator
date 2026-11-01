@@ -33,6 +33,24 @@
           "minItems": 1,
           "title": "Materials",
           "type": "array"
+        },
+        "power_outlets": {
+          "description": "Power outlets; only placement searches read them, so they never enter input_hash",
+          "items": {
+            "$ref": "#/$defs/Fixture"
+          },
+          "maxItems": 512,
+          "title": "Power Outlets",
+          "type": "array"
+        },
+        "network_ports": {
+          "description": "Wired network sockets for access points with a cable; only placement searches read them",
+          "items": {
+            "$ref": "#/$defs/Fixture"
+          },
+          "maxItems": 512,
+          "title": "Network Ports",
+          "type": "array"
         }
       },
       "required": [
@@ -42,6 +60,59 @@
         "materials"
       ],
       "title": "Building",
+      "type": "object"
+    },
+    "DataConnection": {
+      "additionalProperties": false,
+      "description": "How a device that offers a network reaches the rest of it (B-117). Only wireless hops are evaluated.",
+      "properties": {
+        "kind": {
+          "description": "gateway: the network exit itself (e.g. the ISP router); wired: a declared cable, not evaluated; wireless: a project link carries the data; unknown: not known yet",
+          "enum": [
+            "gateway",
+            "wired",
+            "wireless",
+            "unknown"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "link_id": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The wireless link; required only for 'wireless'",
+          "title": "Link Id"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. Ethernet, PLC, mesh; documentation only",
+          "title": "Note"
+        }
+      },
+      "required": [
+        "kind",
+        "link_id",
+        "note"
+      ],
+      "title": "DataConnection",
       "type": "object"
     },
     "Device": {
@@ -88,6 +159,18 @@
           "default": "User-defined generic device; functional compatibility unverified",
           "title": "Evidence",
           "type": "string"
+        },
+        "data_connection": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DataConnection"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How this device reaches the network. Expected for access points, routers and bridges; None means not defined yet and is reported as such"
         }
       },
       "required": [
@@ -99,6 +182,34 @@
         "evidence"
       ],
       "title": "Device",
+      "type": "object"
+    },
+    "Fixture": {
+      "additionalProperties": false,
+      "description": "A fixed point of the dwelling that limits where equipment can go (B-119).",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Point"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "position"
+      ],
+      "title": "Fixture",
       "type": "object"
     },
     "Link": {

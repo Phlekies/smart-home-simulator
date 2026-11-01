@@ -9,10 +9,16 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import Field, model_validator
+import statistics
 
+from pydantic import ConfigDict, Field, model_validator
+
+from .coverage import MAX_WORK, compute, map_work, preflight
 from .engines import LIMITATIONS, input_hash, simulate
-from .models import DirectionResult, Model, Project, Radio, ScenarioAssumptions, ScenarioRequest
+from .models import (
+    AccessPointConnection, CoverageMapParameters, CoverageMapRequest, CoverageMapResult, DirectionResult, Model,
+    Project, Radio, ScenarioAssumptions, ScenarioRequest, _optional_fields,
+)
 from .scenarios import evaluate as evaluate_scenarios
 
 PENDING_DECISIONS = [
@@ -28,14 +34,30 @@ NOT_EVALUATED = [
 ]
 
 
+MAX_REPORT_MAPS = 4
+
+
 class ReportRequest(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("maps"))
+
     project: Project
     scenarios: list[ScenarioAssumptions] = Field(default_factory=list, max_length=16)
     title: str | None = Field(default=None, max_length=160)
+    maps: list[CoverageMapParameters] = Field(default_factory=list, max_length=MAX_REPORT_MAPS, description=(
+        "Coverage maps to compute and attach (B-120); together they share one map's cost bound"))
 
     @model_validator(mode="after")
     def valid_scenarios(self) -> ReportRequest:
         ScenarioRequest(project=self.project, scenarios=self.scenarios)  # same rules, rejected as 422
+        total = 0
+        for parameters in self.maps:
+            request = CoverageMapRequest(project=self.project, **dict(parameters))
+            if request.engine != "quick-estimate":
+                raise ValueError(f"{request.engine}: map adapter not implemented or verified; no fallback executed")
+            preflight(request)
+            total += map_work(request)
+        if total > MAX_WORK:
+            raise ValueError(f"Los mapas del informe requieren {total} evaluaciones celda×pared (máximo {MAX_WORK}).")
         return self
 
 
@@ -71,7 +93,27 @@ class ReportLink(Model):
     notes: list[str]
 
 
+class MapSummary(Model):
+    """Counts and spread of a map; not a coverage percentage (no failure criterion or design reserve yet)."""
+
+    cells: int
+    computed_cells: int
+    partial_cells: int
+    not_computed_cells: int
+    limiting_margin_db: list[float] | None = Field(description=(
+        "[min, median, max] of the lower margin of both directions over computed cells; None without any"))
+    negative_limiting_cells: int = Field(description="Computed cells whose lower margin is below 0 dB")
+
+
+class ReportMap(Model):
+    title: str
+    summary: MapSummary
+    result: CoverageMapResult = Field(description="Full map, so the report file keeps it for drawing and staleness")
+
+
 class InstallationReport(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("access_points", "maps"))
+
     title: str
     project_name: str
     input_hash: str
@@ -83,6 +125,9 @@ class InstallationReport(Model):
     pending_decisions: list[str]
     not_evaluated: list[str]
     limitations: list[str]
+    access_points: list[AccessPointConnection] = Field(default_factory=list, description=(
+        "Data path of each access point (B-117), as in the simulation result"))
+    maps: list[ReportMap] = Field(default_factory=list, description="Requested coverage maps (B-120)")
 
 
 def _direction(project: Project, result: DirectionResult | None, receiver: Radio) -> ReportDirection | None:
@@ -97,6 +142,20 @@ def _direction(project: Project, result: DirectionResult | None, receiver: Radio
         received_power_dbm=result.received_power_dbm, margin_db=result.margin_db, sensitivity_provenance=origin,
         walls=[ReportWall(wall_id=w, material=materials[walls[w].material_id], door=walls[w].door)
                for w in result.crossed_wall_ids])
+
+
+def _map(project: Project, parameters: CoverageMapParameters) -> ReportMap:
+    result = compute(CoverageMapRequest(project=project, **dict(parameters)))
+    cells = result.cells
+    margins = sorted(min(f, r) for f, r, status in zip(cells.forward_margin_db, cells.reverse_margin_db, cells.status)
+                     if status == "computed")
+    title = (f"{parameters.profile.name} · {parameters.grid.height_m:g} m"
+             + (f" · {parameters.scenario.name}" if parameters.scenario else ""))
+    return ReportMap(title=title, result=result, summary=MapSummary(
+        cells=len(cells.status), computed_cells=result.computed_cells, partial_cells=result.partial_cells,
+        not_computed_cells=result.not_computed_cells,
+        limiting_margin_db=[margins[0], statistics.median(margins), margins[-1]] if margins else None,
+        negative_limiting_cells=sum(margin < 0 for margin in margins)))
 
 
 def build_report(request: ReportRequest) -> InstallationReport:
@@ -140,10 +199,13 @@ def build_report(request: ReportRequest) -> InstallationReport:
         input_hash=input_hash(project), engine=simulation.engine, engine_version=simulation.engine_version,
         scope=simulation.scope + ". El informe no clasifica la cobertura ni recomienda compras.",
         links=links, counts=counts, pending_decisions=PENDING_DECISIONS, not_evaluated=NOT_EVALUATED,
-        limitations=LIMITATIONS)
+        limitations=LIMITATIONS, access_points=simulation.access_points,
+        maps=[_map(project, parameters) for parameters in request.maps])
 
 
 DOOR_LABELS = {"open": "abierta", "closed": "cerrada", "unknown": "estado desconocido"}
+CONNECTION_LABELS = {"gateway": "pasarela", "wired": "cable (no evaluado)", "wireless": "inalámbrica",
+                     "unknown": "desconocida", "undefined": "sin definir", "loop": "bucle"}
 SIGN_LABELS = {"consistent": "mismo signo en todos los escenarios",
                "depends-on-hypotheses": "depende de hipótesis no resueltas",
                "incomplete": "no se puede evaluar (faltan datos)"}
@@ -185,6 +247,39 @@ def to_markdown(report: InstallationReport) -> str:
         if link.hypotheses:
             out.append(f"Hipótesis que le afectan: {_cell(', '.join(link.hypotheses))}.")
         out += [f"- {_cell(note)}" for note in link.notes] + [""]
+    if report.access_points:
+        out += ["## Conexión de datos de los AP", "",
+                "| Equipo | Conexión | Enlaces de datos (margen limitante, dB) | Llega a |", "|---|---|---|---|"]
+        for path in report.access_points:
+            hops = ", ".join(f"{hop.link_id} ({_cell(hop.limiting_margin_db)})" for hop in path.hops) or "—"
+            out.append(f"| {_cell(path.device_id)} | {CONNECTION_LABELS[path.kind]} | {_cell(hops)} | "
+                       f"{CONNECTION_LABELS[path.ends_at]} ({_cell(path.end_device_id)}) |")
+        out.append("")
+        out += [f"- {_cell(reason)}" for path in report.access_points for reason in path.reasons] + [""]
+    if report.maps:
+        out += ["## Mapas de cobertura", "",
+                "Recuentos de celdas, no un porcentaje de cobertura: no hay criterio de fallo ni reserva de diseño. "
+                "La interfaz dibuja cada mapa a partir de su resultado completo.", ""]
+        for item in report.maps:
+            summary, parameters = item.summary, item.result.parameters
+            grid = parameters.grid
+            spread = ("—" if summary.limiting_margin_db is None
+                      else " / ".join(_cell(value) for value in summary.limiting_margin_db))
+            out += [f"### {_cell(item.title)}", "",
+                    f"- AP `{_cell(parameters.access_point_device_id)}` · rejilla {grid.width_m:g} × {grid.depth_m:g} m "
+                    f"cada {grid.resolution_m:g} m · huella `{item.result.request_hash[:12]}`",
+                    f"- Celdas: {summary.cells} · calculadas {summary.computed_cells} · parciales "
+                    f"{summary.partial_cells} · sin calcular {summary.not_computed_cells}",
+                    f"- Margen limitante mínimo / mediana / máximo: {spread} dB · celdas con margen negativo: "
+                    f"{summary.negative_limiting_cells}"]
+            if item.result.points:
+                out += ["", "| Punto (m) | Ida (dBm) | Vuelta (dBm) | Margen ida (dB) | Margen vuelta (dB) | Estado |",
+                        "|---|---:|---:|---:|---:|---|"]
+                for point, sample in zip(parameters.points, item.result.points):
+                    out.append(f"| ({point.x:g}, {point.y:g}, {point.z:g}) | {_cell(sample.forward_dbm)} | "
+                               f"{_cell(sample.reverse_dbm)} | {_cell(sample.forward_margin_db)} | "
+                               f"{_cell(sample.reverse_margin_db)} | {_cell(sample.status)} |")
+            out += ["", *[f"- {_cell(reason)}" for reason in item.result.reasons], ""]
     out += ["## Decisiones pendientes", "", *[f"- {d}" for d in report.pending_decisions], "",
             "## No evaluado", "", *[f"- {n}" for n in report.not_evaluated], "",
             "## Limitaciones del motor", "", *[f"- {_cell(item)}" for item in report.limitations], ""]

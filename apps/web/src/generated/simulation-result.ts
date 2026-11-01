@@ -26,6 +26,43 @@ export type SnrDb = number;
 export type MarginDb = number | null;
 export type Reasons = string[];
 export type Links = LinkResult[];
+export type DeviceId = string;
+export type Kind = "gateway" | "wired" | "wireless" | "unknown" | "undefined";
+export type LinkId = string;
+/**
+ * Device whose data travels over this link
+ */
+export type FromDeviceId = string;
+/**
+ * Next device towards the gateway
+ */
+export type ToDeviceId = string;
+/**
+ * Status of the link in the same simulation
+ */
+export type Status1 = string;
+/**
+ * Lower margin of both directions; None if either is missing
+ */
+export type LimitingMarginDb = number | null;
+/**
+ * Wireless links from this device towards the gateway, in order
+ */
+export type Hops = BackhaulHop[];
+export type EndsAt = "gateway" | "wired" | "unknown" | "undefined" | "loop";
+/**
+ * Last device reached; its connection is 'ends_at'
+ */
+export type EndDeviceId = string;
+/**
+ * Lowest hop margin; None without hops or if one is missing
+ */
+export type WeakestMarginDb = number | null;
+export type Reasons1 = string[];
+/**
+ * Data path of every access point, router or bridge, and of any device with a data connection
+ */
+export type AccessPoints = AccessPointConnection[];
 
 export interface SimulationResult {
   engine: Engine;
@@ -35,6 +72,7 @@ export interface SimulationResult {
   scope: Scope;
   limitations: Limitations;
   links: Links;
+  access_points?: AccessPoints;
 }
 export interface LinkResult {
   id: Id;
@@ -55,4 +93,26 @@ export interface DirectionResult {
   noise_dbm: NoiseDbm;
   snr_db: SnrDb;
   margin_db: MarginDb;
+}
+/**
+ * Data path of a network device: its wireless hops and what the chain reaches. No verdict.
+ */
+export interface AccessPointConnection {
+  device_id: DeviceId;
+  kind: Kind;
+  hops: Hops;
+  ends_at: EndsAt;
+  end_device_id: EndDeviceId;
+  weakest_margin_db: WeakestMarginDb;
+  reasons: Reasons1;
+}
+/**
+ * One wireless link that carries an access point's data towards the gateway.
+ */
+export interface BackhaulHop {
+  link_id: LinkId;
+  from_device_id: FromDeviceId;
+  to_device_id: ToDeviceId;
+  status: Status1;
+  limiting_margin_db: LimitingMarginDb;
 }

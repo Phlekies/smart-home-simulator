@@ -45,6 +45,144 @@ export type Links = ReportLink[];
 export type PendingDecisions = string[];
 export type NotEvaluated = string[];
 export type Limitations = string[];
+export type DeviceId = string;
+export type Kind = "gateway" | "wired" | "wireless" | "unknown" | "undefined";
+export type LinkId1 = string;
+/**
+ * Device whose data travels over this link
+ */
+export type FromDeviceId1 = string;
+/**
+ * Next device towards the gateway
+ */
+export type ToDeviceId1 = string;
+/**
+ * Status of the link in the same simulation
+ */
+export type Status1 = string;
+/**
+ * Lower margin of both directions; None if either is missing
+ */
+export type LimitingMarginDb1 = number | null;
+/**
+ * Wireless links from this device towards the gateway, in order
+ */
+export type Hops = BackhaulHop[];
+export type EndsAt = "gateway" | "wired" | "unknown" | "undefined" | "loop";
+/**
+ * Last device reached; its connection is 'ends_at'
+ */
+export type EndDeviceId = string;
+/**
+ * Lowest hop margin; None without hops or if one is missing
+ */
+export type WeakestMarginDb = number | null;
+export type Reasons = string[];
+/**
+ * Data path of each access point (B-117), as in the simulation result
+ */
+export type AccessPoints = AccessPointConnection[];
+export type Title1 = string;
+export type Cells = number;
+export type ComputedCells = number;
+export type PartialCells = number;
+export type NotComputedCells = number;
+/**
+ * [min, median, max] of the lower margin of both directions over computed cells; None without any
+ */
+export type LimitingMarginDb2 = number[] | null;
+/**
+ * Computed cells whose lower margin is below 0 dB
+ */
+export type NegativeLimitingCells = number;
+export type Engine1 = string;
+export type EngineVersion1 = string;
+/**
+ * Hash of the project (same as simulation results)
+ */
+export type InputHash1 = string;
+/**
+ * Hash of the project and every map parameter
+ */
+export type RequestHash = string;
+export type AccessPointDeviceId = string;
+export type AccessPointRadioId = string;
+export type Id = string;
+export type Name = string;
+export type Id1 = string;
+export type Protocol = "wifi" | "thread" | "zigbee" | "ble" | "zwave" | "unknown";
+export type FrequencyHz = number;
+export type BandwidthHz = number;
+export type Channel = number | null;
+export type TxPowerDbm = number | null;
+export type TxGainDbi = number;
+export type RxGainDbi = number;
+export type SensitivityDbm = number | null;
+export type NoiseFigureDb = number;
+export type Antenna = "omnidirectional" | "directional";
+export type OrientationDeg = number;
+export type BeamwidthDeg = number;
+export type PatternSharpness = number;
+export type SideLobeAttenuationDb = number;
+export type PolarizationDeg = number;
+/**
+ * Optional origin of each value. 'unknown' requires an empty value; measured/declared require one.
+ */
+export type Provenance = {
+  [k: string]: RadioValueSource;
+} | null;
+export type Provenance1 = "measured" | "declared" | "standard-minimum" | "inferred" | "unknown";
+export type Source = string | null;
+export type Evidence = string;
+export type OriginXM = number;
+export type OriginYM = number;
+export type WidthM = number;
+export type DepthM = number;
+export type ResolutionM = number;
+export type HeightM = number;
+export type X = number;
+export type Y = number;
+export type Z = number;
+/**
+ * Exact positions evaluated without snapping to the grid
+ *
+ * @maxItems 256
+ */
+export type Points = Point[];
+export type Engine2 = "quick-estimate" | "sionna-rt" | "ns-3";
+export type Id2 = string;
+export type Name1 = string;
+export type Metric = "direct-path-received-power";
+export type FrequencyHz1 = number;
+export type Compatibility1 = "radio-compatible" | "unverified";
+export type Columns = number;
+export type Rows = number;
+export type ForwardDbm = (number | null)[];
+export type ReverseDbm = (number | null)[];
+export type ForwardMarginDb = (number | null)[];
+export type ReverseMarginDb = (number | null)[];
+export type Status2 = ("computed" | "partial" | "not-computed")[];
+export type ForwardDbm1 = number | null;
+export type ReverseDbm1 = number | null;
+export type ForwardMarginDb1 = number | null;
+export type ReverseMarginDb1 = number | null;
+export type Status3 = "computed" | "partial" | "not-computed";
+export type Reason = string | null;
+export type Points1 = CoverageSample[];
+export type ComputedCells1 = number;
+export type PartialCells1 = number;
+export type NotComputedCells1 = number;
+export type ElapsedMs = number;
+export type Scope1 = string;
+export type Limitations1 = string[];
+/**
+ * Map-level notes: missing data, unverified compatibility, etc.
+ */
+export type Reasons1 = string[];
+/**
+ * Requested coverage maps (B-120)
+ */
+export type Maps = ReportMap[];
 
 export interface InstallationReport {
   title: Title;
@@ -58,6 +196,8 @@ export interface InstallationReport {
   pending_decisions: PendingDecisions;
   not_evaluated: NotEvaluated;
   limitations: Limitations;
+  access_points?: AccessPoints;
+  maps?: Maps;
 }
 export interface ReportLink {
   link_id: LinkId;
@@ -90,4 +230,170 @@ export interface ReportWall {
 }
 export interface Counts {
   [k: string]: number;
+}
+/**
+ * Data path of a network device: its wireless hops and what the chain reaches. No verdict.
+ */
+export interface AccessPointConnection {
+  device_id: DeviceId;
+  kind: Kind;
+  hops: Hops;
+  ends_at: EndsAt;
+  end_device_id: EndDeviceId;
+  weakest_margin_db: WeakestMarginDb;
+  reasons: Reasons;
+}
+/**
+ * One wireless link that carries an access point's data towards the gateway.
+ */
+export interface BackhaulHop {
+  link_id: LinkId1;
+  from_device_id: FromDeviceId1;
+  to_device_id: ToDeviceId1;
+  status: Status1;
+  limiting_margin_db: LimitingMarginDb1;
+}
+export interface ReportMap {
+  title: Title1;
+  summary: MapSummary;
+  result: CoverageMapResult;
+}
+/**
+ * Counts and spread of a map; not a coverage percentage (no failure criterion or design reserve yet).
+ */
+export interface MapSummary {
+  cells: Cells;
+  computed_cells: ComputedCells;
+  partial_cells: PartialCells;
+  not_computed_cells: NotComputedCells;
+  limiting_margin_db: LimitingMarginDb2;
+  negative_limiting_cells: NegativeLimitingCells;
+}
+/**
+ * Full map, so the report file keeps it for drawing and staleness
+ */
+export interface CoverageMapResult {
+  engine: Engine1;
+  engine_version: EngineVersion1;
+  input_hash: InputHash1;
+  request_hash: RequestHash;
+  parameters: CoverageMapParameters;
+  metric: Metric;
+  frequency_hz: FrequencyHz1;
+  compatibility: Compatibility1;
+  columns: Columns;
+  rows: Rows;
+  cells: CoverageCells;
+  points: Points1;
+  computed_cells: ComputedCells1;
+  partial_cells: PartialCells1;
+  not_computed_cells: NotComputedCells1;
+  elapsed_ms: ElapsedMs;
+  scope: Scope1;
+  limitations: Limitations1;
+  reasons: Reasons1;
+}
+/**
+ * Everything that defines a map except the project; echoed in the result for staleness checks.
+ */
+export interface CoverageMapParameters {
+  access_point_device_id: AccessPointDeviceId;
+  access_point_radio_id: AccessPointRadioId;
+  profile: ReceiverProfile;
+  grid: MapGrid;
+  points: Points;
+  engine: Engine2;
+  /**
+   * Door states and material bounds applied to every cell, e.g. the best or worst case of /api/scenario-simulations; None evaluates the project as it is
+   */
+  scenario?: ScenarioAssumptions | null;
+}
+/**
+ * Radio of the candidate device as it would be installed; drives both link directions.
+ */
+export interface ReceiverProfile {
+  id: Id;
+  name: Name;
+  radio: Radio;
+  evidence: Evidence;
+}
+export interface Radio {
+  id: Id1;
+  protocol: Protocol;
+  frequency_hz: FrequencyHz;
+  bandwidth_hz: BandwidthHz;
+  channel: Channel;
+  tx_power_dbm: TxPowerDbm;
+  tx_gain_dbi: TxGainDbi;
+  rx_gain_dbi: RxGainDbi;
+  sensitivity_dbm: SensitivityDbm;
+  noise_figure_db: NoiseFigureDb;
+  antenna: Antenna;
+  orientation_deg: OrientationDeg;
+  beamwidth_deg: BeamwidthDeg;
+  pattern_sharpness: PatternSharpness;
+  side_lobe_attenuation_db: SideLobeAttenuationDb;
+  polarization_deg: PolarizationDeg;
+  provenance?: Provenance;
+}
+/**
+ * Where one radio value comes from; documentation only, never a solver input.
+ */
+export interface RadioValueSource {
+  provenance: Provenance1;
+  source: Source;
+}
+/**
+ * Horizontal sampling plane. Cell (i, j) is evaluated at its centre:
+ * x = origin_x_m + (i + 0.5)·resolution_m, y = origin_y_m + (j + 0.5)·resolution_m, z = height_m.
+ * Edge cells narrower than resolution_m use the centre of their clipped extent.
+ */
+export interface MapGrid {
+  origin_x_m: OriginXM;
+  origin_y_m: OriginYM;
+  width_m: WidthM;
+  depth_m: DepthM;
+  resolution_m: ResolutionM;
+  height_m: HeightM;
+}
+export interface Point {
+  x: X;
+  y: Y;
+  z: Z;
+}
+/**
+ * Named scenario: door states and material bounds that replace the nominal project values.
+ */
+export interface ScenarioAssumptions {
+  id: Id2;
+  name: Name1;
+  doors: Doors;
+  materials: Materials;
+}
+export interface Doors {
+  [k: string]: "open" | "closed";
+}
+export interface Materials {
+  [k: string]: "low" | "nominal" | "high";
+}
+/**
+ * Row-major arrays (index = j·columns + i), one entry per cell, same meaning as CoverageSample.
+ */
+export interface CoverageCells {
+  forward_dbm: ForwardDbm;
+  reverse_dbm: ReverseDbm;
+  forward_margin_db: ForwardMarginDb;
+  reverse_margin_db: ReverseMarginDb;
+  status: Status2;
+}
+/**
+ * One evaluated position. Forward is AP→profile, reverse is profile→AP; no classification.
+ */
+export interface CoverageSample {
+  forward_dbm: ForwardDbm1;
+  reverse_dbm: ReverseDbm1;
+  forward_margin_db: ForwardMarginDb1;
+  reverse_margin_db: ReverseMarginDb1;
+  status: Status3;
+  reason: Reason;
 }
