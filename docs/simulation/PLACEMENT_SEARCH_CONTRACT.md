@@ -50,7 +50,9 @@ Parámetros:
 - **Por lugar:** equipos completos, peor margen y su equipo, media, y `delta_worst_margin_db`
   frente a la línea base (solo si ambos tienen los mismos equipos completos).
 - `ranked = false` si ningún lugar tiene márgenes completos: los candidatos se devuelven sin ordenar.
-- Se excluyen, con su motivo, los lugares dentro del grosor de una pared (`inside-wall:<id>`) y los que
+- Se excluyen, con su motivo, los lugares dentro del grosor de una pared (`inside-wall:<id>`), los que
+  quedan por encima o por debajo de todas las paredes (`outside-wall-heights:<base>-<techo>m`, B-122):
+  allí no se atraviesa nada y parecerían falsamente buenos; y los que
   quedan fuera del alcance de enchufes o tomas (`no-power-outlet-within:<m>m`,
   `no-network-port-within:<m>m`). Se devuelven los 50 mejores.
 - **Enlace de datos del AP (B-117):** si el AP tiene una conexión `wireless`, ese enlace se evalúa

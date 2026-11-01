@@ -20,11 +20,12 @@ from concurrent.futures import ThreadPoolExecutor
 from .backhaul import connection, is_network_device, path_note
 from .cache import ResultCache
 
-from .engines import LIMITATIONS, direction, input_hash, link_result, radio_pair_check
+from .engines import (  # inside_wall is re-exported for placement and older imports
+    LIMITATIONS, direction, geometry_issue, input_hash, inside_wall, link_result, radio_pair_check, wall_heights,
+)
 from .models import (
     CoverageCells, CoverageMapJob, CoverageMapRequest, CoverageMapResult, CoverageSample, Device, Point, Project,
     ScenarioAssumptions,
-    Wall,
 )
 
 ENGINE_VERSION = "0.1.0"
@@ -69,16 +70,6 @@ def preflight(request: CoverageMapRequest) -> None:
                                  "aumenta la resolución, reduce el área o el número de paredes.")
 
 
-def inside_wall(point: Point, wall: Wall) -> bool:
-    """Point within half the wall thickness of its centre line and within its height."""
-    if not wall.start.z <= point.z <= wall.start.z + wall.height_m:
-        return False
-    ax, ay, bx, by = wall.start.x, wall.start.y, wall.end.x, wall.end.y
-    length_sq = (bx - ax) ** 2 + (by - ay) ** 2
-    t = max(0.0, min(1.0, ((point.x - ax) * (bx - ax) + (point.y - ay) * (by - ay)) / length_sq))
-    return math.hypot(point.x - (ax + t * (bx - ax)), point.y - (ay + t * (by - ay))) < wall.thickness_m / 2
-
-
 def evaluate(project: Project, ap: Device, ap_radio, profile_radio, point: Point,
              scenario: ScenarioAssumptions | None = None) -> CoverageSample:
     for wall in project.building.walls:
@@ -116,6 +107,12 @@ def compute(request: CoverageMapRequest, progress: Callable[[float], None] = lam
         reasons.append("Falta la potencia de transmisión del perfil: sentido equipo→AP no calculado.")
     if profile_radio.sensitivity_dbm is None or ap_radio.sensitivity_dbm is None:
         reasons.append("Falta alguna sensibilidad: los márgenes de ese sentido no se calculan.")
+    if issue := geometry_issue(project, ap.position, ap.name):
+        reasons.append(issue)
+    if (heights := wall_heights(project)) is not None and not heights[0] <= grid.height_m <= heights[1]:
+        reasons.append(f"La altura del mapa ({grid.height_m:g} m) queda fuera de las paredes ({heights[0]:g}–"
+                       f"{heights[1]:g} m): las celdas no atraviesan paredes ni forjados modelados y sus valores "
+                       "no describen esa planta.")
     if is_network_device(ap):
         links = {link.id: link for link in project.links}
         path = connection(project, ap, lambda link_id: link_result(project, links[link_id]))

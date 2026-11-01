@@ -1,0 +1,322 @@
+{
+  "$defs": {
+    "BudgetTerm": {
+      "additionalProperties": false,
+      "properties": {
+        "term": {
+          "enum": [
+            "tx_power",
+            "tx_antenna_gain",
+            "rx_antenna_gain",
+            "system_gain",
+            "path_loss",
+            "walls",
+            "extra_loss",
+            "polarization"
+          ],
+          "title": "Term",
+          "type": "string"
+        },
+        "base_db": {
+          "description": "Contribution to the received power in the base version (losses negative)",
+          "title": "Base Db",
+          "type": "number"
+        },
+        "alternative_db": {
+          "title": "Alternative Db",
+          "type": "number"
+        },
+        "change_db": {
+          "description": "alternative − base; the terms add up to the change of received power",
+          "title": "Change Db",
+          "type": "number"
+        }
+      },
+      "required": [
+        "term",
+        "base_db",
+        "alternative_db",
+        "change_db"
+      ],
+      "title": "BudgetTerm",
+      "type": "object"
+    },
+    "DirectionDifference": {
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "enum": [
+            "forward",
+            "reverse"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "base_dbm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Base Dbm"
+        },
+        "alternative_dbm": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Alternative Dbm"
+        },
+        "change_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Change Db"
+        },
+        "base_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Base Margin Db"
+        },
+        "alternative_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Alternative Margin Db"
+        },
+        "terms": {
+          "description": "Empty when either version lacks this direction",
+          "items": {
+            "$ref": "#/$defs/BudgetTerm"
+          },
+          "title": "Terms",
+          "type": "array"
+        },
+        "walls": {
+          "items": {
+            "$ref": "#/$defs/WallChange"
+          },
+          "title": "Walls",
+          "type": "array"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "direction",
+        "base_dbm",
+        "alternative_dbm",
+        "change_db",
+        "base_margin_db",
+        "alternative_margin_db",
+        "terms",
+        "walls",
+        "reason"
+      ],
+      "title": "DirectionDifference",
+      "type": "object"
+    },
+    "LinkDifference": {
+      "additionalProperties": false,
+      "properties": {
+        "link_id": {
+          "title": "Link Id",
+          "type": "string"
+        },
+        "base_status": {
+          "title": "Base Status",
+          "type": "string"
+        },
+        "alternative_status": {
+          "title": "Alternative Status",
+          "type": "string"
+        },
+        "forward": {
+          "$ref": "#/$defs/DirectionDifference"
+        },
+        "reverse": {
+          "$ref": "#/$defs/DirectionDifference"
+        },
+        "base_limiting_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Base Limiting Margin Db"
+        },
+        "alternative_limiting_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Alternative Limiting Margin Db"
+        },
+        "limiting_change_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Limiting Change Db"
+        },
+        "residual_risks": {
+          "description": "What the alternative still rests on; no probabilities",
+          "items": {
+            "type": "string"
+          },
+          "title": "Residual Risks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "link_id",
+        "base_status",
+        "alternative_status",
+        "forward",
+        "reverse",
+        "base_limiting_margin_db",
+        "alternative_limiting_margin_db",
+        "limiting_change_db",
+        "residual_risks"
+      ],
+      "title": "LinkDifference",
+      "type": "object"
+    },
+    "WallChange": {
+      "additionalProperties": false,
+      "properties": {
+        "wall_id": {
+          "title": "Wall Id",
+          "type": "string"
+        },
+        "change": {
+          "enum": [
+            "no-longer-crossed",
+            "newly-crossed",
+            "loss-changed"
+          ],
+          "title": "Change",
+          "type": "string"
+        },
+        "change_db": {
+          "description": "Effect on the received power (positive helps)",
+          "title": "Change Db",
+          "type": "number"
+        }
+      },
+      "required": [
+        "wall_id",
+        "change",
+        "change_db"
+      ],
+      "title": "WallChange",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "engine": {
+      "title": "Engine",
+      "type": "string"
+    },
+    "engine_version": {
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "base_hash": {
+      "title": "Base Hash",
+      "type": "string"
+    },
+    "alternative_hash": {
+      "title": "Alternative Hash",
+      "type": "string"
+    },
+    "links": {
+      "items": {
+        "$ref": "#/$defs/LinkDifference"
+      },
+      "title": "Links",
+      "type": "array"
+    },
+    "unmatched_link_ids": {
+      "description": "Links missing in one version or with different ends",
+      "items": {
+        "type": "string"
+      },
+      "title": "Unmatched Link Ids",
+      "type": "array"
+    },
+    "elapsed_ms": {
+      "title": "Elapsed Ms",
+      "type": "number"
+    },
+    "scope": {
+      "title": "Scope",
+      "type": "string"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "engine",
+    "engine_version",
+    "base_hash",
+    "alternative_hash",
+    "links",
+    "unmatched_link_ids",
+    "elapsed_ms",
+    "scope",
+    "limitations"
+  ],
+  "title": "DifferenceResult",
+  "type": "object"
+}

@@ -42,6 +42,10 @@ export type PredictedDbm = number;
  */
 export type ResidualDb = number;
 export type Assumptions = string[];
+/**
+ * Kind of the instrument at the device position (B-124); anything but the candidate is a stand-in
+ */
+export type DeviceInstrumentKind = string | null;
 export type CampaignId2 = string;
 export type PointId2 = string;
 export type Direction2 = ("ap-to-device" | "device-to-ap") | null;
@@ -105,6 +109,7 @@ export interface PointResidual {
   predicted_dbm: PredictedDbm;
   residual_db: ResidualDb;
   assumptions: Assumptions;
+  device_instrument_kind?: DeviceInstrumentKind;
 }
 export interface SkippedObservation {
   campaign_id: CampaignId2;

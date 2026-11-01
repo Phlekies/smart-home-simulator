@@ -20,11 +20,13 @@ import sys
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field
+from pydantic import ConfigDict, Field
 
 from .engines import direction
-from .measurements import MeasurementCampaign, partition_issues, project_issues, summarize
-from .models import Device, Model, Point, Project, Radio, ScenarioAssumptions
+from .measurements import (
+    MeasurementCampaign, instrument_notes, partition_issues, project_issues, stand_in, summarize,
+)
+from .models import Device, Model, Point, Project, Radio, ScenarioAssumptions, _optional_fields
 
 Direction = Literal["ap-to-device", "device-to-ap"]
 
@@ -34,6 +36,8 @@ class CalibrationError(ValueError):
 
 
 class PointResidual(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("device_instrument_kind"))
+
     campaign_id: str
     site_id: str
     split: str
@@ -44,6 +48,8 @@ class PointResidual(Model):
     predicted_dbm: float
     residual_db: float = Field(description="measured − predicted")
     assumptions: list[str]
+    device_instrument_kind: str | None = Field(default=None, description=(
+        "Kind of the instrument at the device position (B-124); anything but the candidate is a stand-in"))
 
 
 class SkippedObservation(Model):
@@ -112,6 +118,8 @@ def residuals(campaign: MeasurementCampaign, project: Project) -> tuple[list[Poi
             assumptions.append("ganancia de antena del AP desconocida: 0 dBi")
         if dev_gain is None:
             assumptions.append("ganancia de antena del instrumento desconocida: 0 dBi")
+        if note := stand_in(device_instrument):
+            assumptions.append(note)
         ap_radio = Radio(id="ap", protocol="wifi", frequency_hz=setup.frequency_hz, channel=setup.channel,
                          bandwidth_hz=setup.bandwidth_hz, tx_power_dbm=ap_power,
                          tx_gain_dbi=ap_gain or 0, rx_gain_dbi=ap_gain or 0)
@@ -145,7 +153,7 @@ def residuals(campaign: MeasurementCampaign, project: Project) -> tuple[list[Poi
                                      samples=len(observation.samples_dbm), measured_median_dbm=measured,
                                      predicted_dbm=predicted.received_power_dbm,
                                      residual_db=measured - predicted.received_power_dbm,
-                                     assumptions=assumptions))
+                                     assumptions=assumptions, device_instrument_kind=device_instrument.kind))
     return out, skipped
 
 
@@ -165,6 +173,7 @@ def calibrate(pairs: list[tuple[MeasurementCampaign, Project]]) -> CalibrationRe
              "Las métricas de validación usan solo viviendas que no intervienen en el ajuste."]
     if offset is None:
         notes.append("Sin puntos de calibración: no se ajusta nada.")
+    notes += list(dict.fromkeys(note for campaign in campaigns for note in instrument_notes(campaign)))
     before, after = [], []
     for name in ("ap-to-device", "device-to-ap", "all"):
         values = [r.residual_db for r in all_residuals
@@ -259,6 +268,7 @@ def check(request: MeasurementCheckRequest) -> MeasurementCheckResult:
         else:
             found, skipped = residuals(campaign, project)
             notes.append("Residuos = medido − predicho por el estimador rápido; no son una validación.")
+    notes += instrument_notes(campaign)
     return MeasurementCheckResult(
         campaign_id=campaign.id, site_id=campaign.site_id, split=campaign.split, synthetic=campaign.synthetic,
         points=counts, summary=[PointSummary.model_validate(row) for row in summarize(campaign)],
