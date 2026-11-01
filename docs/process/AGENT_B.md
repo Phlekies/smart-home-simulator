@@ -5,14 +5,21 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — I-005 (revisión de A-109…A-113, PR #14) publicada en [PR #16](https://github.com/Phlekies/smart-home-simulator/pull/16) en borrador,
-  apilado sobre #15. Sin tarea nueva reservada.
-- Pendiente del usuario: merges #11 → #13 → #15 → #16 (cambiando bases a `main`) y #14 (incluye #12).
-  El control de permisos impide a esta sesión fusionar o cambiar la base de PR ajenos.
+- Estado: **review** — B-117…B-121 en la rama local `agent-b/b-117-121`, apilada sobre #16.
+  Pendiente de publicar si el usuario lo autoriza.
+- Contratos (todos aditivos y opcionales; ningún consumidor existente cambia):
+  `Device.data_connection`, `Building.power_outlets`/`network_ports` (fuera de `input_hash`),
+  `PlacementSearchParameters.max_power_distance_m`/`max_network_distance_m`, `TargetEvaluation.backhaul`,
+  `SimulationResult.access_points`, `GenericProfile.roles`, `ReportRequest.maps`,
+  `InstallationReport.maps`/`access_points`; ruta nueva `POST /api/profiles/{id}/radio`.
+- Trabajo que necesitará A (sin bloquear): editor de la conexión de datos, enchufes y tomas, perfiles de AP,
+  mapas en la descarga del informe.
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
 - Rama/worktree: clon B; no escribe en el checkout ni en los worktrees de A.
-- Última actualización: 2026-10-31 (Europe/Madrid).
-- Archivos reservados: documentos comunes de integración y este registro.
+- Última actualización: 2026-11-01 (Europe/Madrid).
+- Archivos reservados: `services/simulator/**`, `scripts/export_contracts.py`, `contracts/**`,
+  `apps/web/src/generated/**` solo por generación, `docs/simulation/**`, documentos comunes de
+  integración y este registro.
 
 ## Plantilla de entrega — completar al trabajar
 
@@ -30,6 +37,33 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### B-117…B-121 — conexión de datos, perfiles de AP, cableado, mapas en el informe y paridad Java (review)
+
+```text
+Tareas / estado: B-117…B-121 / review. Rama local agent-b/b-117-121 sobre #16. 2026-11-01, Europe/Madrid.
+B-117: DataConnection en Device (gateway, wired, wireless con link_id, unknown); backhaul.py recorre los
+  saltos inalámbricos hasta la pasarela con el margen limitante de cada uno; SimulationResult.access_points;
+  la búsqueda evalúa siempre el enlace de datos del AP movido (TargetEvaluation.backhaul); notas en mapas
+  e informe. El campo solo entra en input_hash si se define.
+B-118: perfiles wifi4-ht20-ap-mcs0/3/7 (potencia desconocida; límite UE 20 dBm PIRE solo como nota, de
+  resúmenes no cotejados); GenericProfile.roles y radio(); POST /api/profiles/{id}/radio; GET /api/profiles
+  devuelve clientes por defecto (?role=access-point para AP). Tabla HT: búsqueda sin fuente primaria pública.
+B-119: Building.power_outlets/network_ports (fuera de input_hash, dentro de request_hash de la búsqueda);
+  max_power_distance_m / max_network_distance_m descartan por distancia en línea recta, con motivo.
+B-120: ReportRequest.maps (≤ 4, coste compartido de un mapa); ReportMap con resultado completo y resumen sin
+  porcentaje; sección Markdown con puntos exactos.
+B-121: arnés Java compilado en un directorio temporal (Java sin modificar, JDK 22.0.2 ya instalado); 76 sondas
+  de antena y polarización ≤ 0.0022 dB; contraste multipath en JAVA_PARITY.md y evidencia JSON.
+Contratos: solo campos opcionales y una ruta nueva; tipos regenerados (los 9 .ts generados).
+Comandos: pytest 356; export --check sin deriva; npm test 84; build correcto; git diff --check limpio.
+  Rama de #14 (A) con los tipos nuevos en un worktree temporal: 120 pruebas y build correctos; worktree
+  eliminado (primero el enlace a node_modules).
+Sin cambios de interfaz: no hay recorrido de navegador que verificar en esta entrega.
+Solicitud a A: editor de la conexión de datos y vista de access_points; «Aplicar perfil de AP» por canal;
+  marcar enchufes y tomas y los dos límites de la búsqueda; dibujar maps[].result en la descarga del informe.
+Siguiente paso: publicar si el usuario lo autoriza; merges pendientes del usuario (#11 → #13 → #15 → #16, #14).
+```
 
 ### I-005 — revisión de A-109…A-113 (review)
 

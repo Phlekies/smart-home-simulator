@@ -58,10 +58,10 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 ## M3 — Sustitución del motor
 
 - [x] Candidato avanzado ejecutado, versiones y entorno CPU/GPU documentados (Sionna RT 2.2.0 en WSL/CPU; Windows nativo y GPU documentados como no disponibles; B-102).
-- [ ] Conversión de unidades, ejes, geometría, radios y materiales probada (parcial B-102: unidades, ejes, paredes y materiales ITU; antenas direccionales y polarizaciones distintas pendientes).
+- [ ] Conversión de unidades, ejes, geometría, radios y materiales probada (B-102: unidades, ejes, paredes y materiales ITU; B-121 en revisión: antenas direccionales y polarizaciones iguales a Java en 76 sondas).
 - [x] Interacciones físicas y omisiones de la versión seleccionada documentadas (B-102).
 - [x] Espacio libre, pared y reflexión contrastados con referencias (B-101 + B-102: 18/18).
-- [ ] Diferencias respecto a Java explicadas; errores antiguos no se conservan como requisito (parcial: tabla de materiales y fase de reflexión documentadas; motor multipath Java no contrastado).
+- [ ] Diferencias respecto a Java explicadas; errores antiguos no se conservan como requisito (tabla de materiales y fase de reflexión documentadas; contraste con el multipath Java en B-121, en revisión).
 - [x] Progreso, cancelación, caché y límites para cálculo pesado (B-103: progreso, cancelación y límites de mapas; B-105: búsqueda acotada; B-110: caché en memoria por hash de petición).
 - [x] Benchmark inicial reproducible de tiempo y memoria (script y evidencia JSON de B-102; un equipo, una ejecución).
 
@@ -72,7 +72,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] AP/emisor y receptor/perfil identificados en cada resultado (B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
 - [x] Energía agregada no se presenta como señal de una conexión (un AP por mapa; B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
 - [ ] Comparación de posiciones y optimización básica con restricciones (comparación manual A-105 y API de lugares permitidos B-105 en `main`; interfaz A-110 en #14, revisada).
-- [ ] Mapas guardables y resultados invalidados al editar (invalidación verificada en A-104; los mapas son de sesión y no se guardan).
+- [ ] Mapas guardables y resultados invalidados al editar (invalidación verificada en A-104; los mapas son de sesión; B-120, en revisión, los guarda completos dentro del informe).
 - [ ] Predicción técnica separada de recomendación de compra validada.
 
 ## M5 — Cierre técnico

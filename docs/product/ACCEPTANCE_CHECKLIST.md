@@ -5,7 +5,7 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 
 ## P0 — Requisitos y evidencia
 
-- [ ] Perfiles iniciales Wi-Fi 2.4 GHz con parámetros de AP/cliente y procedencia (parcial: perfiles de cliente B-106 en `main`; tabla HT sin cotejar; sin perfiles de AP ni interfaz).
+- [ ] Perfiles iniciales Wi-Fi 2.4 GHz con parámetros de AP/cliente y procedencia (parcial: perfiles de cliente B-106 en `main`; perfiles de AP B-118 en revisión; tabla HT sin fuente primaria; sin interfaz de perfiles de AP).
 - [ ] Configuración/modo de radio y requisitos por perfil documentados (modo documentado en B-106; requisito de enlace pendiente del criterio de fallo).
 - [ ] Desconocidos y valores inferidos diferenciados de datos medidos (contrato: medidas B-101, perfiles B-106 y procedencia por parámetro de radio B-113; falta mostrarlo en la interfaz).
 - [ ] Protocolo de medida piloto y criterio activo de fallo del enlace (protocolo B-101 en `main`; umbral del criterio pendiente de decisión del usuario).
@@ -37,8 +37,8 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 
 - [ ] Comparación base/alternativa conserva perfiles y condiciones equivalentes.
 - [ ] Mover AP/equipo/altura ofrece diferencia de señal y margen limitante.
-- [ ] Añadir AP exige definir su conexión de datos.
-- [ ] Lugares permitidos, enchufes y cableado limitan la búsqueda.
+- [ ] Añadir AP exige definir su conexión de datos (API B-117 en revisión: sin definir se avisa; falta el editor en la interfaz).
+- [ ] Lugares permitidos, enchufes y cableado limitan la búsqueda (lugares B-105 en `main`; enchufes y tomas B-119 en revisión; falta marcarlos en la interfaz).
 - [ ] Se evalúan ubicaciones prioritarias, no solo el porcentaje de suelo cubierto.
 - [ ] La explicación identifica mejoras y riesgos residuales sin atribuciones causales falsas.
 - [ ] Sin recomendar compra de modelo con datos/compatibilidad de radio sin verificar.
@@ -59,7 +59,7 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 - [ ] Persona nueva completa vivienda→equipo→ubicación→diagnóstico→alternativa→informe.
 - [ ] Puede explorar sin haber comprado toda la domótica.
 - [ ] Si usa móvil como medida, se explica su diferencia respecto al equipo candidato.
-- [ ] Informe conserva versiones, escenario, perfil, supuestos y datos pendientes (API B-115 en JSON/Markdown; falta la descarga en la interfaz y adjuntar mapas).
+- [ ] Informe conserva versiones, escenario, perfil, supuestos y datos pendientes (API B-115 en JSON/Markdown; mapas en el informe B-120 en revisión; falta la descarga en la interfaz).
 - [ ] Guardado/recuperación, accesibilidad e instalación local comprobados.
 - [ ] Se distingue predicción de medidas reales y rendimiento no evaluado.
 - [ ] Las extensiones sin validar no se anuncian como soportadas.
