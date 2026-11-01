@@ -33,7 +33,7 @@ dependencies {
     implementation("org.kordamp.ikonli:ikonli-material2-pack:12.4.0") { exclude(group = "org.openjfx") }
 
     // Project files are stored as JSON.
-    implementation("tools.jackson.core:jackson-databind:3.2.3")
+    implementation("tools.jackson.core:jackson-databind:3.2.4")
 
     testImplementation(platform("org.junit:junit-bom:6.1.3"))
     testImplementation("org.junit.jupiter:junit-jupiter")
