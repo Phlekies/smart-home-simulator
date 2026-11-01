@@ -9,7 +9,7 @@ nueva, con qué motor y con qué evidencia. Remite a cada contrato y no sustituy
 | Dónde | Qué contiene |
 |---|---|
 | `main` | Hasta #10 inclusive: base de migración, importación Java, estimador directo, editor (A-101…A-108), casos de referencia y evaluación de Sionna (B-101…B-104), búsqueda de ubicación y perfiles de cliente (B-105/B-106), escenarios (B-108) y mapas en la interfaz (A-104) |
-| En revisión (PR en borrador) | #11 (documentos y matriz Java) → #13 (B-109…B-112) → #15 (B-113…B-116) → #16 (revisión I-005) → #17 (B-117…B-121) → B-122…B-125. Interfaz de A: #12 y #14 (A-102, A-109…A-113) |
+| En revisión (PR en borrador) | #11 (documentos y matriz Java) → #13 (B-109…B-112) → #15 (B-113…B-116) → #16 (revisión I-005) → #17 (B-117…B-121) → #22 (B-122…B-125). Interfaz de A: #12 y #14 (A-102, A-109…A-113) |
 
 Lo que solo está en revisión **no** está en `main` hasta que el usuario fusione esos PR.
 

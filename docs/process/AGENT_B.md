@@ -5,9 +5,10 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — B-117…B-121 publicadas en [PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17) en borrador, apilado sobre #16.
-  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 (cambiando bases a `main`) y #14.
-- **review** — B-122…B-125 (rama local `agent-b/b-122-125`, apilada sobre #17), pendiente de publicar:
+- Estado: **review** — B-117…B-121 en [PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17) y B-122…B-125 en [PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), ambos en borrador.
+  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 (cambiando bases a `main`) y #14.
+  PR #18–#21 son de Dependabot (acciones de CI y Gradle): sin revisar ni fusionar por B.
+- **review** — B-122…B-125 ([PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), apilado sobre #17):
   - **B-122** geometría fuera del modelo (equipo dentro de una pared, por encima o por debajo de todas las
     paredes) sin conclusión favorable; lugares de búsqueda por encima de las paredes descartados.
   - **B-123** diferencia exacta entre dos versiones del proyecto por enlace y sentido: términos del
@@ -68,8 +69,9 @@ Comandos: pytest 373; export --check sin deriva; 10 .ts regenerados; npm test 84
 Sin cambios de interfaz: no hay recorrido de navegador que verificar en esta entrega.
 Solicitud a A: añadir link-difference.ts al script contracts y mostrar la diferencia en la comparación
   (A-105/A-110) con lenguaje de modelo; mostrar notas de instrumentos al importar campañas.
-Siguiente paso: publicar si el usuario lo autoriza. Lo restante depende del usuario (merges, umbral del
-  criterio de fallo, medidas reales) o de A (interfaz).
+Publicación: PR #22 en borrador, apilado sobre #17, por autorización del usuario.
+Siguiente paso: lo restante depende del usuario (merges, umbral del criterio de fallo, medidas reales)
+  o de A (interfaz).
 ```
 
 ### B-117…B-121 — conexión de datos, perfiles de AP, cableado, mapas en el informe y paridad Java (review)

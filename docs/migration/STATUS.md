@@ -27,7 +27,7 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
   parámetro, mapas con escenario, informe por enlace y comprobación de medidas. Ver secciones inferiores.
 - En revisión: B-117…B-121 ([PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17), sobre #16): conexión de datos de los AP,
   perfiles de AP, enchufes y tomas en la búsqueda, mapas en el informe y paridad con Java.
-- En revisión local: B-122…B-125 (rama `agent-b/b-122-125`, sobre #17): geometría fuera del
+- En revisión: B-122…B-125 ([PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), sobre #17): geometría fuera del
   modelo, diferencias exactas entre versiones, medidas con móvil y
   [ámbito real y motores](SCOPE_AND_ENGINES.md).
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
