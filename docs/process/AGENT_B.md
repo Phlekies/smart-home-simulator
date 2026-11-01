@@ -5,8 +5,8 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — B-117…B-121 en la rama local `agent-b/b-117-121`, apilada sobre #16.
-  Pendiente de publicar si el usuario lo autoriza.
+- Estado: **review** — B-117…B-121 publicadas en [PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17) en borrador, apilado sobre #16.
+  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 (cambiando bases a `main`) y #14.
 - Contratos (todos aditivos y opcionales; ningún consumidor existente cambia):
   `Device.data_connection`, `Building.power_outlets`/`network_ports` (fuera de `input_hash`),
   `PlacementSearchParameters.max_power_distance_m`/`max_network_distance_m`, `TargetEvaluation.backhaul`,
@@ -62,7 +62,8 @@ Comandos: pytest 356; export --check sin deriva; npm test 84; build correcto; gi
 Sin cambios de interfaz: no hay recorrido de navegador que verificar en esta entrega.
 Solicitud a A: editor de la conexión de datos y vista de access_points; «Aplicar perfil de AP» por canal;
   marcar enchufes y tomas y los dos límites de la búsqueda; dibujar maps[].result en la descarga del informe.
-Siguiente paso: publicar si el usuario lo autoriza; merges pendientes del usuario (#11 → #13 → #15 → #16, #14).
+Publicación: PR #17 en borrador, apilado sobre #16, por autorización del usuario.
+Siguiente paso: merges del usuario (#11 → #13 → #15 → #16 → #17, #14); después marcar done y los criterios.
 ```
 
 ### I-005 — revisión de A-109…A-113 (review)

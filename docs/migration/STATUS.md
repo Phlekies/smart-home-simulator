@@ -25,7 +25,7 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
 - Interfaz A-109…A-113 en [PR #14](https://github.com/Phlekies/smart-home-simulator/pull/14), revisada por B (I-005), con A-102 incluida.
 - En revisión: I-004, B-109…B-112 (#13) y B-113…B-116 (#15): procedencia por
   parámetro, mapas con escenario, informe por enlace y comprobación de medidas. Ver secciones inferiores.
-- En revisión local: B-117…B-121 (rama `agent-b/b-117-121`, sobre #16): conexión de datos de los AP,
+- En revisión: B-117…B-121 ([PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17), sobre #16): conexión de datos de los AP,
   perfiles de AP, enchufes y tomas en la búsqueda, mapas en el informe y paridad con Java.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
