@@ -79,8 +79,8 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 
 - [x] JSON Schema/OpenAPI/TypeScript comprobados por CI remota (PR #2, commit 33f1df8).
 - [x] Importación y recuperación de los tres ejemplos Java sin pérdida silenciosa (B-111: original Java íntegro, recuentos, exportar/reimportar idéntico; recuperación local A-101).
-- [ ] Pruebas de fórmulas/geometría y regresiones pertinentes.
-- [ ] E2E de crear/importar, editar, calcular, comparar y guardar (API completa en B-111 con los tres ejemplos y un proyecto nuevo; recorrido completo en navegador pendiente).
+- [ ] Pruebas de fórmulas/geometría y regresiones pertinentes (B-126 en revisión: 47 casos de cruces, esquinas, uniones, roces, alturas y escalas, y corrección de esquinas que dependían del sentido de dibujo; regresión de paridad Java B-121).
+- [ ] E2E de crear/importar, editar, calcular, comparar y guardar (API completa en B-111; recorrido en navegador B-127 sobre la pila B + #14: crear, importar, editar, calcular, comparar, guardar y recuperar, en [STATUS](STATUS.md); se marca al fusionar).
 - [x] Instalación limpia y arranque local reproducibles (B-112: clon nuevo en Windows x64 siguiendo LOCAL_DEVELOPMENT; Linux en cada CI de migración desde el lock).
 - [x] Matriz de funciones conservadas/sustituidas/excluidas y motivos ([FEATURE_MATRIX](FEATURE_MATRIX.md), B-107; revisar al cerrar cada fase).
 - [ ] Documentación del ámbito real y motores disponibles ([ámbito real y motores](SCOPE_AND_ENGINES.md), B-125 en revisión).

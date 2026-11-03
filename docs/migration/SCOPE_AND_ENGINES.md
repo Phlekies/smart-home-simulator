@@ -16,6 +16,7 @@ Lo que solo está en revisión **no** está en `main` hasta que el usuario fusio
 ## Qué responde la aplicación
 
 Todo se ejecuta en local, con la API en loopback. Rutas en [arranque local](LOCAL_DEVELOPMENT.md).
+Con la interfaz ya compilada basta Python: `python -m smart_environment.serve` (B-128).
 
 | Pregunta | Función | Contrato |
 |---|---|---|
@@ -47,7 +48,7 @@ devuelve 501 y **nunca** recurre en silencio a otro.
 
 | Nivel | Estado |
 |---|---|
-| Modelo analítico y unidades | Cubierto: pruebas de fórmulas, geometría, contratos y regresiones (más de 370 en Python) |
+| Modelo analítico y unidades | Cubierto: pruebas de fórmulas, geometría, contratos y regresiones (424 en Python), [geometría](../simulation/GEOMETRY.md) y recorrido E2E en navegador (B-127) |
 | Comprobación matemática frente a referencias | Cubierto: casos cerrados (B-101), paridad con Java (B-121) y Sionna en WSL (B-102) |
 | Validación en viviendas | **Sin datos.** El formato, el protocolo piloto y la calibración están preparados, pero no hay medidas reales |
 

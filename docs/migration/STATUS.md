@@ -30,11 +30,31 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
 - En revisión: B-122…B-125 ([PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), sobre #17): geometría fuera del
   modelo, diferencias exactas entre versiones, medidas con móvil y
   [ámbito real y motores](SCOPE_AND_ENGINES.md).
+- En revisión: B-126…B-129 ([PR #23](https://github.com/Phlekies/smart-home-simulator/pull/23), sobre #22): cruces de paredes independientes
+  del dibujo, recorrido E2E en navegador, modo local de un proceso y matriz v2.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## B-126…B-129 — geometría, recorrido E2E, modo local y matriz — 2026-11-03
+
+| Tarea | Comprobación | Resultado |
+|---|---|---|
+| B-126 | Sonda previa y `test_geometry_cases.py` | Antes del arreglo, la misma esquina en L costaba 0, 10 o 20 dB, y el extremo libre de una pared 0 o 10 dB, según el sentido de dibujo. Ahora son 10 y 0 dB siempre. 47 casos (esquinas en todos los sentidos, uniones en T y en X, roces, rasantes, alturas en el cruce, trayectos inclinados, desplazamiento hasta 9990 m, paredes de centímetros). Ejemplos Java sin cambios (paridad dentro de 1e-9). Mapa del almacén: 617 715 evaluaciones en 0.83 s |
+| B-128 | `test_serve.py` y arranque real | `python -m smart_environment.serve` sirve la interfaz y `/api` en el mismo origen, solo en 127.0.0.1; sin compilación se detiene con la orden de compilar |
+| B-127 | Navegador integrado sobre la pila B (478aeaa) + #14, fusión limpia en un worktree temporal, interfaz compilada y servida por B-128 en el puerto 8010 | Ver tabla siguiente |
+| B-129 | Revisión de documentos | Matriz v2, puerta de la ruta y anotaciones de checklists al día |
+| Rama completa | `pytest`, `export --check`, `git diff --check` | 424 Python; contratos sin deriva |
+
+| Paso E2E (B-127) | Resultado |
+|---|---|
+| Importar | Apartamento Java. Estimación: 6 enlaces, ida de −59.3 a −78.8 dBm, vuelta «Sin datos» porque falta la potencia del hub, estado «Sin verificar» |
+| Editar y comparar | Base fijada. Sensor de puerta de X = 40 a 30 m. Sensor → hub: −78.8 → −72.4 dBm (+6.4 dB); margen 13.2 → 19.6 dB; el resto 0.0. `/api/link-differences` en el mismo servidor: +6.365 dB = distancia +3.07 + `wall-11` deja de cruzarse +3.30; error de la suma 3e-15 |
+| Guardar y recuperar | La copia local (A-101) conserva X = 30 m. Reimportada por `/api/projects/import`: HTTP 200, idéntica y con el original Java. Tras recargar, «Restaurar proyecto» y nueva estimación: −72.4 dBm |
+| Crear | Proyecto nuevo, pared (5, 0) → (5, 6) por coordenadas, AP y equipo Wi-Fi en el canal 1 (20 y 10 dBm, −82 dBm), enlace y estimación: ida −40.8 y vuelta −50.8 dBm, márgenes 41.2 / 31.2 dB, 1 pared cruzada. La API avisa de que la conexión de datos del AP no está definida (B-117); la interfaz de #14 aún no lo muestra |
+| Consola y cierre | Sin errores en consola. «Guardar JSON» validó el proyecto y lanzó la descarga del navegador. No apareció ningún archivo nuevo en Descargas; el contenido se comprobó con la copia local. Servidor detenido y worktree eliminado |
 
 ## B-122…B-125 — geometría fuera del modelo, diferencias, instrumentos y ámbito — 2026-11-01
 

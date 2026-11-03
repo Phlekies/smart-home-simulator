@@ -13,7 +13,7 @@ import hashlib
 import json
 import time
 
-from .engines import LIMITATIONS, crossing_parameter, direction, input_hash, radio_pair_check
+from .engines import LIMITATIONS, crossed_walls, direction, input_hash, material_loss_db, radio_pair_check
 from .models import (
     LinkScenarioResult, Project, ScenarioAssumptions, ScenarioOutcome, ScenarioRequest, ScenarioResult,
 )
@@ -68,9 +68,10 @@ def evaluate(request: ScenarioRequest) -> ScenarioResult:
             continue
         outcomes = [ScenarioOutcome(scenario_id=s.id, forward=direction(project, source, a, target, b, s),
                                     reverse=direction(project, target, b, source, a, s)) for s in scenarios]
-        hypotheses = [w.id for w in project.building.walls
-                      if (w.door == "unknown" or materials[w.material_id].uncertainty is not None)
-                      and crossing_parameter(source.position, target.position, w) is not None]
+        on_path = crossed_walls(source.position, target.position, project.building.walls,
+                                lambda w: material_loss_db(materials[w.material_id], a.frequency_hz))
+        hypotheses = [w.id for w in on_path
+                      if w.door == "unknown" or materials[w.material_id].uncertainty is not None]
         limiting = []
         for outcome in outcomes:
             margins = [d.margin_db if d is not None else None for d in (outcome.forward, outcome.reverse)]
