@@ -11,6 +11,7 @@ has to run. Without a compiled interface it stops with the command to build one.
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -37,6 +38,7 @@ def main(argv: list[str] | None = None) -> None:
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--dist", type=Path, default=DIST, help="carpeta de la interfaz compilada")
     args = parser.parse_args(argv)
+    sys.stdout.reconfigure(encoding="utf-8")  # Windows consoles and redirected logs default to cp1252
     mount_web(app, args.dist)
     import uvicorn
 
