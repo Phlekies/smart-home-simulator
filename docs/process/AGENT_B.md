@@ -6,9 +6,9 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 ## Reserva actual
 
 - Estado: **review** — B-117…B-121 en [PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17) y B-122…B-125 en [PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), ambos en borrador.
-  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 (cambiando bases a `main`) y #14.
+  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 → #23 (cambiando bases a `main`) y #14.
   PR #18–#21 son de Dependabot (acciones de CI y Gradle): sin revisar ni fusionar por B.
-- **review** — B-126…B-129 (rama local `agent-b/b-126-129`, apilada sobre #22), pendiente de publicar. Reserva escrita
+- **review** — B-126…B-129 ([PR #23](https://github.com/Phlekies/smart-home-simulator/pull/23), apilado sobre #22). Reserva escrita
   después de empezar B-126 y B-128 (descuido corregido el mismo día; nadie más tenía esos archivos):
   - **B-126** geometría de cruces en vértices de pared independiente del sentido de dibujo, con casos de
     esquinas, uniones, roces, alturas y escalas (`engines.py`, `scenarios.py`, pruebas, `docs/simulation/GEOMETRY.md`).
@@ -72,7 +72,8 @@ B-127: recorrido E2E en el navegador integrado sobre la pila B + #14 (worktree t
   apareció ningún archivo nuevo en Descargas. Servidor detenido, worktree y enlace eliminados.
 B-129: FEATURE_MATRIX v2, puerta de ROADMAP, anotaciones de CHECKLIST, LOCAL_DEVELOPMENT, SCOPE_AND_ENGINES.
 Contratos: sin cambios. Comandos: pytest 424; export --check sin deriva; git diff --check limpio.
-Siguiente paso: publicar si el usuario lo autoriza. Para cerrar M5 faltan: merges, decisión de motor
+Publicación: PR #23 en borrador, apilado sobre #22, por autorización del usuario.
+Siguiente paso: para cerrar M5 faltan merges, decisión de motor
   (usuario), interfaz pendiente (A) e instalador sin Python/Node (decisión de herramienta).
 ```
 

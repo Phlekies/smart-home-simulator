@@ -30,7 +30,7 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
 - En revisión: B-122…B-125 ([PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), sobre #17): geometría fuera del
   modelo, diferencias exactas entre versiones, medidas con móvil y
   [ámbito real y motores](SCOPE_AND_ENGINES.md).
-- En revisión local: B-126…B-129 (rama `agent-b/b-126-129`, sobre #22): cruces de paredes independientes
+- En revisión: B-126…B-129 ([PR #23](https://github.com/Phlekies/smart-home-simulator/pull/23), sobre #22): cruces de paredes independientes
   del dibujo, recorrido E2E en navegador, modo local de un proceso y matriz v2.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
