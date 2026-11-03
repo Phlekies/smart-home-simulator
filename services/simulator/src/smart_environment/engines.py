@@ -6,6 +6,7 @@ import json
 import math
 import shutil
 import time
+from collections.abc import Callable
 from typing import NamedTuple
 
 from .backhaul import access_point_connections
@@ -75,8 +76,15 @@ def engine_capabilities() -> list[dict]:
     ]
 
 
-def crossing_parameter(a: Point, b: Point, wall: Wall) -> float | None:
-    """Segment/vertical-wall crossing; shared wall endpoints use a half-open convention."""
+END_TOLERANCE = 1e-9  # along the wall, as a fraction of its length
+
+
+def crossing_parameter(a: Point, b: Point, wall: Wall) -> tuple[float, float] | None:
+    """Where segment a→b meets a wall's centre line within its height: (t along a→b, u along the wall).
+
+    ``u`` includes both wall ends; ``crossed_walls`` decides what a hit on an end means. Endpoints of
+    a→b and rays running along a wall (rasante) are not crossings.
+    """
     dx, dy = b.x - a.x, b.y - a.y
     wx, wy = wall.end.x - wall.start.x, wall.end.y - wall.start.y
     determinant = dx * wy - dy * wx
@@ -85,10 +93,47 @@ def crossing_parameter(a: Point, b: Point, wall: Wall) -> float | None:
     qx, qy = wall.start.x - a.x, wall.start.y - a.y
     t = (qx * wy - qy * wx) / determinant
     u = (qx * dy - qy * dx) / determinant
-    if not (1e-9 < t < 1 - 1e-9 and 0 <= u < 1):
+    if not (1e-9 < t < 1 - 1e-9 and -END_TOLERANCE <= u <= 1 + END_TOLERANCE):
         return None
     z = a.z + t * (b.z - a.z)
-    return t if wall.start.z <= z <= wall.start.z + wall.height_m else None
+    return (t, u) if wall.start.z <= z <= wall.start.z + wall.height_m else None
+
+
+def crossed_walls(a: Point, b: Point, walls: list[Wall], loss: Callable[[Wall], float]) -> list[Wall]:
+    """Walls that segment a→b crosses, in the given order, whatever direction each wall was drawn in (B-126).
+
+    A wall crossed between its ends counts once. Where the segment passes exactly through wall ends
+    (a corner, a junction or a free wall end), the walls ending there are split by the side of the
+    segment they lie on, and only the side with fewer walls counts, as if the segment were shifted
+    infinitesimally towards the more open side: touching a free end or the outside of a corner is a
+    graze, a corner or a straight joint counts once, a four-way junction counts twice. On a tie the side
+    with more loss counts, then the side holding the earliest wall, so both directions agree.
+    """
+    dx, dy = b.x - a.x, b.y - a.y
+    chosen: dict[int, Wall] = {}
+    ends: dict[tuple[float, float], list[tuple[int, Wall, float]]] = {}
+    for order, wall in enumerate(walls):
+        hit = crossing_parameter(a, b, wall)
+        if hit is None:
+            continue
+        u = hit[1]
+        if END_TOLERANCE < u < 1 - END_TOLERANCE:
+            chosen[order] = wall
+            continue
+        here, other = (wall.start, wall.end) if u <= END_TOLERANCE else (wall.end, wall.start)
+        side = dx * (other.y - here.y) - dy * (other.x - here.x)
+        if side != 0:
+            ends.setdefault((round(here.x, 6), round(here.y, 6)), []).append((order, wall, side))
+    for group in ends.values():
+        left = [(order, wall) for order, wall, side in group if side > 0]
+        right = [(order, wall) for order, wall, side in group if side < 0]
+        if len(left) != len(right):
+            counted = min(left, right, key=len)
+        else:
+            counted = max(left, right, key=lambda side: (sum(loss(wall) for _, wall in side),
+                                                         -min(order for order, _ in side)))
+        chosen.update(counted)
+    return [chosen[order] for order in sorted(chosen)]
 
 
 def inside_wall(point: Point, wall: Wall) -> bool:
@@ -185,16 +230,15 @@ def budget(project: Project, tx: Device, tx_radio: Radio, rx: Device, rx_radio: 
     fspl_1m = 20 * math.log10(4 * math.pi * tx_radio.frequency_hz / 299_792_458)
     path_loss = fspl_1m + (20 if d < 1 else 10 * project.settings.path_loss_exponent) * math.log10(d)
     materials = {m.id: m for m in project.building.materials}
-    walls = []
-    for wall in project.building.walls:
-        door = (scenario.doors.get(wall.id) if scenario else None) or wall.door
-        if door == "open":
-            continue
-        if crossing_parameter(tx.position, rx.position, wall) is not None:
-            material = materials[wall.material_id]
-            bound = scenario.materials.get(material.id, "nominal") if scenario else "nominal"
-            base = material_loss_db(material, tx_radio.frequency_hz, bound)
-            walls.append((wall.id, base + wall.thickness_m * 100 * material.extra_loss_db_per_cm))
+
+    def loss(wall: Wall) -> float:
+        material = materials[wall.material_id]
+        bound = scenario.materials.get(material.id, "nominal") if scenario else "nominal"
+        return material_loss_db(material, tx_radio.frequency_hz, bound) + wall.thickness_m * 100 * material.extra_loss_db_per_cm
+
+    closed = [wall for wall in project.building.walls
+              if ((scenario.doors.get(wall.id) if scenario else None) or wall.door) != "open"]
+    walls = [(wall.id, loss(wall)) for wall in crossed_walls(tx.position, rx.position, closed, loss)]
     angle = math.degrees(math.atan2(rx.position.y - tx.position.y, rx.position.x - tx.position.x))
     polarization = -20 * math.log10(max(abs(math.cos(math.radians(
         tx_radio.polarization_deg - rx_radio.polarization_deg))), .05))
