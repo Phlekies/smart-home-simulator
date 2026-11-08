@@ -32,7 +32,7 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
   [ámbito real y motores](SCOPE_AND_ENGINES.md).
 - En revisión: B-126…B-129 ([PR #23](https://github.com/Phlekies/smart-home-simulator/pull/23), sobre #22): cruces de paredes independientes
   del dibujo, recorrido E2E en navegador, modo local de un proceso y matriz v2.
-- En revisión local: B-130…B-133 e I-006 (rama `agent-b/b-130-133`, sobre #23): motor de cierre
+- En revisión: B-130…B-133 e I-006 ([PR #24](https://github.com/Phlekies/smart-home-simulator/pull/24), sobre #23): motor de cierre
   decidido (ADR-008), instalación con Python, huella de proyecto, ensayo de integración completo y
   [plan de cierre](CLOSING_PLAN.md).
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;

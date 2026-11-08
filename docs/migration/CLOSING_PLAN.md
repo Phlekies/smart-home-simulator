@@ -12,7 +12,7 @@ Ningún paso se marca antes: `[x]` en el [checklist](CHECKLIST.md) exige trabajo
 
 ## 1. Merges (usuario)
 
-Orden: #11 → #13 → #15 → #16 → #17 → #22 → #23 → PR de B-130…B-133. Antes de fusionar cada PR
+Orden: #11 → #13 → #15 → #16 → #17 → #22 → #23 → #24. Antes de fusionar cada PR
 apilado, cambiar su base a `main`. El #14 de A (incluye el #12) puede ir antes o después.
 
 El ensayo I-006 del 2026-11-08 fusionó todo sobre `main` (6fb42e2) en un worktree temporal **sin

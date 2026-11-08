@@ -6,9 +6,9 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 ## Reserva actual
 
 - Estado: **review** — B-117…B-121 en [PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17) y B-122…B-125 en [PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), ambos en borrador.
-  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 → #23 (cambiando bases a `main`) y #14.
+  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 → #23 → #24 (cambiando bases a `main`) y #14.
   PR #18–#21 son de Dependabot (acciones de CI y Gradle): sin revisar ni fusionar por B.
-- **review** — B-130…B-133 e I-006 (rama local `agent-b/b-130-133`, apilada sobre #23), por decisión del
+- **review** — B-130…B-133 e I-006 ([PR #24](https://github.com/Phlekies/smart-home-simulator/pull/24), apilado sobre #23), por decisión del
   usuario del 2026-11-08 («estimador directo» como motor de la migración; instalación «basta con Python»):
   - **B-130** registrar y aplicar la decisión de motor (FEATURE_MATRIX, ROADMAP, SCOPE_AND_ENGINES,
     ADVANCED_ENGINE_EVALUATION, ARCHITECTURE si procede, CHECKLIST).
@@ -85,7 +85,8 @@ B-133: docs/migration/CLOSING_PLAN.md y documentos al día; casillas sin marcar 
 Comandos: pytest 438; export --check sin deriva; 11 .ts regenerados; build y 120 pruebas web en I-006.
 Solicitud a A: guardar/reabrir mapas con la huella; añadir link-difference.ts y project-fingerprint.ts
   al script contracts cuando los consuma.
-Siguiente paso: publicar si el usuario lo autoriza; tras los merges, ejecutar CLOSING_PLAN (pasos 2–3).
+Publicación: PR #24 en borrador, apilado sobre #23, por autorización del usuario.
+Siguiente paso: tras los merges, ejecutar CLOSING_PLAN (pasos 2–3).
 ```
 
 ### B-126…B-129 — geometría, recorrido E2E, modo local y matriz (review)
