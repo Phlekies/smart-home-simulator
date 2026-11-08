@@ -1,8 +1,9 @@
 # Referencia de plano a escala — A-102
 
-Entrega de interfaz del 2026-10-30 (Europe/Madrid). Recorrido de sesión implementado;
-persistencia de imagen/transformación pendiente de acuerdo e implementación por B.
-No se modifican contratos ni se crea otro formato de proyecto persistido.
+Entrega de interfaz del 2026-10-30 (Europe/Madrid). Escala, origen, huella y puntos de
+calibración persistidos mediante `Project.plan_reference`, contrato B-104 ya integrado.
+No cambia backend, tipos generados ni formato de proyecto. La imagen continúa en el
+archivo local de la persona: no se incrusta ni se envía a la API.
 
 ## Uso
 
@@ -15,6 +16,10 @@ No se modifican contratos ni se crea otro formato de proyecto persistido.
    distorsión de escáner, inclinación o errores de la medida conocida.
 5. Ajustar opacidad o mostrar/ocultar el fondo. Dibujar paredes o crearlas por coordenadas.
    La anchura de la imagen y la longitud de la pared seleccionada se muestran en metros.
+6. Guardar JSON o esperar la copia de recuperación. Al reabrir, se conservan los metadatos;
+   la referencia muestra «imagen no disponible» hasta elegir «Reasociar imagen guardada».
+7. Reasociar el archivo original. Se comprueban SHA-256 de sus bytes, dimensiones y tipo.
+   Un nombre distinto es válido con los mismos bytes; el mismo nombre no acredita identidad.
 
 La selección de referencia ocurre en un SVG distinto del editor: no crea ni mueve paredes.
 No se redondean los puntos de calibración a la cuadrícula de 0,1 m. Se exige separación
@@ -30,28 +35,66 @@ Las paredes y dispositivos existentes conservan sus medidas al recalibrar la ima
 La imagen es referencia visual: no se convierte automáticamente en obstáculos ni afecta
 a la simulación. Solo la geometría del proyecto llega al cálculo.
 
-## Datos locales y persistencia pendiente
+## Datos locales, historial y recuperación
 
-La interfaz avisa de que la imagen es **de sesión**, no incluida en el JSON ni en la
-recuperación. Cambiar de proyecto o recargar la elimina; las paredes trazadas se guardan
-normalmente. Se utilizan URLs de objeto del navegador, revocadas al reemplazar/retirar
-el recurso o desmontar el componente. No se envían imágenes a la API ni a terceros.
+El JSON y la recuperación incluyen nombre, MIME, SHA-256, píxeles, metros por píxel,
+origen, puntos exactos y distancia conocida, con procedencia de calibración del usuario.
+No incluyen bytes de imagen, URL del navegador, opacidad ni visibilidad. Estas preferencias
+vuelven a 55 % y visible al abrir otro proyecto. La huella se calcula localmente.
 
-La solicitud a B está en [AGENT_A](../process/AGENT_A.md): decidir recursos locales,
-transformación canónica, identificación por huella, compatibilidad v1 y límites del JSON.
-No marcar completa toda A-102/M2 por esta entrega parcial sin persistencia acordada.
+Una imagen ausente o distinta no bloquea la vivienda ni borra su referencia. Reasociar
+rehidrata los puntos, escala y origen sin recalibrar ni cambiar los metadatos. También
+se admiten referencias importadas sin puntos de calibración: se usa su escala guardada;
+para recalibrarlas se debe indicar una distancia conocida.
+
+«Elegir otra imagen» prepara un borrador. El fondo y los metadatos anteriores se mantienen
+hasta aplicar la nueva escala; «Descartar imagen pendiente» conserva la referencia previa.
+Los cambios pendientes de calibración se rotulan como no incluidos aún en el proyecto.
+
+Aplicar, sustituir y retirar metadatos son acciones de historial. Deshacer puede recuperar
+una referencia cuyo archivo ya no está en memoria: se indica y se permite reasociarla.
+Al cambiar de proyecto se descarta el recurso de sesión para evitar mezclar viviendas.
+Las URLs se revocan al descartar borradores, cambiar/retirar el recurso o cerrar el editor.
+Las cargas obsoletas se descartan si cambia el proyecto o la referencia durante la lectura.
+
+La referencia visual no es entrada del motor. Sus cambios y su undo/redo conservan los
+resultados de radio, mapas y comparabilidad de posiciones. Los cambios físicos mantienen
+la invalidación habitual. Guardar comprueba la revisión completa del proyecto, incluida
+la referencia, para no exportar una respuesta de validación anterior.
+
+Compatibilidad: los proyectos v1 sin referencia siguen abriendo. Un proyecto con este
+campo puede ser rechazado por versiones anteriores a B-104; ver
+[PLAN_REFERENCE_CONTRACT.md](../simulation/PLAN_REFERENCE_CONTRACT.md).
 
 ## Evidencia
 
-- 11 pruebas de dominio nuevas: distancia horizontal/vertical/diagonal, coordenadas
+- 11 pruebas iniciales del dominio: distancia horizontal/vertical/diagonal, coordenadas
   fraccionarias, puntos coincidentes/fuera de imagen, escalas, proporción, origen,
   límites físicos/de píxeles y límites de archivos/MIME.
-- Navegador: [fixture sintético](reference-fixture.png), 800×600 px, A=(100,300),
-  B=(700,300), distancia=12 m → imagen de 16×12 m. Origen (−2,−2) y fondo visibles.
-- Dibujo sobre imagen: nueva pared de 4,00 m con inspector/cota. La pared sobrevivió
-  a la recarga; la imagen no, de acuerdo con el aviso de sesión.
-- Mostrar/ocultar imagen verificado. Elegir nuevo A bloquea aplicar; Escape devuelve
-  A.x=100 y conserva B.x=700. Ctrl+Z en la previsualización no altera el enlace existente.
-- Captura del editor: [plan-reference.jpg](plan-reference.jpg). Usa datos sintéticos.
-- Guardar JSON con imagen aplicada descarga el contrato canónico sin nuevos campos.
-  Resultados finales de pruebas/build registrados en [la entrega A](../process/AGENT_A.md).
+- 10 pruebas adicionales de persistencia/comparación: vector SHA-256 conocido, identidad
+  por bytes y dimensiones/MIME, recurso renombrado/ausente/distinto, coordenadas fraccionarias,
+  metadatos sin URL/preferencias, recuperación e historial, datos originales conservados,
+  referencias sin calibración y separación de entradas físicas/visuales.
+- Navegador/API reales con [fixture sintético](reference-fixture.png), 800×600 px:
+  A=(100.125,300.25), B=(700.375,300.25), distancia=12.005 m → escala 0.02 m/px,
+  imagen de 16×12 m, origen (−2.125,3.75). Los campos muestran sus decimales completos.
+- Descarga real `entorno.shsim (5).json`, validada por API y leída desde disco: todos los
+  campos canónicos y los puntos exactos presentes; SHA-256 coincide con el archivo local
+  `85c35c6236ca2aeb6026c1752a5342190bf646ece3cab73298fb1479c5f78422`.
+- Recargar/restaurar conserva la calibración y muestra imagen ausente. Un PNG con el mismo
+  nombre y dimensiones pero bytes distintos se rechaza; copia idéntica renombrada se acepta
+  y recupera el fondo. Reabrir el JSON descargado conserva los mismos datos y vuelve a pedir
+  reasociación, sin reutilizar el recurso de la vivienda anterior.
+- Cambiar origen a −1.375 se aplica exactamente; Deshacer recupera −2.125. Una sustitución
+  pendiente conserva la URL aplicada anterior y se descarta sin pérdida. Retirar referencia,
+  deshacer y rehacer restaura/retira metadatos; imagen ausente explícita y reasociable.
+- Un mapa calculado conserva identidad al aplicar/deshacer un origen de imagen. Mover el
+  equipo de X=7 a X=7.125 retira el mapa al instante. Mostrar/ocultar fondo funciona.
+- Consola final sin errores ni advertencias. [Captura de la recuperación](plan-reference-persistence.jpg).
+  La [captura inicial](plan-reference.jpg) documenta la entrega histórica de sesión.
+- `npm.cmd --prefix apps/web test`: **94 superadas**; TypeScript/Vite y `git diff --check`
+  correctos. Persiste el aviso previo del chunk 3D de ~933 kB. Servicios temporales detenidos.
+
+La escala depende de la distancia indicada y de la calidad de la imagen. No certifica
+dimensiones del edificio ni valida el modelo de propagación. Esta entrega completa el
+consumidor A-102; la aceptación global de M2 requiere el resto de su checklist.

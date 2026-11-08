@@ -1,6 +1,8 @@
 import type { Project, Wall } from './generated/project';
 import { transformWall, wallLength } from './editor/geometry';
 import NumberField from './NumberField';
+import MaterialUncertaintyEditor from './MaterialUncertaintyEditor';
+import { doorNames, withDoor } from './editor/uncertainty';
 
 export default function WallInspector({ project, wall, onEdit, onMaterialEdit, onDelete, onGestureStart, onGestureEnd }: {
   project: Project; wall: Wall; onEdit: (next: Wall) => void;
@@ -23,6 +25,13 @@ export default function WallInspector({ project, wall, onEdit, onMaterialEdit, o
     <p className="helper">Arrastra la pared en el plano o ajusta su posición y orientación. Las dimensiones se expresan en metros.</p>
     <fieldset className="inspector-fields" onFocusCapture={onGestureStart} onBlurCapture={onGestureEnd}>
       <legend className="sr-only">Propiedades de la pared</legend>
+      <label className="field"><span>Tipo de obstáculo y estado</span><select aria-label="Tipo de obstáculo y estado" value={wall.door ?? 'wall'}
+        onChange={event => onEdit(withDoor(wall, event.target.value === 'wall' ? null : event.target.value as Wall['door']))}>
+        <option value="wall">Pared normal</option>{Object.entries(doorNames).map(([value, name]) => <option key={value} value={value}>{name}</option>)}
+      </select></label>
+      {wall.door && <p className="helper">{wall.door === 'open' ? 'Abierta: el estimador omite la pérdida de este segmento.' : wall.door === 'unknown'
+        ? 'Estado desconocido: nominal cerrada; los escenarios evaluarán abierta/cerrada.' : 'Cerrada: cuenta como obstáculo con su material y espesor.'}
+        {' '}El segmento completo representa la puerta. No dibuja un hueco dentro de otra pared ni calcula difracción.</p>}
       <div className="radio-fields">
         {number('Centro X · m', centerX, n => transform(n), -10000, 10000)}
         {number('Centro Y · m', centerY, n => transform(centerX, n), -10000, 10000)}
@@ -42,6 +51,8 @@ export default function WallInspector({ project, wall, onEdit, onMaterialEdit, o
         {number('Pérdida adicional · dB/cm', material.extra_loss_db_per_cm, n => onMaterialEdit(material.id, { extra_loss_db_per_cm: n }), 0, 100, .01)}
         <p className="helper">Procedencia: {material.evidence}</p>
       </details>
+      <MaterialUncertaintyEditor key={material.id} material={material} wallCount={project.building.walls.filter(item => item.material_id === material.id).length}
+        onEdit={patch => onMaterialEdit(material.id, patch)} />
     </fieldset>
     <p className="wall-dimensions">Inicio ({wall.start.x.toFixed(2)}, {wall.start.y.toFixed(2)}) · Fin ({wall.end.x.toFixed(2)}, {wall.end.y.toFixed(2)})</p>
     <button className="danger-link" onClick={onDelete}>Eliminar pared</button>

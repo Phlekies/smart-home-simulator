@@ -3,6 +3,7 @@ import test from 'node:test';
 import type { Project, Radio } from '../generated/project.ts';
 import type { DirectionResult, SimulationResult } from '../generated/simulation-result.ts';
 import { captureComparison, comparePositions, movedDevices, samePositionConfiguration } from './comparison.ts';
+import { makeReference } from './referencePersistence.ts';
 
 const radio: Radio = { id: 'r', protocol: 'wifi', frequency_hz: 2.412e9, bandwidth_hz: 20e6, channel: 1,
   tx_power_dbm: 10, tx_gain_dbi: 0, rx_gain_dbi: 0, sensitivity_dbm: null, noise_figure_db: 7,
@@ -62,6 +63,15 @@ test('radio, material, wall, topology and setting changes block a placement comp
     assert.equal(samePositionConfiguration(project(), p), false);
     assert.equal(comparePositions(base(), p, result('b'.repeat(64))).kind, 'blocked');
   }
+});
+
+test('a calibrated background image does not change the physical conditions of a placement comparison', () => {
+  const p = moved();
+  p.plan_reference = makeReference({ url: 'blob:test', fileName: 'synthetic.png', mediaType: 'image/png',
+    sha256: 'a'.repeat(64), widthPx: 800, heightPx: 600 }, { x: 0, y: 0 }, { x: 600, y: 0 }, 12,
+    { originX: -2.125, originY: 3.75 });
+  assert.equal(samePositionConfiguration(project(), p), true);
+  assert.equal(comparePositions(base(), p, result('b'.repeat(64))).kind, 'ready');
 });
 
 test('an edited alternative without a fresh result hides deltas and retains the base', () => {

@@ -22,9 +22,9 @@ function stable(value: unknown): string {
 }
 const byId = <T extends { id: string }>(items: T[]) => [...items].sort((a, b) => a.id.localeCompare(b.id));
 
-// Keep every project setting except names/positions. Never compare a radio change as a placement improvement.
+// Keep every calculation setting except names/positions; the background image is not a solver input.
 function configuration(project: Project) {
-  const { name: _name, devices, building, links, ...rest } = project;
+  const { name: _name, plan_reference: _reference, devices, building, links, ...rest } = project;
   return stable({ ...rest, building: { ...building, walls: byId(building.walls), materials: byId(building.materials) },
     devices: byId(devices).map(({ name: _name, position: _position, radios, ...device }) => ({ ...device, radios: byId(radios) })),
     links: byId(links) });

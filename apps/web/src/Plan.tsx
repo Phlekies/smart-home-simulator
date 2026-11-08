@@ -6,6 +6,7 @@ import { referenceBounds } from './editor/reference';
 import type { PlanReference } from './editor/reference';
 import type { CoverageLayer } from './editor/coverage';
 import { mapExtent, metricNames } from './editor/coverage';
+import { doorNames } from './editor/uncertainty';
 
 type Bounds = { minX: number; minY: number; maxX: number; maxY: number };
 type Drag = {
@@ -176,14 +177,16 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
           strokeWidth=".09" strokeDasharray=".3 .2" opacity=".8" />;
       })}
       {project.building.walls.map((wall, index) => <g key={wall.id} role="button" tabIndex={tool === 'select' ? 0 : -1}
-        aria-label={`Seleccionar pared ${index + 1}`} aria-pressed={selectedWallId === wall.id} className="plan-wall"
+        aria-label={`Seleccionar pared ${index + 1}${wall.door ? ` · ${doorNames[wall.door]}` : ''}`} aria-pressed={selectedWallId === wall.id} className="plan-wall"
         onKeyDown={event => keyboardMove(event, 'wall', wall.id)} onPointerDown={event => startDrag(event, 'wall', wall.id)}>
         <line x1={wall.start.x} y1={wall.start.y} x2={wall.end.x} y2={wall.end.y}
           stroke="transparent" strokeWidth="16" vectorEffect="non-scaling-stroke" />
         <circle cx={wall.start.x} cy={wall.start.y} r=".1" fill="transparent" pointerEvents="none" />
         <circle cx={wall.end.x} cy={wall.end.y} r=".1" fill="transparent" pointerEvents="none" />
         <line x1={wall.start.x} y1={wall.start.y} x2={wall.end.x} y2={wall.end.y} pointerEvents="none"
-          stroke={selectedWallId === wall.id ? '#f3cf88' : '#abbcae'} strokeWidth={Math.max(.17, wall.thickness_m)} strokeLinecap="square" />
+          stroke={selectedWallId === wall.id ? '#f3cf88' : wall.door === 'open' ? '#82d6c8' : wall.door === 'unknown' ? '#ceaeef' : '#abbcae'}
+          strokeDasharray={wall.door === 'open' ? '.18 .3' : wall.door === 'unknown' ? '.4 .18' : undefined}
+          strokeWidth={Math.max(.17, wall.thickness_m)} strokeLinecap="square" />
         {selectedWallId === wall.id && <text x={(wall.start.x + wall.end.x) / 2} y={(wall.start.y + wall.end.y) / 2 - .35}
           textAnchor="middle" fontSize=".5" fill="#f3cf88" paintOrder="stroke" stroke="#142221" strokeWidth=".15" pointerEvents="none">
           {Math.hypot(wall.end.x - wall.start.x, wall.end.y - wall.start.y).toFixed(2)} m

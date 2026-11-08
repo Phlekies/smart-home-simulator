@@ -22,7 +22,8 @@ export default function Scene3D({ project, selected, onSelect, selectedWallId, o
             (w.start.y + w.end.y) / 2]} rotation-y={-Math.atan2(dy, dx)}
             onClick={event => { event.stopPropagation(); onSelectWall(w.id); }}>
             <boxGeometry args={[Math.hypot(dx, dy), w.height_m, w.thickness_m]} />
-            <meshStandardMaterial color={selectedWallId === w.id ? '#f3b26f' : '#92a69a'} transparent opacity={.7} roughness={.8} />
+            <meshStandardMaterial color={selectedWallId === w.id ? '#f3b26f' : w.door === 'unknown' ? '#ceaeef' : w.door === 'open' ? '#82d6c8' : '#92a69a'}
+              transparent opacity={w.door === 'open' ? .12 : .7} roughness={.8} />
           </mesh>;
         })}
         {project.devices.map(d => <mesh key={d.id} position={[d.position.x, d.position.z, d.position.y]}
