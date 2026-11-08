@@ -42,7 +42,7 @@ motivo), **Nueva** (no existía en Java).
 
 | Función Java | Estado | Nueva aplicación / evidencia | Motivo |
 |---|---|---|---|
-| Motor multipath (directo, reflexión, difracción, difusa; rayos/ondas) | Sustituida (en curso) | Estimador directo bidireccional en la API; Sionna RT evaluado en WSL/CPU con 18/18 referencias (B-102), sin integrar | El estimador no equivale a Java multipath: contraste en [B-121](../simulation/JAVA_PARITY.md) (+0.3 a +3.6 dB en viviendas y oficinas en modo rayos, hasta +33 dB en el almacén); Java queda como referencia |
+| Motor multipath (directo, reflexión, difracción, difusa; rayos/ondas) | Sustituida (decisión del 2026-11-08, [ADR-008](ARCHITECTURE.md)) | Estimador directo bidireccional en la API; Sionna RT evaluado en WSL/CPU con 18/18 referencias (B-102), sin integrar | El estimador no equivale a Java multipath: contraste en [B-121](../simulation/JAVA_PARITY.md) (+0.3 a +3.6 dB en viviendas y oficinas en modo rayos, hasta +33 dB en el almacén); Java queda como referencia |
 | Tabla empírica de materiales | Conservada como hipótesis | Importada con procedencia; contrastada con losa ITU (B-101); rangos y escenarios (B-108, `main`) | Diferencias documentadas, no se conservan como verdad |
 | Fase fija de reflexión (cuarto de ciclo) | Excluida | Fresnel/losa en referencias y Sionna | Error físico documentado en B-101/B-102 |
 | Fading Rayleigh/Rician | Excluida | Se tratan desvanecimiento e incertidumbre con media de banda ancha (B-102) y escenarios (B-108) | Estadístico sin validación; no apoya una decisión de compra |
@@ -71,9 +71,10 @@ motivo), **Nueva** (no existía en Java).
 
 ## Pendiente para cerrar M5 sobre esta matriz
 
-- Decisión del usuario: integrar y verificar el motor avanzado (Sionna RT, hoy solo en WSL) o declarar el
-  alcance del estimador directo como definitivo para la migración, con el contraste de B-121.
+- Motor: decidido el 2026-11-08 ([ADR-008](ARCHITECTURE.md)). La migración se cierra con el estimador
+  directo y Sionna RT queda evaluado, no integrado.
 - Interfaz (A): descarga del informe con mapas, exportación de imagen, zoom/pan, accesibilidad completa y,
   si aporta, plantillas adicionales; mostrar procedencia, conexión de datos y diferencias.
-- Distribución: instalador o paquete que no exija Python ni Node (decisión de herramienta pendiente).
+- Distribución: decidido el 2026-11-08 que basta con Python. `scripts/start.py` lo prepara todo y
+  `scripts/package_local.py` incluye la web compilada (B-131). No se hará instalador nativo en la migración.
 - Revisar la matriz al cerrar cada fase: un estado «Pendiente» no se convierte en «Excluida» sin motivo.

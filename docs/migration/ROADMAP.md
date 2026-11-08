@@ -129,7 +129,8 @@ ilustrativas, BER BPSK o capacidad Shannon a la interfaz principal.
 M0–M5 han de tener evidencia. Estado a 2026-11-03: M0 y M1 completas con CI remota. M2–M5 tienen
 los puntos abiertos que lista el [checklist](CHECKLIST.md), varios ya hechos en PR pendientes de
 fusionar. El estimador rápido no equivale al motor multipath Java: el contraste está en
-[B-121](../simulation/JAVA_PARITY.md) y la elección de motor para cerrar M5 la decide el usuario.
+[B-121](../simulation/JAVA_PARITY.md). El usuario decidió el 2026-11-08 cerrar la migración con el
+estimador directo ([ADR-008](ARCHITECTURE.md)) y una instalación que solo requiere Python.
 Por tanto, la migración completa sigue en curso.
 
 Completar migración no significa «producto con precisión validada». El objetivo rector
