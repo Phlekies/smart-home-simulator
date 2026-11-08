@@ -32,7 +32,7 @@ motivo), **Nueva** (no existía en Java).
 | Función Java | Estado | Nueva aplicación / evidencia | Motivo |
 |---|---|---|---|
 | Sensores y un hub, frecuencia global | Sustituida | Dispositivos con rol, 1–8 radios con frecuencia/canal propios y enlaces explícitos (A-107/A-108) | Varias radios y AP; sin frecuencia global |
-| Antena omnidireccional o direccional `cos^k`, polarización | Conservada | Campos en `Radio`; los usa el estimador rápido; el adaptador Sionna rechaza direccionales | Falta traducir antenas al motor avanzado (M3) |
+| Antena omnidireccional o direccional `cos^k`, polarización | Conservada | Campos en `Radio`; los usa el estimador rápido, igual que Java en 76 sondas (diferencia ≤ 0.0022 dB, [B-121](../simulation/JAVA_PARITY.md)); el adaptador Sionna rechaza direccionales | Falta traducir antenas al motor avanzado (M3) |
 | Sensibilidad global del hub | Sustituida | Sensibilidad y potencia por radio; desconocidas se quedan desconocidas | Ambos sentidos con su receptor |
 | — | Nueva | Perfiles Wi-Fi genéricos con procedencia por valor (B-106, PR #8) | Explorar sin producto concreto |
 
@@ -40,7 +40,7 @@ motivo), **Nueva** (no existía en Java).
 
 | Función Java | Estado | Nueva aplicación / evidencia | Motivo |
 |---|---|---|---|
-| Motor multipath (directo, reflexión, difracción, difusa; rayos/ondas) | Sustituida (en curso) | Estimador directo bidireccional en la API; Sionna RT evaluado en WSL/CPU con 18/18 referencias (B-102), sin integrar | El estimador no equivale a Java multipath; Java queda como referencia |
+| Motor multipath (directo, reflexión, difracción, difusa; rayos/ondas) | Sustituida (en curso) | Estimador directo bidireccional en la API; Sionna RT evaluado en WSL/CPU con 18/18 referencias (B-102), sin integrar | El estimador no equivale a Java multipath: contraste en [B-121](../simulation/JAVA_PARITY.md) (+0.3 a +3.6 dB en viviendas y oficinas en modo rayos, hasta +33 dB en el almacén); Java queda como referencia |
 | Tabla empírica de materiales | Conservada como hipótesis | Importada con procedencia; contrastada con losa ITU (B-101); rangos y escenarios (B-108, PR #9) | Diferencias documentadas, no se conservan como verdad |
 | Fase fija de reflexión (cuarto de ciclo) | Excluida | Fresnel/losa en referencias y Sionna | Error físico documentado en B-101/B-102 |
 | Fading Rayleigh/Rician | Excluida | Se tratan desvanecimiento e incertidumbre con media de banda ancha (B-102) y escenarios (B-108) | Estadístico sin validación; no apoya una decisión de compra |

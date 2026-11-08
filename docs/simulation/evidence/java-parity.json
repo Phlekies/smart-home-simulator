@@ -1,0 +1,5003 @@
+{
+  "task": "B-121",
+  "generated_utc": "2026-11-01T16:41:25+00:00",
+  "java": "java version \"22.0.2\" 2024-07-16",
+  "java_sources_commit": "7e016cd7790bbc4935f7b5f47596466aba56f4b1",
+  "python": "3.13.7",
+  "command": "python services/simulator/benchmarks/java_parity.py --output docs/simulation/evidence/java-parity.json",
+  "tolerance_db": 0.01,
+  "java_floor_dbm": -150.0,
+  "java_culling_dbm": -115.0,
+  "parity_cases": [
+    {
+      "id": "pattern-0",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "DIRECTIONAL",
+        "orientation_deg": 0,
+        "beamwidth_deg": 60,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "a0",
+          "x": 16.0,
+          "y": 10.0
+        },
+        {
+          "id": "a10",
+          "x": 15.908846518073247,
+          "y": 11.041889066001582
+        },
+        {
+          "id": "a25",
+          "x": 15.437846722219899,
+          "y": 12.535709570444197
+        },
+        {
+          "id": "a29",
+          "x": 15.247718242836374,
+          "y": 12.908857721478022
+        },
+        {
+          "id": "a31",
+          "x": 15.143003804212674,
+          "y": 13.090228449460325
+        },
+        {
+          "id": "a45",
+          "x": 14.242640687119286,
+          "y": 14.242640687119286
+        },
+        {
+          "id": "a59",
+          "x": 13.090228449460325,
+          "y": 15.143003804212674
+        },
+        {
+          "id": "a61",
+          "x": 12.908857721478022,
+          "y": 15.247718242836374
+        },
+        {
+          "id": "a90",
+          "x": 10.0,
+          "y": 16.0
+        },
+        {
+          "id": "a135",
+          "x": 5.757359312880715,
+          "y": 14.242640687119286
+        },
+        {
+          "id": "a180",
+          "x": 4.0,
+          "y": 10.0
+        },
+        {
+          "id": "a225",
+          "x": 5.757359312880714,
+          "y": 5.757359312880715
+        },
+        {
+          "id": "a300",
+          "x": 13.0,
+          "y": 4.803847577293368
+        },
+        {
+          "id": "a330",
+          "x": 15.19615242270663,
+          "y": 6.999999999999997
+        }
+      ]
+    },
+    {
+      "id": "pattern-1",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "DIRECTIONAL",
+        "orientation_deg": 45,
+        "beamwidth_deg": 120,
+        "pattern_sharpness": 4,
+        "side_lobe_db": 10,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "a0",
+          "x": 16.0,
+          "y": 10.0
+        },
+        {
+          "id": "a10",
+          "x": 15.908846518073247,
+          "y": 11.041889066001582
+        },
+        {
+          "id": "a25",
+          "x": 15.437846722219899,
+          "y": 12.535709570444197
+        },
+        {
+          "id": "a29",
+          "x": 15.247718242836374,
+          "y": 12.908857721478022
+        },
+        {
+          "id": "a31",
+          "x": 15.143003804212674,
+          "y": 13.090228449460325
+        },
+        {
+          "id": "a45",
+          "x": 14.242640687119286,
+          "y": 14.242640687119286
+        },
+        {
+          "id": "a59",
+          "x": 13.090228449460325,
+          "y": 15.143003804212674
+        },
+        {
+          "id": "a61",
+          "x": 12.908857721478022,
+          "y": 15.247718242836374
+        },
+        {
+          "id": "a90",
+          "x": 10.0,
+          "y": 16.0
+        },
+        {
+          "id": "a135",
+          "x": 5.757359312880715,
+          "y": 14.242640687119286
+        },
+        {
+          "id": "a180",
+          "x": 4.0,
+          "y": 10.0
+        },
+        {
+          "id": "a225",
+          "x": 5.757359312880714,
+          "y": 5.757359312880715
+        },
+        {
+          "id": "a300",
+          "x": 13.0,
+          "y": 4.803847577293368
+        },
+        {
+          "id": "a330",
+          "x": 15.19615242270663,
+          "y": 6.999999999999997
+        }
+      ]
+    },
+    {
+      "id": "pattern-2",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "DIRECTIONAL",
+        "orientation_deg": -30,
+        "beamwidth_deg": 90,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 25,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "a0",
+          "x": 16.0,
+          "y": 10.0
+        },
+        {
+          "id": "a10",
+          "x": 15.908846518073247,
+          "y": 11.041889066001582
+        },
+        {
+          "id": "a25",
+          "x": 15.437846722219899,
+          "y": 12.535709570444197
+        },
+        {
+          "id": "a29",
+          "x": 15.247718242836374,
+          "y": 12.908857721478022
+        },
+        {
+          "id": "a31",
+          "x": 15.143003804212674,
+          "y": 13.090228449460325
+        },
+        {
+          "id": "a45",
+          "x": 14.242640687119286,
+          "y": 14.242640687119286
+        },
+        {
+          "id": "a59",
+          "x": 13.090228449460325,
+          "y": 15.143003804212674
+        },
+        {
+          "id": "a61",
+          "x": 12.908857721478022,
+          "y": 15.247718242836374
+        },
+        {
+          "id": "a90",
+          "x": 10.0,
+          "y": 16.0
+        },
+        {
+          "id": "a135",
+          "x": 5.757359312880715,
+          "y": 14.242640687119286
+        },
+        {
+          "id": "a180",
+          "x": 4.0,
+          "y": 10.0
+        },
+        {
+          "id": "a225",
+          "x": 5.757359312880714,
+          "y": 5.757359312880715
+        },
+        {
+          "id": "a300",
+          "x": 13.0,
+          "y": 4.803847577293368
+        },
+        {
+          "id": "a330",
+          "x": 15.19615242270663,
+          "y": 6.999999999999997
+        }
+      ]
+    },
+    {
+      "id": "pattern-3",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "DIRECTIONAL",
+        "orientation_deg": 200,
+        "beamwidth_deg": 30,
+        "pattern_sharpness": 1,
+        "side_lobe_db": 18,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "a0",
+          "x": 16.0,
+          "y": 10.0
+        },
+        {
+          "id": "a10",
+          "x": 15.908846518073247,
+          "y": 11.041889066001582
+        },
+        {
+          "id": "a25",
+          "x": 15.437846722219899,
+          "y": 12.535709570444197
+        },
+        {
+          "id": "a29",
+          "x": 15.247718242836374,
+          "y": 12.908857721478022
+        },
+        {
+          "id": "a31",
+          "x": 15.143003804212674,
+          "y": 13.090228449460325
+        },
+        {
+          "id": "a45",
+          "x": 14.242640687119286,
+          "y": 14.242640687119286
+        },
+        {
+          "id": "a59",
+          "x": 13.090228449460325,
+          "y": 15.143003804212674
+        },
+        {
+          "id": "a61",
+          "x": 12.908857721478022,
+          "y": 15.247718242836374
+        },
+        {
+          "id": "a90",
+          "x": 10.0,
+          "y": 16.0
+        },
+        {
+          "id": "a135",
+          "x": 5.757359312880715,
+          "y": 14.242640687119286
+        },
+        {
+          "id": "a180",
+          "x": 4.0,
+          "y": 10.0
+        },
+        {
+          "id": "a225",
+          "x": 5.757359312880714,
+          "y": 5.757359312880715
+        },
+        {
+          "id": "a300",
+          "x": 13.0,
+          "y": 4.803847577293368
+        },
+        {
+          "id": "a330",
+          "x": 15.19615242270663,
+          "y": 6.999999999999997
+        }
+      ]
+    },
+    {
+      "id": "polarization-0-0",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 2.0,
+      "receiver_polarization_deg": 0,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0
+      },
+      "probes": [
+        {
+          "id": "p",
+          "x": 16.5,
+          "y": 11.25
+        }
+      ]
+    },
+    {
+      "id": "polarization-0-90",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 2.0,
+      "receiver_polarization_deg": 90,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0
+      },
+      "probes": [
+        {
+          "id": "p",
+          "x": 16.5,
+          "y": 11.25
+        }
+      ]
+    },
+    {
+      "id": "polarization-30-0",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 2.0,
+      "receiver_polarization_deg": 0,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 30
+      },
+      "probes": [
+        {
+          "id": "p",
+          "x": 16.5,
+          "y": 11.25
+        }
+      ]
+    },
+    {
+      "id": "polarization-30-90",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 2.0,
+      "receiver_polarization_deg": 90,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 30
+      },
+      "probes": [
+        {
+          "id": "p",
+          "x": 16.5,
+          "y": 11.25
+        }
+      ]
+    },
+    {
+      "id": "polarization-60-0",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 2.0,
+      "receiver_polarization_deg": 0,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 60
+      },
+      "probes": [
+        {
+          "id": "p",
+          "x": 16.5,
+          "y": 11.25
+        }
+      ]
+    },
+    {
+      "id": "polarization-60-90",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 2.0,
+      "receiver_polarization_deg": 90,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 60
+      },
+      "probes": [
+        {
+          "id": "p",
+          "x": 16.5,
+          "y": 11.25
+        }
+      ]
+    },
+    {
+      "id": "polarization-89-0",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 2.0,
+      "receiver_polarization_deg": 0,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 89
+      },
+      "probes": [
+        {
+          "id": "p",
+          "x": 16.5,
+          "y": 11.25
+        }
+      ]
+    },
+    {
+      "id": "polarization-89-90",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 2.0,
+      "receiver_polarization_deg": 90,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 89
+      },
+      "probes": [
+        {
+          "id": "p",
+          "x": 16.5,
+          "y": 11.25
+        }
+      ]
+    },
+    {
+      "id": "polarization-90-0",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 2.0,
+      "receiver_polarization_deg": 0,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 90
+      },
+      "probes": [
+        {
+          "id": "p",
+          "x": 16.5,
+          "y": 11.25
+        }
+      ]
+    },
+    {
+      "id": "polarization-90-90",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 2.0,
+      "receiver_polarization_deg": 90,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 90
+      },
+      "probes": [
+        {
+          "id": "p",
+          "x": 16.5,
+          "y": 11.25
+        }
+      ]
+    },
+    {
+      "id": "polarization-135-0",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 2.0,
+      "receiver_polarization_deg": 0,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 135
+      },
+      "probes": [
+        {
+          "id": "p",
+          "x": 16.5,
+          "y": 11.25
+        }
+      ]
+    },
+    {
+      "id": "polarization-135-90",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 2.0,
+      "receiver_polarization_deg": 90,
+      "walls": [],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 135
+      },
+      "probes": [
+        {
+          "id": "p",
+          "x": 16.5,
+          "y": 11.25
+        }
+      ]
+    },
+    {
+      "id": "walls-2400MHz",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.2,
+        "system_gain_db": -1.5
+      },
+      "exponent": 2.6,
+      "receiver_gain_dbi": 1.0,
+      "receiver_polarization_deg": 15,
+      "walls": [
+        {
+          "x1": 13.0,
+          "y1": 4.0,
+          "x2": 13.0,
+          "y2": 16.0,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 15.5,
+          "y1": 4.0,
+          "x2": 15.5,
+          "y2": 16.0,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        }
+      ],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "DIRECTIONAL",
+        "orientation_deg": 10,
+        "beamwidth_deg": 90,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 45
+      },
+      "probes": [
+        {
+          "id": "a0",
+          "x": 18.0,
+          "y": 10.0
+        },
+        {
+          "id": "a20",
+          "x": 17.517540966287267,
+          "y": 12.73616114660535
+        },
+        {
+          "id": "a40",
+          "x": 16.128355544951823,
+          "y": 15.142300877492314
+        },
+        {
+          "id": "a-20",
+          "x": 17.517540966287267,
+          "y": 7.263838853394651
+        }
+      ]
+    },
+    {
+      "id": "walls-5200MHz",
+      "env": {
+        "freq_mhz": 5200.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.2,
+        "system_gain_db": -1.5
+      },
+      "exponent": 2.6,
+      "receiver_gain_dbi": 1.0,
+      "receiver_polarization_deg": 15,
+      "walls": [
+        {
+          "x1": 13.0,
+          "y1": 4.0,
+          "x2": 13.0,
+          "y2": 16.0,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 15.5,
+          "y1": 4.0,
+          "x2": 15.5,
+          "y2": 16.0,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        }
+      ],
+      "sensor": {
+        "id": "S",
+        "x": 10,
+        "y": 10,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "DIRECTIONAL",
+        "orientation_deg": 10,
+        "beamwidth_deg": 90,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 45
+      },
+      "probes": [
+        {
+          "id": "a0",
+          "x": 18.0,
+          "y": 10.0
+        },
+        {
+          "id": "a20",
+          "x": 17.517540966287267,
+          "y": 12.73616114660535
+        },
+        {
+          "id": "a40",
+          "x": 16.128355544951823,
+          "y": 15.142300877492314
+        },
+        {
+          "id": "a-20",
+          "x": 17.517540966287267,
+          "y": 7.263838853394651
+        }
+      ]
+    }
+  ],
+  "parity": [
+    {
+      "case": "pattern-0",
+      "probe": "a0",
+      "java_dbm": -43.395401092,
+      "python_dbm": -43.39318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a10",
+      "java_dbm": -45.644298351,
+      "python_dbm": -45.64208157312141,
+      "difference_db": 0.0022167778785942005
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a25",
+      "java_dbm": -61.395401092,
+      "python_dbm": -61.39318431417201,
+      "difference_db": 0.002216777827989347
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a29",
+      "java_dbm": -61.395401092,
+      "python_dbm": -61.39318431417201,
+      "difference_db": 0.002216777827989347
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a31",
+      "java_dbm": -61.435401092,
+      "python_dbm": -61.43318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a45",
+      "java_dbm": -61.995401092,
+      "python_dbm": -61.99318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a59",
+      "java_dbm": -62.555401092,
+      "python_dbm": -62.553184314172015,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a61",
+      "java_dbm": -62.635401092,
+      "python_dbm": -62.63318431417201,
+      "difference_db": 0.002216777827989347
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a90",
+      "java_dbm": -63.795401092,
+      "python_dbm": -63.79318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a135",
+      "java_dbm": -65.595401092,
+      "python_dbm": -65.59318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a180",
+      "java_dbm": -67.395401092,
+      "python_dbm": -67.39318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a225",
+      "java_dbm": -65.595401092,
+      "python_dbm": -65.59318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a300",
+      "java_dbm": -62.595401092,
+      "python_dbm": -62.59318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-0",
+      "probe": "a330",
+      "java_dbm": -61.395401092,
+      "python_dbm": -61.39318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a0",
+      "java_dbm": -53.395401092,
+      "python_dbm": -53.39318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a10",
+      "java_dbm": -53.395401092,
+      "python_dbm": -53.39318431417201,
+      "difference_db": 0.002216777827989347
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a25",
+      "java_dbm": -48.392950557,
+      "python_dbm": -48.39073377850401,
+      "difference_db": 0.002216778495991889
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a29",
+      "java_dbm": -46.536988089,
+      "python_dbm": -46.534771311027775,
+      "difference_db": 0.002216777972222417
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a31",
+      "java_dbm": -45.783262077,
+      "python_dbm": -45.78104529906771,
+      "difference_db": 0.002216777932289915
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a45",
+      "java_dbm": -43.395401092,
+      "python_dbm": -43.39318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a59",
+      "java_dbm": -45.783262077,
+      "python_dbm": -45.78104529906771,
+      "difference_db": 0.002216777932289915
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a61",
+      "java_dbm": -46.536988089,
+      "python_dbm": -46.534771311027775,
+      "difference_db": 0.002216777972222417
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a90",
+      "java_dbm": -53.395401092,
+      "python_dbm": -53.39318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a135",
+      "java_dbm": -54.895401092,
+      "python_dbm": -54.89318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a180",
+      "java_dbm": -57.145401092,
+      "python_dbm": -57.14318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a225",
+      "java_dbm": -59.395401092,
+      "python_dbm": -59.39318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a300",
+      "java_dbm": -55.645401092,
+      "python_dbm": -55.64318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-1",
+      "probe": "a330",
+      "java_dbm": -54.145401092,
+      "python_dbm": -54.14318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a0",
+      "java_dbm": -54.232480936,
+      "python_dbm": -54.23026415807534,
+      "difference_db": 0.002216777924658686
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a10",
+      "java_dbm": -68.395401092,
+      "python_dbm": -68.393184314172,
+      "difference_db": 0.0022167778279964523
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a25",
+      "java_dbm": -68.839845537,
+      "python_dbm": -68.83762875861646,
+      "difference_db": 0.0022167783835413957
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a29",
+      "java_dbm": -69.017623315,
+      "python_dbm": -69.01540653639424,
+      "difference_db": 0.002216778605756531
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a31",
+      "java_dbm": -69.106512203,
+      "python_dbm": -69.10429542528313,
+      "difference_db": 0.0022167777168675684
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a45",
+      "java_dbm": -69.728734426,
+      "python_dbm": -69.72651764750535,
+      "difference_db": 0.0022167784946560687
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a59",
+      "java_dbm": -70.350956648,
+      "python_dbm": -70.34873986972758,
+      "difference_db": 0.002216778272412512
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a61",
+      "java_dbm": -70.439845537,
+      "python_dbm": -70.43762875861646,
+      "difference_db": 0.0022167783835413957
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a90",
+      "java_dbm": -71.728734426,
+      "python_dbm": -71.72651764750535,
+      "difference_db": 0.0022167784946560687
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a135",
+      "java_dbm": -73.728734426,
+      "python_dbm": -73.72651764750535,
+      "difference_db": 0.0022167784946560687
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a180",
+      "java_dbm": -73.062067759,
+      "python_dbm": -73.05985098083869,
+      "difference_db": 0.0022167781613120496
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a225",
+      "java_dbm": -71.062067759,
+      "python_dbm": -71.05985098083869,
+      "difference_db": 0.0022167781613120496
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a300",
+      "java_dbm": -54.232480936,
+      "python_dbm": -54.23026415807534,
+      "difference_db": 0.002216777924658686
+    },
+    {
+      "case": "pattern-2",
+      "probe": "a330",
+      "java_dbm": -43.395401092,
+      "python_dbm": -43.39318431417202,
+      "difference_db": 0.0022167778279822414
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a0",
+      "java_dbm": -66.668128365,
+      "python_dbm": -66.66591158689928,
+      "difference_db": 0.002216778100716965
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a10",
+      "java_dbm": -67.031764729,
+      "python_dbm": -67.02954795053564,
+      "difference_db": 0.0022167784643585264
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a25",
+      "java_dbm": -67.21358291,
+      "python_dbm": -67.21136613235383,
+      "difference_db": 0.002216777646168566
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a29",
+      "java_dbm": -67.068128365,
+      "python_dbm": -67.06591158689929,
+      "difference_db": 0.002216778100716965
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a31",
+      "java_dbm": -66.995401092,
+      "python_dbm": -66.99318431417203,
+      "difference_db": 0.0022167778279680306
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a45",
+      "java_dbm": -66.486310183,
+      "python_dbm": -66.48409340508111,
+      "difference_db": 0.002216777918889079
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a59",
+      "java_dbm": -65.977219274,
+      "python_dbm": -65.9750024959902,
+      "difference_db": 0.0022167780098101275
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a61",
+      "java_dbm": -65.904492001,
+      "python_dbm": -65.90227522326292,
+      "difference_db": 0.002216777737075404
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a90",
+      "java_dbm": -64.849946547,
+      "python_dbm": -64.84772976871747,
+      "difference_db": 0.0022167782825306404
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a135",
+      "java_dbm": -63.21358291,
+      "python_dbm": -63.21136613235384,
+      "difference_db": 0.0022167776461614608
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a180",
+      "java_dbm": -61.577219274,
+      "python_dbm": -61.5750024959902,
+      "difference_db": 0.002216778009803022
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a225",
+      "java_dbm": -61.759037456,
+      "python_dbm": -61.75682067780838,
+      "difference_db": 0.0022167781916238027
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a300",
+      "java_dbm": -64.486310183,
+      "python_dbm": -64.48409340508111,
+      "difference_db": 0.002216777918889079
+    },
+    {
+      "case": "pattern-3",
+      "probe": "a330",
+      "java_dbm": -65.577219274,
+      "python_dbm": -65.57500249599019,
+      "difference_db": 0.0022167780098101275
+    },
+    {
+      "case": "polarization-0-0",
+      "probe": "p",
+      "java_dbm": -42.291004205,
+      "python_dbm": -42.2887874268782,
+      "difference_db": 0.002216778121798768
+    },
+    {
+      "case": "polarization-0-90",
+      "probe": "p",
+      "java_dbm": -68.311604118,
+      "python_dbm": -68.30938734015783,
+      "difference_db": 0.0022167778421788853
+    },
+    {
+      "case": "polarization-30-0",
+      "probe": "p",
+      "java_dbm": -43.540391571,
+      "python_dbm": -43.5381747929612,
+      "difference_db": 0.002216778038800271
+    },
+    {
+      "case": "polarization-30-90",
+      "probe": "p",
+      "java_dbm": -48.311604118,
+      "python_dbm": -48.309387340157826,
+      "difference_db": 0.00221677784217178
+    },
+    {
+      "case": "polarization-60-0",
+      "probe": "p",
+      "java_dbm": -48.311604118,
+      "python_dbm": -48.309387340157826,
+      "difference_db": 0.00221677784217178
+    },
+    {
+      "case": "polarization-60-90",
+      "probe": "p",
+      "java_dbm": -43.540391571,
+      "python_dbm": -43.5381747929612,
+      "difference_db": 0.002216778038800271
+    },
+    {
+      "case": "polarization-89-0",
+      "probe": "p",
+      "java_dbm": -68.311604118,
+      "python_dbm": -68.30938734015783,
+      "difference_db": 0.0022167778421788853
+    },
+    {
+      "case": "polarization-89-90",
+      "probe": "p",
+      "java_dbm": -42.292327209,
+      "python_dbm": -42.29011043069363,
+      "difference_db": 0.002216778306369349
+    },
+    {
+      "case": "polarization-90-0",
+      "probe": "p",
+      "java_dbm": -68.311604118,
+      "python_dbm": -68.30938734015783,
+      "difference_db": 0.0022167778421788853
+    },
+    {
+      "case": "polarization-90-90",
+      "probe": "p",
+      "java_dbm": -42.291004205,
+      "python_dbm": -42.2887874268782,
+      "difference_db": 0.002216778121798768
+    },
+    {
+      "case": "polarization-135-0",
+      "probe": "p",
+      "java_dbm": -45.301304162,
+      "python_dbm": -45.299087383518014,
+      "difference_db": 0.0022167784819870917
+    },
+    {
+      "case": "polarization-135-90",
+      "probe": "p",
+      "java_dbm": -45.301304162,
+      "python_dbm": -45.299087383518014,
+      "difference_db": 0.0022167784819870917
+    },
+    {
+      "case": "walls-2400MHz",
+      "probe": "a0",
+      "java_dbm": -76.05646247,
+      "python_dbm": -76.05424569204331,
+      "difference_db": 0.0022167779566899526
+    },
+    {
+      "case": "walls-2400MHz",
+      "probe": "a20",
+      "java_dbm": -76.05646247,
+      "python_dbm": -76.05424569204331,
+      "difference_db": 0.0022167779566899526
+    },
+    {
+      "case": "walls-2400MHz",
+      "probe": "a40",
+      "java_dbm": -85.921031706,
+      "python_dbm": -85.91881492789234,
+      "difference_db": 0.0022167781076518622
+    },
+    {
+      "case": "walls-2400MHz",
+      "probe": "a-20",
+      "java_dbm": -85.921031706,
+      "python_dbm": -85.91881492789234,
+      "difference_db": 0.0022167781076518622
+    },
+    {
+      "case": "walls-5200MHz",
+      "probe": "a0",
+      "java_dbm": -90.772304509,
+      "python_dbm": -90.77008773050717,
+      "difference_db": 0.0022167784928228684
+    },
+    {
+      "case": "walls-5200MHz",
+      "probe": "a20",
+      "java_dbm": -90.772304509,
+      "python_dbm": -90.77008773050717,
+      "difference_db": 0.0022167784928228684
+    },
+    {
+      "case": "walls-5200MHz",
+      "probe": "a40",
+      "java_dbm": -100.636873744,
+      "python_dbm": -100.63465696635622,
+      "difference_db": 0.0022167776437811426
+    },
+    {
+      "case": "walls-5200MHz",
+      "probe": "a-20",
+      "java_dbm": -100.636873744,
+      "python_dbm": -100.63465696635622,
+      "difference_db": 0.0022167776437811426
+    }
+  ],
+  "parity_summary": {
+    "probes": 76,
+    "max_abs_difference_db": 0.002216778605756531
+  },
+  "examples": [
+    {
+      "id": "smart-apartment:S1",
+      "example": "smart-apartment",
+      "sensor_id": "S1",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 41.6,
+          "y2": 1.3,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 41.6,
+          "y1": 1.3,
+          "x2": 41.6,
+          "y2": 28.6,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 41.6,
+          "y1": 28.6,
+          "x2": 1.3,
+          "y2": 28.6,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 28.6,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 1.3,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 9.1,
+          "x2": 28.6,
+          "y2": 28.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 19.5,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 9.1,
+          "x2": 28.6,
+          "y2": 9.1,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 28.6,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 22.1,
+          "y1": 9.1,
+          "x2": 22.1,
+          "y2": 19.5,
+          "material": "Wood",
+          "thickness_cm": 6.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 1.3,
+          "x2": 33.800000000000004,
+          "y2": 9.1,
+          "material": "Wood",
+          "thickness_cm": 6.0
+        }
+      ],
+      "sensor": {
+        "id": "S1",
+        "x": 7,
+        "y": 12,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 5.0,
+          "y": 4.0
+        }
+      ]
+    },
+    {
+      "id": "smart-apartment:S2",
+      "example": "smart-apartment",
+      "sensor_id": "S2",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 41.6,
+          "y2": 1.3,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 41.6,
+          "y1": 1.3,
+          "x2": 41.6,
+          "y2": 28.6,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 41.6,
+          "y1": 28.6,
+          "x2": 1.3,
+          "y2": 28.6,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 28.6,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 1.3,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 9.1,
+          "x2": 28.6,
+          "y2": 28.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 19.5,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 9.1,
+          "x2": 28.6,
+          "y2": 9.1,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 28.6,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 22.1,
+          "y1": 9.1,
+          "x2": 22.1,
+          "y2": 19.5,
+          "material": "Wood",
+          "thickness_cm": 6.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 1.3,
+          "x2": 33.800000000000004,
+          "y2": 9.1,
+          "material": "Wood",
+          "thickness_cm": 6.0
+        }
+      ],
+      "sensor": {
+        "id": "S2",
+        "x": 24,
+        "y": 5,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 5.0,
+          "y": 4.0
+        }
+      ]
+    },
+    {
+      "id": "smart-apartment:S3",
+      "example": "smart-apartment",
+      "sensor_id": "S3",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 41.6,
+          "y2": 1.3,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 41.6,
+          "y1": 1.3,
+          "x2": 41.6,
+          "y2": 28.6,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 41.6,
+          "y1": 28.6,
+          "x2": 1.3,
+          "y2": 28.6,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 28.6,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 1.3,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 9.1,
+          "x2": 28.6,
+          "y2": 28.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 19.5,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 9.1,
+          "x2": 28.6,
+          "y2": 9.1,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 28.6,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 22.1,
+          "y1": 9.1,
+          "x2": 22.1,
+          "y2": 19.5,
+          "material": "Wood",
+          "thickness_cm": 6.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 1.3,
+          "x2": 33.800000000000004,
+          "y2": 9.1,
+          "material": "Wood",
+          "thickness_cm": 6.0
+        }
+      ],
+      "sensor": {
+        "id": "S3",
+        "x": 40,
+        "y": 3,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 5.0,
+          "y": 4.0
+        }
+      ]
+    },
+    {
+      "id": "smart-apartment:S4",
+      "example": "smart-apartment",
+      "sensor_id": "S4",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 41.6,
+          "y2": 1.3,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 41.6,
+          "y1": 1.3,
+          "x2": 41.6,
+          "y2": 28.6,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 41.6,
+          "y1": 28.6,
+          "x2": 1.3,
+          "y2": 28.6,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 28.6,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 1.3,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 9.1,
+          "x2": 28.6,
+          "y2": 28.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 19.5,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 9.1,
+          "x2": 28.6,
+          "y2": 9.1,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 28.6,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 22.1,
+          "y1": 9.1,
+          "x2": 22.1,
+          "y2": 19.5,
+          "material": "Wood",
+          "thickness_cm": 6.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 1.3,
+          "x2": 33.800000000000004,
+          "y2": 9.1,
+          "material": "Wood",
+          "thickness_cm": 6.0
+        }
+      ],
+      "sensor": {
+        "id": "S4",
+        "x": 4,
+        "y": 26,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 5.0,
+          "y": 4.0
+        }
+      ]
+    },
+    {
+      "id": "smart-apartment:S5",
+      "example": "smart-apartment",
+      "sensor_id": "S5",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 41.6,
+          "y2": 1.3,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 41.6,
+          "y1": 1.3,
+          "x2": 41.6,
+          "y2": 28.6,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 41.6,
+          "y1": 28.6,
+          "x2": 1.3,
+          "y2": 28.6,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 28.6,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 1.3,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 9.1,
+          "x2": 28.6,
+          "y2": 28.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 19.5,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 9.1,
+          "x2": 28.6,
+          "y2": 9.1,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 28.6,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 22.1,
+          "y1": 9.1,
+          "x2": 22.1,
+          "y2": 19.5,
+          "material": "Wood",
+          "thickness_cm": 6.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 1.3,
+          "x2": 33.800000000000004,
+          "y2": 9.1,
+          "material": "Wood",
+          "thickness_cm": 6.0
+        }
+      ],
+      "sensor": {
+        "id": "S5",
+        "x": 20,
+        "y": 25,
+        "tx_power_dbm": 3.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 5.0,
+          "y": 4.0
+        }
+      ]
+    },
+    {
+      "id": "smart-apartment:S6",
+      "example": "smart-apartment",
+      "sensor_id": "S6",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 41.6,
+          "y2": 1.3,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 41.6,
+          "y1": 1.3,
+          "x2": 41.6,
+          "y2": 28.6,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 41.6,
+          "y1": 28.6,
+          "x2": 1.3,
+          "y2": 28.6,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 28.6,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Brick",
+          "thickness_cm": 12.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 1.3,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 9.1,
+          "x2": 28.6,
+          "y2": 28.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 19.5,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 9.1,
+          "x2": 28.6,
+          "y2": 9.1,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 28.6,
+          "y2": 19.5,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 22.1,
+          "y1": 9.1,
+          "x2": 22.1,
+          "y2": 19.5,
+          "material": "Wood",
+          "thickness_cm": 6.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 1.3,
+          "x2": 33.800000000000004,
+          "y2": 9.1,
+          "material": "Wood",
+          "thickness_cm": 6.0
+        }
+      ],
+      "sensor": {
+        "id": "S6",
+        "x": 39,
+        "y": 26,
+        "tx_power_dbm": 10.0,
+        "tx_gain_dbi": 3.0,
+        "antenna": "DIRECTIONAL",
+        "orientation_deg": 225.0,
+        "beamwidth_deg": 120.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 5.0,
+          "y": 4.0
+        }
+      ]
+    },
+    {
+      "id": "office-floor:S1",
+      "example": "office-floor",
+      "sensor_id": "S1",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 13.0,
+          "x2": 36.4,
+          "y2": 13.0,
+          "material": "Wood",
+          "thickness_cm": 5.0
+        }
+      ],
+      "sensor": {
+        "id": "S1",
+        "x": 8,
+        "y": 6,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 20.0,
+          "y": 8.0
+        }
+      ]
+    },
+    {
+      "id": "office-floor:S2",
+      "example": "office-floor",
+      "sensor_id": "S2",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 13.0,
+          "x2": 36.4,
+          "y2": 13.0,
+          "material": "Wood",
+          "thickness_cm": 5.0
+        }
+      ],
+      "sensor": {
+        "id": "S2",
+        "x": 30,
+        "y": 6,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 20.0,
+          "y": 8.0
+        }
+      ]
+    },
+    {
+      "id": "office-floor:S3",
+      "example": "office-floor",
+      "sensor_id": "S3",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 13.0,
+          "x2": 36.4,
+          "y2": 13.0,
+          "material": "Wood",
+          "thickness_cm": 5.0
+        }
+      ],
+      "sensor": {
+        "id": "S3",
+        "x": 8,
+        "y": 25,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 20.0,
+          "y": 8.0
+        }
+      ]
+    },
+    {
+      "id": "office-floor:S4",
+      "example": "office-floor",
+      "sensor_id": "S4",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 13.0,
+          "x2": 36.4,
+          "y2": 13.0,
+          "material": "Wood",
+          "thickness_cm": 5.0
+        }
+      ],
+      "sensor": {
+        "id": "S4",
+        "x": 20,
+        "y": 25,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 20.0,
+          "y": 8.0
+        }
+      ]
+    },
+    {
+      "id": "office-floor:S5",
+      "example": "office-floor",
+      "sensor_id": "S5",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 13.0,
+          "x2": 36.4,
+          "y2": 13.0,
+          "material": "Wood",
+          "thickness_cm": 5.0
+        }
+      ],
+      "sensor": {
+        "id": "S5",
+        "x": 31,
+        "y": 25,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 20.0,
+          "y": 8.0
+        }
+      ]
+    },
+    {
+      "id": "office-floor:S6",
+      "example": "office-floor",
+      "sensor_id": "S6",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 13.0,
+          "x2": 36.4,
+          "y2": 13.0,
+          "material": "Wood",
+          "thickness_cm": 5.0
+        }
+      ],
+      "sensor": {
+        "id": "S6",
+        "x": 20,
+        "y": 16,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 20.0,
+          "y": 8.0
+        }
+      ]
+    },
+    {
+      "id": "office-floor:S7",
+      "example": "office-floor",
+      "sensor_id": "S7",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 31.200000000000003,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 31.200000000000003,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 15.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 19.5,
+          "x2": 13.0,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 29.900000000000002,
+          "x2": 3.9000000000000004,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 19.5,
+          "x2": 24.7,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 24.7,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 15.600000000000001,
+          "y1": 29.900000000000002,
+          "x2": 15.600000000000001,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 19.5,
+          "x2": 36.4,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 36.4,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 29.900000000000002,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 27.3,
+          "y1": 29.900000000000002,
+          "x2": 27.3,
+          "y2": 19.5,
+          "material": "Glass",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 5.2,
+          "x2": 42.9,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 42.9,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 18.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 37.7,
+          "y1": 18.2,
+          "x2": 37.7,
+          "y2": 5.2,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 3.9000000000000004,
+          "y1": 13.0,
+          "x2": 36.4,
+          "y2": 13.0,
+          "material": "Wood",
+          "thickness_cm": 5.0
+        }
+      ],
+      "sensor": {
+        "id": "S7",
+        "x": 42,
+        "y": 4,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 20.0,
+          "y": 8.0
+        }
+      ]
+    },
+    {
+      "id": "warehouse:S1",
+      "example": "warehouse",
+      "sensor_id": "S1",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 37.7,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 37.7,
+          "x2": 1.3,
+          "y2": 37.7,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 37.7,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 2.6,
+          "y1": 2.6,
+          "x2": 11.700000000000001,
+          "y2": 2.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 2.6,
+          "x2": 11.700000000000001,
+          "y2": 10.4,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 10.4,
+          "x2": 2.6,
+          "y2": 10.4,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 2.6,
+          "y1": 10.4,
+          "x2": 2.6,
+          "y2": 2.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 6.5,
+          "x2": 13.0,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 22.1,
+          "x2": 13.0,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 18.2,
+          "y1": 6.5,
+          "x2": 18.2,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 18.2,
+          "y1": 22.1,
+          "x2": 18.2,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 23.400000000000002,
+          "y1": 6.5,
+          "x2": 23.400000000000002,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 23.400000000000002,
+          "y1": 22.1,
+          "x2": 23.400000000000002,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 6.5,
+          "x2": 28.6,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 22.1,
+          "x2": 28.6,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 6.5,
+          "x2": 33.800000000000004,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 22.1,
+          "x2": 33.800000000000004,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 39.0,
+          "y1": 6.5,
+          "x2": 39.0,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 39.0,
+          "y1": 22.1,
+          "x2": 39.0,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 13.0,
+          "x2": 44.2,
+          "y2": 13.0,
+          "material": "Wood",
+          "thickness_cm": 5.0
+        }
+      ],
+      "sensor": {
+        "id": "S1",
+        "x": 15,
+        "y": 12,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 6.0,
+          "y": 6.0
+        }
+      ]
+    },
+    {
+      "id": "warehouse:S2",
+      "example": "warehouse",
+      "sensor_id": "S2",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 37.7,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 37.7,
+          "x2": 1.3,
+          "y2": 37.7,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 37.7,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 2.6,
+          "y1": 2.6,
+          "x2": 11.700000000000001,
+          "y2": 2.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 2.6,
+          "x2": 11.700000000000001,
+          "y2": 10.4,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 10.4,
+          "x2": 2.6,
+          "y2": 10.4,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 2.6,
+          "y1": 10.4,
+          "x2": 2.6,
+          "y2": 2.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 6.5,
+          "x2": 13.0,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 22.1,
+          "x2": 13.0,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 18.2,
+          "y1": 6.5,
+          "x2": 18.2,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 18.2,
+          "y1": 22.1,
+          "x2": 18.2,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 23.400000000000002,
+          "y1": 6.5,
+          "x2": 23.400000000000002,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 23.400000000000002,
+          "y1": 22.1,
+          "x2": 23.400000000000002,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 6.5,
+          "x2": 28.6,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 22.1,
+          "x2": 28.6,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 6.5,
+          "x2": 33.800000000000004,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 22.1,
+          "x2": 33.800000000000004,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 39.0,
+          "y1": 6.5,
+          "x2": 39.0,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 39.0,
+          "y1": 22.1,
+          "x2": 39.0,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 13.0,
+          "x2": 44.2,
+          "y2": 13.0,
+          "material": "Wood",
+          "thickness_cm": 5.0
+        }
+      ],
+      "sensor": {
+        "id": "S2",
+        "x": 27,
+        "y": 28,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 6.0,
+          "y": 6.0
+        }
+      ]
+    },
+    {
+      "id": "warehouse:S3",
+      "example": "warehouse",
+      "sensor_id": "S3",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 37.7,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 37.7,
+          "x2": 1.3,
+          "y2": 37.7,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 37.7,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 2.6,
+          "y1": 2.6,
+          "x2": 11.700000000000001,
+          "y2": 2.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 2.6,
+          "x2": 11.700000000000001,
+          "y2": 10.4,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 10.4,
+          "x2": 2.6,
+          "y2": 10.4,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 2.6,
+          "y1": 10.4,
+          "x2": 2.6,
+          "y2": 2.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 6.5,
+          "x2": 13.0,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 22.1,
+          "x2": 13.0,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 18.2,
+          "y1": 6.5,
+          "x2": 18.2,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 18.2,
+          "y1": 22.1,
+          "x2": 18.2,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 23.400000000000002,
+          "y1": 6.5,
+          "x2": 23.400000000000002,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 23.400000000000002,
+          "y1": 22.1,
+          "x2": 23.400000000000002,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 6.5,
+          "x2": 28.6,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 22.1,
+          "x2": 28.6,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 6.5,
+          "x2": 33.800000000000004,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 22.1,
+          "x2": 33.800000000000004,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 39.0,
+          "y1": 6.5,
+          "x2": 39.0,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 39.0,
+          "y1": 22.1,
+          "x2": 39.0,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 13.0,
+          "x2": 44.2,
+          "y2": 13.0,
+          "material": "Wood",
+          "thickness_cm": 5.0
+        }
+      ],
+      "sensor": {
+        "id": "S3",
+        "x": 35,
+        "y": 20,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 6.0,
+          "y": 6.0
+        }
+      ]
+    },
+    {
+      "id": "warehouse:S4",
+      "example": "warehouse",
+      "sensor_id": "S4",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 37.7,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 37.7,
+          "x2": 1.3,
+          "y2": 37.7,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 37.7,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 2.6,
+          "y1": 2.6,
+          "x2": 11.700000000000001,
+          "y2": 2.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 2.6,
+          "x2": 11.700000000000001,
+          "y2": 10.4,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 10.4,
+          "x2": 2.6,
+          "y2": 10.4,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 2.6,
+          "y1": 10.4,
+          "x2": 2.6,
+          "y2": 2.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 6.5,
+          "x2": 13.0,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 22.1,
+          "x2": 13.0,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 18.2,
+          "y1": 6.5,
+          "x2": 18.2,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 18.2,
+          "y1": 22.1,
+          "x2": 18.2,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 23.400000000000002,
+          "y1": 6.5,
+          "x2": 23.400000000000002,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 23.400000000000002,
+          "y1": 22.1,
+          "x2": 23.400000000000002,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 6.5,
+          "x2": 28.6,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 22.1,
+          "x2": 28.6,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 6.5,
+          "x2": 33.800000000000004,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 22.1,
+          "x2": 33.800000000000004,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 39.0,
+          "y1": 6.5,
+          "x2": 39.0,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 39.0,
+          "y1": 22.1,
+          "x2": 39.0,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 13.0,
+          "x2": 44.2,
+          "y2": 13.0,
+          "material": "Wood",
+          "thickness_cm": 5.0
+        }
+      ],
+      "sensor": {
+        "id": "S4",
+        "x": 43,
+        "y": 30,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 6.0,
+          "y": 6.0
+        }
+      ]
+    },
+    {
+      "id": "warehouse:S5",
+      "example": "warehouse",
+      "sensor_id": "S5",
+      "env": {
+        "freq_mhz": 2400.0,
+        "bandwidth_hz": 20000000.0,
+        "noise_figure_db": 7.0,
+        "alpha_db_per_m": 0.0,
+        "system_gain_db": 0.0
+      },
+      "exponent": 2.1,
+      "receiver_gain_dbi": 0.0,
+      "receiver_polarization_deg": 0.0,
+      "walls": [
+        {
+          "x1": 1.3,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 1.3,
+          "x2": 44.2,
+          "y2": 37.7,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 44.2,
+          "y1": 37.7,
+          "x2": 1.3,
+          "y2": 37.7,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 1.3,
+          "y1": 37.7,
+          "x2": 1.3,
+          "y2": 1.3,
+          "material": "Concrete",
+          "thickness_cm": 20.0
+        },
+        {
+          "x1": 2.6,
+          "y1": 2.6,
+          "x2": 11.700000000000001,
+          "y2": 2.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 2.6,
+          "x2": 11.700000000000001,
+          "y2": 10.4,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 10.4,
+          "x2": 2.6,
+          "y2": 10.4,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 2.6,
+          "y1": 10.4,
+          "x2": 2.6,
+          "y2": 2.6,
+          "material": "Drywall",
+          "thickness_cm": 8.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 6.5,
+          "x2": 13.0,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 13.0,
+          "y1": 22.1,
+          "x2": 13.0,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 18.2,
+          "y1": 6.5,
+          "x2": 18.2,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 18.2,
+          "y1": 22.1,
+          "x2": 18.2,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 23.400000000000002,
+          "y1": 6.5,
+          "x2": 23.400000000000002,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 23.400000000000002,
+          "y1": 22.1,
+          "x2": 23.400000000000002,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 6.5,
+          "x2": 28.6,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 28.6,
+          "y1": 22.1,
+          "x2": 28.6,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 6.5,
+          "x2": 33.800000000000004,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 33.800000000000004,
+          "y1": 22.1,
+          "x2": 33.800000000000004,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 39.0,
+          "y1": 6.5,
+          "x2": 39.0,
+          "y2": 16.900000000000002,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 39.0,
+          "y1": 22.1,
+          "x2": 39.0,
+          "y2": 33.800000000000004,
+          "material": "Metal door",
+          "thickness_cm": 4.0
+        },
+        {
+          "x1": 11.700000000000001,
+          "y1": 13.0,
+          "x2": 44.2,
+          "y2": 13.0,
+          "material": "Wood",
+          "thickness_cm": 5.0
+        }
+      ],
+      "sensor": {
+        "id": "S5",
+        "x": 21,
+        "y": 8,
+        "tx_power_dbm": 0.0,
+        "tx_gain_dbi": 0.0,
+        "antenna": "OMNIDIRECTIONAL",
+        "orientation_deg": 0.0,
+        "beamwidth_deg": 360.0,
+        "pattern_sharpness": 1.8,
+        "side_lobe_db": 18.0,
+        "polarization_deg": 0.0
+      },
+      "probes": [
+        {
+          "id": "hub",
+          "x": 6.0,
+          "y": 6.0
+        }
+      ]
+    }
+  ],
+  "contrast": [
+    {
+      "example": "smart-apartment",
+      "sensor_id": "S1",
+      "python_imported_dbm": -59.294022192000384,
+      "python_same_height_dbm": -59.29335163953098,
+      "java_direct_dbm": -59.295568418,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -58.130123475,
+      "java_rays_paths": 3,
+      "rays_minus_direct_db": 1.1654449430000042,
+      "java_waves_dbm": -56.66912044,
+      "java_waves_paths": 3,
+      "waves_minus_direct_db": 2.6264479780000016
+    },
+    {
+      "example": "smart-apartment",
+      "sensor_id": "S2",
+      "python_imported_dbm": -69.91857401436778,
+      "python_same_height_dbm": -69.91844804671373,
+      "java_direct_dbm": -69.920664825,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -67.494492694,
+      "java_rays_paths": 5,
+      "rays_minus_direct_db": 2.4261721310000013,
+      "java_waves_dbm": -76.952702026,
+      "java_waves_paths": 5,
+      "waves_minus_direct_db": -7.032037200999994
+    },
+    {
+      "example": "smart-apartment",
+      "sensor_id": "S3",
+      "python_imported_dbm": -78.78119518775709,
+      "python_same_height_dbm": -78.78115799303065,
+      "java_direct_dbm": -78.783374771,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -75.140440315,
+      "java_rays_paths": 4,
+      "rays_minus_direct_db": 3.642934455999992,
+      "java_waves_dbm": -74.41093764,
+      "java_waves_paths": 4,
+      "waves_minus_direct_db": 4.372437130999998
+    },
+    {
+      "example": "smart-apartment",
+      "sensor_id": "S4",
+      "python_imported_dbm": -71.25239033298666,
+      "python_same_height_dbm": -71.25229631143927,
+      "java_direct_dbm": -71.25451309,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -68.490919141,
+      "java_rays_paths": 4,
+      "rays_minus_direct_db": 2.763593948999997,
+      "java_waves_dbm": -70.019438965,
+      "java_waves_paths": 4,
+      "waves_minus_direct_db": 1.235074124999997
+    },
+    {
+      "example": "smart-apartment",
+      "sensor_id": "S5",
+      "python_imported_dbm": -72.69855593174037,
+      "python_same_height_dbm": -72.69848746240366,
+      "java_direct_dbm": -72.700704241,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -69.132582815,
+      "java_rays_paths": 5,
+      "rays_minus_direct_db": 3.5681214259999905,
+      "java_waves_dbm": -72.793097462,
+      "java_waves_paths": 5,
+      "waves_minus_direct_db": -0.09239322100000891
+    },
+    {
+      "example": "smart-apartment",
+      "sensor_id": "S6",
+      "python_imported_dbm": -70.9051238680393,
+      "python_same_height_dbm": -70.90509606268468,
+      "java_direct_dbm": -70.907312841,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -69.338726212,
+      "java_rays_paths": 6,
+      "rays_minus_direct_db": 1.5685866290000092,
+      "java_waves_dbm": -76.627630995,
+      "java_waves_paths": 6,
+      "waves_minus_direct_db": -5.720318153999997
+    },
+    {
+      "example": "office-floor",
+      "sensor_id": "S1",
+      "python_imported_dbm": -62.84006417168213,
+      "python_same_height_dbm": -62.83975606776255,
+      "java_direct_dbm": -62.841972846,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -60.851171223,
+      "java_rays_paths": 3,
+      "rays_minus_direct_db": 1.9908016229999959,
+      "java_waves_dbm": -68.628213958,
+      "java_waves_paths": 3,
+      "waves_minus_direct_db": -5.786241112000006
+    },
+    {
+      "example": "office-floor",
+      "sensor_id": "S2",
+      "python_imported_dbm": -61.23129656806411,
+      "python_same_height_dbm": -61.23085811875269,
+      "java_direct_dbm": -61.233074897,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -59.653367809,
+      "java_rays_paths": 3,
+      "rays_minus_direct_db": 1.5797070879999993,
+      "java_waves_dbm": -58.765965455,
+      "java_waves_paths": 3,
+      "waves_minus_direct_db": 2.4671094420000017
+    },
+    {
+      "example": "office-floor",
+      "sensor_id": "S3",
+      "python_imported_dbm": -72.98523628051414,
+      "python_same_height_dbm": -72.98513096782584,
+      "java_direct_dbm": -72.987347746,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -71.238805952,
+      "java_rays_paths": 6,
+      "rays_minus_direct_db": 1.7485417939999905,
+      "java_waves_dbm": -70.32428521,
+      "java_waves_paths": 6,
+      "waves_minus_direct_db": 2.663062535999998
+    },
+    {
+      "example": "office-floor",
+      "sensor_id": "S4",
+      "python_imported_dbm": -71.141593190982,
+      "python_same_height_dbm": -71.14143540505924,
+      "java_direct_dbm": -71.143652183,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -70.505403175,
+      "java_rays_paths": 6,
+      "rays_minus_direct_db": 0.6382490080000025,
+      "java_waves_dbm": -72.546831509,
+      "java_waves_paths": 6,
+      "waves_minus_direct_db": -1.403179326
+    },
+    {
+      "example": "office-floor",
+      "sensor_id": "S5",
+      "python_imported_dbm": -72.73634977207394,
+      "python_same_height_dbm": -72.73623855167273,
+      "java_direct_dbm": -72.73845533,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -71.400868968,
+      "java_rays_paths": 5,
+      "rays_minus_direct_db": 1.3375863619999961,
+      "java_waves_dbm": -72.144982258,
+      "java_waves_paths": 5,
+      "waves_minus_direct_db": 0.5934730719999948
+    },
+    {
+      "example": "office-floor",
+      "sensor_id": "S6",
+      "python_imported_dbm": -62.26761024167129,
+      "python_same_height_dbm": -62.266897782946316,
+      "java_direct_dbm": -62.269114561,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -61.919485566,
+      "java_rays_paths": 4,
+      "rays_minus_direct_db": 0.34962899500000333,
+      "java_waves_dbm": -65.456127069,
+      "java_waves_paths": 4,
+      "waves_minus_direct_db": -3.1870125080000022
+    },
+    {
+      "example": "office-floor",
+      "sensor_id": "S7",
+      "python_imported_dbm": -68.39128430257288,
+      "python_same_height_dbm": -68.3911931016437,
+      "java_direct_dbm": -68.39340988,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -66.035428007,
+      "java_rays_paths": 4,
+      "rays_minus_direct_db": 2.357981873,
+      "java_waves_dbm": -64.480227824,
+      "java_waves_paths": 4,
+      "waves_minus_direct_db": 3.9131820559999966
+    },
+    {
+      "example": "warehouse",
+      "sensor_id": "S1",
+      "python_imported_dbm": -82.76834933925322,
+      "python_same_height_dbm": -82.7679596044502,
+      "java_direct_dbm": -82.770176383,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -80.450121612,
+      "java_rays_paths": 6,
+      "rays_minus_direct_db": 2.3200547710000023,
+      "java_waves_dbm": -76.5477756,
+      "java_waves_paths": 6,
+      "waves_minus_direct_db": 6.222400783000012
+    },
+    {
+      "example": "warehouse",
+      "sensor_id": "S2",
+      "python_imported_dbm": -113.44654554790141,
+      "python_same_height_dbm": -113.44649624987534,
+      "java_direct_dbm": -113.448713028,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -94.400175645,
+      "java_rays_paths": 3,
+      "rays_minus_direct_db": 19.048537382999996,
+      "java_waves_dbm": -92.048935422,
+      "java_waves_paths": 3,
+      "waves_minus_direct_db": 21.399777606
+    },
+    {
+      "example": "warehouse",
+      "sensor_id": "S3",
+      "python_imported_dbm": -131.9677289718752,
+      "python_same_height_dbm": -131.9676849982004,
+      "java_direct_dbm": -131.969901776,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -150.0,
+      "java_rays_paths": 0,
+      "rays_minus_direct_db": null,
+      "java_waves_dbm": -150.0,
+      "java_waves_paths": 0,
+      "waves_minus_direct_db": null
+    },
+    {
+      "example": "warehouse",
+      "sensor_id": "S4",
+      "python_imported_dbm": -152.83568736070674,
+      "python_same_height_dbm": -152.83566391556363,
+      "java_direct_dbm": -150.0,
+      "java_direct_at_floor": true,
+      "java_rays_dbm": -150.0,
+      "java_rays_paths": 0,
+      "rays_minus_direct_db": null,
+      "java_waves_dbm": -150.0,
+      "java_waves_paths": 0,
+      "waves_minus_direct_db": null
+    },
+    {
+      "example": "warehouse",
+      "sensor_id": "S5",
+      "python_imported_dbm": -103.83047974699426,
+      "python_same_height_dbm": -103.83028062068432,
+      "java_direct_dbm": -103.832497399,
+      "java_direct_at_floor": false,
+      "java_rays_dbm": -71.250440785,
+      "java_rays_paths": 5,
+      "rays_minus_direct_db": 32.58205661400001,
+      "java_waves_dbm": -70.640083402,
+      "java_waves_paths": 5,
+      "waves_minus_direct_db": 33.192413997
+    }
+  ],
+  "contrast_summary": {
+    "smart-apartment": {
+      "rays": {
+        "links": 6,
+        "not_comparable": 0,
+        "mean": 2.522475588999999,
+        "min": 1.1654449430000042,
+        "max": 3.642934455999992
+      },
+      "waves": {
+        "links": 6,
+        "not_comparable": 0,
+        "mean": -0.768464890333334,
+        "min": -7.032037200999994,
+        "max": 4.372437130999998
+      }
+    },
+    "office-floor": {
+      "rays": {
+        "links": 7,
+        "not_comparable": 0,
+        "mean": 1.4289281061428554,
+        "min": 0.34962899500000333,
+        "max": 2.357981873
+      },
+      "waves": {
+        "links": 7,
+        "not_comparable": 0,
+        "mean": -0.1056579771428596,
+        "min": -5.786241112000006,
+        "max": 3.9131820559999966
+      }
+    },
+    "warehouse": {
+      "rays": {
+        "links": 3,
+        "not_comparable": 2,
+        "mean": 17.983549589333336,
+        "min": 2.3200547710000023,
+        "max": 32.58205661400001
+      },
+      "waves": {
+        "links": 3,
+        "not_comparable": 2,
+        "mean": 20.271530795333337,
+        "min": 6.222400783000012,
+        "max": 33.192413997
+      }
+    }
+  }
+}

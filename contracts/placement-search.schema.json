@@ -198,6 +198,36 @@
           ],
           "title": "Engine",
           "type": "string"
+        },
+        "max_power_distance_m": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 100,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Discard places farther than this straight-line distance from every power outlet (B-119)",
+          "title": "Max Power Distance M"
+        },
+        "max_network_distance_m": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 100,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Discard places farther than this straight-line distance from every network socket (B-119)",
+          "title": "Max Network Distance M"
         }
       },
       "required": [
@@ -319,6 +349,12 @@
         "link_id": {
           "title": "Link Id",
           "type": "string"
+        },
+        "backhaul": {
+          "default": false,
+          "description": "True for the AP's own wireless data link (B-117): it moves with the AP and always counts",
+          "title": "Backhaul",
+          "type": "boolean"
         },
         "forward_margin_db": {
           "anyOf": [

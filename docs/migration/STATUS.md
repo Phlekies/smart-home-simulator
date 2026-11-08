@@ -25,11 +25,26 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
 - Interfaz A-109…A-113 en [PR #14](https://github.com/Phlekies/smart-home-simulator/pull/14), revisada por B (I-005), con A-102 incluida.
 - En revisión: I-004, B-109…B-112 (#13) y B-113…B-116 (#15): procedencia por
   parámetro, mapas con escenario, informe por enlace y comprobación de medidas. Ver secciones inferiores.
+- En revisión: B-117…B-121 ([PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17), sobre #16): conexión de datos de los AP,
+  perfiles de AP, enchufes y tomas en la búsqueda, mapas en el informe y paridad con Java.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## B-117…B-121 — conexión de datos, perfiles de AP, cableado, mapas en el informe y paridad Java — 2026-11-01
+
+| Tarea | Comprobación | Resultado |
+|---|---|---|
+| B-117 | `test_backhaul.py` | Margen del salto igual al del enlace simulado; potencia ausente sin margen; sin definir, desconocida, cable y bucle declarados; contrato incoherente rechazado; huella de proyectos anteriores intacta; el enlace de datos se mueve con el AP en la búsqueda; nota en mapas e informe |
+| B-118 | `test_profiles.py` | Perfiles de AP con potencia desconocida y límite legal de la UE como información; radio por canal 1–13 con procedencia; `GET /api/profiles` sigue devolviendo solo clientes; roles y canales inválidos rechazados |
+| B-119 | `test_wiring_limits.py` | Enchufes y tomas no cambian resultados ni `input_hash`, sí `request_hash`; descarte por distancia en línea recta con motivo; límites independientes; 422 sin enchufes o tomas |
+| B-120 | `test_report_maps.py` | Mapa del informe idéntico al de la API de mapas; resumen y peor caso; Markdown sin porcentajes; límite de coste compartido; 422 si los datos son inválidos |
+| B-121 | `java_parity.py` (JDK 22.0.2) y `test_java_parity.py` | 76 sondas de antena y polarización con diferencia ≤ 0.0022 dB; importación de antenas fiel; contraste multipath documentado ([paridad](../simulation/JAVA_PARITY.md)) |
+| Contratos | `export --check` y tipos regenerados | Solo campos opcionales y una ruta nueva (`POST /api/profiles/{id}/radio`) |
+| Compatibilidad con A | Rama de #14 con los tipos nuevos, en un worktree temporal ya eliminado | 120 pruebas web y build correctos |
+| Rama completa | `pytest`, `npm test`, `npm run build`, `git diff --check` | 356 Python, 84 web, build correcto |
 
 ## I-005 — revisión de A-109…A-113 ([PR #14](https://github.com/Phlekies/smart-home-simulator/pull/14)) — 2026-10-31
 

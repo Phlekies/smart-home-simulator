@@ -34,6 +34,12 @@ Parámetros:
 - `candidates`: puntos con `id`, etiqueta y posición con altura.
 - `zones`: rectángulos con altura y paso de 0.25–10 m.
 - `engine`.
+- `max_power_distance_m` y `max_network_distance_m` (B-119, opcionales, hasta 100 m): descartan los
+  lugares más lejanos, en línea recta, que el límite indicado de todo enchufe
+  (`building.power_outlets`) o de toda toma de red (`building.network_ports`). La línea recta es el
+  cable más corto posible: solo se descartan lugares que seguro no alcanzan. Un límite sin enchufes
+  o tomas en el proyecto responde 422. Enchufes y tomas no entran en `input_hash`, pero sí en
+  `request_hash`, para que la caché no devuelva una búsqueda antigua.
 
 ## Semántica
 
@@ -44,7 +50,12 @@ Parámetros:
 - **Por lugar:** equipos completos, peor margen y su equipo, media, y `delta_worst_margin_db`
   frente a la línea base (solo si ambos tienen los mismos equipos completos).
 - `ranked = false` si ningún lugar tiene márgenes completos: los candidatos se devuelven sin ordenar.
-- Los lugares dentro del grosor de una pared se excluyen con su motivo. Se devuelven los 50 mejores.
+- Se excluyen, con su motivo, los lugares dentro del grosor de una pared (`inside-wall:<id>`) y los que
+  quedan fuera del alcance de enchufes o tomas (`no-power-outlet-within:<m>m`,
+  `no-network-port-within:<m>m`). Se devuelven los 50 mejores.
+- **Enlace de datos del AP (B-117):** si el AP tiene una conexión `wireless`, ese enlace se evalúa
+  siempre, con `backhaul = true`, aunque no figure entre los equipos prioritarios o use otra radio
+  del AP. Ver [conexión de datos](DATA_CONNECTION_CONTRACT.md).
 - El resultado repite `parameters`, `input_hash` y `request_hash` para detectar obsolescencia.
 
 ## Trabajo del consumidor (A)
@@ -57,7 +68,9 @@ Parámetros:
 
 ## Límites
 
-- Mueve un único AP. Añadir un AP exige definir su enlace de datos (P3) y no se evalúa.
+- Mueve un único AP. Su enlace de datos inalámbrico se evalúa con él (B-117). Añadir un AP nuevo y
+  elegir su ubicación junto con la del resto queda fuera de esta búsqueda.
 - Trayecto directo del estimador rápido. Con Sionna, el orden podría cambiar por multipath:
   hay que aplicar las condiciones de [B-102](ADVANCED_ENGINE_EVALUATION.md).
-- Alimentación, cableado y montaje los garantiza la persona al declarar los lugares.
+- Enchufes y tomas solo descartan lugares por distancia en línea recta. El recorrido real del cable,
+  la canaleta y el montaje los garantiza la persona.

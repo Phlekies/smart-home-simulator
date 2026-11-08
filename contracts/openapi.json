@@ -346,19 +346,95 @@
     "/api/profiles": {
       "get": {
         "summary": "Profiles",
-        "description": "Generic radio profiles with per-value provenance; approximations, not products.",
+        "description": "Generic radio profiles with per-value provenance; approximations, not products.\n\nClients by default, as before B-118, so existing map selectors never list access points.",
         "operationId": "profiles_api_profiles_get",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "client",
+                "access-point"
+              ],
+              "type": "string",
+              "default": "client",
+              "title": "Role"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Successful Response",
             "content": {
               "application/json": {
                 "schema": {
+                  "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/GenericProfile"
                   },
-                  "type": "array",
                   "title": "Response Profiles Api Profiles Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/profiles/{profile_id}/radio": {
+      "post": {
+        "summary": "Profile Radio",
+        "description": "A catalogue profile as a project radio on a 2.4 GHz channel; unknown values stay empty.",
+        "operationId": "profile_radio_api_profiles__profile_id__radio_post",
+        "parameters": [
+          {
+            "name": "profile_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Profile Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileRadioRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Radio-Output"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -525,6 +601,81 @@
   },
   "components": {
     "schemas": {
+      "AccessPointConnection": {
+        "properties": {
+          "device_id": {
+            "type": "string",
+            "title": "Device Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "gateway",
+              "wired",
+              "wireless",
+              "unknown",
+              "undefined"
+            ],
+            "title": "Kind"
+          },
+          "hops": {
+            "items": {
+              "$ref": "#/components/schemas/BackhaulHop"
+            },
+            "type": "array",
+            "title": "Hops",
+            "description": "Wireless links from this device towards the gateway, in order"
+          },
+          "ends_at": {
+            "type": "string",
+            "enum": [
+              "gateway",
+              "wired",
+              "unknown",
+              "undefined",
+              "loop"
+            ],
+            "title": "Ends At"
+          },
+          "end_device_id": {
+            "type": "string",
+            "title": "End Device Id",
+            "description": "Last device reached; its connection is 'ends_at'"
+          },
+          "weakest_margin_db": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Weakest Margin Db",
+            "description": "Lowest hop margin; None without hops or if one is missing"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Reasons"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "device_id",
+          "kind",
+          "hops",
+          "ends_at",
+          "end_device_id",
+          "weakest_margin_db",
+          "reasons"
+        ],
+        "title": "AccessPointConnection",
+        "description": "Data path of a network device: its wireless hops and what the chain reaches. No verdict."
+      },
       "AccessPointSetup": {
         "properties": {
           "id": {
@@ -608,6 +759,52 @@
         ],
         "title": "AccessPointSetup"
       },
+      "BackhaulHop": {
+        "properties": {
+          "link_id": {
+            "type": "string",
+            "title": "Link Id"
+          },
+          "from_device_id": {
+            "type": "string",
+            "title": "From Device Id",
+            "description": "Device whose data travels over this link"
+          },
+          "to_device_id": {
+            "type": "string",
+            "title": "To Device Id",
+            "description": "Next device towards the gateway"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Status of the link in the same simulation"
+          },
+          "limiting_margin_db": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limiting Margin Db",
+            "description": "Lower margin of both directions; None if either is missing"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "link_id",
+          "from_device_id",
+          "to_device_id",
+          "status",
+          "limiting_margin_db"
+        ],
+        "title": "BackhaulHop",
+        "description": "One wireless link that carries an access point's data towards the gateway."
+      },
       "Building-Input": {
         "properties": {
           "width_m": {
@@ -640,6 +837,24 @@
             "maxItems": 64,
             "minItems": 1,
             "title": "Materials"
+          },
+          "power_outlets": {
+            "items": {
+              "$ref": "#/components/schemas/Fixture-Input"
+            },
+            "type": "array",
+            "maxItems": 512,
+            "title": "Power Outlets",
+            "description": "Power outlets; only placement searches read them, so they never enter input_hash"
+          },
+          "network_ports": {
+            "items": {
+              "$ref": "#/components/schemas/Fixture-Input"
+            },
+            "type": "array",
+            "maxItems": 512,
+            "title": "Network Ports",
+            "description": "Wired network sockets for access points with a cable; only placement searches read them"
           }
         },
         "additionalProperties": false,
@@ -681,6 +896,24 @@
             "maxItems": 64,
             "minItems": 1,
             "title": "Materials"
+          },
+          "power_outlets": {
+            "items": {
+              "$ref": "#/components/schemas/Fixture-Output"
+            },
+            "type": "array",
+            "maxItems": 512,
+            "title": "Power Outlets",
+            "description": "Power outlets; only placement searches read them, so they never enter input_hash"
+          },
+          "network_ports": {
+            "items": {
+              "$ref": "#/components/schemas/Fixture-Output"
+            },
+            "type": "array",
+            "maxItems": 512,
+            "title": "Network Ports",
+            "description": "Wired network sockets for access points with a cable; only placement searches read them"
           }
         },
         "additionalProperties": false,
@@ -1009,7 +1242,69 @@
         ],
         "title": "CoverageMapJob"
       },
-      "CoverageMapParameters": {
+      "CoverageMapParameters-Input": {
+        "properties": {
+          "access_point_device_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Access Point Device Id"
+          },
+          "access_point_radio_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Access Point Radio Id"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/ReceiverProfile-Input"
+          },
+          "grid": {
+            "$ref": "#/components/schemas/MapGrid-Input"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/Point-Input"
+            },
+            "type": "array",
+            "maxItems": 256,
+            "title": "Points",
+            "description": "Exact positions evaluated without snapping to the grid"
+          },
+          "engine": {
+            "type": "string",
+            "enum": [
+              "quick-estimate",
+              "sionna-rt",
+              "ns-3"
+            ],
+            "title": "Engine",
+            "default": "quick-estimate"
+          },
+          "scenario": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScenarioAssumptions-Input"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Door states and material bounds applied to every cell, e.g. the best or worst case of /api/scenario-simulations; None evaluates the project as it is"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "access_point_device_id",
+          "access_point_radio_id",
+          "profile",
+          "grid"
+        ],
+        "title": "CoverageMapParameters",
+        "description": "Everything that defines a map except the project; echoed in the result for staleness checks."
+      },
+      "CoverageMapParameters-Output": {
         "properties": {
           "access_point_device_id": {
             "type": "string",
@@ -1159,7 +1454,7 @@
             "description": "Hash of the project and every map parameter"
           },
           "parameters": {
-            "$ref": "#/components/schemas/CoverageMapParameters"
+            "$ref": "#/components/schemas/CoverageMapParameters-Output"
           },
           "metric": {
             "type": "string",
@@ -1337,6 +1632,106 @@
         "title": "CoverageSample",
         "description": "One evaluated position. Forward is AP→profile, reverse is profile→AP; no classification."
       },
+      "DataConnection-Input": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "gateway",
+              "wired",
+              "wireless",
+              "unknown"
+            ],
+            "title": "Kind",
+            "description": "gateway: the network exit itself (e.g. the ISP router); wired: a declared cable, not evaluated; wireless: a project link carries the data; unknown: not known yet"
+          },
+          "link_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link Id",
+            "description": "The wireless link; required only for 'wireless'"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "description": "e.g. Ethernet, PLC, mesh; documentation only"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "kind"
+        ],
+        "title": "DataConnection",
+        "description": "How a device that offers a network reaches the rest of it (B-117). Only wireless hops are evaluated."
+      },
+      "DataConnection-Output": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "gateway",
+              "wired",
+              "wireless",
+              "unknown"
+            ],
+            "title": "Kind",
+            "description": "gateway: the network exit itself (e.g. the ISP router); wired: a declared cable, not evaluated; wireless: a project link carries the data; unknown: not known yet"
+          },
+          "link_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Link Id",
+            "description": "The wireless link; required only for 'wireless'"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note",
+            "description": "e.g. Ethernet, PLC, mesh; documentation only"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "kind",
+          "link_id",
+          "note"
+        ],
+        "title": "DataConnection",
+        "description": "How a device that offers a network reaches the rest of it (B-117). Only wireless hops are evaluated."
+      },
       "DeliverySummary": {
         "properties": {
           "criterion_id": {
@@ -1496,6 +1891,17 @@
             "type": "string",
             "title": "Evidence",
             "default": "User-defined generic device; functional compatibility unverified"
+          },
+          "data_connection": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataConnection-Input"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How this device reaches the network. Expected for access points, routers and bridges; None means not defined yet and is reported as such"
           }
         },
         "additionalProperties": false,
@@ -1551,6 +1957,17 @@
             "type": "string",
             "title": "Evidence",
             "default": "User-defined generic device; functional compatibility unverified"
+          },
+          "data_connection": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataConnection-Output"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "How this device reaches the network. Expected for access points, routers and bridges; None means not defined yet and is reported as such"
           }
         },
         "additionalProperties": false,
@@ -1728,6 +2145,62 @@
         "title": "FailureCriterion",
         "description": "Active link test decided before looking at predictions; frozen before validation."
       },
+      "Fixture-Input": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "position": {
+            "$ref": "#/components/schemas/Point-Input"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "position"
+        ],
+        "title": "Fixture",
+        "description": "A fixed point of the dwelling that limits where equipment can go (B-119)."
+      },
+      "Fixture-Output": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "position": {
+            "$ref": "#/components/schemas/Point-Output"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "position"
+        ],
+        "title": "Fixture",
+        "description": "A fixed point of the dwelling that limits where equipment can go (B-119)."
+      },
       "GenericProfile": {
         "properties": {
           "id": {
@@ -1787,6 +2260,20 @@
             "type": "array",
             "maxItems": 32,
             "title": "Notes"
+          },
+          "roles": {
+            "items": {
+              "type": "string",
+              "enum": [
+                "client",
+                "access-point"
+              ]
+            },
+            "type": "array",
+            "maxItems": 2,
+            "minItems": 1,
+            "title": "Roles",
+            "description": "Where the profile may be applied (B-118)"
           }
         },
         "additionalProperties": false,
@@ -1806,7 +2293,7 @@
           "notes"
         ],
         "title": "GenericProfile",
-        "description": "Generic client radio for a band and mode; an approximation, never a certified product."
+        "description": "Generic radio for a band and mode; an approximation, never a certified product."
       },
       "HTTPValidationError": {
         "properties": {
@@ -1881,6 +2368,22 @@
             },
             "type": "array",
             "title": "Limitations"
+          },
+          "access_points": {
+            "items": {
+              "$ref": "#/components/schemas/AccessPointConnection"
+            },
+            "type": "array",
+            "title": "Access Points",
+            "description": "Data path of each access point (B-117), as in the simulation result"
+          },
+          "maps": {
+            "items": {
+              "$ref": "#/components/schemas/ReportMap"
+            },
+            "type": "array",
+            "title": "Maps",
+            "description": "Requested coverage maps (B-120)"
           }
         },
         "additionalProperties": false,
@@ -2312,6 +2815,58 @@
         ],
         "title": "MapGrid",
         "description": "Horizontal sampling plane. Cell (i, j) is evaluated at its centre:\nx = origin_x_m + (i + 0.5)·resolution_m, y = origin_y_m + (j + 0.5)·resolution_m, z = height_m.\nEdge cells narrower than resolution_m use the centre of their clipped extent."
+      },
+      "MapSummary": {
+        "properties": {
+          "cells": {
+            "type": "integer",
+            "title": "Cells"
+          },
+          "computed_cells": {
+            "type": "integer",
+            "title": "Computed Cells"
+          },
+          "partial_cells": {
+            "type": "integer",
+            "title": "Partial Cells"
+          },
+          "not_computed_cells": {
+            "type": "integer",
+            "title": "Not Computed Cells"
+          },
+          "limiting_margin_db": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limiting Margin Db",
+            "description": "[min, median, max] of the lower margin of both directions over computed cells; None without any"
+          },
+          "negative_limiting_cells": {
+            "type": "integer",
+            "title": "Negative Limiting Cells",
+            "description": "Computed cells whose lower margin is below 0 dB"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "cells",
+          "computed_cells",
+          "partial_cells",
+          "not_computed_cells",
+          "limiting_margin_db",
+          "negative_limiting_cells"
+        ],
+        "title": "MapSummary",
+        "description": "Counts and spread of a map; not a coverage percentage (no failure criterion or design reserve yet)."
       },
       "Material-Input": {
         "properties": {
@@ -3038,6 +3593,34 @@
             ],
             "title": "Engine",
             "default": "quick-estimate"
+          },
+          "max_power_distance_m": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Power Distance M",
+            "description": "Discard places farther than this straight-line distance from every power outlet (B-119)"
+          },
+          "max_network_distance_m": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Network Distance M",
+            "description": "Discard places farther than this straight-line distance from every network socket (B-119)"
           }
         },
         "additionalProperties": false,
@@ -3103,6 +3686,34 @@
             ],
             "title": "Engine",
             "default": "quick-estimate"
+          },
+          "max_power_distance_m": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Power Distance M",
+            "description": "Discard places farther than this straight-line distance from every power outlet (B-119)"
+          },
+          "max_network_distance_m": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Network Distance M",
+            "description": "Discard places farther than this straight-line distance from every network socket (B-119)"
           },
           "project": {
             "$ref": "#/components/schemas/Project-Input"
@@ -3721,6 +4332,39 @@
           "delivery"
         ],
         "title": "PointSummary"
+      },
+      "ProfileRadioRequest": {
+        "properties": {
+          "role": {
+            "type": "string",
+            "enum": [
+              "client",
+              "access-point"
+            ],
+            "title": "Role"
+          },
+          "channel": {
+            "type": "integer",
+            "maximum": 13.0,
+            "minimum": 1.0,
+            "title": "Channel"
+          },
+          "radio_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Radio Id",
+            "default": "radio-1"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "role",
+          "channel"
+        ],
+        "title": "ProfileRadioRequest",
+        "description": "Apply a catalogue profile to a project radio on a given 2.4 GHz channel (B-118)."
       },
       "ProfileValue": {
         "properties": {
@@ -4683,6 +5327,29 @@
         ],
         "title": "ReportLink"
       },
+      "ReportMap": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/MapSummary"
+          },
+          "result": {
+            "$ref": "#/components/schemas/CoverageMapResult",
+            "description": "Full map, so the report file keeps it for drawing and staleness"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "summary",
+          "result"
+        ],
+        "title": "ReportMap"
+      },
       "ReportRequest": {
         "properties": {
           "project": {
@@ -4707,6 +5374,15 @@
               }
             ],
             "title": "Title"
+          },
+          "maps": {
+            "items": {
+              "$ref": "#/components/schemas/CoverageMapParameters-Input"
+            },
+            "type": "array",
+            "maxItems": 4,
+            "title": "Maps",
+            "description": "Coverage maps to compute and attach (B-120); together they share one map's cost bound"
           }
         },
         "additionalProperties": false,
@@ -5198,6 +5874,14 @@
             },
             "type": "array",
             "title": "Links"
+          },
+          "access_points": {
+            "items": {
+              "$ref": "#/components/schemas/AccessPointConnection"
+            },
+            "type": "array",
+            "title": "Access Points",
+            "description": "Data path of every access point, router or bridge, and of any device with a data connection"
           }
         },
         "additionalProperties": false,
@@ -5262,6 +5946,12 @@
           "link_id": {
             "type": "string",
             "title": "Link Id"
+          },
+          "backhaul": {
+            "type": "boolean",
+            "title": "Backhaul",
+            "description": "True for the AP's own wireless data link (B-117): it moves with the AP and always counts",
+            "default": false
           },
           "forward_margin_db": {
             "anyOf": [

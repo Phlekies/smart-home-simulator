@@ -46,6 +46,20 @@ export type LossDb5GhzHigh = number;
  */
 export type Source = string;
 export type Id2 = string;
+export type Label = string;
+/**
+ * Power outlets; only placement searches read them, so they never enter input_hash
+ *
+ * @maxItems 512
+ */
+export type PowerOutlets = Fixture[];
+/**
+ * Wired network sockets for access points with a cable; only placement searches read them
+ *
+ * @maxItems 512
+ */
+export type NetworkPorts = Fixture[];
+export type Id3 = string;
 export type Name2 = string;
 export type Role = "endpoint" | "access-point" | "controller" | "router" | "bridge" | "unknown";
 /**
@@ -61,7 +75,7 @@ export type Radios =
   | [Radio, Radio, Radio, Radio, Radio, Radio]
   | [Radio, Radio, Radio, Radio, Radio, Radio, Radio]
   | [Radio, Radio, Radio, Radio, Radio, Radio, Radio, Radio];
-export type Id3 = string;
+export type Id4 = string;
 export type Protocol = "wifi" | "thread" | "zigbee" | "ble" | "zwave" | "unknown";
 export type FrequencyHz = number;
 export type BandwidthHz = number;
@@ -87,10 +101,22 @@ export type Provenance1 = "measured" | "declared" | "standard-minimum" | "inferr
 export type Source1 = string | null;
 export type Evidence1 = string;
 /**
+ * gateway: the network exit itself (e.g. the ISP router); wired: a declared cable, not evaluated; wireless: a project link carries the data; unknown: not known yet
+ */
+export type Kind = "gateway" | "wired" | "wireless" | "unknown";
+/**
+ * The wireless link; required only for 'wireless'
+ */
+export type LinkId = string | null;
+/**
+ * e.g. Ethernet, PLC, mesh; documentation only
+ */
+export type Note = string | null;
+/**
  * @maxItems 128
  */
 export type Devices = Device[];
-export type Id4 = string;
+export type Id5 = string;
 export type SourceDeviceId = string;
 export type SourceRadioId = string;
 export type TargetDeviceId = string;
@@ -143,6 +169,8 @@ export interface Building {
   depth_m: DepthM;
   walls: Walls;
   materials: Materials;
+  power_outlets?: PowerOutlets;
+  network_ports?: NetworkPorts;
 }
 export interface Wall {
   id: Id;
@@ -177,16 +205,28 @@ export interface MaterialUncertainty {
   loss_db_5ghz_high: LossDb5GhzHigh;
   source: Source;
 }
-export interface Device {
+/**
+ * A fixed point of the dwelling that limits where equipment can go (B-119).
+ */
+export interface Fixture {
   id: Id2;
+  label: Label;
+  position: Point;
+}
+export interface Device {
+  id: Id3;
   name: Name2;
   role: Role;
   position: Point;
   radios: Radios;
   evidence: Evidence1;
+  /**
+   * How this device reaches the network. Expected for access points, routers and bridges; None means not defined yet and is reported as such
+   */
+  data_connection?: DataConnection | null;
 }
 export interface Radio {
-  id: Id3;
+  id: Id4;
   protocol: Protocol;
   frequency_hz: FrequencyHz;
   bandwidth_hz: BandwidthHz;
@@ -211,8 +251,16 @@ export interface RadioValueSource {
   provenance: Provenance1;
   source: Source1;
 }
+/**
+ * How a device that offers a network reaches the rest of it (B-117). Only wireless hops are evaluated.
+ */
+export interface DataConnection {
+  kind: Kind;
+  link_id: LinkId;
+  note: Note;
+}
 export interface Link {
-  id: Id4;
+  id: Id5;
   source_device_id: SourceDeviceId;
   source_radio_id: SourceRadioId;
   target_device_id: TargetDeviceId;
