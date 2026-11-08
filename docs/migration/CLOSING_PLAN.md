@@ -22,6 +22,9 @@ conflictos**. En el árbol resultante:
 - build (`tsc` + vite) y 120 pruebas web;
 - paquete local generado y arranque del servidor único correcto.
 
+Repetido el mismo día con B-134/B-135: 444 pruebas Python, contratos y tipos de A sin deriva,
+build y 120 pruebas web, sin conflictos.
+
 ## 2. Verificación en `main` (B, al terminar los merges)
 
 1. CI de `main` en verde: migración y Java (Linux, Windows y macOS).
@@ -37,7 +40,7 @@ conflictos**. En el árbol resultante:
 |---|---|---|
 | M3 | Conversión de unidades, ejes, geometría, radios y materiales | B-102 + B-121 (76 sondas ≤ 0.0022 dB) |
 | M3 | Diferencias respecto a Java explicadas | B-101/B-102 + contraste multipath B-121 + [ADR-008](ARCHITECTURE.md) |
-| M4 | Comparación de posiciones y optimización con restricciones | A-105, A-110 (#14), B-105, B-119 |
+| M4 | Comparación de posiciones y optimización con restricciones | A-105, A-110 (#14), B-105, B-119 y evaluación bajo incertidumbre B-134 |
 | M5 | Pruebas de fórmulas/geometría y regresiones | B-126 (47 casos) + paridad B-121 |
 | M5 | E2E crear/importar, editar, calcular, comparar y guardar | B-111 (API) + B-127 (navegador) + paso 2.3 |
 | M5 | Documentación del ámbito real y motores | B-125 [SCOPE_AND_ENGINES](SCOPE_AND_ENGINES.md) + ADR-008 |

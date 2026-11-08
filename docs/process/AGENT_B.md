@@ -8,6 +8,15 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 - Estado: **review** — B-117…B-121 en [PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17) y B-122…B-125 en [PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), ambos en borrador.
   Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 → #23 → #24 (cambiando bases a `main`) y #14.
   PR #18–#21 son de Dependabot (acciones de CI y Gradle): sin revisar ni fusionar por B.
+- **review** — B-134 y B-135 (rama local `agent-b/b-134-135`, apilada sobre #24). Condiciones de la tabla
+  de inventario de ROADMAP que seguían abiertas para B:
+  - **B-134** `HubPlacementOptimizer`: evaluación bajo incertidumbre. `PlacementSearchParameters.scenario`
+    opcional (mismas reglas que los mapas B-114), para ordenar los lugares, por ejemplo, en el peor caso.
+  - **B-135** `LinkValidator`: el informe distingue consistencia, calibración y validación
+    (`InstallationReport.evidence_levels` opcional y sección Markdown).
+  - Archivos: `models.py`, `placement.py`, `report.py`, pruebas, contratos y tipos generados,
+    `PLACEMENT_SEARCH_CONTRACT.md`, `REPORT_CONTRACT.md`, documentos comunes y este registro.
+    Contrato aditivo.
 - **review** — B-130…B-133 e I-006 ([PR #24](https://github.com/Phlekies/smart-home-simulator/pull/24), apilado sobre #23), por decisión del
   usuario del 2026-11-08 («estimador directo» como motor de la migración; instalación «basta con Python»):
   - **B-130** registrar y aplicar la decisión de motor (FEATURE_MATRIX, ROADMAP, SCOPE_AND_ENGINES,
@@ -68,6 +77,23 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### B-134 y B-135 — búsqueda bajo incertidumbre y niveles de evidencia (review)
+
+```text
+Tareas / estado: B-134, B-135 / review. Rama local agent-b/b-134-135 sobre #24. 2026-11-08, Europe/Madrid.
+Motivo: condiciones de la tabla de inventario de ROADMAP que seguían abiertas para B.
+B-134: PlacementSearchParameters.scenario opcional (scenario_issue, request_hash sin la clave si es None);
+  _evaluate aplica el escenario a ambos sentidos; motivo y alcance lo nombran.
+B-135: InstallationReport.evidence_levels (consistencia comprobada; calibración y validación ninguna) y
+  tabla «Nivel de evidencia» en Markdown.
+Contratos: dos campos opcionales; placement-search.ts e installation-report.ts regenerados.
+Comandos: pytest 444; export --check sin deriva; ensayo main + pila B + #14: contratos y tipos de A sin deriva,
+  build y 120 pruebas web; worktree eliminado.
+Solicitud a A: opción «ordenar bajo el peor caso» en la búsqueda (A-110) y mostrar el nivel de evidencia
+  del informe.
+Siguiente paso: publicar si el usuario lo autoriza; tras los merges, CLOSING_PLAN.
+```
 
 ### B-130…B-133 e I-006 — decisión de motor, instalación con Python, huella y ensayo de integración (review)
 
