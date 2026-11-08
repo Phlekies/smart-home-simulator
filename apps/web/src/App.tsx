@@ -22,6 +22,9 @@ import { adoptHistory, editHistory, emptyHistory, finishGesture, redoHistory, st
 import { translateWall } from './editor/geometry';
 import { doorNames, validatedMaterialPatch } from './editor/uncertainty';
 import { useProjectRecovery } from './useProjectRecovery';
+import { downloadText } from './editor/files';
+import { creationSteps } from './editor/onboarding';
+import type { StepId } from './editor/onboarding';
 import type { Device, PlanReference as SavedReference, Point, Project, Radio } from './generated/project';
 import type { SimulationResult } from './generated/simulation-result';
 
@@ -68,6 +71,7 @@ export default function App() {
   const [result, setResult] = useState<SimulationResult | null>(null);
   const [comparisonBase, setComparisonBase] = useState<ComparisonBase | null>(null);
   const [coverageLayer, setCoverageLayer] = useState<CoverageLayer | null>(null);
+  const coverageRef = useRef(coverageLayer); coverageRef.current = coverageLayer;
   const [engines, setEngines] = useState<Engine[]>([]);
   const [view, setView] = useState<'2d' | '3d'>('2d');
   const [busy, setBusy] = useState(false);
@@ -76,6 +80,7 @@ export default function App() {
   const [exampleId, setExampleId] = useState('apartment');
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
+  const [savedRevision, setSavedRevision] = useState<number | null>(null);
   const revision = useRef(0);
   const loadSequence = useRef(0);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -98,7 +103,7 @@ export default function App() {
     setComparisonBase(null);
     setReferenceImage(null); setReferenceView(defaultReferenceView()); setProjectEpoch(value => value + 1);
     revision.current += 1;
-    setHistory(previous => adoptHistory(previous, next));
+    setHistory(previous => adoptHistory(previous, next)); setSavedRevision(null);
     setSelected(next.devices[0]?.id ?? ''); setSelectedWallId(null); setTool('select'); setRadioId(''); setResult(null); setError(''); setExampleId('');
     focusProject();
   }
@@ -245,19 +250,41 @@ export default function App() {
   function download(data: unknown, filename: string) {
     downloadRaw(JSON.stringify(data, null, 2), filename);
   }
-  function downloadRaw(data: string, filename: string) {
-    const url = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
-    const anchor = document.createElement('a'); anchor.href = url; anchor.download = filename; anchor.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  }
+  function downloadRaw(data: string, filename: string) { downloadText(data, filename); }
   async function saveProject() {
     if (!project || !checkEditorFields()) return;
     const current = project;
     try {
       const validated = await api<Project>('/projects/import', project);
       if (current !== historyRef.current.present) { setNotice('El proyecto cambió durante la validación. Guarda de nuevo.'); return; }
-      download(validated, 'entorno.shsim.json'); setNotice('Proyecto validado y guardado como JSON.');
+      download(validated, 'entorno.shsim.json'); setSavedRevision(revision.current); setNotice('Proyecto validado y guardado como JSON.');
     } catch (e) { setError(`Revisa los datos antes de guardar. ${String(e)}`); }
+  }
+  async function downloadReport() {
+    if (!project || !checkEditorFields()) return;
+    const current = project, map = coverageRef.current?.result.parameters;
+    try {
+      const response = await fetch('/api/reports/markdown', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project, ...(map ? { maps: [map] } : {}) }) });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(typeof payload.detail === 'string' ? payload.detail : `La API rechazó el informe (${response.status}).`);
+      }
+      const text = await response.text();
+      if (current !== historyRef.current.present) { setNotice('El proyecto cambió mientras se preparaba el informe. Descárgalo de nuevo.'); return; }
+      downloadText(text, 'informe-instalacion.md', 'text/markdown');
+      setNotice(map ? 'Informe descargado con el mapa visible. No contiene veredicto de cobertura ni recomendación de compra.'
+        : 'Informe descargado. Calcula un mapa antes si quieres incluirlo. No contiene veredicto de cobertura ni recomendación de compra.');
+    } catch (e) { setError(`No se pudo preparar el informe. ${e instanceof Error ? e.message : String(e)}`); }
+  }
+  function goToStep(step: StepId) {
+    if (!project || loading) return;
+    if (step === 'walls') { setView('2d'); setTool('wall'); return; }
+    if (step === 'devices') { addDevice(); return; }
+    if (step === 'estimate') { void run(); return; }
+    if (step === 'save') { void saveProject(); return; }
+    const pending = project.devices.find(d => d.radios.some(r => r.tx_power_dbm === null || r.sensitivity_dbm === null || r.protocol === 'unknown' || r.channel === null)) ?? project.devices[0];
+    if (pending) { selectDevice(pending.id); setRadioId(''); window.requestAnimationFrame(() => deviceName.current?.focus()); }
   }
   function addDevice() {
     const id = crypto.randomUUID();
@@ -344,6 +371,15 @@ export default function App() {
           : 'Recuperación local: se guardará una copia de cada proyecto válido.'}
       </div>
       <div className="message notice" role="status" aria-live="polite">{notice || (loading ? 'Abriendo proyecto…' : 'Arrastra los dispositivos en el plano o ajusta sus propiedades.')}</div>
+      {project && <details className="creation-path panel" open={project.devices.length < 2 || !project.links.length}>
+        <summary>Recorrido para describir tu vivienda · {creationSteps(project, !!result, savedRevision === revision.current).filter(step => step.done).length}/6</summary>
+        <ol>{creationSteps(project, !!result, savedRevision === revision.current).map(step => <li key={step.id} className={step.done ? 'done' : ''}>
+          <span aria-hidden="true">{step.done ? '✓' : '○'}</span><div><strong>{step.title}</strong>
+            <span className="sr-only">{step.done ? ' · hecho' : ' · pendiente'}</span><small>{step.detail}</small></div>
+          {!step.done && <button type="button" disabled={loading || (step.id === 'estimate' && (busy || !project.links.length))} onClick={() => goToStep(step.id)}>
+            {{ walls: 'Dibujar pared', devices: 'Añadir equipo', radios: 'Revisar radios', links: 'Elegir equipo', estimate: 'Ejecutar', save: 'Guardar JSON' }[step.id]}</button>}
+        </li>)}</ol>
+      </details>}
 
       <section className="workspace-grid" aria-busy={loading} inert={loading || undefined}>
         <aside className="devices-panel panel">
@@ -467,7 +503,8 @@ export default function App() {
         onInspect={id => { selectWall(id); window.requestAnimationFrame(() => document.querySelector<HTMLInputElement>('.properties-panel input')?.focus()); }} />}
       <section className="results-panel panel">
         <div className="results-heading"><div><span className="eyebrow">DIAGNÓSTICO DE LA INSTALACIÓN</span><h2>Comprueba cada dirección.</h2></div>
-          {result && <button onClick={() => download({ project, result }, 'diagnostico.json')}>Exportar diagnóstico</button>}</div>
+          <div className="results-actions">{result && <button onClick={() => download({ project, result }, 'diagnostico.json')}>Exportar diagnóstico</button>}
+            <button disabled={!project?.links.length || loading} onClick={() => void downloadReport()}>Descargar informe</button></div></div>
         {result ? <>
           <div className="result-meta"><span>{result.links.length} enlaces evaluados</span><span>{result.elapsed_ms.toFixed(1)} ms</span>
             <span title={result.input_hash}>Escenario {result.input_hash.slice(0, 10)}</span><span>Modelo {result.engine_version} · sin calibrar</span></div>
@@ -486,6 +523,7 @@ export default function App() {
                 <td>{n(link.forward?.margin_db)} / {n(link.reverse?.margin_db)}</td><td><span className={`badge ${link.status}`}>{statusNames[link.status]}</span></td></tr>;
             })}
           </tbody></table></div>
+          <p className="comparison-limit">«Sobre umbral» significa margen positivo frente a la sensibilidad indicada en ambos sentidos. Es una predicción técnica sin calibrar: no garantiza la conexión ni es una recomendación de compra.</p>
           <details className="limitations"><summary>Alcance y límites de esta estimación</summary><p>{result.scope}</p><ul>{result.limitations.map(l => <li key={l}>{l}</li>)}</ul></details>
         </> : <div className="results-empty"><span>↗</span><div><strong>{project?.links.length ? 'Tu escenario está listo para explorar.' : 'Añade dispositivos y conecta los que quieras evaluar.'}</strong>
           <p>Ejecuta una estimación para ver señal y margen en ambos sentidos. La velocidad real y la latencia requieren simulación de tráfico.</p></div></div>}
@@ -494,7 +532,7 @@ export default function App() {
         onCapture={captureBase} onClear={() => { setComparisonBase(null); setNotice('Comparación retirada; el proyecto actual se conserva.'); focusProject(); }} onRestore={restoreBasePositions} />}
       {!!project?.migration_notes.length && <details className="migration panel"><summary>Datos importados · {project.migration_notes.length} notas que debes revisar</summary>
         <ul>{project.migration_notes.map(note => <li key={note}>{note}</li>)}</ul></details>}
-      <footer className="app-footer">Smart Environment <span>Una estimación orienta el diseño. Las mediciones permiten validarlo.</span></footer>
+      <footer className="app-footer">Smart Environment <span>Una estimación orienta el diseño; no es una recomendación de compra. Las mediciones permiten validarlo.</span></footer>
     </main>
   </div>;
 }

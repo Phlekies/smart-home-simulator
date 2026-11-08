@@ -7,8 +7,20 @@ import type { PlanReference } from './editor/reference';
 import type { CoverageLayer } from './editor/coverage';
 import { mapExtent, metricNames } from './editor/coverage';
 import { doorNames } from './editor/uncertainty';
+import { downloadBlob } from './editor/files';
+import { exportSize, panView, visibleBounds, zoomView } from './editor/viewport';
+import type { Bounds, View } from './editor/viewport';
 
-type Bounds = { minX: number; minY: number; maxX: number; maxY: number };
+type Pan = { pointerId: number; clientX: number; clientY: number; view: View; worldPerPixel: number };
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+async function dataUrl(url: string): Promise<string> {
+  const blob = await (await fetch(url)).blob();
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+}
 type Drag = {
   kind: 'device' | 'wall'; id: string; pointerId: number; anchor: Point;
   x: number; y: number; minX: number; minY: number; maxX: number; maxY: number;
@@ -35,6 +47,9 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
   const [drawingStart, setDrawingStart] = useState<Point | null>(null);
   const [drawingEnd, setDrawingEnd] = useState<Point | null>(null);
   const [drawingMessage, setDrawingMessage] = useState('');
+  const [view, setView] = useState<View | null>(null);
+  const [exportMessage, setExportMessage] = useState('');
+  const pan = useRef<Pan | null>(null);
   const endGesture = useRef(onGestureEnd);
   endGesture.current = onGestureEnd;
   const allX = project.devices.map(d => d.position.x).concat(project.building.walls.flatMap(w => [w.start.x, w.end.x]));
@@ -46,6 +61,70 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
   const liveBounds = { minX: Math.min(0, ...allX) - 2, minY: Math.min(0, ...allY) - 2,
     maxX: Math.max(project.building.width_m, ...allX) + 2, maxY: Math.max(project.building.depth_m, ...allY) + 2 };
   const bounds = frozenBounds ?? liveBounds;
+  const visible = visibleBounds(bounds, view);
+  const boundsRef = useRef(bounds); boundsRef.current = bounds;
+
+  useEffect(() => {
+    // Ctrl/Cmd + wheel zooms around the pointer; a plain wheel keeps scrolling the page.
+    const svg = svgRef.current;
+    if (!svg) return;
+    function wheel(event: WheelEvent) {
+      if (!event.ctrlKey && !event.metaKey) return;
+      event.preventDefault();
+      const matrix = svgRef.current?.getScreenCTM();
+      const at = matrix ? new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse()) : undefined;
+      setView(current => zoomView(boundsRef.current, current, event.deltaY < 0 ? 1.25 : 1 / 1.25, at && { x: at.x, y: at.y }));
+    }
+    svg.addEventListener('wheel', wheel, { passive: false });
+    return () => svg.removeEventListener('wheel', wheel);
+  }, []);
+  function startPan(event: PointerEvent<SVGSVGElement>) {
+    const svg = svgRef.current;
+    if (!svg || !view) return false;
+    const width = svg.getBoundingClientRect().width || 1;
+    pan.current = { pointerId: event.pointerId, clientX: event.clientX, clientY: event.clientY, view,
+      worldPerPixel: (visible.maxX - visible.minX) / width };
+    svg.setPointerCapture(event.pointerId); event.preventDefault();
+    return true;
+  }
+  async function exportImage() {
+    const svg = svgRef.current;
+    if (!svg) return;
+    setExportMessage('Preparando la imagen…');
+    try {
+      const { width, height } = exportSize(liveBounds);
+      const clone = svg.cloneNode(true) as SVGSVGElement;
+      clone.setAttribute('xmlns', SVG_NS);
+      clone.setAttribute('viewBox', `${liveBounds.minX} ${liveBounds.minY} ${liveBounds.maxX - liveBounds.minX} ${liveBounds.maxY - liveBounds.minY}`);
+      clone.setAttribute('width', String(width)); clone.setAttribute('height', String(height));
+      const background = document.createElementNS(SVG_NS, 'rect');
+      Object.entries({ x: liveBounds.minX, y: liveBounds.minY, width: liveBounds.maxX - liveBounds.minX, height: liveBounds.maxY - liveBounds.minY, fill: '#142221' })
+        .forEach(([name, value]) => background.setAttribute(name, String(value)));
+      clone.insertBefore(background, clone.firstChild);
+      const caption = document.createElementNS(SVG_NS, 'text');
+      Object.entries({ x: liveBounds.minX + .3, y: liveBounds.maxY - .3, 'font-size': .45, fill: '#dfe8df' })
+        .forEach(([name, value]) => caption.setAttribute(name, String(value)));
+      caption.textContent = `${project.name} · cuadrícula 1 m · estimación de trayecto directo sin calibrar`;
+      clone.appendChild(caption);
+      // Images embedded in an SVG drawn as a picture cannot load blob: URLs; inline them first.
+      for (const image of Array.from(clone.querySelectorAll('image'))) {
+        const href = image.getAttribute('href');
+        if (href?.startsWith('blob:')) image.setAttribute('href', await dataUrl(href));
+      }
+      const picture = new Image();
+      picture.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(new XMLSerializer().serializeToString(clone))}`;
+      await picture.decode();
+      const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
+      const context = canvas.getContext('2d');
+      if (!context) throw new Error('El navegador no pudo dibujar la imagen.');
+      context.drawImage(picture, 0, 0, width, height);
+      const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'));
+      if (!blob) throw new Error('El navegador no pudo generar el PNG.');
+      const slug = project.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      downloadBlob(blob, `${slug || 'plano'}.png`);
+      setExportMessage(`Imagen del plano completo exportada (${width} × ${height} px).`);
+    } catch (e) { setExportMessage(`No se pudo exportar la imagen. ${e instanceof Error ? e.message : String(e)}`); }
+  }
 
   useEffect(() => { setDrawingStart(null); setDrawingEnd(null); setDrawingMessage(''); setFrozenBounds(null); }, [tool]);
   useEffect(() => () => { if (drag.current?.started) endGesture.current(); }, []);
@@ -56,6 +135,10 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
     return { x: clamp(snap(p.x)), y: clamp(snap(p.y)), z: 0 };
   }
   function finishDrag() {
+    if (pan.current) {
+      if (svgRef.current?.hasPointerCapture(pan.current.pointerId)) svgRef.current.releasePointerCapture(pan.current.pointerId);
+      pan.current = null;
+    }
     const current = drag.current;
     drag.current = null;
     if (!drawingStart) setFrozenBounds(null);
@@ -84,6 +167,12 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
     if (drag.current) { setFrozenBounds(liveBounds); svgRef.current?.setPointerCapture(event.pointerId); }
   }
   function move(event: PointerEvent<SVGSVGElement>) {
+    const panning = pan.current;
+    if (panning && event.pointerId === panning.pointerId) {
+      setView(panView(bounds, panning.view, -(event.clientX - panning.clientX) * panning.worldPerPixel,
+        -(event.clientY - panning.clientY) * panning.worldPerPixel));
+      return;
+    }
     const point = position(event);
     if (!point) return;
     if (tool === 'wall' && drawingStart) setDrawingEnd(point);
@@ -98,6 +187,9 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
     current.appliedX = dx; current.appliedY = dy;
   }
   function draw(event: PointerEvent<SVGSVGElement>) {
+    // Middle button pans in any tool; in Select, dragging the empty background pans too.
+    const background = event.target === event.currentTarget || (event.target as Element).classList?.contains('plan-background');
+    if (view && (event.button === 1 || (tool === 'select' && event.button === 0 && background)) && startPan(event)) return;
     if (tool !== 'wall' || event.button !== 0 || !event.isPrimary) return;
     const point = position(event);
     if (!point) return;
@@ -138,14 +230,30 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
     onGestureEnd();
   }
   const previewLength = drawingStart && drawingEnd ? Math.hypot(drawingEnd.x - drawingStart.x, drawingEnd.y - drawingStart.y) : 0;
+  const zoomBy = (factor: number) => setView(current => zoomView(bounds, current, factor));
   return <>
-    <svg ref={svgRef} className={`plan ${tool === 'wall' ? 'is-drawing' : ''}`} tabIndex={0} role="group"
-      aria-label="Plano de la vivienda. Selecciona y arrastra paredes o dispositivos; usa Dibujar pared para crear obstáculos."
-      viewBox={`${bounds.minX} ${bounds.minY} ${bounds.maxX - bounds.minX} ${bounds.maxY - bounds.minY}`}
+    <div className="plan-controls" role="toolbar" aria-label="Vista del plano">
+      <button type="button" onClick={() => zoomBy(1.5)} disabled={(view?.scale ?? 1) >= 20} aria-label="Acercar el plano">＋</button>
+      <button type="button" onClick={() => zoomBy(1 / 1.5)} disabled={!view} aria-label="Alejar el plano">－</button>
+      <button type="button" onClick={() => setView(null)} disabled={!view}>Ver todo</button>
+      <button type="button" onClick={() => void exportImage()}>Exportar imagen</button>
+      <span className="plan-zoom" role="status">{view ? `Zoom ×${view.scale.toFixed(1)} · arrastra el fondo para desplazar` : 'Plano completo'}{exportMessage ? ` · ${exportMessage}` : ''}</span>
+    </div>
+    <svg ref={svgRef} className={`plan ${tool === 'wall' ? 'is-drawing' : ''} ${view ? 'is-zoomed' : ''}`} tabIndex={0} role="group"
+      aria-label="Plano de la vivienda. Selecciona y arrastra paredes o dispositivos; usa Dibujar pared para crear obstáculos. Más y menos acercan o alejan, 0 muestra todo y las flechas desplazan el plano ampliado."
+      viewBox={`${visible.minX} ${visible.minY} ${visible.maxX - visible.minX} ${visible.maxY - visible.minY}`}
       onPointerDown={draw} onPointerMove={move} onPointerUp={finishDrag} onPointerCancel={finishDrag}
       onLostPointerCapture={() => { if (drag.current) finishDrag(); }} onKeyDown={event => {
         if ((event.ctrlKey || event.metaKey) && !event.altKey && ['z', 'y'].includes(event.key.toLowerCase())) {
           finishDrag(); // Complete the current pointer gesture before App navigates its history.
+        }
+        if (event.target === event.currentTarget && !event.ctrlKey && !event.metaKey && !event.altKey) {
+          const step = (visible.maxX - visible.minX) / 10;
+          const pans: Record<string, [number, number]> = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
+          if (event.key === '+' || event.key === '=') { event.preventDefault(); zoomBy(1.5); return; }
+          if (event.key === '-') { event.preventDefault(); zoomBy(1 / 1.5); return; }
+          if (event.key === '0') { event.preventDefault(); setView(null); return; }
+          if (view && pans[event.key]) { event.preventDefault(); setView(panView(bounds, view, ...pans[event.key])); return; }
         }
         if (event.key === 'Escape') {
           event.preventDefault(); setDrawingStart(null); setDrawingEnd(null); setFrozenBounds(null);
@@ -161,7 +269,7 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
       {coverageLayer && mapGrid && <image href={coverageLayer.imageUrl} x={mapGrid.x} y={mapGrid.y}
         width={mapGrid.textureWidth} height={mapGrid.textureHeight}
         preserveAspectRatio="none" clipPath={`url(#${mapClipId})`} opacity=".8" style={{ imageRendering: 'pixelated' }} pointerEvents="none" />}
-      <rect x={bounds.minX} y={bounds.minY} width={bounds.maxX - bounds.minX} height={bounds.maxY - bounds.minY} fill="url(#grid)" />
+      <rect className="plan-background" x={bounds.minX} y={bounds.minY} width={bounds.maxX - bounds.minX} height={bounds.maxY - bounds.minY} fill="url(#grid)" />
       {imageBounds && <g pointerEvents="none" aria-hidden="true">
         <line x1={imageBounds.minX} y1={imageBounds.minY - .4} x2={imageBounds.maxX} y2={imageBounds.minY - .4} stroke="#dfcfa0" strokeWidth=".04" />
         <text x={(imageBounds.minX + imageBounds.maxX) / 2} y={imageBounds.minY - .6} textAnchor="middle" fontSize=".4" fill="#dfcfa0">

@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
-import type { CoverageMapJob } from './generated/coverage-map';
+import type { CoverageMapJob, CoverageMapResult } from './generated/coverage-map';
+import type { ProjectFingerprint } from './generated/project-fingerprint';
+import { api } from './api';
+import { downloadText } from './editor/files';
+import { MAX_SAVED_MAP_BYTES, parseSavedMap, savedMapFileName, savedMapStaleness } from './editor/savedMap';
 import type { Project } from './generated/project';
 import { mapColor, metricNames, rasterCellSize } from './editor/coverage';
 import type { CoverageLayer, CoverageRequest, MapMetric } from './editor/coverage';
@@ -36,19 +40,34 @@ export default function CoveragePanel({ project, projectRevision, onLayer, onVal
   const [error, setError] = useState('');
   const [job, setJob] = useState<MapState>({ state: 'idle', progress: 0, result: null, error: null });
   const calculatedRevision = useRef<number | null>(null);
+  const [opened, setOpened] = useState<{ result: CoverageMapResult; name: string; stale: string | null } | null>(null);
+  const mapFile = useRef<HTMLInputElement>(null);
   const [runner] = useState(() => new CoverageRunner({ create: request => mapApi('', 'POST', request),
     read: id => mapApi(`/${id}`, 'GET'), cancel: id => mapApi(`/${id}`, 'DELETE') }, setJob));
   const options = project.devices.flatMap(device => device.radios.map(radio => ({ device, radio, key: key(device.id, radio.id) })));
   const ap = options.find(option => option.key === apKey), profile = options.find(option => option.key === profileKey);
   const active = ['submitting', 'queued', 'running'].includes(job.state);
 
-  useEffect(() => { runner.invalidate(); calculatedRevision.current = null; onLayer(null);
+  useEffect(() => { runner.invalidate(); calculatedRevision.current = null; onLayer(null); setOpened(null);
     return () => runner.invalidate(true); }, [projectRevision, runner, onLayer]);
-  function edit(action: () => void) { runner.invalidate(); calculatedRevision.current = null; onLayer(null); setError(''); action(); }
+  function edit(action: () => void) { runner.invalidate(); calculatedRevision.current = null; onLayer(null); setOpened(null); setError(''); action(); }
+  // A computed map for this revision wins; otherwise an opened file is drawn only while it is still current.
+  const shown = job.result && calculatedRevision.current === projectRevision ? job.result : opened && !opened.stale ? opened.result : null;
+
+  async function openMap(file: File | undefined) {
+    if (!file) return;
+    if (file.size > MAX_SAVED_MAP_BYTES) { setError('El archivo supera el límite de 20 MB para mapas guardados.'); return; }
+    try {
+      const map = parseSavedMap(await file.text());
+      const fingerprint = await api<ProjectFingerprint>('/projects/fingerprint', project);
+      runner.invalidate(); calculatedRevision.current = null; setError('');
+      setOpened({ result: map, name: file.name, stale: savedMapStaleness(map, fingerprint) });
+    } catch (e) { setOpened(null); setError(`No se pudo abrir el mapa. ${e instanceof Error ? e.message : String(e)}`); }
+  }
 
   useEffect(() => {
-    const result = job.result;
-    if (!result || calculatedRevision.current !== projectRevision) { onLayer(null); return; }
+    const result = shown;
+    if (!result) { onLayer(null); return; }
     const size = rasterCellSize(result.columns, result.rows), canvas = document.createElement('canvas');
     canvas.width = result.columns * size; canvas.height = result.rows * size;
     const ctx = canvas.getContext('2d'); if (!ctx) { setError('El navegador no pudo dibujar el mapa.'); onLayer(null); return; }
@@ -64,7 +83,7 @@ export default function CoveragePanel({ project, projectRevision, onLayer, onVal
     const imageUrl = canvas.toDataURL('image/png');
     if (imageUrl === 'data:,') { setError('El navegador no pudo dibujar estas dimensiones. Reduce el área o aumenta la resolución.'); onLayer(null); return; }
     onLayer({ result, metric, imageUrl });
-  }, [job.result, metric, projectRevision, onLayer]);
+  }, [shown, metric, onLayer]);
 
   function calculate(event: FormEvent) {
     event.preventDefault(); if (disabled || !onValidate()) return;
@@ -97,8 +116,9 @@ export default function CoveragePanel({ project, projectRevision, onLayer, onVal
         {option.device.name} · {option.radio.id} · {option.radio.frequency_hz / 1e6} MHz</option>)}
     </select></label>;
   }
-  const result = job.result && calculatedRevision.current === projectRevision ? job.result : null;
+  const result = shown;
   const point = result?.points[0];
+  const apName = project.devices.find(device => device.id === result?.parameters.access_point_device_id)?.name ?? result?.parameters.access_point_device_id;
   return <section className="results-panel panel coverage-panel" aria-labelledby="coverage-title" aria-busy={disabled || active}>
     <span className="eyebrow">SEÑAL EN EL PLANO · TRAYECTO DIRECTO</span><h2 id="coverage-title">Mapa para un equipo y una altura.</h2>
     <p className="helper">Elige qué equipo representa el AP y qué radio representa el cliente. Sus parámetros actuales se usan sin completar datos desconocidos. Un único AP por mapa.</p>
@@ -114,24 +134,31 @@ export default function CoveragePanel({ project, projectRevision, onLayer, onVal
       <label className="reference-toggle"><input type="checkbox" checked={exact} onChange={event => edit(() => setExact(event.target.checked))} /> Evaluar también un punto exacto</label>
       {exact && <div className="coverage-fields">{number('px', 'Punto exacto X · m', -10000, 10000)}{number('py', 'Punto exacto Y · m', -10000, 10000)}{number('pz', 'Altura del punto exacto · m', -1000, 1000)}</div>}
       <div className="coverage-actions"><button className="primary" disabled={active || !options.length} type="submit">Calcular mapa</button>
-        {active && <button type="button" onClick={() => void runner.cancel()}>Cancelar mapa</button>}</div>
+        {active && <button type="button" onClick={() => void runner.cancel()}>Cancelar mapa</button>}
+        <button type="button" disabled={!shown} onClick={() => shown && downloadText(JSON.stringify(shown, null, 2), savedMapFileName(shown))}>Guardar mapa</button>
+        <button type="button" disabled={active} onClick={() => mapFile.current?.click()}>Abrir mapa guardado</button>
+        <input ref={mapFile} type="file" accept=".json,application/json" hidden aria-label="Archivo de mapa guardado"
+          onChange={event => { const file = event.target.files?.[0]; event.target.value = ''; void openMap(file); }} /></div>
     </fieldset></form>
     {(error || job.error) && <p className="message error" role="alert">{error || job.error}</p>}
     <p role="status" className="comparison-state">{active ? `Mapa ${job.state === 'submitting' ? 'enviándose' : job.state === 'queued' ? 'en cola' : 'calculándose'} · ${Math.round(job.progress * 100)} %`
-      : job.state === 'cancelled' ? 'Mapa descartado; se ha solicitado cancelar el cálculo.' : result ? 'Mapa disponible en el plano 2D.' : 'Sin mapa vigente. Calcula de nuevo después de editar la instalación o los parámetros.'}</p>
+      : job.state === 'cancelled' ? 'Mapa descartado; se ha solicitado cancelar el cálculo.' : opened && !opened.stale && result === opened.result
+        ? `Mapa guardado vigente: ${opened.name}. Coincide con el proyecto y el motor actuales.` : result ? 'Mapa disponible en el plano 2D.'
+        : 'Sin mapa vigente. Calcula de nuevo después de editar la instalación o los parámetros.'}</p>
+    {opened?.stale && <p className="message error" role="alert">Mapa guardado obsoleto ({opened.name}): {opened.stale} No se dibuja; calcula uno nuevo.</p>}
     {active && <progress aria-label="Progreso del mapa" max={1} value={job.progress} />}
     <label className="field coverage-metric"><span>Métrica que se muestra en el plano</span><select aria-label="Métrica que se muestra en el plano" value={metric} onChange={event => setMetric(event.target.value as MapMetric)}>
       {(Object.keys(metricNames) as MapMetric[]).map(key => <option key={key} value={key}>{metricNames[key]} · {key.includes('margin') ? 'dB' : 'dBm'}</option>)}
     </select></label>
     <div className="coverage-legend"><span className="coverage-scale" /> <span>{metric.includes('margin') ? '≤ −30 a ≥ +40 dB' : '≤ −100 a ≥ −30 dBm'} · escala visual fija</span>
       <span>▧ Rayado: dato disponible con información parcial</span><span>■ Gris: sin valor de esta métrica</span><span>■ Gris oscuro: celda sin calcular</span></div>
-    <p className="comparison-limit">Los colores no clasifican cobertura favorable o insuficiente. Estimador sin calibración experimental; no evalúa tráfico, interferencias ni estabilidad. Cambiar la instalación retira el mapa anterior.</p>
+    <p className="comparison-limit">Los colores no clasifican cobertura favorable o insuficiente. Estimador sin calibración experimental; no evalúa tráfico, interferencias ni estabilidad. Cambiar la instalación retira el mapa anterior. Un mapa guardado es un archivo local aparte del proyecto: al abrirlo se comprueba que sigue describiendo este proyecto y este motor.</p>
     {result && <>
-      <div className="result-meta"><span>AP: {ap?.device.name} · {result.parameters.access_point_radio_id}</span><span>Perfil: {result.parameters.profile.name} · {result.parameters.profile.radio.id}</span>
+      <div className="result-meta"><span>AP: {apName} · {result.parameters.access_point_radio_id}</span><span>Perfil: {result.parameters.profile.name} · {result.parameters.profile.radio.id}</span>
         <span>{result.frequency_hz / 1e6} MHz · altura {result.parameters.grid.height_m} m · resolución {result.parameters.grid.resolution_m} m</span>
         <span>{result.columns}×{result.rows} celdas · {result.elapsed_ms.toFixed(1)} ms</span><span title={result.request_hash}>Mapa {result.request_hash.slice(0, 10)}</span></div>
       <p className="helper">{result.computed_cells} completas · {result.partial_cells} parciales · {result.not_computed_cells} sin calcular. Compatibilidad de radio: {result.compatibility === 'unverified' ? 'sin verificar' : 'compatible bajo los parámetros declarados'}.</p>
-      {exact && point && <div className="coverage-point"><h3>Punto exacto · X {result.parameters.points[0].x}, Y {result.parameters.points[0].y}, altura {result.parameters.points[0].z} m</h3>
+      {point && <div className="coverage-point"><h3>Punto exacto · X {result.parameters.points[0].x}, Y {result.parameters.points[0].y}, altura {result.parameters.points[0].z} m</h3>
         <p>AP → perfil: {value(point.forward_dbm, 'dBm')} · margen {value(point.forward_margin_db, 'dB')}.</p>
         <p>Perfil → AP: {value(point.reverse_dbm, 'dBm')} · margen {value(point.reverse_margin_db, 'dB')}.</p>
         <p>{point.status === 'not-computed' ? `Sin calcular: ${point.reason === 'inside-wall' ? 'dentro de una pared' : point.reason === 'too-close-to-access-point' ? 'demasiado próximo al AP' : point.reason ?? 'motivo no indicado'}.` : point.status === 'partial' ? 'Información parcial; faltan datos para uno o más valores.' : 'Presupuesto calculado en ambos sentidos; no garantiza una conexión fiable.'}</p></div>}
