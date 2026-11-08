@@ -10,6 +10,10 @@ Windows nativo no se ejecuta en este equipo. Es un candidato técnicamente viabl
 pero **no está integrado en la API ni validado con medidas**: la API sigue respondiendo 501
 a `engine = "sionna-rt"`, sin fallback.
 
+**Decisión del 2026-11-08 ([ADR-008](../migration/ARCHITECTURE.md)):** la migración se cierra con el
+estimador directo. Integrar Sionna se reconsiderará cuando haya medidas independientes (P4) con las
+que comparar ambos motores.
+
 ## Entornos probados
 
 | | Windows 11 nativo | WSL2 Ubuntu 24.04.4 |

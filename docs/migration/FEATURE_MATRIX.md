@@ -42,7 +42,7 @@ motivo), **Nueva** (no existía en Java).
 
 | Función Java | Estado | Nueva aplicación / evidencia | Motivo |
 |---|---|---|---|
-| Motor multipath (directo, reflexión, difracción, difusa; rayos/ondas) | Sustituida (en curso) | Estimador directo bidireccional en la API; Sionna RT evaluado en WSL/CPU con 18/18 referencias (B-102), sin integrar | El estimador no equivale a Java multipath: contraste en [B-121](../simulation/JAVA_PARITY.md) (+0.3 a +3.6 dB en viviendas y oficinas en modo rayos, hasta +33 dB en el almacén); Java queda como referencia |
+| Motor multipath (directo, reflexión, difracción, difusa; rayos/ondas) | Sustituida (decisión del 2026-11-08, [ADR-008](ARCHITECTURE.md)) | Estimador directo bidireccional en la API; Sionna RT evaluado en WSL/CPU con 18/18 referencias (B-102), sin integrar | El estimador no equivale a Java multipath: contraste en [B-121](../simulation/JAVA_PARITY.md) (+0.3 a +3.6 dB en viviendas y oficinas en modo rayos, hasta +33 dB en el almacén); Java queda como referencia |
 | Tabla empírica de materiales | Conservada como hipótesis | Importada con procedencia; contrastada con losa ITU (B-101); rangos y escenarios (B-108, `main`) | Diferencias documentadas, no se conservan como verdad |
 | Fase fija de reflexión (cuarto de ciclo) | Excluida | Fresnel/losa en referencias y Sionna | Error físico documentado en B-101/B-102 |
 | Fading Rayleigh/Rician | Excluida | Se tratan desvanecimiento e incertidumbre con media de banda ancha (B-102) y escenarios (B-108) | Estadístico sin validación; no apoya una decisión de compra |
@@ -65,15 +65,16 @@ motivo), **Nueva** (no existía en Java).
 | Función Java | Estado | Nueva aplicación / evidencia | Motivo |
 |---|---|---|---|
 | Informe HTML de cobertura | Sustituida en la API (en revisión) | Informe JSON/Markdown por enlace con escenarios, conexión de datos y mapas (B-115, B-117, B-120); falta la descarga en la interfaz (A) | P5: informe por equipo con sentidos, hipótesis y pendientes, sin veredicto |
-| Paquetes nativos (jpackage) y releases | Conservada en Java; parcial en la nueva | `scripts/dev.py` para desarrollo; `python -m smart_environment.serve` sirve la interfaz compilada y la API en un proceso, sin Node al ejecutar (B-128, en revisión). Falta un instalador que no exija Python | M5/P5: distribución local sin herramientas de desarrollo |
+| Paquetes nativos (jpackage) y releases | Conservada en Java; sustituida en la nueva por una instalación con Python (decisión del 2026-11-08) | `python scripts/start.py` lo prepara y arranca todo; zip con la web compilada (`scripts/package_local.py`) adjunto a las releases (B-128/B-131, en revisión) | M5/P5: distribución local sin herramientas de desarrollo |
 | 192 pruebas Java en CI | Conservada | CI Java sigue en Linux/Windows/macOS | Referencia mientras no se superen las puertas |
-| — | Nueva | Pruebas Python (424 en la pila B), web (84 en `main`, 120 con #14), contratos sin deriva en CI, paridad con Java (B-121) y recorrido E2E en navegador (B-127) | Sustitución verificable |
+| — | Nueva | Pruebas Python (438 en la pila B), web (84 en `main`, 120 con #14), contratos sin deriva en CI, paridad con Java (B-121), recorrido E2E en navegador (B-127) y ensayo de integración completo (I-006) | Sustitución verificable |
 
 ## Pendiente para cerrar M5 sobre esta matriz
 
-- Decisión del usuario: integrar y verificar el motor avanzado (Sionna RT, hoy solo en WSL) o declarar el
-  alcance del estimador directo como definitivo para la migración, con el contraste de B-121.
+- Motor: decidido el 2026-11-08 ([ADR-008](ARCHITECTURE.md)). La migración se cierra con el estimador
+  directo y Sionna RT queda evaluado, no integrado.
 - Interfaz (A): descarga del informe con mapas, exportación de imagen, zoom/pan, accesibilidad completa y,
   si aporta, plantillas adicionales; mostrar procedencia, conexión de datos y diferencias.
-- Distribución: instalador o paquete que no exija Python ni Node (decisión de herramienta pendiente).
+- Distribución: decidido el 2026-11-08 que basta con Python. `scripts/start.py` lo prepara todo y
+  `scripts/package_local.py` incluye la web compilada (B-131). No se hará instalador nativo en la migración.
 - Revisar la matriz al cerrar cada fase: un estado «Pendiente» no se convierte en «Excluida» sin motivo.

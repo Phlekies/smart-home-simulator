@@ -13,12 +13,13 @@ import hashlib
 import json
 import time
 
-from .engines import LIMITATIONS, crossed_walls, direction, input_hash, material_loss_db, radio_pair_check
+from .engines import (
+    ENGINE_VERSION, LIMITATIONS, crossed_walls, direction, input_hash, material_loss_db, radio_pair_check,
+)
 from .models import (
     LinkScenarioResult, Project, ScenarioAssumptions, ScenarioOutcome, ScenarioRequest, ScenarioResult,
 )
 
-ENGINE_VERSION = "0.1.0"
 SCENARIO_LIMITATIONS = LIMITATIONS + [
     "Mejor y peor caso solo varían puertas desconocidas y materiales con rango declarado.",
     "Los rangos son límites de escenario razonados, no intervalos de probabilidad.",

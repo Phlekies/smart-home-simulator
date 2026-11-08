@@ -21,14 +21,14 @@ from .backhaul import connection, is_network_device, path_note
 from .cache import ResultCache
 
 from .engines import (  # inside_wall is re-exported for placement and older imports
-    LIMITATIONS, direction, geometry_issue, input_hash, inside_wall, link_result, radio_pair_check, wall_heights,
+    ENGINE_VERSION, LIMITATIONS, direction, geometry_issue, input_hash, inside_wall, link_result, radio_pair_check,
+    wall_heights,
 )
 from .models import (
     CoverageCells, CoverageMapJob, CoverageMapRequest, CoverageMapResult, CoverageSample, Device, Point, Project,
     ScenarioAssumptions,
 )
 
-ENGINE_VERSION = "0.1.0"
 MAX_WORK = 2_000_000  # cells × walls; bounds a quick-estimate job to a few seconds
 MAP_LIMITATIONS = LIMITATIONS + [
     "Valor en el centro de cada celda, sin interpolación; los puntos exactos se evalúan aparte.",

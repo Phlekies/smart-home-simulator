@@ -41,6 +41,8 @@ jobs:
       - name: Build web application
         run: npm run build
         working-directory: apps/web
+      - name: Package the Python-only local app
+        run: python scripts/package_local.py --output "$RUNNER_TEMP/local-app"
       - name: Test editor geometry and undo history
         run: npm test
         working-directory: apps/web

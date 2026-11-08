@@ -16,7 +16,8 @@ Lo que solo está en revisión **no** está en `main` hasta que el usuario fusio
 ## Qué responde la aplicación
 
 Todo se ejecuta en local, con la API en loopback. Rutas en [arranque local](LOCAL_DEVELOPMENT.md).
-Con la interfaz ya compilada basta Python: `python -m smart_environment.serve` (B-128).
+Para usarla basta Python: `python scripts/start.py` lo prepara todo y la arranca (B-131). Mapas e
+informes guardados se comprueban con `POST /api/projects/fingerprint` (B-132).
 
 | Pregunta | Función | Contrato |
 |---|---|---|
@@ -36,8 +37,8 @@ Perfiles disponibles: clientes y AP Wi-Fi 4 de 2.4 GHz en 20 MHz, con procedenci
 
 | Motor | Estado | Evidencia | Límites principales |
 |---|---|---|---|
-| Estimación rápida (`quick-estimate` 0.1.0) | Implementado y disponible en todas las rutas | [Casos analíticos](../simulation/REFERENCE_CASES.md). Trayecto directo igual al de Java en 76 sondas de antena y polarización, con diferencia ≤ 0.0022 dB ([paridad](../simulation/JAVA_PARITY.md)) | Solo trayecto directo y paredes verticales. Sin forjados, reflexiones, difracción ni desvanecimiento. Materiales empíricos sin calibrar. Sin validación con medidas |
-| Sionna RT 2.2.0 | Evaluado; **no integrado** | 18/18 casos de referencia en WSL2/CPU ([evaluación](../simulation/ADVANCED_ENGINE_EVALUATION.md)) | No se ejecuta en Windows nativo, no está en la API y rechaza antenas directivas. Las rutas responden 501 sin fallback |
+| Estimación rápida (`quick-estimate` 0.2.0) | Implementado y disponible en todas las rutas. **Motor con el que se cierra la migración** ([ADR-008](ARCHITECTURE.md)) | [Casos analíticos](../simulation/REFERENCE_CASES.md). Trayecto directo igual al de Java en 76 sondas de antena y polarización, con diferencia ≤ 0.0022 dB ([paridad](../simulation/JAVA_PARITY.md)) | Solo trayecto directo y paredes verticales. Sin forjados, reflexiones, difracción ni desvanecimiento. Materiales empíricos sin calibrar. Sin validación con medidas |
+| Sionna RT 2.2.0 | Evaluado; **no integrado** (decisión del 2026-11-08) | 18/18 casos de referencia en WSL2/CPU ([evaluación](../simulation/ADVANCED_ENGINE_EVALUATION.md)) | No se ejecuta en Windows nativo, no está en la API y rechaza antenas directivas. Las rutas responden 501 sin fallback |
 | ns-3 | No implementado | — | Extensión futura para protocolos; no es necesario para la cobertura inicial |
 | Motor multipath Java | Referencia conservada (aplicación de escritorio) | Contraste con el estimador: +0.3 a +3.6 dB en viviendas y oficinas, hasta +33 dB en el almacén ([paridad](../simulation/JAVA_PARITY.md)) | Modelo 2D sin validar; no se usa en la API |
 
@@ -48,7 +49,7 @@ devuelve 501 y **nunca** recurre en silencio a otro.
 
 | Nivel | Estado |
 |---|---|
-| Modelo analítico y unidades | Cubierto: pruebas de fórmulas, geometría, contratos y regresiones (424 en Python), [geometría](../simulation/GEOMETRY.md) y recorrido E2E en navegador (B-127) |
+| Modelo analítico y unidades | Cubierto: pruebas de fórmulas, geometría, contratos y regresiones (438 en Python), [geometría](../simulation/GEOMETRY.md) y recorrido E2E en navegador (B-127) |
 | Comprobación matemática frente a referencias | Cubierto: casos cerrados (B-101), paridad con Java (B-121) y Sionna en WSL (B-102) |
 | Validación en viviendas | **Sin datos.** El formato, el protocolo piloto y la calibración están preparados, pero no hay medidas reales |
 

@@ -33,6 +33,26 @@ adaptador implementado y verificado. No se importan librerías GPU al iniciar la
 instalan automáticamente. Peticiones a motores no implementados devuelven error explícito.
 El estimador rápido nunca sustituye silenciosamente otro motor solicitado.
 
+## ADR-008 — Motor con el que se cierra la migración: estimador directo
+
+Decisión del usuario del 2026-11-08 (B-130). La migración se cierra con la estimación rápida
+(`quick-estimate`): trayecto directo, paredes verticales y ambos sentidos, con sus límites
+declarados. Sionna RT queda evaluado (B-102: 18/18 referencias en WSL2/CPU) y **no se integra**
+en la API.
+
+Motivos:
+- En este equipo no se ejecuta en Windows nativo y exige WSL con LLVM.
+- Sin medidas reales no hay datos para saber qué motor acierta más en una vivienda.
+- El contraste con el multipath Java (B-121) ya documenta cuánto puede separarse el estimador:
+  de +0.3 a +3.6 dB en viviendas y oficinas, y hasta +33 dB en el almacén.
+
+Consecuencias:
+- `sionna-rt` y `ns-3` siguen respondiendo 501, sin recurrir al estimador.
+- Los resultados se presentan como «trayecto directo, sin calibrar».
+- El estimador no equivale al motor multipath Java y no se anuncia como tal.
+- Integrar un motor avanzado pasa a ser una decisión de producto (P4), cuando haya medidas
+  independientes con las que comparar ambos.
+
 ## ADR-005 — Reproducibilidad y obsolescencia
 
 Cada ejecución incluye hash SHA-256 del escenario canónico, ID/versión del motor,

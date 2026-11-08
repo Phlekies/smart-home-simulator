@@ -23,6 +23,9 @@ LIMITATIONS = [
     "Antena aproximada en azimut; no representa patrones tridimensionales medidos.",
     "Cruces por superficies y esquinas son aproximados; equipos dentro de paredes no se modelan.",
 ]
+# 0.2.0 (B-122/B-126): positions outside the model are never favourable and wall ends no longer depend
+# on drawing direction. Results saved with another version are stale (see /api/projects/fingerprint).
+ENGINE_VERSION = "0.2.0"
 # Interaction kinds of smart_environment.references that this engine claims to model.
 MODELLED_INTERACTIONS = ("free-space", "log-distance", "wall-penetration")
 
@@ -61,14 +64,15 @@ def engine_capabilities() -> list[dict]:
         version = None
     return [
         {"id": "quick-estimate", "name": "Estimación rápida", "implemented": True,
-         "available": True, "verified": False, "version": "0.1.0",
+         "available": True, "verified": False, "version": ENGINE_VERSION,
          "interactions": list(MODELLED_INTERACTIONS),
          "description": "Modelo analítico probado con casos sintéticos y con el trayecto directo de Java "
                         "(B-121); sin validación experimental."},
         {"id": "sionna-rt", "name": "Sionna RT", "implemented": False,
          "available": False, "verified": False, "version": version,
          "description": "Adaptador de evaluación (B-102) contrastado con casos analíticos en WSL/CPU; "
-                        "no integrado en la API ni validado con medidas. Instalar el paquete no lo activa."},
+                        "no integrado en la API (decisión del 2026-11-08, ADR-008) ni validado con medidas. "
+                        "Instalar el paquete no lo activa."},
         {"id": "ns-3", "name": "ns-3", "implemented": False,
          "available": False, "verified": False, "version": None,
          "executable_detected": shutil.which("ns3") is not None,
@@ -339,7 +343,7 @@ def simulate(project: Project) -> SimulationResult:
     started = time.perf_counter()
     results = [link_result(project, link) for link in project.links]
     by_id = {result.id: result for result in results}
-    return SimulationResult(engine="quick-estimate", engine_version="0.1.0",
+    return SimulationResult(engine="quick-estimate", engine_version=ENGINE_VERSION,
                             input_hash=input_hash(project),
                             elapsed_ms=(time.perf_counter() - started) * 1000,
                             scope="Presupuesto de enlace directo; compatibilidad funcional no evaluada",

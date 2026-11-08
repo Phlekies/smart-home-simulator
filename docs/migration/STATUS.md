@@ -32,11 +32,25 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
   [ámbito real y motores](SCOPE_AND_ENGINES.md).
 - En revisión: B-126…B-129 ([PR #23](https://github.com/Phlekies/smart-home-simulator/pull/23), sobre #22): cruces de paredes independientes
   del dibujo, recorrido E2E en navegador, modo local de un proceso y matriz v2.
+- En revisión: B-130…B-133 e I-006 ([PR #24](https://github.com/Phlekies/smart-home-simulator/pull/24), sobre #23): motor de cierre
+  decidido (ADR-008), instalación con Python, huella de proyecto, ensayo de integración completo y
+  [plan de cierre](CLOSING_PLAN.md).
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## B-130…B-133 e I-006 — decisión de motor, instalación con Python, huella y ensayo de integración — 2026-11-08
+
+| Tarea | Comprobación | Resultado |
+|---|---|---|
+| B-130 | Decisión del usuario del 2026-11-08 | [ADR-008](ARCHITECTURE.md): cierre con el estimador directo; Sionna RT evaluado, no integrado. Matriz, ruta, alcance y evaluación de motor actualizados |
+| B-131 | `test_local_scripts.py` (9) y prueba real | Zip de 0.4 MB y 31 archivos, descomprimido en una carpeta nueva. `python scripts/start.py` con Python 3.13.7 del sistema: `.venv` y dependencias en 28 s; la segunda ejecución solo arranca; interfaz, `/api/health`, `/docs`, ejemplos y simulación responden en 127.0.0.1. Servidor detenido. CI de migración empaqueta en cada PR; la release adjunta el zip |
+| B-132 | `test_fingerprint.py` (5) | La huella coincide con simulación, mapa e informe. Editar el plano deja obsoleto un mapa guardado; enchufes e imagen no. Otra versión de motor = obsoleto. Estimador 0.2.0 para todas las rutas (B-122/B-126 cambiaron resultados) |
+| I-006 | Worktree temporal: `main` (6fb42e2) + `agent-b/b-130-133` + #14, fusiones sin conflicto | 438 Python; contratos sin deriva; script `contracts` de A sin deriva en sus 6 tipos; build (`tsc` + vite); 120 pruebas web; paquete generado; `git diff --check` limpio; servidor único con huella = simulación (0.2.0) e interfaz servida. Worktree, enlace y servidor eliminados |
+| B-133 | Revisión de documentos | [Plan de cierre](CLOSING_PLAN.md) con merges, verificación en `main`, casillas que se marcan, pendientes de A y declaración final |
+| Rama completa | `pytest`, `export --check`, `git diff --check` | 438 Python; contratos sin deriva |
 
 ## B-126…B-129 — geometría, recorrido E2E, modo local y matriz — 2026-11-03
 

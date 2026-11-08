@@ -385,6 +385,14 @@ class SimulationRequest(Model):
     engine: Literal["quick-estimate", "sionna-rt", "ns-3"] = "quick-estimate"
 
 
+class ProjectFingerprint(Model):
+    """What a saved result must match to still describe this project (B-132)."""
+
+    input_hash: str = Field(description="Same hash as in simulations, maps, scenarios, reports and measurement campaigns")
+    engine: Literal["quick-estimate"]
+    engine_version: str = Field(description="A saved result with another engine version is stale")
+
+
 # --- Coverage maps (B-103) -------------------------------------------------------------
 
 MAX_MAP_CELLS = 40_000

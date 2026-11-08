@@ -13,7 +13,7 @@ from .cache import ResultCache
 from .calibration import MeasurementCheckRequest, MeasurementCheckResult, check as check_measurements
 from .coverage import CoverageJobs, CoverageLimitError
 from .differences import DifferenceRequest, DifferenceResult, compare
-from .engines import engine_capabilities, simulate
+from .engines import ENGINE_VERSION, engine_capabilities, input_hash, simulate
 from .legacy import import_project
 from .placement import ENGINE_VERSION as PLACEMENT_VERSION, PlacementLimitError, search
 from .placement import request_hash as placement_hash
@@ -23,6 +23,7 @@ from .scenarios import ENGINE_VERSION as SCENARIO_VERSION, evaluate as evaluate_
 from .scenarios import request_hash as scenario_hash
 from .models import (
     CoverageMapJob, CoverageMapRequest, GenericProfile, PlacementSearchRequest, PlacementSearchResult,
+    ProjectFingerprint,
     ProfileRadioRequest, ProfileRole, Project, Radio, ScenarioRequest, ScenarioResult, SimulationRequest,
     SimulationResult, wifi24_channel_frequency_hz,
 )
@@ -97,6 +98,12 @@ def project_import(data: dict[str, Any]) -> Project:
         raise HTTPException(422, error.errors(include_context=False, include_input=False)) from error
     except (ValueError, TypeError, KeyError, AttributeError) as error:
         raise HTTPException(422, f"Invalid project: {error}") from error
+
+
+@app.post("/api/projects/fingerprint", response_model=ProjectFingerprint)
+def project_fingerprint(project: Project) -> ProjectFingerprint:
+    """Hash and engine version a saved map, report or result must match to be current (B-132)."""
+    return ProjectFingerprint(input_hash=input_hash(project), engine="quick-estimate", engine_version=ENGINE_VERSION)
 
 
 @app.post("/api/simulations", response_model=SimulationResult)

@@ -15,10 +15,9 @@ from typing import Literal
 
 from pydantic import Field, model_validator
 
-from .engines import LIMITATIONS, Budget, budget, geometry_issue, input_hash, link_result
+from .engines import ENGINE_VERSION, LIMITATIONS, Budget, budget, geometry_issue, input_hash, link_result
 from .models import Link, Model, Project
 
-ENGINE_VERSION = "0.1.0"
 Term = Literal["tx_power", "tx_antenna_gain", "rx_antenna_gain", "system_gain", "path_loss", "walls",
                "extra_loss", "polarization"]
 

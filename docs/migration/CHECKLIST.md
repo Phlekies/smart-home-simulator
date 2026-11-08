@@ -72,7 +72,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] AP/emisor y receptor/perfil identificados en cada resultado (B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
 - [x] Energía agregada no se presenta como señal de una conexión (un AP por mapa; B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
 - [ ] Comparación de posiciones y optimización básica con restricciones (comparación manual A-105 y API de lugares permitidos B-105 en `main`; interfaz A-110 en #14, revisada).
-- [ ] Mapas guardables y resultados invalidados al editar (invalidación verificada en A-104; los mapas son de sesión; B-120, en revisión, los guarda completos dentro del informe).
+- [ ] Mapas guardables y resultados invalidados al editar (invalidación verificada en A-104; B-120 guarda los mapas en el informe y B-132 define el mapa guardado como archivo local con huella de vigencia, ambos en revisión; falta guardar y reabrir desde la interfaz).
 - [ ] Predicción técnica separada de recomendación de compra validada.
 
 ## M5 — Cierre técnico
@@ -80,7 +80,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] JSON Schema/OpenAPI/TypeScript comprobados por CI remota (PR #2, commit 33f1df8).
 - [x] Importación y recuperación de los tres ejemplos Java sin pérdida silenciosa (B-111: original Java íntegro, recuentos, exportar/reimportar idéntico; recuperación local A-101).
 - [ ] Pruebas de fórmulas/geometría y regresiones pertinentes (B-126 en revisión: 47 casos de cruces, esquinas, uniones, roces, alturas y escalas, y corrección de esquinas que dependían del sentido de dibujo; regresión de paridad Java B-121).
-- [ ] E2E de crear/importar, editar, calcular, comparar y guardar (API completa en B-111; recorrido en navegador B-127 sobre la pila B + #14: crear, importar, editar, calcular, comparar, guardar y recuperar, en [STATUS](STATUS.md); se marca al fusionar).
+- [ ] E2E de crear/importar, editar, calcular, comparar y guardar (API completa en B-111; recorrido en navegador B-127 sobre la pila B + #14 y ensayo de integración I-006, en [STATUS](STATUS.md); se marca al fusionar según el [plan de cierre](CLOSING_PLAN.md)).
 - [x] Instalación limpia y arranque local reproducibles (B-112: clon nuevo en Windows x64 siguiendo LOCAL_DEVELOPMENT; Linux en cada CI de migración desde el lock).
 - [x] Matriz de funciones conservadas/sustituidas/excluidas y motivos ([FEATURE_MATRIX](FEATURE_MATRIX.md), B-107; revisar al cerrar cada fase).
 - [ ] Documentación del ámbito real y motores disponibles ([ámbito real y motores](SCOPE_AND_ENGINES.md), B-125 en revisión).

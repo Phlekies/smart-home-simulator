@@ -67,6 +67,15 @@ resolución 0.1–5 m y **altura obligatoria**), `points` (hasta 256 posiciones 
   LRU, solo en memoria. La búsqueda de ubicación (16) y los escenarios (32) reutilizan igual sus
   resultados. Cancelados y fallidos no se guardan. Es seguro porque el estimador es determinista.
 
+## Mapas guardados (B-132)
+
+Un mapa es un resultado derivado. Se guarda como **archivo local aparte** (el `CoverageMapResult` tal
+cual) y nunca dentro del proyecto exportable, igual que las campañas de medida. El archivo se describe
+a sí mismo: lleva sus parámetros, `input_hash`, `request_hash` y `engine_version`. Para saber si sigue
+valiendo, la interfaz pide `POST /api/projects/fingerprint` con el proyecto actual. El mapa está
+vigente solo si coinciden `input_hash` y `engine_version`; si no, se muestra como obsoleto y se
+recalcula. Enchufes, tomas e imagen de plano no lo vuelven obsoleto, porque no cambian el cálculo.
+
 ## Trabajo del consumidor (A-104)
 
 1. Añadir al script `contracts` de `apps/web/package.json` la generación

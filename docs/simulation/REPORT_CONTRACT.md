@@ -55,6 +55,11 @@ cada sentido limitante va acompañado de «un margen positivo no garantiza el fu
 3. Opcional (B-120): pedir los mapas visibles al generar el informe y dibujarlos a partir de
    `maps[].result` en la versión descargada.
 
+## Informe guardado (B-132)
+
+El JSON del informe lleva `input_hash` y `engine_version`, también en cada mapa. Al reabrirlo,
+`POST /api/projects/fingerprint` dice si sigue describiendo el proyecto actual.
+
 ## Límites
 
 - Trayecto directo del estimador rápido; cifras sin calibración experimental.

@@ -13,7 +13,8 @@ detectar riesgos y comparar mejoras. Wi-Fi primero, empezando por 2.4 GHz.
 > **Migración en curso (2026-10-29):** nueva aplicación local con interfaz React/TypeScript
 > y servicio Python. [Arranque local](docs/migration/LOCAL_DEVELOPMENT.md),
 > [ruta completa](docs/migration/ROADMAP.md), [checklist](docs/migration/CHECKLIST.md)
-> y [evidencia del estado](docs/migration/STATUS.md).
+> y [evidencia del estado](docs/migration/STATUS.md). Para usarla basta con Python 3.11+:
+> `python scripts/start.py` lo prepara todo y la sirve en http://127.0.0.1:8000/ .
 > Java se conserva como referencia. El primer motor Python es una estimación directa;
 > Sionna RT y ns-3 todavía no están integrados ni validados
 > ([ámbito real y motores](docs/migration/SCOPE_AND_ENGINES.md)). La documentación inferior
