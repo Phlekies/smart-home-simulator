@@ -19,9 +19,9 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 - [x] Mapa por perfil/banda/altura, con resolución y puntos no calculados identificados (B-103 + A-104 en `main`; [evidencia](../ui/COVERAGE_MAP.md)).
 - [x] Coordenada elegida se evalúa sin redondeo a la celda visual (punto exacto; B-103 + A-104 en `main`; [evidencia](../ui/COVERAGE_MAP.md)).
 - [x] Potencia y margen de ida y vuelta visibles (mapas y enlaces; B-103 + A-104 en `main`; [evidencia](../ui/COVERAGE_MAP.md)).
-- [ ] Un retorno insuficiente impide concluir cobertura favorable aunque la bajada sea buena.
+- [ ] Un retorno insuficiente impide concluir cobertura favorable aunque la bajada sea buena (motor: `below-threshold` o `unverified`, nunca `above-threshold`; probado en B-122; la clasificación espera el criterio de fallo).
 - [x] Selección de AP explícita; energía de distintos AP no se suma como señal de una conexión (B-103 + A-104 en `main`; [evidencia](../ui/COVERAGE_MAP.md)).
-- [ ] Sensibilidad/configuración desconocida produce conclusión parcial o sin datos.
+- [ ] Sensibilidad/configuración desconocida produce conclusión parcial o sin datos (motor `unverified` y márgenes vacíos; celdas `partial`; probado en B-103 y B-122).
 - [ ] Cambiar paredes, AP o radios invalida resultados obsoletos.
 
 ## P2 — Riesgo y supuestos
@@ -30,17 +30,17 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 - [ ] Clasificación distingue favorable, marginal, insuficiente y sin datos.
 - [ ] Sin umbral RSSI universal ni porcentajes de éxito inventados.
 - [ ] Ruido/interferencia no evaluados se declaran independientemente de la cobertura.
-- [ ] Fuera de banda, perfil o geometría soportados: sin recomendación favorable.
+- [ ] Fuera de banda, perfil o geometría soportados: sin recomendación favorable (banda: `unsupported`; geometría fuera del modelo sin estado favorable, B-122 en revisión).
 - [ ] Cobertura, compatibilidad de radio y funcionamiento de aplicación se presentan separados.
 
 ## P3 — Alternativas realizables
 
 - [ ] Comparación base/alternativa conserva perfiles y condiciones equivalentes.
-- [ ] Mover AP/equipo/altura ofrece diferencia de señal y margen limitante.
+- [ ] Mover AP/equipo/altura ofrece diferencia de señal y margen limitante (comparación A-105 en `main`; diferencia exacta por términos B-123 en revisión).
 - [ ] Añadir AP exige definir su conexión de datos (API B-117 en revisión: sin definir se avisa; falta el editor en la interfaz).
 - [ ] Lugares permitidos, enchufes y cableado limitan la búsqueda (lugares B-105 en `main`; enchufes y tomas B-119 en revisión; falta marcarlos en la interfaz).
 - [ ] Se evalúan ubicaciones prioritarias, no solo el porcentaje de suelo cubierto.
-- [ ] La explicación identifica mejoras y riesgos residuales sin atribuciones causales falsas.
+- [ ] La explicación identifica mejoras y riesgos residuales sin atribuciones causales falsas (API B-123 en revisión: términos del modelo que suman el cambio y riesgos residuales; falta mostrarlo en la interfaz).
 - [ ] Sin recomendar compra de modelo con datos/compatibilidad de radio sin verificar.
 
 ## P4 — Validación
@@ -58,7 +58,7 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 
 - [ ] Persona nueva completa vivienda→equipo→ubicación→diagnóstico→alternativa→informe.
 - [ ] Puede explorar sin haber comprado toda la domótica.
-- [ ] Si usa móvil como medida, se explica su diferencia respecto al equipo candidato.
+- [ ] Si usa móvil como medida, se explica su diferencia respecto al equipo candidato (B-124 en revisión: notas y supuesto por residuo; falta la importación en la interfaz).
 - [ ] Informe conserva versiones, escenario, perfil, supuestos y datos pendientes (API B-115 en JSON/Markdown; mapas en el informe B-120 en revisión; falta la descarga en la interfaz).
 - [ ] Guardado/recuperación, accesibilidad e instalación local comprobados.
 - [ ] Se distingue predicción de medidas reales y rendimiento no evaluado.

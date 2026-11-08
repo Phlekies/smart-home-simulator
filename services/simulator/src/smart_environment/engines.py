@@ -6,6 +6,7 @@ import json
 import math
 import shutil
 import time
+from typing import NamedTuple
 
 from .backhaul import access_point_connections
 from .models import (
@@ -61,7 +62,8 @@ def engine_capabilities() -> list[dict]:
         {"id": "quick-estimate", "name": "Estimación rápida", "implemented": True,
          "available": True, "verified": False, "version": "0.1.0",
          "interactions": list(MODELLED_INTERACTIONS),
-         "description": "Modelo analítico probado con casos sintéticos; sin validación experimental."},
+         "description": "Modelo analítico probado con casos sintéticos y con el trayecto directo de Java "
+                        "(B-121); sin validación experimental."},
         {"id": "sionna-rt", "name": "Sionna RT", "implemented": False,
          "available": False, "verified": False, "version": version,
          "description": "Adaptador de evaluación (B-102) contrastado con casos analíticos en WSL/CPU; "
@@ -89,6 +91,39 @@ def crossing_parameter(a: Point, b: Point, wall: Wall) -> float | None:
     return t if wall.start.z <= z <= wall.start.z + wall.height_m else None
 
 
+def inside_wall(point: Point, wall: Wall) -> bool:
+    """Point within half the wall thickness of its centre line and within its height."""
+    if not wall.start.z <= point.z <= wall.start.z + wall.height_m:
+        return False
+    ax, ay, bx, by = wall.start.x, wall.start.y, wall.end.x, wall.end.y
+    length_sq = (bx - ax) ** 2 + (by - ay) ** 2
+    t = max(0.0, min(1.0, ((point.x - ax) * (bx - ax) + (point.y - ay) * (by - ay)) / length_sq))
+    return math.hypot(point.x - (ax + t * (bx - ax)), point.y - (ay + t * (by - ay))) < wall.thickness_m / 2
+
+
+def wall_heights(project: Project) -> tuple[float, float] | None:
+    """Lowest wall base and highest wall top: the storey the walls describe, or None without walls."""
+    walls = project.building.walls
+    if not walls:
+        return None
+    return min(w.start.z for w in walls), max(w.start.z + w.height_m for w in walls)
+
+
+def geometry_issue(project: Project, point: Point, label: str) -> str | None:
+    """Why a position lies outside what the estimator models (B-122); None when it is inside."""
+    if wall := next((w for w in project.building.walls if inside_wall(point, w)), None):
+        return f"{label} está dentro de la pared {wall.id}: un equipo empotrado no se modela."
+    if (heights := wall_heights(project)) is not None:
+        low, top = heights
+        if point.z > top:
+            return (f"{label} está a {point.z:g} m, por encima de todas las paredes ({top:g} m): otra planta o "
+                    "falso techo; los forjados no se modelan.")
+        if point.z < low:
+            return (f"{label} está a {point.z:g} m, por debajo de todas las paredes ({low:g} m): otra planta; "
+                    "los forjados no se modelan.")
+    return None
+
+
 def antenna_gain(radio: Radio, peak_gain: float, angle_deg: float) -> float:
     if radio.antenna == "omnidirectional" or radio.beamwidth_deg >= 360:
         return peak_gain
@@ -112,9 +147,35 @@ def material_loss_db(material: Material, frequency_hz: float, bound: str = "nomi
     return u.loss_db_5ghz_high if high_band else u.loss_db_24ghz_high
 
 
-def direction(project: Project, tx: Device, tx_radio: Radio, rx: Device, rx_radio: Radio,
-              scenario: ScenarioAssumptions | None = None) -> DirectionResult | None:
-    """One-way budget. ``scenario`` overrides door states and material bounds; open doors add no loss."""
+class Budget(NamedTuple):
+    """Terms of a one-way budget in dB; ``received_dbm`` adds them in the original order."""
+
+    distance_m: float
+    tx_power_dbm: float
+    tx_gain_db: float
+    rx_gain_db: float
+    system_gain_db: float
+    path_loss_db: float
+    walls: list[tuple[str, float]]  # crossed wall id and its loss, in project order
+    extra_loss_db: float
+    polarization_loss_db: float
+
+    @property
+    def wall_loss_db(self) -> float:
+        total = 0.0
+        for _, loss in self.walls:
+            total += loss
+        return total
+
+    @property
+    def received_dbm(self) -> float:
+        return (self.tx_power_dbm + self.tx_gain_db + self.rx_gain_db + self.system_gain_db
+                - self.path_loss_db - self.wall_loss_db - self.extra_loss_db - self.polarization_loss_db)
+
+
+def budget(project: Project, tx: Device, tx_radio: Radio, rx: Device, rx_radio: Radio,
+           scenario: ScenarioAssumptions | None = None) -> Budget | None:
+    """Every term of the one-way budget, or None without transmit power. Open doors add no loss."""
     if tx_radio.tx_power_dbm is None:
         return None
     distance = math.dist((tx.position.x, tx.position.y, tx.position.z),
@@ -124,8 +185,7 @@ def direction(project: Project, tx: Device, tx_radio: Radio, rx: Device, rx_radi
     fspl_1m = 20 * math.log10(4 * math.pi * tx_radio.frequency_hz / 299_792_458)
     path_loss = fspl_1m + (20 if d < 1 else 10 * project.settings.path_loss_exponent) * math.log10(d)
     materials = {m.id: m for m in project.building.materials}
-    wall_loss = 0.0
-    crossed = []
+    walls = []
     for wall in project.building.walls:
         door = (scenario.doors.get(wall.id) if scenario else None) or wall.door
         if door == "open":
@@ -134,18 +194,28 @@ def direction(project: Project, tx: Device, tx_radio: Radio, rx: Device, rx_radi
             material = materials[wall.material_id]
             bound = scenario.materials.get(material.id, "nominal") if scenario else "nominal"
             base = material_loss_db(material, tx_radio.frequency_hz, bound)
-            wall_loss += base + wall.thickness_m * 100 * material.extra_loss_db_per_cm
-            crossed.append(wall.id)
+            walls.append((wall.id, base + wall.thickness_m * 100 * material.extra_loss_db_per_cm))
     angle = math.degrees(math.atan2(rx.position.y - tx.position.y, rx.position.x - tx.position.x))
-    tx_gain = antenna_gain(tx_radio, tx_radio.tx_gain_dbi, angle)
-    rx_gain = antenna_gain(rx_radio, rx_radio.rx_gain_dbi, angle + 180)
     polarization = -20 * math.log10(max(abs(math.cos(math.radians(
         tx_radio.polarization_deg - rx_radio.polarization_deg))), .05))
-    received = (tx_radio.tx_power_dbm + tx_gain + rx_gain + project.settings.system_gain_db
-                - path_loss - wall_loss - project.settings.extra_loss_db_per_m * distance - polarization)
+    return Budget(distance_m=distance, tx_power_dbm=tx_radio.tx_power_dbm,
+                  tx_gain_db=antenna_gain(tx_radio, tx_radio.tx_gain_dbi, angle),
+                  rx_gain_db=antenna_gain(rx_radio, rx_radio.rx_gain_dbi, angle + 180),
+                  system_gain_db=project.settings.system_gain_db, path_loss_db=path_loss, walls=walls,
+                  extra_loss_db=project.settings.extra_loss_db_per_m * distance, polarization_loss_db=polarization)
+
+
+def direction(project: Project, tx: Device, tx_radio: Radio, rx: Device, rx_radio: Radio,
+              scenario: ScenarioAssumptions | None = None) -> DirectionResult | None:
+    """One-way budget. ``scenario`` overrides door states and material bounds; open doors add no loss."""
+    terms = budget(project, tx, tx_radio, rx, rx_radio, scenario)
+    if terms is None:
+        return None
+    received = terms.received_dbm
     noise = -174 + 10 * math.log10(rx_radio.bandwidth_hz) + rx_radio.noise_figure_db
-    return DirectionResult(tx_device_id=tx.id, rx_device_id=rx.id, distance_m=distance,
-                           path_loss_db=path_loss, wall_loss_db=wall_loss, crossed_wall_ids=crossed,
+    return DirectionResult(tx_device_id=tx.id, rx_device_id=rx.id, distance_m=terms.distance_m,
+                           path_loss_db=terms.path_loss_db, wall_loss_db=terms.wall_loss_db,
+                           crossed_wall_ids=[wall_id for wall_id, _ in terms.walls],
                            received_power_dbm=received, noise_dbm=noise, snr_db=received - noise,
                            margin_db=None if rx_radio.sensitivity_dbm is None else received - rx_radio.sensitivity_dbm)
 
@@ -208,9 +278,12 @@ def link_result(project: Project, link: Link) -> LinkResult:
             reasons.append("Distancia inferior a 0.1 m: fuera del alcance del modelo; pérdida acotada.")
     complete = (forward is not None and reverse is not None and forward.margin_db is not None
                 and reverse.margin_db is not None and forward.distance_m >= .1)
+    outside = [issue for device in (source, target)
+               if (issue := geometry_issue(project, device.position, device.name)) is not None]
+    reasons += outside
     if any(d is not None and d.margin_db is not None and d.margin_db < 0 for d in (forward, reverse)):
         status = "below-threshold"
-    elif complete and compatibility == "radio-compatible":
+    elif complete and compatibility == "radio-compatible" and not outside:
         status = "above-threshold"
     else:
         status = "unverified"

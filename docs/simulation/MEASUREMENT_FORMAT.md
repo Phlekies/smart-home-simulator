@@ -27,7 +27,7 @@ Los archivos no se envían a terceros. Las notas libres no deben incluir datos p
 | Bloque | Contenido | Reglas |
 |---|---|---|
 | Cabecera | `id`, `site_id`, `split`, `synthetic`, `purpose`, `project`, fechas | `synthetic` solo y siempre con `split = format-example` |
-| `instruments` | Router, equipo candidato o del mismo modelo, móvil, portátil… con modelo, chipset, firmware, herramienta y forma de informar RSSI | Un móvil (`phone`) no representa la radio del candidato |
+| `instruments` | Router, equipo candidato o del mismo modelo, móvil, portátil… con modelo, chipset, firmware, herramienta y forma de informar RSSI | Un móvil (`phone`) no representa la radio del candidato: la comprobación y la calibración lo explican en sus notas, y cada residuo lo lleva como supuesto y en `device_instrument_kind` (B-124) |
 | `radio` / `ParameterValue` | Potencia, ganancia, figura de ruido, sensibilidad: `value` + `provenance` (`measured`, `declared`, `inferred`, `unknown`) + `source` | Valor ausente ⇔ `unknown`; nunca un número por defecto |
 | `access_points` | Dispositivo y radio del proyecto, frecuencia, canal, ancho, potencia y ganancia con procedencia, ajustes fijados | Referencias comprobadas contra el proyecto |
 | `conditions` | Estado de puertas (ids de paredes del proyecto), personas, redes visibles en el canal, notas | Puertas desconocidas se declaran `unknown` |

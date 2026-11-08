@@ -27,11 +27,27 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
   parámetro, mapas con escenario, informe por enlace y comprobación de medidas. Ver secciones inferiores.
 - En revisión: B-117…B-121 ([PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17), sobre #16): conexión de datos de los AP,
   perfiles de AP, enchufes y tomas en la búsqueda, mapas en el informe y paridad con Java.
+- En revisión: B-122…B-125 ([PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), sobre #17): geometría fuera del
+  modelo, diferencias exactas entre versiones, medidas con móvil y
+  [ámbito real y motores](SCOPE_AND_ENGINES.md).
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## B-122…B-125 — geometría fuera del modelo, diferencias, instrumentos y ámbito — 2026-11-01
+
+| Tarea | Comprobación | Resultado |
+|---|---|---|
+| B-122 | `test_geometry_scope.py` | Un equipo empotrado o por encima o por debajo de todas las paredes da `unverified`, conservando los valores. Un retorno negativo da `below-threshold` y uno ausente, `unverified`: nunca hay estado favorable. Los mapas y la búsqueda lo indican, y la búsqueda descarta lugares por encima de las paredes |
+| B-123 | `test_link_differences.py` | Los términos suman el cambio de cada sentido (1e-9) y coinciden con `simulate`. Paredes que salen o entran; cambio de radio en su término; riesgos de puerta desconocida y material incierto; sin potencia, sin términos; enlaces con otros extremos no comparados; 501 sin fallback |
+| B-124 | `test_measurement_check.py`, `test_calibration.py` | Una nota por instrumento sustituto, incluso sin proyecto. Cada residuo lleva el supuesto y `device_instrument_kind`. El propio candidato no genera notas |
+| B-125 | Revisión de enlaces y cifras | [Ámbito real y motores](SCOPE_AND_ENGINES.md); README enlazado; descripción de `quick-estimate` actualizada |
+| Refactor | Presupuesto por términos (`engines.budget`) | Resultados idénticos: la regresión de paridad Java con tolerancia 1e-9 sigue en verde |
+| Contratos | `export --check` y tipos regenerados (10 `.ts`) | Ruta `POST /api/link-differences` con `link-difference.schema.json` y campo opcional en `PointResidual` |
+| Compatibilidad con A | Rama de #14 con los tipos nuevos (worktree temporal, eliminado) | 120 pruebas y build (`tsc --noEmit` + vite) correctos |
+| Rama completa | `pytest`, `npm test`, `npm run build`, `git diff --check` | 373 Python, 84 web, build correcto |
 
 ## B-117…B-121 — conexión de datos, perfiles de AP, cableado, mapas en el informe y paridad Java — 2026-11-01
 

@@ -111,6 +111,7 @@ API local (documentación interactiva en http://127.0.0.1:8000/docs):
 | `POST /api/scenario-simulations` | Mejor/peor caso de puertas y materiales inciertos | [escenarios](../simulation/SCENARIOS_CONTRACT.md) |
 | `POST /api/reports`, `POST /api/reports/markdown` | Informe por enlace (JSON o documento) | [informe](../simulation/REPORT_CONTRACT.md) |
 | `POST /api/measurements/check` | Validar una campaña de medida y ver sus residuos | [medidas](../simulation/MEASUREMENT_FORMAT.md) |
+| `POST /api/link-differences` | Diferencia exacta entre dos versiones del proyecto | [diferencias](../simulation/LINK_DIFFERENCE_CONTRACT.md) |
 
 Ninguna clasifica la cobertura como favorable o insuficiente: la reserva de diseño está pendiente.
 

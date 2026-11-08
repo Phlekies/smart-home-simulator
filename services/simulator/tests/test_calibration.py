@@ -87,7 +87,12 @@ def test_offset_is_fitted_on_calibration_and_judged_on_validation():
     assert before.count == after.count == 6
     assert before.bias_db == pytest.approx(OFFSET - sum(JITTER) / len(JITTER))
     assert abs(after.bias_db) < 0.5 and after.rmse_db < before.rmse_db
-    assert all("ganancia de antena" in a for r in report.residuals for a in r.assumptions)
+    for residual in report.residuals:  # unknown gains, and a phone standing in for the candidate (B-124)
+        assert any("ganancia de antena" in a for a in residual.assumptions)
+        assert any("medido con un móvil (phone)" in a for a in residual.assumptions)
+        assert residual.device_instrument_kind == "phone"
+        assert all("ganancia de antena" in a or "móvil" in a for a in residual.assumptions)
+    assert any("phone es un móvil" in note for note in report.notes)
 
 
 def test_leakage_mismatch_and_synthetic_data_are_refused():

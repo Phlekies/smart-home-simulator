@@ -120,6 +120,19 @@
           },
           "title": "Assumptions",
           "type": "array"
+        },
+        "device_instrument_kind": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Kind of the instrument at the device position (B-124); anything but the candidate is a stand-in",
+          "title": "Device Instrument Kind"
         }
       },
       "required": [

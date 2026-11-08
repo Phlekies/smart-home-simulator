@@ -292,3 +292,34 @@ def partition_issues(campaigns: Iterable[MeasurementCampaign]) -> list[str]:
         if {"pilot", "validation"} <= used:
             issues.append(f"La vivienda {site} se usó en el piloto y en validación: los objetivos se fijaron con ella.")
     return issues
+
+
+CANDIDATE_KINDS = ("candidate-device", "same-model-as-candidate")
+INSTRUMENT_LABELS = {"phone": "un móvil", "laptop": "un portátil", "usb-adapter": "un adaptador USB",
+                     "access-point": "un punto de acceso", "other": "otro instrumento"}
+
+
+def stand_in(instrument: Instrument) -> str | None:
+    """Assumption carried by readings from something other than the candidate radio (B-124)."""
+    if instrument.kind in CANDIDATE_KINDS:
+        return None
+    return (f"medido con {INSTRUMENT_LABELS[instrument.kind]} ({instrument.id}), no con la radio del equipo "
+            "candidato: antena, sensibilidad y cálculo del RSSI distintos")
+
+
+def instrument_notes(campaign: MeasurementCampaign) -> list[str]:
+    """One explanation per stand-in instrument actually used at a measured point."""
+    used = set()
+    for point in campaign.points:
+        if point.status == "measured":
+            used.add(point.device_instrument_id)
+            used.update(observation.receiver_instrument_id for observation in point.rssi)
+    notes = []
+    for instrument in campaign.instruments:
+        if instrument.id not in used or instrument.kind in CANDIDATE_KINDS or instrument.kind == "access-point":
+            continue
+        notes.append(f"{instrument.id} es {INSTRUMENT_LABELS[instrument.kind]}: sus lecturas describen su propia "
+                     "radio, no la del equipo candidato. La antena, la orientación o la mano, la sensibilidad y la "
+                     "forma de calcular el RSSI difieren; sirven para comparar posiciones, no para concluir que el "
+                     "candidato funcionará ahí.")
+    return notes

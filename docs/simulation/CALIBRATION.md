@@ -22,6 +22,8 @@ sola campaña, `POST /api/measurements/check` (B-116) devuelve sus residuos sin 
   - el estado de las puertas registrado en las condiciones de ese punto, como escenario de [B-108](SCENARIOS_CONTRACT.md).
 - **Residuo** = mediana de las muestras medidas − predicción, en dB. Las ganancias de antena
   desconocidas se toman como 0 dBi y figuran en `assumptions` de cada residuo: el residuo las incluye.
+  Si mide un móvil, un portátil u otro instrumento que no es el equipo candidato, el residuo lo dice
+  (`assumptions` y `device_instrument_kind`, B-124): describe esa radio, no la del candidato.
 - **Estadísticas por grupo** (AP→equipo, equipo→AP y todos): número de puntos, sesgo (media), mediana,
   MAE, RMSE, mínimo y máximo. No se calculan probabilidades ni intervalos de confianza.
 - **Calibración `single-offset`**: un desplazamiento igual a la media de los residuos de las campañas

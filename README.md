@@ -15,7 +15,8 @@ detectar riesgos y comparar mejoras. Wi-Fi primero, empezando por 2.4 GHz.
 > [ruta completa](docs/migration/ROADMAP.md), [checklist](docs/migration/CHECKLIST.md)
 > y [evidencia del estado](docs/migration/STATUS.md).
 > Java se conserva como referencia. El primer motor Python es una estimación directa;
-> Sionna RT y ns-3 todavía no están integrados ni validados. La documentación inferior
+> Sionna RT y ns-3 todavía no están integrados ni validados
+> ([ámbito real y motores](docs/migration/SCOPE_AND_ENGINES.md)). La documentación inferior
 > corresponde a la aplicación Java original.
 
 [![CI](https://github.com/Phlekies/smart-home-simulator/actions/workflows/ci.yml/badge.svg)](https://github.com/Phlekies/smart-home-simulator/actions/workflows/ci.yml)
