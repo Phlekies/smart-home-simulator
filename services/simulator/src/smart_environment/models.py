@@ -399,12 +399,15 @@ class CoverageMapResult(Model):
 
 
 class CoverageMapJob(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("cached"))
+
     job_id: str
     state: Literal["queued", "running", "done", "cancelled", "failed"]
     progress: float = Field(ge=0, le=1)
     request_hash: str
     result: CoverageMapResult | None = None
     error: str | None = None
+    cached: bool = Field(default=False, description="True when an identical finished map was reused")
 
 
 # --- Access-point placement search (B-105) ---------------------------------------------

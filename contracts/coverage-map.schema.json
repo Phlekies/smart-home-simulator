@@ -669,6 +669,12 @@
       ],
       "default": null,
       "title": "Error"
+    },
+    "cached": {
+      "default": false,
+      "description": "True when an identical finished map was reused",
+      "title": "Cached",
+      "type": "boolean"
     }
   },
   "required": [

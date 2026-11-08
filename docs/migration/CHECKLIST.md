@@ -62,7 +62,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] Interacciones físicas y omisiones de la versión seleccionada documentadas (B-102).
 - [x] Espacio libre, pared y reflexión contrastados con referencias (B-101 + B-102: 18/18).
 - [ ] Diferencias respecto a Java explicadas; errores antiguos no se conservan como requisito (parcial: tabla de materiales y fase de reflexión documentadas; motor multipath Java no contrastado).
-- [ ] Progreso, cancelación, caché y límites para cálculo pesado (parcial B-103: progreso, cancelación y límites de mapas; sin caché).
+- [x] Progreso, cancelación, caché y límites para cálculo pesado (B-103: progreso, cancelación y límites de mapas; B-105: búsqueda acotada; B-110: caché en memoria por hash de petición).
 - [x] Benchmark inicial reproducible de tiempo y memoria (script y evidencia JSON de B-102; un equipo, una ejecución).
 
 ## M4 — Mapas y comparación básica
@@ -78,10 +78,10 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 ## M5 — Cierre técnico
 
 - [x] JSON Schema/OpenAPI/TypeScript comprobados por CI remota (PR #2, commit 33f1df8).
-- [ ] Importación y recuperación de los tres ejemplos Java sin pérdida silenciosa.
+- [x] Importación y recuperación de los tres ejemplos Java sin pérdida silenciosa (B-111: original Java íntegro, recuentos, exportar/reimportar idéntico; recuperación local A-101).
 - [ ] Pruebas de fórmulas/geometría y regresiones pertinentes.
-- [ ] E2E de crear/importar, editar, calcular, comparar y guardar.
-- [ ] Instalación limpia y arranque local reproducibles.
+- [ ] E2E de crear/importar, editar, calcular, comparar y guardar (API completa en B-111 con los tres ejemplos y un proyecto nuevo; recorrido completo en navegador pendiente).
+- [x] Instalación limpia y arranque local reproducibles (B-112: clon nuevo en Windows x64 siguiendo LOCAL_DEVELOPMENT; Linux en cada CI de migración desde el lock).
 - [x] Matriz de funciones conservadas/sustituidas/excluidas y motivos ([FEATURE_MATRIX](FEATURE_MATRIX.md), B-107; revisar al cerrar cada fase).
 - [ ] Documentación del ámbito real y motores disponibles.
 - [ ] Java preservado como referencia hasta superar las puertas de sustitución.

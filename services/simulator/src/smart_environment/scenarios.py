@@ -9,6 +9,8 @@ are scenario bounds, not probability intervals.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import time
 
 from .engines import LIMITATIONS, crossing_parameter, direction, input_hash, radio_pair_check
@@ -22,6 +24,13 @@ SCENARIO_LIMITATIONS = LIMITATIONS + [
     "Los rangos son límites de escenario razonados, no intervalos de probabilidad.",
     "Con un motor multipath el peor caso no tiene por qué coincidir con todas las pérdidas máximas.",
 ]
+
+
+def request_hash(request: ScenarioRequest) -> str:
+    parameters = request.model_dump(mode="json", exclude={"project"})
+    canonical = json.dumps({"project": input_hash(request.project), "parameters": parameters},
+                           sort_keys=True, separators=(",", ":"), allow_nan=False)
+    return hashlib.sha256(canonical.encode()).hexdigest()
 
 
 def automatic_scenarios(project: Project) -> list[ScenarioAssumptions]:

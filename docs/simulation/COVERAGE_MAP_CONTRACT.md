@@ -51,6 +51,10 @@ resolución 0.1–5 m y **altura obligatoria**), `points` (hasta 256 posiciones 
   celdas, 21 paredes) en 1.0 s. El límite acota un trabajo a unos 3–4 s en este equipo.
 - Un trabajador en segundo plano, cola e historial de 16 trabajos; al apagar la API se cancelan.
   Los resultados viven en memoria del proceso local: no hay caché persistente.
+- Caché (B-110): una petición idéntica (mismo `request_hash` y versión del motor) reutiliza el
+  último mapa terminado; el trabajo nace `done` con `cached: true` (campo opcional). Hasta 8 mapas,
+  LRU, solo en memoria. La búsqueda de ubicación (16) y los escenarios (32) reutilizan igual sus
+  resultados. Cancelados y fallidos no se guardan. Es seguro porque el estimador es determinista.
 
 ## Trabajo del consumidor (A-104)
 

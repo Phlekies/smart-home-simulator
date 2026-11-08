@@ -26,7 +26,10 @@ def main():
             ([sys.executable, "-m", "uvicorn", "smart_environment.api:app", "--host", "127.0.0.1", "--port", "8000"], ROOT),
             ([node, str(vite), "--host", "127.0.0.1", "--port", "5174", "--strictPort"], ROOT / "apps/web"),
         ]:
-            processes.append(subprocess.Popen(command, cwd=cwd, creationflags=flags))
+            # Pass our streams explicitly: without them a CREATE_NO_WINDOW child on Windows loses its
+            # output, and a port-in-use error would never reach the person running the launcher.
+            processes.append(subprocess.Popen(command, cwd=cwd, creationflags=flags,
+                                              stdout=sys.stdout, stderr=sys.stderr))
         print("Local interface: http://127.0.0.1:5174/\nAPI documentation: http://127.0.0.1:8000/docs\nCtrl+C stops both services.", flush=True)
         while True:
             for process in processes:

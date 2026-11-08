@@ -22,11 +22,28 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
 - Última evidencia de código: combinación `main`+#8+#9+#10 verificada localmente por B: **199 pruebas
   Python, 84 web/editor, build, contratos y tipos generados sin deriva**. Java no se modifica.
 - [Matriz de funciones Java](FEATURE_MATRIX.md) (B-107): qué se conserva, sustituye o excluye y por qué.
+- En revisión local (rama `agent-b/b-109-112`): I-004 (A-102 verificada), B-109 (residuos y
+  calibración), B-110 (caché), B-111 (E2E de la API) y B-112 (instalación limpia). Ver sección inferior.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## I-004 y B-109…B-112 — cinco tareas — 2026-10-30
+
+| Tarea | Comprobación | Resultado |
+|---|---|---|
+| I-004 | Alcance de #12 (A-102) y `main`+#12 en rama temporal | Solo archivos de A; 199 Python, 94 web, build, contratos y generados sin deriva; captura sin datos personales. Cambio de base y merge: usuario |
+| B-109 | `test_calibration.py` | La predicción coincide con `simulate()` de un enlace equivalente; puertas de las condiciones aplicadas; el desplazamiento se ajusta solo con calibración y se evalúa en validación; fugas, hash distinto y datos sintéticos rechazados |
+| B-110 | `test_cache.py` | Mapa idéntico servido `cached` sin recalcular; cambios de proyecto o parámetros recalculan; cancelados/fallidos no se guardan; LRU acotada |
+| B-111 | `test_e2e_api.py` | Tres ejemplos Java: importación con original íntegro, edición, simulación, mapa con perfil y punto exacto, búsqueda, escenarios, exportar/reimportar idéntico y mismo hash en todos los resultados; proyecto nuevo desde cero |
+| B-111 | Fallo encontrado | Tras cerrar el ciclo de vida de la app quedaba un gestor de mapas apagado; corregido, la prueba de regresión falla sin la corrección |
+| B-112 | Clon nuevo siguiendo LOCAL_DEVELOPMENT | Dependencias en 27 s + 5 s; 216 Python, contratos, typecheck, build, 84 web; API y web compilada en loopback |
+| B-112 | `dev.py` con puertos ocupados | Falla con código 1; antes no mostraba la causa en Windows, ahora sí («Port 5174 is already in use») |
+| Rama completa | `pytest`, `export --check`, `npm test`, `npm run build`, `git diff --check` | 216 Python, sin deriva, 84 web, build correcto |
+
+Servidores de prueba propios detenidos; los de A (puertos 8000/5174) no se tocaron.
 
 ## I-003 — consolidación tras el merge de #7 — 2026-10-30
 
