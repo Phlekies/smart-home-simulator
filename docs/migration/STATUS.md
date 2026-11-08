@@ -26,6 +26,15 @@ y el [plan de cierre](CLOSING_PLAN.md).
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
 
+## A-114…A-120 — interfaz de cierre, hecha por B en el papel de A — 2026-11-08
+
+| Tarea | Resultado |
+|---|---|
+| A-114…A-119 | Mapas guardables con vigencia por huella, descarga del informe con mapa, zoom y desplazamiento, exportación PNG, recorrido guiado y accesibilidad, y aviso de que la predicción no es una recomendación de compra. Verificado en el navegador ([evidencia](../ui/CLOSING_UI_TASKS.md)) |
+| A-120 · fallo en `main` | La interfaz rechazaba mapas y búsquedas: comparaba los parámetros devueltos con su petición y los campos opcionales nuevos (B-113/B-114/B-119/B-134) vuelven como `null`. Corregido con una comparación que trata ausente como `null`, con pruebas de regresión. Nadie lo detectó antes porque no hay pruebas de la interfaz frente a la API real y los recorridos E2E no calcularon mapas |
+| Comprobaciones | 131 pruebas web, build (`tsc` + vite), `npm run contracts` sin deriva, 444 Python |
+| Checklist técnico | Con estas tareas, todas las casillas de M0–M5 quedan marcadas en la rama; serán efectivas al fusionar |
+
 ## I-007 — merges y verificación de `main` (8734c9b) — 2026-11-08
 
 | Comprobación | Resultado |

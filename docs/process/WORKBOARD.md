@@ -81,12 +81,13 @@ validación en viviendas. Los checklists técnico y de producto siguen siendo la
 | B-134 | B | done | Búsqueda de ubicación bajo un escenario (p. ej. el peor caso): evaluación bajo incertidumbre que exige la ruta para sustituir el optimizador Java | [PR #25](https://github.com/Phlekies/smart-home-simulator/pull/25) (sobre #24); contrato aditivo |
 | B-135 | B | done | El informe separa consistencia, calibración y validación | [PR #25](https://github.com/Phlekies/smart-home-simulator/pull/25) (sobre #24); contrato aditivo |
 | I-007 | B integrador | done | Merges #11…#25 y #14 en `main` (8734c9b) por autorización del usuario; verificación y casillas del plan de cierre | Evidencia en STATUS |
-| A-114 | A (asumido por B) | claimed | Guardar y reabrir mapas como archivo local, con vigencia según la huella B-132 | Rama local `agent-a/a-114-119` |
-| A-115 | A (asumido por B) | claimed | Descargar el informe (Markdown) con el mapa vigente | Rama local `agent-a/a-114-119` |
-| A-116 | A (asumido por B) | claimed | Zoom y desplazamiento del plano | Rama local `agent-a/a-114-119` |
-| A-117 | A (asumido por B) | claimed | Exportar el plano como imagen | Rama local `agent-a/a-114-119` |
-| A-118 | A (asumido por B) | claimed | Accesibilidad (nombres, foco, teclado) y recorrido guiado de creación de una vivienda | Rama local `agent-a/a-114-119` |
-| A-119 | A (asumido por B) | claimed | Revisión de textos: predicción técnica separada de recomendación de compra | Rama local `agent-a/a-114-119` |
+| A-114 | A (asumido por B) | review | Guardar y reabrir mapas como archivo local, con vigencia según la huella B-132 | Rama local `agent-a/a-114-119` (sobre I-007); [evidencia](../ui/CLOSING_UI_TASKS.md) |
+| A-115 | A (asumido por B) | review | Descargar el informe (Markdown) con el mapa vigente | Rama local `agent-a/a-114-119` (sobre I-007); [evidencia](../ui/CLOSING_UI_TASKS.md) |
+| A-116 | A (asumido por B) | review | Zoom y desplazamiento del plano | Rama local `agent-a/a-114-119` (sobre I-007); [evidencia](../ui/CLOSING_UI_TASKS.md) |
+| A-117 | A (asumido por B) | review | Exportar el plano como imagen | Rama local `agent-a/a-114-119` (sobre I-007); [evidencia](../ui/CLOSING_UI_TASKS.md) |
+| A-118 | A (asumido por B) | review | Accesibilidad (nombres, foco, teclado) y recorrido guiado de creación de una vivienda | Rama local `agent-a/a-114-119` (sobre I-007); [evidencia](../ui/CLOSING_UI_TASKS.md) |
+| A-119 | A (asumido por B) | review | Revisión de textos: predicción técnica separada de recomendación de compra | Rama local `agent-a/a-114-119` (sobre I-007); [evidencia](../ui/CLOSING_UI_TASKS.md) |
+| A-120 | A (asumido por B) | review | Corrección de integración: mapas y búsqueda de la interfaz rechazaban los parámetros devueltos con campos opcionales nuevos (`null`) | Rama local `agent-a/a-114-119` (sobre I-007); ya fallaba en `main` |
 | I-005 | B integrador | done | Revisión de A-109…A-113 (#14) con `main` y la pila B (#11, #13, #15) | [PR #16](https://github.com/Phlekies/smart-home-simulator/pull/16) (sobre #15); merges del usuario |
 | I-002 | A (integración por instrucción del usuario) | done | Entregas A-101…A-108 y B-101…B-104 en `main` (046ee82) por [PR #7](https://github.com/Phlekies/smart-home-simulator/pull/7); 162 Python/70 web/build/contratos; CI de migración y Java verde antes y después | AGENTS.md excluido; Java conservado. No volver a fusionar la pila B como entregas nuevas |
 | I-001 | B integrador | done | Base publicada en PR #2 e incluida en `main` por I-002; evidencia histórica en STATUS | Sin force-push; AGENTS.md local |

@@ -5,7 +5,7 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **claimed** — A-114…A-119, asumidas por la sesión de B por instrucción del usuario (2026-11-08), de
+- Estado: **review** — A-114…A-120, hechas por la sesión de B por instrucción del usuario (2026-11-08), de
   forma secuencial y documentada (AGENTS.md: un único agente puede asumir ambos roles). Rama local
   `agent-a/a-114-119` sobre `main` 8734c9b + I-007.
   - **A-114** guardar y reabrir mapas como archivo local; vigencia con `POST /api/projects/fingerprint` (B-132).
@@ -17,6 +17,23 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 - Archivos previstos: `apps/web/src/**` (salvo `generated`), `apps/web/package.json` (script `contracts`),
   `docs/ui/**` y este registro.
 - Estado anterior (A original): A-109…A-113 y A-102 fusionadas en `main` por #14 (I-007).
+
+## Historial
+
+### A-114…A-120 — interfaz de cierre (review), hecha por la sesión de B en el papel de A
+
+```text
+Tareas / estado: A-114…A-120 / review. Rama local agent-a/a-114-119 sobre main 8734c9b + I-007. 2026-11-08.
+A-114: guardar/abrir mapa (editor/savedMap.ts + CoveragePanel), vigencia con /api/projects/fingerprint.
+A-115: «Descargar informe» (Markdown) con el mapa visible.
+A-116: zoom y desplazamiento del plano (editor/viewport.ts + Plan); la edición sigue funcionando con zoom.
+A-117: «Exportar imagen» PNG del plano completo.
+A-118: recorrido guiado (editor/onboarding.ts), foco visible del plano, revisión de accesibilidad.
+A-119: aviso de que «Sobre umbral» no garantiza la conexión ni recomienda comprar; pie de página.
+A-120: validaciones de mapas y búsqueda toleran campos opcionales devueltos como null (editor/echo.ts).
+Comandos: npm test 131; build (tsc + vite); contracts sin deriva (script con project-fingerprint.ts).
+Navegador: ver docs/ui/CLOSING_UI_TASKS.md. Servidores detenidos.
+```
 
 ## Entrega y coordinación
 

@@ -52,7 +52,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] Undo/redo con 50 acciones; cada arrastre es una acción; transformaciones y pérdidas de material recuperables.
 - [x] Guardado/apertura manual de proyectos JSON (base M1, conservada).
 - [x] Recuperación automática de trabajo tras cierre o recarga (A-101; validación, restaurar/descartar y límites documentados; I-002 integra la evidencia).
-- [ ] Accesibilidad y recorrido de creación de una vivienda.
+- [x] Accesibilidad y recorrido de creación de una vivienda (A-103 teclado; A-118: recorrido guiado de seis pasos, foco visible en el plano, revisión de nombres, etiquetas y avisos; [evidencia](../ui/CLOSING_UI_TASKS.md)).
 - [x] Ámbito de una planta declarado hasta soportar y validar forjados.
 
 ## M3 — Sustitución del motor
@@ -72,8 +72,8 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] AP/emisor y receptor/perfil identificados en cada resultado (B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
 - [x] Energía agregada no se presenta como señal de una conexión (un AP por mapa; B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
 - [x] Comparación de posiciones y optimización básica con restricciones (A-105, A-110, B-105, B-117/B-119 y orden bajo incertidumbre B-134, en `main`; comparación verificada en navegador sobre `main` en I-007).
-- [ ] Mapas guardables y resultados invalidados al editar (invalidación verificada en A-104; B-120 guarda los mapas en el informe y B-132 define el mapa guardado como archivo local con huella de vigencia, en `main`; falta guardar y reabrir desde la interfaz: A-114).
-- [ ] Predicción técnica separada de recomendación de compra validada.
+- [x] Mapas guardables y resultados invalidados al editar (invalidación A-104; guardar y reabrir con vigencia según la huella, A-114 sobre B-132; mapas dentro del informe, B-120 y A-115).
+- [x] Predicción técnica separada de recomendación de compra validada (API sin veredicto ni recomendación; revisión de textos y aviso explícito en la interfaz, A-119).
 
 ## M5 — Cierre técnico
 
@@ -84,7 +84,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] Instalación limpia y arranque local reproducibles (B-112: clon nuevo en Windows x64 siguiendo LOCAL_DEVELOPMENT; Linux en cada CI de migración desde el lock).
 - [x] Matriz de funciones conservadas/sustituidas/excluidas y motivos ([FEATURE_MATRIX](FEATURE_MATRIX.md), B-107; revisar al cerrar cada fase).
 - [x] Documentación del ámbito real y motores disponibles ([ámbito real y motores](SCOPE_AND_ENGINES.md), [ADR-008](ARCHITECTURE.md)).
-- [ ] Java preservado como referencia hasta superar las puertas de sustitución.
+- [x] Java preservado como referencia hasta superar las puertas de sustitución (fuentes, Gradle, ejemplos y releases Java intactos; CI Java en verde en los tres sistemas; ADR-001).
 
 ## Puertas separadas del producto
 
