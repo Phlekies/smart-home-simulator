@@ -48,20 +48,20 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 
 - [x] Cuadrícula en metros y dibujo/movimiento/rotación/borrado de paredes.
 - [x] Espesor/material/altura configurables; alcance explícito de paredes verticales de una planta, sin forjados.
-- [ ] Imagen de referencia con escala y cotas.
+- [x] Imagen de referencia con escala y cotas (A-102 + B-104 en `main`: calibración por dos puntos y distancia, huella y reasociación; cotas: línea de dimensión con el ancho real de la imagen y longitud de la pared seleccionada o en dibujo, en metros).
 - [x] Undo/redo con 50 acciones; cada arrastre es una acción; transformaciones y pérdidas de material recuperables.
 - [x] Guardado/apertura manual de proyectos JSON (base M1, conservada).
 - [x] Recuperación automática de trabajo tras cierre o recarga (A-101; validación, restaurar/descartar y límites documentados; I-002 integra la evidencia).
-- [ ] Accesibilidad y recorrido de creación de una vivienda.
+- [x] Accesibilidad y recorrido de creación de una vivienda (A-103 teclado; A-118: recorrido guiado de seis pasos, foco visible en el plano, revisión de nombres, etiquetas y avisos; [evidencia](../ui/CLOSING_UI_TASKS.md)).
 - [x] Ámbito de una planta declarado hasta soportar y validar forjados.
 
 ## M3 — Sustitución del motor
 
 - [x] Candidato avanzado ejecutado, versiones y entorno CPU/GPU documentados (Sionna RT 2.2.0 en WSL/CPU; Windows nativo y GPU documentados como no disponibles; B-102).
-- [ ] Conversión de unidades, ejes, geometría, radios y materiales probada (B-102: unidades, ejes, paredes y materiales ITU; B-121 en revisión: antenas direccionales y polarizaciones iguales a Java en 76 sondas).
+- [x] Conversión de unidades, ejes, geometría, radios y materiales probada (B-102: unidades, ejes, paredes y materiales ITU; B-121: antenas direccionales y polarizaciones iguales a Java en 76 sondas, ≤ 0.0022 dB).
 - [x] Interacciones físicas y omisiones de la versión seleccionada documentadas (B-102).
 - [x] Espacio libre, pared y reflexión contrastados con referencias (B-101 + B-102: 18/18).
-- [ ] Diferencias respecto a Java explicadas; errores antiguos no se conservan como requisito (tabla de materiales y fase de reflexión documentadas; contraste con el multipath Java en B-121, en revisión).
+- [x] Diferencias respecto a Java explicadas; errores antiguos no se conservan como requisito (tabla de materiales y fase de reflexión, B-101/B-102; esquinas contadas dos veces en Java y dependencia del dibujo corregidas, B-126; contraste multipath, B-121; decisión de motor, ADR-008).
 - [x] Progreso, cancelación, caché y límites para cálculo pesado (B-103: progreso, cancelación y límites de mapas; B-105: búsqueda acotada; B-110: caché en memoria por hash de petición).
 - [x] Benchmark inicial reproducible de tiempo y memoria (script y evidencia JSON de B-102; un equipo, una ejecución).
 
@@ -71,20 +71,20 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] Presupuesto de ambos sentidos para puntos individuales (punto exacto sin redondeo; B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
 - [x] AP/emisor y receptor/perfil identificados en cada resultado (B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
 - [x] Energía agregada no se presenta como señal de una conexión (un AP por mapa; B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
-- [ ] Comparación de posiciones y optimización básica con restricciones (comparación manual A-105 y API de lugares permitidos B-105 en `main`; interfaz A-110 en #14, revisada; orden bajo el peor caso B-134 en revisión).
-- [ ] Mapas guardables y resultados invalidados al editar (invalidación verificada en A-104; B-120 guarda los mapas en el informe y B-132 define el mapa guardado como archivo local con huella de vigencia, ambos en revisión; falta guardar y reabrir desde la interfaz).
-- [ ] Predicción técnica separada de recomendación de compra validada.
+- [x] Comparación de posiciones y optimización básica con restricciones (A-105, A-110, B-105, B-117/B-119 y orden bajo incertidumbre B-134, en `main`; comparación verificada en navegador sobre `main` en I-007).
+- [x] Mapas guardables y resultados invalidados al editar (invalidación A-104; guardar y reabrir con vigencia según la huella, A-114 sobre B-132; mapas dentro del informe, B-120 y A-115).
+- [x] Predicción técnica separada de recomendación de compra validada (API sin veredicto ni recomendación; revisión de textos y aviso explícito en la interfaz, A-119).
 
 ## M5 — Cierre técnico
 
 - [x] JSON Schema/OpenAPI/TypeScript comprobados por CI remota (PR #2, commit 33f1df8).
 - [x] Importación y recuperación de los tres ejemplos Java sin pérdida silenciosa (B-111: original Java íntegro, recuentos, exportar/reimportar idéntico; recuperación local A-101).
-- [ ] Pruebas de fórmulas/geometría y regresiones pertinentes (B-126 en revisión: 47 casos de cruces, esquinas, uniones, roces, alturas y escalas, y corrección de esquinas que dependían del sentido de dibujo; regresión de paridad Java B-121).
-- [ ] E2E de crear/importar, editar, calcular, comparar y guardar (API completa en B-111; recorrido en navegador B-127 sobre la pila B + #14 y ensayo de integración I-006, en [STATUS](STATUS.md); se marca al fusionar según el [plan de cierre](CLOSING_PLAN.md)).
+- [x] Pruebas de fórmulas/geometría y regresiones pertinentes (444 pruebas Python; 47 casos de geometría B-126; paridad Java B-121; regresiones de huella y ejemplos; CI de `main` 8734c9b en verde).
+- [x] E2E de crear/importar, editar, calcular, comparar y guardar (API B-111; navegador B-127 sobre la combinación integrada; recorrido sobre `main` 8734c9b desde un clon nuevo en I-007; evidencia en [STATUS](STATUS.md)).
 - [x] Instalación limpia y arranque local reproducibles (B-112: clon nuevo en Windows x64 siguiendo LOCAL_DEVELOPMENT; Linux en cada CI de migración desde el lock).
 - [x] Matriz de funciones conservadas/sustituidas/excluidas y motivos ([FEATURE_MATRIX](FEATURE_MATRIX.md), B-107; revisar al cerrar cada fase).
-- [ ] Documentación del ámbito real y motores disponibles ([ámbito real y motores](SCOPE_AND_ENGINES.md), B-125 en revisión).
-- [ ] Java preservado como referencia hasta superar las puertas de sustitución.
+- [x] Documentación del ámbito real y motores disponibles ([ámbito real y motores](SCOPE_AND_ENGINES.md), [ADR-008](ARCHITECTURE.md)).
+- [x] Java preservado como referencia hasta superar las puertas de sustitución (fuentes, Gradle, ejemplos y releases Java intactos; CI Java en verde en los tres sistemas; ADR-001).
 
 ## Puertas separadas del producto
 

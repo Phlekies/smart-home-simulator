@@ -1,6 +1,7 @@
 import type { Project, Point } from '../generated/project.ts';
 import type { CandidateEvaluation, PlacementCandidate, PlacementSearchParameters, PlacementSearchResult, PlacementZone } from '../generated/placement-search.ts';
 import { stable } from './latestAnalysis.ts';
+import { stableEcho } from './echo.ts';
 import { sameSimulationProject } from './referencePersistence.ts';
 export type PlacementRequest = PlacementSearchParameters & { project: Project };
 export function linkedPlacementTargets(project: Project, deviceId: string, radioId: string) {
@@ -59,7 +60,7 @@ function inAllowedPlace(row: CandidateEvaluation, request: PlacementRequest) {
 export function validatePlacementResult(result: PlacementSearchResult, request: PlacementRequest) {
   const { project, ...parameters } = request;
   const ap = project.devices.find(device => device.id === parameters.access_point_device_id)!;
-  if (stable(result.parameters) !== stable(parameters) || result.engine !== request.engine
+  if (stableEcho(result.parameters) !== stableEcho(parameters) || result.engine !== request.engine
     || result.access_point_device_id !== ap.id || result.access_point_radio_id !== parameters.access_point_radio_id
     || result.baseline.candidate_id !== 'current' || stable(result.baseline.position) !== stable(ap.position)
     || result.ranking.length > 50 || new Set(result.ranking.map(row => row.candidate_id)).size !== result.ranking.length

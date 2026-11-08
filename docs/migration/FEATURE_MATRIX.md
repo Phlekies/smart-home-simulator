@@ -22,8 +22,8 @@ motivo), **Nueva** (no existía en Java).
 | Abrir/guardar proyecto JSON | Sustituida | Formato v1 versionado con unidades explícitas; importador Java v1 que conserva `legacy_source` | Contrato independiente del motor |
 | — | Nueva | Recuperación local tras recarga (A-101) | Evita pérdida silenciosa |
 | — | Nueva | Imagen de plano a escala: sesión (A-102) y contrato persistente (B-104) | Introducir la vivienda real |
-| Exportar el plano como PNG | Pendiente | — | Útil para el informe P5 |
-| Zoom y desplazamiento del plano | Pendiente | El plano se ajusta solo a la vista | Usabilidad P5 en viviendas grandes |
+| Exportar el plano como PNG | Conservada | «Exportar imagen»: plano completo en PNG con mapa, referencia y leyenda (A-117) | Útil para el informe P5 |
+| Zoom y desplazamiento del plano | Conservada | Botones, Ctrl+rueda, teclado y arrastre del fondo, sin romper la edición (A-116) | Usabilidad P5 en viviendas grandes |
 | Temas claro/oscuro (AtlantaFX) | Excluida | — | No ayuda a la decisión; se puede reconsiderar por accesibilidad |
 | Atajos de teclado | Parcial | Undo/redo, Escape, flechas y Enter (A-103) | Sin atajos de mapa ni de exportación |
 | — | Nueva | Vista 3D de inspección | Comprobar alturas y paredes |
@@ -64,10 +64,10 @@ motivo), **Nueva** (no existía en Java).
 
 | Función Java | Estado | Nueva aplicación / evidencia | Motivo |
 |---|---|---|---|
-| Informe HTML de cobertura | Sustituida en la API (en revisión) | Informe JSON/Markdown por enlace con escenarios, conexión de datos y mapas (B-115, B-117, B-120); falta la descarga en la interfaz (A) | P5: informe por equipo con sentidos, hipótesis y pendientes, sin veredicto |
+| Informe HTML de cobertura | Sustituida | Informe Markdown por enlace con escenarios, conexión de datos, mapas y nivel de evidencia (B-115, B-117, B-120, B-135), descargable desde la interfaz (A-115) | P5: informe por equipo con sentidos, hipótesis y pendientes, sin veredicto |
 | Paquetes nativos (jpackage) y releases | Conservada en Java; sustituida en la nueva por una instalación con Python (decisión del 2026-11-08) | `python scripts/start.py` lo prepara y arranca todo; zip con la web compilada (`scripts/package_local.py`) adjunto a las releases (B-128/B-131, en revisión) | M5/P5: distribución local sin herramientas de desarrollo |
 | 192 pruebas Java en CI | Conservada | CI Java sigue en Linux/Windows/macOS | Referencia mientras no se superen las puertas |
-| — | Nueva | Pruebas Python (438 en la pila B), web (84 en `main`, 120 con #14), contratos sin deriva en CI, paridad con Java (B-121), recorrido E2E en navegador (B-127) y ensayo de integración completo (I-006) | Sustitución verificable |
+| — | Nueva | Pruebas Python (444) y web (131), contratos sin deriva en CI, paridad con Java (B-121), recorridos E2E en navegador (B-127, I-007, A-114…A-119) e integración completa (I-006, I-007) | Sustitución verificable |
 
 ## Pendiente para cerrar M5 sobre esta matriz
 

@@ -50,3 +50,14 @@ test('missing arrays, incorrect dimensions and lost exact points cannot be rende
   request.points.push({ x: 7.125, y: 3.3, z: .4 }); result.parameters.points = [...request.points];
   assert.throws(() => validateMapResult(result, request, result.request_hash));
 });
+
+test('optional contract fields echoed as null still match a request that omitted them', () => {
+  // B-113/B-114 added Radio.provenance and CoverageMapParameters.scenario with a null default.
+  const { request, result } = coverageFixture();
+  const echoed = structuredClone(result) as typeof result & { parameters: { scenario: unknown } };
+  echoed.parameters.scenario = null;
+  (echoed.parameters.profile.radio as Record<string, unknown>).provenance = null;
+  validateMapResult(echoed, request, result.request_hash);
+  echoed.parameters.scenario = { id: 'worst', name: 'Peor caso', doors: {}, materials: {} };
+  assert.throws(() => validateMapResult(echoed, request, result.request_hash), /otros parámetros/);
+});

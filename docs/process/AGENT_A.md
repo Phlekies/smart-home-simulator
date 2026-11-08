@@ -5,25 +5,35 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review**, A-109 a A-113 implementadas, verificadas y publicadas en [PR #14](https://github.com/Phlekies/smart-home-simulator/pull/14); archivos liberados.
-- Sesión: conversación actual, agente A; 2026-10-30, Europe/Madrid.
-- Worktree aislado `smart-home-simulator/.local/five-ui-tasks`, rama
-  `codex/next-five-ui-tasks`, sobre main 6fb42e2 + persistencia de PR #12 (3b7432e).
-  La versión de prueba en integration-review/5174 no se modifica durante el desarrollo.
-- A-109: perfiles Wi-Fi en mapas con procedencia, desconocidos y parámetros explícitos.
-- A-110: búsqueda entre posiciones/zonas permitidas y equipos prioritarios, comparación
-  bidireccional, aplicar alternativa explícita y deshacible, descarte de resultados antiguos.
-- A-111: editor de puerta/estado en inspector de pared; historial e invalidación normales.
-- A-112: editor de incertidumbre de material con rangos y fuente; validación nominal/rango.
-- A-113: vista de escenarios y rangos por enlace/sentido, hipótesis y datos incompletos.
-- Contratos B-105/B-106/B-108 integrados por PR #8/#9, mapa A-104 por #10. No rediseñar
-  física/contratos ni tratar los perfiles preliminares como datos de productos certificados.
-- Reserva: apps/web/src/{App,CoveragePanel,Plan,Scene3D,WallInspector,styles,api,useAnalysis} y componentes nuevos
-  de perfiles, búsqueda, incertidumbre y escenarios; módulos/pruebas editor asociados;
-  apps/web/package.json (script contracts solicitado por B); docs/ui y este registro.
-  Tipos generados intactos: solo consumir los existentes. No documentos comunes ni backend.
-- A-102 persistencia publicada en PR #12 con 94 pruebas/build; esta rama la conserva.
-  AGENTS.md sigue local/excluido; no publicar planos del usuario.
+- Estado: **review** — A-114…A-120, hechas por la sesión de B por instrucción del usuario (2026-11-08), de
+  forma secuencial y documentada (AGENTS.md: un único agente puede asumir ambos roles). Rama local
+  `agent-a/a-114-119` sobre `main` 8734c9b + I-007.
+  - **A-114** guardar y reabrir mapas como archivo local; vigencia con `POST /api/projects/fingerprint` (B-132).
+  - **A-115** descargar el informe (`/api/reports/markdown`), con el mapa vigente si lo hay (B-120).
+  - **A-116** zoom y desplazamiento del plano sin romper selección, arrastre ni dibujo.
+  - **A-117** exportar el plano como imagen PNG.
+  - **A-118** accesibilidad (botones con nombre, foco visible, teclado) y recorrido guiado para crear una vivienda.
+  - **A-119** revisión de textos: ninguna predicción se presenta como recomendación de compra.
+- Archivos previstos: `apps/web/src/**` (salvo `generated`), `apps/web/package.json` (script `contracts`),
+  `docs/ui/**` y este registro.
+- Estado anterior (A original): A-109…A-113 y A-102 fusionadas en `main` por #14 (I-007).
+
+## Historial
+
+### A-114…A-120 — interfaz de cierre (review), hecha por la sesión de B en el papel de A
+
+```text
+Tareas / estado: A-114…A-120 / review. Rama local agent-a/a-114-119 sobre main 8734c9b + I-007. 2026-11-08.
+A-114: guardar/abrir mapa (editor/savedMap.ts + CoveragePanel), vigencia con /api/projects/fingerprint.
+A-115: «Descargar informe» (Markdown) con el mapa visible.
+A-116: zoom y desplazamiento del plano (editor/viewport.ts + Plan); la edición sigue funcionando con zoom.
+A-117: «Exportar imagen» PNG del plano completo.
+A-118: recorrido guiado (editor/onboarding.ts), foco visible del plano, revisión de accesibilidad.
+A-119: aviso de que «Sobre umbral» no garantiza la conexión ni recomienda comprar; pie de página.
+A-120: validaciones de mapas y búsqueda toleran campos opcionales devueltos como null (editor/echo.ts).
+Comandos: npm test 131; build (tsc + vite); contracts sin deriva (script con project-fingerprint.ts).
+Navegador: ver docs/ui/CLOSING_UI_TASKS.md. Servidores detenidos.
+```
 
 ## Entrega y coordinación
 

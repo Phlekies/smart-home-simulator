@@ -209,3 +209,20 @@ li { margin-bottom: 6px; }
 @media (max-width: 1100px) { main { padding: 20px; } .workspace-grid { grid-template-columns: 200px minmax(250px, 1fr); } .properties-panel { grid-column: 1 / -1; max-height: none; } .radio-fields { grid-template-columns: repeat(4, 1fr); } .local-indicator { display: none; } .app-header .primary { margin-left: auto; } .project-heading { align-items: flex-start; flex-direction: column; } }
 @media (max-width: 650px) { .app-header { padding: 13px; gap: 10px; } .brand { font-size: 13px; } .brand small { font-size: 8px; } .brand-mark { display: none; } button.primary { padding: 10px; font-size: 11px; } main { padding: 15px; } h1 { font-size: 28px; } .workspace-grid { grid-template-columns: 1fr; } .devices-panel { padding: 15px; } .device-list { display: flex; max-height: 150px; overflow: auto; } .device-item { min-width: 190px; } .engine-card { display: none; } .add-button { margin-bottom: 0; } .scene-content, .plan { min-height: 350px; } .scene-toolbar { padding: 10px; } .properties-panel { grid-column: auto; } .radio-fields { grid-template-columns: repeat(2, 1fr); } .file-actions { flex-wrap: wrap; } .app-footer { flex-direction: column; gap: 5px; } .scene-footer { flex-wrap: wrap; } .results-panel { padding: 16px; } .results-heading { align-items: flex-start; flex-direction: column; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* A-116…A-118: plan view controls, focus on the plan itself and the guided creation path. */
+.plan:focus-visible { outline: 3px solid #329b70; outline-offset: -3px; }
+.plan.is-zoomed { cursor: grab; }
+.scene-content > .plan-controls { inset: 8px 8px auto auto; z-index: 2; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: flex-end; max-width: calc(100% - 16px); pointer-events: none; }
+.plan-controls > * { pointer-events: auto; }
+.plan-controls button { padding: 5px 10px; font-size: 12px; }
+.plan-zoom { font-size: 11px; color: #dfe8df; background: #142221cc; padding: 3px 8px; border-radius: 4px; }
+.creation-path { margin: 0 0 14px; padding: 12px 16px; }
+.creation-path summary { cursor: pointer; font-weight: 600; }
+.creation-path ol { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.creation-path li { display: flex; gap: 8px; align-items: flex-start; }
+.creation-path li > div { flex: 1; display: grid; gap: 2px; }
+.creation-path li small { color: #5d6b63; }
+.creation-path li.done > span { color: #329b70; }
+.creation-path li button { padding: 4px 9px; font-size: 12px; }
+.results-actions { display: flex; gap: 8px; flex-wrap: wrap; }

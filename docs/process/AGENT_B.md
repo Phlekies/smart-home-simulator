@@ -5,48 +5,13 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — B-117…B-121 en [PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17) y B-122…B-125 en [PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), ambos en borrador.
-  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 → #23 → #24 → #25 (cambiando bases a `main`) y #14.
-  PR #18–#21 son de Dependabot (acciones de CI y Gradle): sin revisar ni fusionar por B.
-- **review** — B-134 y B-135 ([PR #25](https://github.com/Phlekies/smart-home-simulator/pull/25), apilado sobre #24). Condiciones de la tabla
-  de inventario de ROADMAP que seguían abiertas para B:
-  - **B-134** `HubPlacementOptimizer`: evaluación bajo incertidumbre. `PlacementSearchParameters.scenario`
-    opcional (mismas reglas que los mapas B-114), para ordenar los lugares, por ejemplo, en el peor caso.
-  - **B-135** `LinkValidator`: el informe distingue consistencia, calibración y validación
-    (`InstallationReport.evidence_levels` opcional y sección Markdown).
-  - Archivos: `models.py`, `placement.py`, `report.py`, pruebas, contratos y tipos generados,
-    `PLACEMENT_SEARCH_CONTRACT.md`, `REPORT_CONTRACT.md`, documentos comunes y este registro.
-    Contrato aditivo.
-- **review** — B-130…B-133 e I-006 ([PR #24](https://github.com/Phlekies/smart-home-simulator/pull/24), apilado sobre #23), por decisión del
-  usuario del 2026-11-08 («estimador directo» como motor de la migración; instalación «basta con Python»):
-  - **B-130** registrar y aplicar la decisión de motor (FEATURE_MATRIX, ROADMAP, SCOPE_AND_ENGINES,
-    ADVANCED_ENGINE_EVALUATION, ARCHITECTURE si procede, CHECKLIST).
-  - **B-131** `scripts/start.py` (prepara `.venv`, dependencias del lock y la web si hay Node; arranca
-    `smart_environment.serve`), `scripts/package_local.py` (zip con la web compilada para quien no tiene
-    Node), paso en `.github/workflows/release.yml` y comprobación en `migration.yml`, LOCAL_DEVELOPMENT y README.
-  - **B-132** mapas guardables como archivo local aparte del proyecto; `POST /api/projects/fingerprint`
-    (huella y versiones de motor) con su esquema y tipo generado. Contrato aditivo; A podrá detectar mapas
-    e informes obsoletos.
-  - **I-006** ensayo de integración: `main` + toda la pila B + #14 en un worktree temporal, comprobaciones
-    completas y arranque; sin commits en ramas compartidas.
-  - **B-133** documentos de cierre preparados (sin marcar casillas hasta los merges).
-- **review** — B-126…B-129 ([PR #23](https://github.com/Phlekies/smart-home-simulator/pull/23), apilado sobre #22). Reserva escrita
-  después de empezar B-126 y B-128 (descuido corregido el mismo día; nadie más tenía esos archivos):
-  - **B-126** geometría de cruces en vértices de pared independiente del sentido de dibujo, con casos de
-    esquinas, uniones, roces, alturas y escalas (`engines.py`, `scenarios.py`, pruebas, `docs/simulation/GEOMETRY.md`).
-  - **B-127** recorrido E2E en navegador sobre la combinación de la pila B con #14 (rama temporal, sin commit).
-  - **B-128** modo local sin Node: `smart_environment/serve.py` sirve la interfaz compilada y la API.
-  - **B-129** matriz de funciones, ruta y checklists al día.
-  - Sin cambios de contrato.
-- **review** — B-122…B-125 ([PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), apilado sobre #17):
-  - **B-122** geometría fuera del modelo (equipo dentro de una pared, por encima o por debajo de todas las
-    paredes) sin conclusión favorable; lugares de búsqueda por encima de las paredes descartados.
-  - **B-123** diferencia exacta entre dos versiones del proyecto por enlace y sentido: términos del
-    presupuesto que suman el cambio, paredes que entran o salen y riesgos residuales.
-  - **B-124** medidas con móvil, portátil u otro instrumento explicadas frente al equipo candidato.
-  - **B-125** documento del ámbito real y de los motores disponibles.
-  - Contratos previstos (aditivos): `PointResidual.device_instrument_kind` opcional; nueva ruta
-    `POST /api/link-differences` con esquema `link-difference.schema.json`. Sin cambios en `Project`.
+- Estado: **done** — I-007: merges #11…#25 y #14 en `main` (8734c9b) con autorización del usuario
+  (2026-11-08), verificación de `main` y casillas del plan de cierre. Pila B-107…B-135 integrada.
+- **Cambio de rol (2026-11-08):** por instrucción del usuario, esta sesión asume también el papel de A de forma
+  secuencial para la interfaz pendiente (A-114…A-119, reservadas en [AGENT_A](AGENT_A.md)). Mientras dure,
+  B no trabaja en paralelo sobre los mismos archivos.
+- A-114…A-120 en review (rama local `agent-a/a-114-119`); incluye la corrección de integración A-120
+  (mapas y búsqueda de la interfaz rotos en `main` desde los campos opcionales nuevos).
 - Contratos de B-117…B-121 (todos aditivos y opcionales; ningún consumidor existente cambia):
   `Device.data_connection`, `Building.power_outlets`/`network_ports` (fuera de `input_hash`),
   `PlacementSearchParameters.max_power_distance_m`/`max_network_distance_m`, `TargetEvaluation.backhaul`,
