@@ -40,6 +40,31 @@ servicio falla de forma visible; no se busca un puerto alternativo silenciosamen
 El lanzador pasa su propia salida a los servicios, así que el motivo (por ejemplo
 «Port 5174 is already in use») aparece junto al aviso «A service stopped».
 
+## Instalación con Python, en una orden (B-131)
+
+Para usar la aplicación (no para desarrollarla) basta con Python 3.11 o posterior:
+
+```powershell
+python scripts/start.py
+```
+
+La primera vez:
+1. crea `.venv` en esta carpeta e instala las dependencias fijadas en el lock (necesita Internet);
+2. compila la interfaz si falta y hay Node.
+
+Después arranca en http://127.0.0.1:8000/ . Las siguientes veces solo arranca. Otras opciones:
+- `--port` para cambiar el puerto;
+- `--prepare-only` para dejarlo todo listo sin arrancar;
+- `--rebuild-web` para volver a compilar la interfaz con Node.
+
+Sin Node, usa el zip de `python scripts/package_local.py`. También lo adjunta la release al crear
+una etiqueta `v*`. Incluye la interfaz compilada: descomprímelo y ejecuta `python scripts/start.py`.
+
+Comprobado el 2026-11-08 con el zip descomprimido en una carpeta nueva y el Python 3.13.7 del sistema:
+- preparación en 28 s;
+- la segunda ejecución solo arranca;
+- la interfaz, `/api/health`, `/docs`, los ejemplos y una simulación responden en loopback.
+
 ## Modo local sin Node (B-128)
 
 Para usar la aplicación sin herramientas de desarrollo de la web, compila la interfaz una vez (este

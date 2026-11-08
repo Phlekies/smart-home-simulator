@@ -8,6 +8,19 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 - Estado: **review** — B-117…B-121 en [PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17) y B-122…B-125 en [PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), ambos en borrador.
   Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 → #23 (cambiando bases a `main`) y #14.
   PR #18–#21 son de Dependabot (acciones de CI y Gradle): sin revisar ni fusionar por B.
+- **review** — B-130…B-133 e I-006 (rama local `agent-b/b-130-133`, apilada sobre #23), por decisión del
+  usuario del 2026-11-08 («estimador directo» como motor de la migración; instalación «basta con Python»):
+  - **B-130** registrar y aplicar la decisión de motor (FEATURE_MATRIX, ROADMAP, SCOPE_AND_ENGINES,
+    ADVANCED_ENGINE_EVALUATION, ARCHITECTURE si procede, CHECKLIST).
+  - **B-131** `scripts/start.py` (prepara `.venv`, dependencias del lock y la web si hay Node; arranca
+    `smart_environment.serve`), `scripts/package_local.py` (zip con la web compilada para quien no tiene
+    Node), paso en `.github/workflows/release.yml` y comprobación en `migration.yml`, LOCAL_DEVELOPMENT y README.
+  - **B-132** mapas guardables como archivo local aparte del proyecto; `POST /api/projects/fingerprint`
+    (huella y versiones de motor) con su esquema y tipo generado. Contrato aditivo; A podrá detectar mapas
+    e informes obsoletos.
+  - **I-006** ensayo de integración: `main` + toda la pila B + #14 en un worktree temporal, comprobaciones
+    completas y arranque; sin commits en ramas compartidas.
+  - **B-133** documentos de cierre preparados (sin marcar casillas hasta los merges).
 - **review** — B-126…B-129 ([PR #23](https://github.com/Phlekies/smart-home-simulator/pull/23), apilado sobre #22). Reserva escrita
   después de empezar B-126 y B-128 (descuido corregido el mismo día; nadie más tenía esos archivos):
   - **B-126** geometría de cruces en vértices de pared independiente del sentido de dibujo, con casos de
@@ -55,6 +68,25 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### B-130…B-133 e I-006 — decisión de motor, instalación con Python, huella y ensayo de integración (review)
+
+```text
+Tareas / estado: B-130…B-133, I-006 / review. Rama local agent-b/b-130-133 sobre #23. 2026-11-08, Europe/Madrid.
+Decisiones del usuario (2026-11-08): motor «estimador directo»; instalación «basta con Python».
+B-130: ADR-008; FEATURE_MATRIX, ROADMAP, SCOPE_AND_ENGINES, ADVANCED_ENGINE_EVALUATION; texto de capacidades.
+B-131: scripts/start.py (venv + lock + web si hay Node + serve) y scripts/package_local.py (zip con dist);
+  migration.yml empaqueta en cada PR; release.yml adjunta el zip en las etiquetas v*. Probado en carpeta
+  nueva con Python del sistema (28 s; segunda vez solo arranca). Dependencias solo en esa carpeta temporal.
+B-132: ProjectFingerprint y POST /api/projects/fingerprint (esquema y tipo generados); ENGINE_VERSION único,
+  subido a 0.2.0 porque B-122/B-126 cambiaron resultados. Mapas e informes guardados = archivos locales.
+I-006: main + pila B + #14 en worktree temporal sin conflictos; comprobaciones completas en verde (STATUS).
+B-133: docs/migration/CLOSING_PLAN.md y documentos al día; casillas sin marcar hasta los merges.
+Comandos: pytest 438; export --check sin deriva; 11 .ts regenerados; build y 120 pruebas web en I-006.
+Solicitud a A: guardar/reabrir mapas con la huella; añadir link-difference.ts y project-fingerprint.ts
+  al script contracts cuando los consuma.
+Siguiente paso: publicar si el usuario lo autoriza; tras los merges, ejecutar CLOSING_PLAN (pasos 2–3).
+```
 
 ### B-126…B-129 — geometría, recorrido E2E, modo local y matriz (review)
 
