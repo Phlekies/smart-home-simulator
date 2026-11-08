@@ -7,14 +7,15 @@ Esquema generado: `contracts/measurement-campaign.schema.json`. Plantilla:
 ## Decisión de persistencia
 
 Una campaña es un **archivo local separado** del proyecto exportable. No se incrusta en
-`Project`, no cambia `project.schema.json`, `simulation-result.schema.json` ni OpenAPI, y la
-interfaz (A) no necesita cambios. La campaña referencia el proyecto por nombre y por el
+`Project` ni cambia `project.schema.json` ni `simulation-result.schema.json`. La campaña referencia el proyecto por nombre y por el
 hash SHA-256 del JSON canónico (`input_hash`, el mismo que devuelven las simulaciones). Si
 el plano cambia, el hash deja de coincidir y `project_issues()` lo informa: las posiciones
 pueden referirse a otra versión.
 
-No hay endpoint HTTP para campañas en esta entrega. Si la interfaz necesita importarlas,
-B propondrá un endpoint aditivo y A implementará el consumidor.
+`POST /api/measurements/check` (B-116) valida una campaña con `{ campaign, project? }` y devuelve el
+recuento de puntos, el resumen tipado de lo medido y, si se envía su proyecto, los problemas de encaje
+y los residuos frente al estimador ([calibración](CALIBRATION.md)). No guarda nada: la campaña sigue
+siendo un archivo local. Tipos TS: `measurement-campaign.ts` y `measurement-check.ts`.
 
 ## Privacidad
 

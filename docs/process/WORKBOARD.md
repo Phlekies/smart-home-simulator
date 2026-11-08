@@ -51,6 +51,10 @@ validación en viviendas. Los checklists técnico y de producto siguen siendo la
 | B-110 | B | review | Caché en memoria por hash de petición para mapas, búsqueda y escenarios | Rama local `agent-b/b-109-112` (sobre #11); contrato aditivo (`cached?`) |
 | B-111 | B | review | E2E de la API con los tres ejemplos Java y un proyecto nuevo; corrige el ciclo de vida del gestor de mapas | Rama local `agent-b/b-109-112` (sobre #11) |
 | B-112 | B | review | Instalación limpia y arranque reproducibles; `dev.py` muestra por qué falla un servicio | Rama local `agent-b/b-109-112` (sobre #11) |
+| B-113 | B | review | Procedencia por parámetro de radio (medido, declarado, mínimo de estándar, inferido, desconocido) y avisos en resultados | Rama local `agent-b/b-113-116` (sobre #13); contrato aditivo, fuera del hash |
+| B-114 | B | review | Mapas de cobertura bajo un escenario de puertas/materiales (p. ej. peor y mejor caso) | Rama local `agent-b/b-113-116` (sobre #13); contrato aditivo |
+| B-115 | B | review | Informe por enlace en JSON y Markdown, sin veredicto ([contrato](../simulation/REPORT_CONTRACT.md)) | Rama local `agent-b/b-113-116` (sobre #13); A ofrece la descarga |
+| B-116 | B | review | Comprobar una campaña de medida y sus residuos desde la API | Rama local `agent-b/b-113-116` (sobre #13); A puede importar campañas |
 | I-002 | A (integración por instrucción del usuario) | done | Entregas A-101…A-108 y B-101…B-104 en `main` (046ee82) por [PR #7](https://github.com/Phlekies/smart-home-simulator/pull/7); 162 Python/70 web/build/contratos; CI de migración y Java verde antes y después | AGENTS.md excluido; Java conservado. No volver a fusionar la pila B como entregas nuevas |
 | I-001 | B integrador | done | Base publicada en PR #2 e incluida en `main` por I-002; evidencia histórica en STATUS | Sin force-push; AGENTS.md local |
 

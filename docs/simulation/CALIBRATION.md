@@ -11,8 +11,8 @@ en el repositorio y ningún resultado de este documento procede de una vivienda.
 ```
 
 Cada campaña ([formato](MEASUREMENT_FORMAT.md)) va emparejada con el proyecto que referencia.
-La salida es un `CalibrationReport` en JSON. No hay endpoint HTTP: el análisis P4 es offline y
-local; si la interfaz lo necesita, se añadirá como contrato aditivo.
+La salida es un `CalibrationReport` en JSON. El ajuste entre viviendas sigue siendo offline. Para una
+sola campaña, `POST /api/measurements/check` (B-116) devuelve sus residuos sin ajustar nada.
 
 ## Qué calcula
 

@@ -41,6 +41,11 @@ resolución 0.1–5 m y **altura obligatoria**), `points` (hasta 256 posiciones 
   `input_hash` (el mismo hash de proyecto que las simulaciones) y `request_hash` (proyecto y
   todos los parámetros). Un mapa con otro `request_hash` es de otro escenario.
 - **Un solo AP:** no se suma la energía de otros AP como si fuese señal de esta conexión.
+- **Escenario opcional (B-114):** `scenario` aplica a todas las celdas y puntos los estados de puerta y
+  límites de material de un escenario de [B-108](SCENARIOS_CONTRACT.md); por ejemplo, el `worst` o el `best`
+  que devuelve `/api/scenario-simulations`. Se valida igual que allí, entra en `request_hash` y el
+  alcance y las notas del resultado lo nombran. Comparar el mapa del peor y del mejor caso muestra dónde
+  la conclusión depende de hipótesis no resueltas; no es una probabilidad.
 - Valores de celdas redondeados a 0.001 dB; los puntos exactos conservan toda la precisión.
 
 ## Límites y cancelación

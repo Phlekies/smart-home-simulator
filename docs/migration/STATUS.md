@@ -22,13 +22,25 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
 - Última evidencia de código: combinación `main`+#8+#9+#10 verificada localmente por B: **199 pruebas
   Python, 84 web/editor, build, contratos y tipos generados sin deriva**. Java no se modifica.
 - [Matriz de funciones Java](FEATURE_MATRIX.md) (B-107): qué se conserva, sustituye o excluye y por qué.
-- En revisión local (rama `agent-b/b-109-112`): I-004 (A-102 verificada), B-109 (residuos y
-  calibración), B-110 (caché), B-111 (E2E de la API) y B-112 (instalación limpia). Ver sección inferior.
+- En revisión: I-004, B-109…B-112 (#13) y B-113…B-116 (rama `agent-b/b-113-116`): procedencia por
+  parámetro, mapas con escenario, informe por enlace y comprobación de medidas. Ver secciones inferiores.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## B-113…B-116 — procedencia, mapas con escenario, informe y medidas — 2026-10-30
+
+| Tarea | Comprobación | Resultado |
+|---|---|---|
+| B-113 | `test_provenance.py` | Procedencia incoherente rechazada; etiquetas sin efecto en cifras ni hash; avisos si el margen usa un mínimo de estándar o una sensibilidad inferida; perfiles del catálogo con su procedencia |
+| B-114 | `test_scenario_maps.py` | Detrás de paredes inciertas: peor ≤ nominal ≤ mejor; mapa sin escenario idéntico al anterior; referencias inválidas rechazadas; mapa del peor caso pedido con el escenario devuelto por la API |
+| B-115 | `test_report.py` | Cifras iguales a `simulate()` y a los escenarios; sentido limitante correcto; datos ausentes declarados; Markdown con nombres escapados y sin veredicto |
+| B-116 | `test_measurement_check.py` | Resumen tipado y residuos con su proyecto; sin residuos para campañas sintéticas o proyectos que no encajan; 422 con datos inválidos |
+| Contratos | `export --check`, comparación de OpenAPI | Rutas `/api/reports`, `/api/reports/markdown`, `/api/measurements/check`; `Radio` y `CoverageMapParameters` solo ganan campos opcionales |
+| Compatibilidad con A | Copia del código en curso de A-109…A-113 con los tipos nuevos | `tsc --noEmit` correcto y 120 pruebas superadas (worktree de A sin tocar) |
+| Rama completa | `pytest`, `npm test`, `npm run build`, `git diff --check` | 244 Python, 84 web, build correcto |
 
 ## I-004 y B-109…B-112 — cinco tareas — 2026-10-30
 

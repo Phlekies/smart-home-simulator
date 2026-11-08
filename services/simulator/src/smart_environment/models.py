@@ -93,7 +93,21 @@ class Building(Model):
     materials: list[Material] = Field(min_length=1, max_length=64)
 
 
+RadioParameter = Literal["tx_power_dbm", "tx_gain_dbi", "rx_gain_dbi", "sensitivity_dbm", "noise_figure_db",
+                         "channel", "protocol"]
+ValueProvenance = Literal["measured", "declared", "standard-minimum", "inferred", "unknown"]
+
+
+class RadioValueSource(Model):
+    """Where one radio value comes from; documentation only, never a solver input."""
+
+    provenance: ValueProvenance
+    source: str | None = Field(default=None, max_length=500)
+
+
 class Radio(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("provenance"))
+
     id: Identifier
     protocol: Literal["wifi", "thread", "zigbee", "ble", "zwave", "unknown"] = "unknown"
     frequency_hz: Positive = Field(le=100e9)
@@ -110,6 +124,19 @@ class Radio(Model):
     pattern_sharpness: Finite = Field(default=1.8, ge=0.5, le=100)
     side_lobe_attenuation_db: Finite = Field(default=18, ge=0, le=100)
     polarization_deg: Finite = Field(default=0, ge=-360, le=360)
+    provenance: dict[RadioParameter, RadioValueSource] | None = Field(default=None, description=(
+        "Optional origin of each value. 'unknown' requires an empty value; measured/declared require one."))
+
+    @model_validator(mode="after")
+    def provenance_matches_values(self) -> Radio:
+        for name, origin in (self.provenance or {}).items():
+            value = getattr(self, name)
+            missing = value is None or (name == "protocol" and value == "unknown")
+            if origin.provenance == "unknown" and not missing:
+                raise ValueError(f"Radio {self.id}: {name} has a value but is marked unknown")
+            if origin.provenance in ("measured", "declared", "standard-minimum") and missing:
+                raise ValueError(f"Radio {self.id}: {name} is marked {origin.provenance} but has no value")
+        return self
 
 
 class Device(Model):
@@ -330,6 +357,8 @@ class MapGrid(Model):
 class CoverageMapParameters(Model):
     """Everything that defines a map except the project; echoed in the result for staleness checks."""
 
+    model_config = ConfigDict(json_schema_extra=_optional_fields("scenario"))
+
     access_point_device_id: Identifier
     access_point_radio_id: Identifier
     profile: ReceiverProfile
@@ -337,6 +366,9 @@ class CoverageMapParameters(Model):
     points: list[Point] = Field(default_factory=list, max_length=MAX_MAP_POINTS,
                                 description="Exact positions evaluated without snapping to the grid")
     engine: Literal["quick-estimate", "sionna-rt", "ns-3"] = "quick-estimate"
+    scenario: ScenarioAssumptions | None = Field(default=None, description=(
+        "Door states and material bounds applied to every cell, e.g. the best or worst case of "
+        "/api/scenario-simulations; None evaluates the project as it is"))
 
 
 class CoverageMapRequest(CoverageMapParameters):
@@ -349,6 +381,8 @@ class CoverageMapRequest(CoverageMapParameters):
             raise ValueError(f"Unknown access point device: {self.access_point_device_id}")
         if self.access_point_radio_id not in {r.id for r in device.radios}:
             raise ValueError(f"Unknown access point radio: {self.access_point_radio_id}")
+        if self.scenario is not None and (issue := scenario_issue(self.project, self.scenario)):
+            raise ValueError(issue)
         return self
 
 
@@ -576,6 +610,9 @@ class GenericProfile(Model):
         if self.antenna_gain_dbi.value is None or self.noise_figure_db.value is None:
             raise ValueError("Antenna gain and noise figure need a declared or inferred value")
         gain = self.antenna_gain_dbi.value
+        def origin(value: ProfileValue) -> RadioValueSource:
+            return RadioValueSource(provenance=value.provenance, source=value.source)
+
         return ReceiverProfile(
             id=self.id, name=self.name,
             evidence=f"Generic profile {self.id}: sensitivity {self.sensitivity_dbm.provenance}, "
@@ -584,7 +621,12 @@ class GenericProfile(Model):
                         bandwidth_hz=self.bandwidth_hz, channel=access_point_radio.channel,
                         tx_power_dbm=self.tx_power_dbm.value, tx_gain_dbi=gain, rx_gain_dbi=gain,
                         sensitivity_dbm=self.sensitivity_dbm.value,
-                        noise_figure_db=self.noise_figure_db.value))
+                        noise_figure_db=self.noise_figure_db.value,
+                        provenance={"tx_power_dbm": origin(self.tx_power_dbm),
+                                    "tx_gain_dbi": origin(self.antenna_gain_dbi),
+                                    "rx_gain_dbi": origin(self.antenna_gain_dbi),
+                                    "sensitivity_dbm": origin(self.sensitivity_dbm),
+                                    "noise_figure_db": origin(self.noise_figure_db)}))
 
 
 # --- Scenarios for unresolved hypotheses (B-108) ----------------------------------------
@@ -608,17 +650,24 @@ class ScenarioRequest(Model):
 
     @model_validator(mode="after")
     def known_references(self) -> ScenarioRequest:
-        doors = {w.id for w in self.project.building.walls if w.door is not None}
-        uncertain = {m.id for m in self.project.building.materials if m.uncertainty is not None}
         ids = [s.id for s in self.scenarios]
         if len(ids) != len(set(ids)) or set(ids) & set(RESERVED_SCENARIOS):
             raise ValueError(f"Scenario IDs must be unique and not one of {RESERVED_SCENARIOS}")
         for scenario in self.scenarios:
-            if unknown := sorted(set(scenario.doors) - doors):
-                raise ValueError(f"Scenario {scenario.id}: walls that are not doors: {unknown}")
-            if unknown := sorted(set(scenario.materials) - uncertain):
-                raise ValueError(f"Scenario {scenario.id}: materials without an uncertainty range: {unknown}")
+            if issue := scenario_issue(self.project, scenario):
+                raise ValueError(issue)
         return self
+
+
+def scenario_issue(project: Project, scenario: ScenarioAssumptions) -> str | None:
+    """A scenario may only set walls that are doors and materials that declare a range."""
+    doors = {w.id for w in project.building.walls if w.door is not None}
+    uncertain = {m.id for m in project.building.materials if m.uncertainty is not None}
+    if unknown := sorted(set(scenario.doors) - doors):
+        return f"Scenario {scenario.id}: walls that are not doors: {unknown}"
+    if unknown := sorted(set(scenario.materials) - uncertain):
+        return f"Scenario {scenario.id}: materials without an uncertainty range: {unknown}"
+    return None
 
 
 class ScenarioOutcome(Model):
@@ -647,3 +696,8 @@ class ScenarioResult(Model):
     elapsed_ms: float
     scope: str
     limitations: list[str]
+
+
+# Coverage-map models reference ScenarioAssumptions, defined after them.
+for _model in (CoverageMapParameters, CoverageMapRequest, CoverageMapResult, CoverageMapJob):
+    _model.model_rebuild()

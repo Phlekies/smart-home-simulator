@@ -404,10 +404,210 @@
           }
         }
       }
+    },
+    "/api/reports": {
+      "post": {
+        "summary": "Report",
+        "description": "Per-link report of computed values, hypotheses and missing data; no coverage verdict.",
+        "operationId": "report_api_reports_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstallationReport"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reports/markdown": {
+      "post": {
+        "summary": "Report Markdown",
+        "operationId": "report_markdown_api_reports_markdown_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/markdown": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/measurements/check": {
+      "post": {
+        "summary": "Measurement Check",
+        "description": "Validate a local measurement campaign and, with its project, compare it with predictions.",
+        "operationId": "measurement_check_api_measurements_check_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MeasurementCheckRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasurementCheckResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "AccessPointSetup": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "project_device_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Project Device Id"
+          },
+          "project_radio_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Project Radio Id"
+          },
+          "instrument_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Instrument Id"
+          },
+          "frequency_hz": {
+            "type": "number",
+            "maximum": 100000000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Frequency Hz"
+          },
+          "channel": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Channel"
+          },
+          "bandwidth_hz": {
+            "type": "number",
+            "maximum": 1000000000.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Bandwidth Hz"
+          },
+          "tx_power_dbm": {
+            "$ref": "#/components/schemas/ParameterValue"
+          },
+          "antenna_gain_dbi": {
+            "$ref": "#/components/schemas/ParameterValue"
+          },
+          "settings_note": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Settings Note",
+            "description": "Fixed channel, band steering, power mode, etc."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "project_device_id",
+          "project_radio_id",
+          "instrument_id",
+          "frequency_hz",
+          "bandwidth_hz"
+        ],
+        "title": "AccessPointSetup"
+      },
       "Building-Input": {
         "properties": {
           "width_m": {
@@ -587,6 +787,77 @@
           "delta_worst_margin_db"
         ],
         "title": "CandidateEvaluation"
+      },
+      "Conditions": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "doors": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "open",
+                "closed",
+                "unknown"
+              ]
+            },
+            "propertyNames": {
+              "maxLength": 120,
+              "minLength": 1
+            },
+            "type": "object",
+            "title": "Doors",
+            "description": "Project wall ids representing doors and their state"
+          },
+          "people_present": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "People Present"
+          },
+          "visible_networks_same_channel": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10000.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Visible Networks Same Channel"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "Conditions"
       },
       "CoverageCells": {
         "properties": {
@@ -776,6 +1047,17 @@
             ],
             "title": "Engine",
             "default": "quick-estimate"
+          },
+          "scenario": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScenarioAssumptions-Output"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Door states and material bounds applied to every cell, e.g. the best or worst case of /api/scenario-simulations; None evaluates the project as it is"
           }
         },
         "additionalProperties": false,
@@ -829,6 +1111,17 @@
             ],
             "title": "Engine",
             "default": "quick-estimate"
+          },
+          "scenario": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScenarioAssumptions-Input"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Door states and material bounds applied to every cell, e.g. the best or worst case of /api/scenario-simulations; None evaluates the project as it is"
           },
           "project": {
             "$ref": "#/components/schemas/Project-Input"
@@ -1044,6 +1337,122 @@
         "title": "CoverageSample",
         "description": "One evaluated position. Forward is AP→profile, reverse is profile→AP; no classification."
       },
+      "DeliverySummary": {
+        "properties": {
+          "criterion_id": {
+            "type": "string",
+            "title": "Criterion Id"
+          },
+          "direction": {
+            "type": "string",
+            "title": "Direction"
+          },
+          "sent": {
+            "type": "integer",
+            "title": "Sent"
+          },
+          "received": {
+            "type": "integer",
+            "title": "Received"
+          },
+          "outcome": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "inconclusive"
+            ],
+            "title": "Outcome"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "criterion_id",
+          "direction",
+          "sent",
+          "received",
+          "outcome"
+        ],
+        "title": "DeliverySummary"
+      },
+      "DeliveryTest": {
+        "properties": {
+          "criterion_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Criterion Id"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "icmp-echo",
+              "udp-probe",
+              "application-report",
+              "other"
+            ],
+            "title": "Method"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "ap-to-device",
+              "device-to-ap",
+              "round-trip"
+            ],
+            "title": "Direction"
+          },
+          "payload_bytes": {
+            "type": "integer",
+            "maximum": 65535.0,
+            "minimum": 0.0,
+            "title": "Payload Bytes"
+          },
+          "interval_s": {
+            "type": "number",
+            "exclusiveMinimum": 0.0,
+            "title": "Interval S"
+          },
+          "sent": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Sent"
+          },
+          "received": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 0.0,
+            "title": "Received"
+          },
+          "retries_reported": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retries Reported"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "criterion_id",
+          "method",
+          "direction",
+          "payload_bytes",
+          "interval_s",
+          "sent",
+          "received"
+        ],
+        "title": "DeliveryTest",
+        "description": "Raw counts only; the outcome is derived against its criterion, never stored."
+      },
       "Device-Input": {
         "properties": {
           "id": {
@@ -1248,6 +1657,77 @@
         ],
         "title": "ExcludedCandidate"
       },
+      "FailureCriterion": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Description"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "icmp-echo",
+              "udp-probe",
+              "application-report",
+              "other"
+            ],
+            "title": "Method"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "ap-to-device",
+              "device-to-ap",
+              "round-trip"
+            ],
+            "title": "Direction"
+          },
+          "min_packets": {
+            "type": "integer",
+            "maximum": 1000000.0,
+            "minimum": 1.0,
+            "title": "Min Packets"
+          },
+          "min_delivery_ratio": {
+            "type": "number",
+            "maximum": 1.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Min Delivery Ratio"
+          },
+          "frozen_on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frozen On"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "description",
+          "method",
+          "direction",
+          "min_packets",
+          "min_delivery_ratio"
+        ],
+        "title": "FailureCriterion",
+        "description": "Active link test decided before looking at predictions; frozen before validation."
+      },
       "GenericProfile": {
         "properties": {
           "id": {
@@ -1340,6 +1820,190 @@
         },
         "type": "object",
         "title": "HTTPValidationError"
+      },
+      "InstallationReport": {
+        "properties": {
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "project_name": {
+            "type": "string",
+            "title": "Project Name"
+          },
+          "input_hash": {
+            "type": "string",
+            "title": "Input Hash"
+          },
+          "engine": {
+            "type": "string",
+            "title": "Engine"
+          },
+          "engine_version": {
+            "type": "string",
+            "title": "Engine Version"
+          },
+          "scope": {
+            "type": "string",
+            "title": "Scope"
+          },
+          "links": {
+            "items": {
+              "$ref": "#/components/schemas/ReportLink"
+            },
+            "type": "array",
+            "title": "Links"
+          },
+          "counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Counts"
+          },
+          "pending_decisions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Pending Decisions"
+          },
+          "not_evaluated": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Not Evaluated"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limitations"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "title",
+          "project_name",
+          "input_hash",
+          "engine",
+          "engine_version",
+          "scope",
+          "links",
+          "counts",
+          "pending_decisions",
+          "not_evaluated",
+          "limitations"
+        ],
+        "title": "InstallationReport"
+      },
+      "Instrument": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "candidate-device",
+              "same-model-as-candidate",
+              "phone",
+              "laptop",
+              "usb-adapter",
+              "access-point",
+              "other"
+            ],
+            "title": "Kind"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "radio_chipset": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Radio Chipset"
+          },
+          "firmware": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Firmware"
+          },
+          "software": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Software",
+            "description": "App/tool and version used to read the values"
+          },
+          "rssi_reporting": {
+            "type": "string",
+            "enum": [
+              "dbm",
+              "vendor-scale",
+              "unknown"
+            ],
+            "title": "Rssi Reporting",
+            "default": "unknown"
+          },
+          "radio": {
+            "$ref": "#/components/schemas/RadioCharacterization"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "kind"
+        ],
+        "title": "Instrument",
+        "description": "Device that reports a reading. A phone is not the candidate device's radio."
       },
       "Link": {
         "properties": {
@@ -1814,6 +2478,436 @@
         ],
         "title": "MaterialUncertainty",
         "description": "Reasoned range of a material's loss per crossing: scenario bounds, not a probability interval."
+      },
+      "MeasurementCampaign": {
+        "properties": {
+          "format": {
+            "type": "string",
+            "const": "smart-environment-measurements",
+            "title": "Format",
+            "default": "smart-environment-measurements"
+          },
+          "version": {
+            "type": "integer",
+            "const": 1,
+            "title": "Version",
+            "default": 1
+          },
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "site_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Site Id",
+            "description": "Pseudonymous home identifier; never an address"
+          },
+          "split": {
+            "type": "string",
+            "enum": [
+              "format-example",
+              "pilot",
+              "calibration",
+              "validation"
+            ],
+            "title": "Split"
+          },
+          "synthetic": {
+            "type": "boolean",
+            "title": "Synthetic",
+            "description": "True only for format examples; synthetic data is never evidence"
+          },
+          "purpose": {
+            "type": "string",
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Purpose"
+          },
+          "project": {
+            "$ref": "#/components/schemas/ProjectReference"
+          },
+          "collected_from": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Collected From"
+          },
+          "collected_to": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Collected To"
+          },
+          "operator_role": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 160
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operator Role",
+            "description": "Role, not a personal name"
+          },
+          "instruments": {
+            "items": {
+              "$ref": "#/components/schemas/Instrument"
+            },
+            "type": "array",
+            "maxItems": 64,
+            "minItems": 1,
+            "title": "Instruments"
+          },
+          "access_points": {
+            "items": {
+              "$ref": "#/components/schemas/AccessPointSetup"
+            },
+            "type": "array",
+            "maxItems": 32,
+            "minItems": 1,
+            "title": "Access Points"
+          },
+          "conditions": {
+            "items": {
+              "$ref": "#/components/schemas/Conditions"
+            },
+            "type": "array",
+            "maxItems": 64,
+            "minItems": 1,
+            "title": "Conditions"
+          },
+          "criteria": {
+            "items": {
+              "$ref": "#/components/schemas/FailureCriterion"
+            },
+            "type": "array",
+            "maxItems": 32,
+            "title": "Criteria"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/MeasurementPoint"
+            },
+            "type": "array",
+            "maxItems": 10000,
+            "title": "Points"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "maxItems": 256,
+            "title": "Notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "site_id",
+          "split",
+          "synthetic",
+          "purpose",
+          "project",
+          "instruments",
+          "access_points",
+          "conditions"
+        ],
+        "title": "MeasurementCampaign"
+      },
+      "MeasurementCheckRequest": {
+        "properties": {
+          "campaign": {
+            "$ref": "#/components/schemas/MeasurementCampaign"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Project-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "campaign"
+        ],
+        "title": "MeasurementCheckRequest"
+      },
+      "MeasurementCheckResult": {
+        "properties": {
+          "campaign_id": {
+            "type": "string",
+            "title": "Campaign Id"
+          },
+          "site_id": {
+            "type": "string",
+            "title": "Site Id"
+          },
+          "split": {
+            "type": "string",
+            "title": "Split"
+          },
+          "synthetic": {
+            "type": "boolean",
+            "title": "Synthetic"
+          },
+          "points": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Points",
+            "description": "Count of planned, measured and excluded points"
+          },
+          "summary": {
+            "items": {
+              "$ref": "#/components/schemas/PointSummary"
+            },
+            "type": "array",
+            "title": "Summary"
+          },
+          "project_issues": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Project Issues",
+            "description": "None when no project was sent"
+          },
+          "residuals": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/PointResidual"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Residuals"
+          },
+          "skipped": {
+            "items": {
+              "$ref": "#/components/schemas/SkippedObservation"
+            },
+            "type": "array",
+            "title": "Skipped"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "campaign_id",
+          "site_id",
+          "split",
+          "synthetic",
+          "points",
+          "summary",
+          "project_issues",
+          "residuals",
+          "skipped",
+          "notes"
+        ],
+        "title": "MeasurementCheckResult"
+      },
+      "MeasurementPoint": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "planned",
+              "measured",
+              "excluded"
+            ],
+            "title": "Status"
+          },
+          "position": {
+            "$ref": "#/components/schemas/Point-Input"
+          },
+          "position_uncertainty_m": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position Uncertainty M"
+          },
+          "orientation_deg": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 360.0,
+                "minimum": -360.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Orientation Deg"
+          },
+          "device_instrument_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Device Instrument Id"
+          },
+          "access_point_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Access Point Id"
+          },
+          "conditions_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Conditions Id"
+          },
+          "measured_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Measured At"
+          },
+          "rssi": {
+            "items": {
+              "$ref": "#/components/schemas/RssiObservation"
+            },
+            "type": "array",
+            "maxItems": 64,
+            "title": "Rssi"
+          },
+          "delivery": {
+            "items": {
+              "$ref": "#/components/schemas/DeliveryTest"
+            },
+            "type": "array",
+            "maxItems": 64,
+            "title": "Delivery"
+          },
+          "exclusion_reason": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exclusion Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "position",
+          "device_instrument_id",
+          "access_point_id",
+          "conditions_id"
+        ],
+        "title": "MeasurementPoint"
+      },
+      "ParameterValue": {
+        "properties": {
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "provenance": {
+            "type": "string",
+            "enum": [
+              "measured",
+              "declared",
+              "inferred",
+              "unknown"
+            ],
+            "title": "Provenance",
+            "default": "unknown"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ParameterValue",
+        "description": "A radio parameter with its origin; ``unknown`` and an absent value always go together."
       },
       "PixelPoint": {
         "properties": {
@@ -2527,6 +3621,107 @@
         ],
         "title": "Point"
       },
+      "PointResidual": {
+        "properties": {
+          "campaign_id": {
+            "type": "string",
+            "title": "Campaign Id"
+          },
+          "site_id": {
+            "type": "string",
+            "title": "Site Id"
+          },
+          "split": {
+            "type": "string",
+            "title": "Split"
+          },
+          "point_id": {
+            "type": "string",
+            "title": "Point Id"
+          },
+          "direction": {
+            "type": "string",
+            "enum": [
+              "ap-to-device",
+              "device-to-ap"
+            ],
+            "title": "Direction"
+          },
+          "samples": {
+            "type": "integer",
+            "title": "Samples"
+          },
+          "measured_median_dbm": {
+            "type": "number",
+            "title": "Measured Median Dbm"
+          },
+          "predicted_dbm": {
+            "type": "number",
+            "title": "Predicted Dbm"
+          },
+          "residual_db": {
+            "type": "number",
+            "title": "Residual Db",
+            "description": "measured − predicted"
+          },
+          "assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Assumptions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "campaign_id",
+          "site_id",
+          "split",
+          "point_id",
+          "direction",
+          "samples",
+          "measured_median_dbm",
+          "predicted_dbm",
+          "residual_db",
+          "assumptions"
+        ],
+        "title": "PointResidual"
+      },
+      "PointSummary": {
+        "properties": {
+          "point_id": {
+            "type": "string",
+            "title": "Point Id"
+          },
+          "position": {
+            "$ref": "#/components/schemas/Point-Output"
+          },
+          "rssi": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/RssiSummary"
+            },
+            "type": "object",
+            "title": "Rssi"
+          },
+          "delivery": {
+            "items": {
+              "$ref": "#/components/schemas/DeliverySummary"
+            },
+            "type": "array",
+            "title": "Delivery"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "point_id",
+          "position",
+          "rssi",
+          "delivery"
+        ],
+        "title": "PointSummary"
+      },
       "ProfileValue": {
         "properties": {
           "value": {
@@ -2758,6 +3953,29 @@
         ],
         "title": "Project"
       },
+      "ProjectReference": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 160,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "input_hash": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Input Hash",
+            "description": "SHA-256 of the canonical project JSON"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "input_hash"
+        ],
+        "title": "ProjectReference"
+      },
       "Radio-Input": {
         "properties": {
           "id": {
@@ -2894,6 +4112,32 @@
             "minimum": -360.0,
             "title": "Polarization Deg",
             "default": 0
+          },
+          "provenance": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/RadioValueSource-Input"
+                },
+                "propertyNames": {
+                  "enum": [
+                    "tx_power_dbm",
+                    "tx_gain_dbi",
+                    "rx_gain_dbi",
+                    "sensitivity_dbm",
+                    "noise_figure_db",
+                    "channel",
+                    "protocol"
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provenance",
+            "description": "Optional origin of each value. 'unknown' requires an empty value; measured/declared require one."
           }
         },
         "additionalProperties": false,
@@ -3041,6 +4285,32 @@
             "minimum": -360.0,
             "title": "Polarization Deg",
             "default": 0
+          },
+          "provenance": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/RadioValueSource-Output"
+                },
+                "propertyNames": {
+                  "enum": [
+                    "tx_power_dbm",
+                    "tx_gain_dbi",
+                    "rx_gain_dbi",
+                    "sensitivity_dbm",
+                    "noise_figure_db",
+                    "channel",
+                    "protocol"
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provenance",
+            "description": "Optional origin of each value. 'unknown' requires an empty value; measured/declared require one."
           }
         },
         "additionalProperties": false,
@@ -3064,6 +4334,94 @@
           "polarization_deg"
         ],
         "title": "Radio"
+      },
+      "RadioCharacterization": {
+        "properties": {
+          "tx_power_dbm": {
+            "$ref": "#/components/schemas/ParameterValue"
+          },
+          "antenna_gain_dbi": {
+            "$ref": "#/components/schemas/ParameterValue"
+          },
+          "noise_figure_db": {
+            "$ref": "#/components/schemas/ParameterValue"
+          },
+          "sensitivity_dbm": {
+            "$ref": "#/components/schemas/ParameterValue"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "RadioCharacterization"
+      },
+      "RadioValueSource-Input": {
+        "properties": {
+          "provenance": {
+            "type": "string",
+            "enum": [
+              "measured",
+              "declared",
+              "standard-minimum",
+              "inferred",
+              "unknown"
+            ],
+            "title": "Provenance"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "provenance"
+        ],
+        "title": "RadioValueSource",
+        "description": "Where one radio value comes from; documentation only, never a solver input."
+      },
+      "RadioValueSource-Output": {
+        "properties": {
+          "provenance": {
+            "type": "string",
+            "enum": [
+              "measured",
+              "declared",
+              "standard-minimum",
+              "inferred",
+              "unknown"
+            ],
+            "title": "Provenance"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 500
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "provenance",
+          "source"
+        ],
+        "title": "RadioValueSource",
+        "description": "Where one radio value comes from; documentation only, never a solver input."
       },
       "ReceiverProfile-Input": {
         "properties": {
@@ -3131,6 +4489,357 @@
         ],
         "title": "ReceiverProfile",
         "description": "Radio of the candidate device as it would be installed; drives both link directions."
+      },
+      "ReportDirection": {
+        "properties": {
+          "from_device_id": {
+            "type": "string",
+            "title": "From Device Id"
+          },
+          "to_device_id": {
+            "type": "string",
+            "title": "To Device Id"
+          },
+          "received_power_dbm": {
+            "type": "number",
+            "title": "Received Power Dbm"
+          },
+          "margin_db": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Db"
+          },
+          "sensitivity_provenance": {
+            "type": "string",
+            "title": "Sensitivity Provenance",
+            "description": "Origin of the receiver sensitivity, 'sin etiqueta' if not set"
+          },
+          "walls": {
+            "items": {
+              "$ref": "#/components/schemas/ReportWall"
+            },
+            "type": "array",
+            "title": "Walls"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "from_device_id",
+          "to_device_id",
+          "received_power_dbm",
+          "margin_db",
+          "sensitivity_provenance",
+          "walls"
+        ],
+        "title": "ReportDirection"
+      },
+      "ReportLink": {
+        "properties": {
+          "link_id": {
+            "type": "string",
+            "title": "Link Id"
+          },
+          "devices": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Devices",
+            "description": "Names of both ends, source first"
+          },
+          "radios": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Radios",
+            "description": "Protocol, channel and frequency of each end"
+          },
+          "compatibility": {
+            "type": "string",
+            "title": "Compatibility"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "forward": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReportDirection"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reverse": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ReportDirection"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "limiting_direction": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "forward",
+                  "reverse"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limiting Direction"
+          },
+          "limiting_margin_db": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limiting Margin Db"
+          },
+          "forward_range_dbm": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Forward Range Dbm"
+          },
+          "reverse_range_dbm": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reverse Range Dbm"
+          },
+          "margin_sign": {
+            "type": "string",
+            "title": "Margin Sign"
+          },
+          "hypotheses": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Hypotheses"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notes"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "link_id",
+          "devices",
+          "radios",
+          "compatibility",
+          "status",
+          "forward",
+          "reverse",
+          "limiting_direction",
+          "limiting_margin_db",
+          "forward_range_dbm",
+          "reverse_range_dbm",
+          "margin_sign",
+          "hypotheses",
+          "notes"
+        ],
+        "title": "ReportLink"
+      },
+      "ReportRequest": {
+        "properties": {
+          "project": {
+            "$ref": "#/components/schemas/Project-Input"
+          },
+          "scenarios": {
+            "items": {
+              "$ref": "#/components/schemas/ScenarioAssumptions-Input"
+            },
+            "type": "array",
+            "maxItems": 16,
+            "title": "Scenarios"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 160
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Title"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "project"
+        ],
+        "title": "ReportRequest"
+      },
+      "ReportWall": {
+        "properties": {
+          "wall_id": {
+            "type": "string",
+            "title": "Wall Id"
+          },
+          "material": {
+            "type": "string",
+            "title": "Material"
+          },
+          "door": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "open",
+                  "closed",
+                  "unknown"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Door"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "wall_id",
+          "material",
+          "door"
+        ],
+        "title": "ReportWall"
+      },
+      "RssiObservation": {
+        "properties": {
+          "direction": {
+            "type": "string",
+            "enum": [
+              "ap-to-device",
+              "device-to-ap"
+            ],
+            "title": "Direction"
+          },
+          "receiver_instrument_id": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Receiver Instrument Id"
+          },
+          "samples_dbm": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "maxItems": 100000,
+            "minItems": 1,
+            "title": "Samples Dbm"
+          },
+          "noise_dbm": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 0.0,
+                "minimum": -200.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Noise Dbm"
+          },
+          "duration_s": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration S"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "direction",
+          "receiver_instrument_id",
+          "samples_dbm"
+        ],
+        "title": "RssiObservation"
+      },
+      "RssiSummary": {
+        "properties": {
+          "samples": {
+            "type": "integer",
+            "title": "Samples"
+          },
+          "median_dbm": {
+            "type": "number",
+            "title": "Median Dbm"
+          },
+          "min_dbm": {
+            "type": "number",
+            "title": "Min Dbm"
+          },
+          "max_dbm": {
+            "type": "number",
+            "title": "Max Dbm"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "samples",
+          "median_dbm",
+          "min_dbm",
+          "max_dbm"
+        ],
+        "title": "RssiSummary"
       },
       "ScenarioAssumptions-Input": {
         "properties": {
@@ -3503,6 +5212,46 @@
           "links"
         ],
         "title": "SimulationResult"
+      },
+      "SkippedObservation": {
+        "properties": {
+          "campaign_id": {
+            "type": "string",
+            "title": "Campaign Id"
+          },
+          "point_id": {
+            "type": "string",
+            "title": "Point Id"
+          },
+          "direction": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "ap-to-device",
+                  "device-to-ap"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Direction"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "campaign_id",
+          "point_id",
+          "direction",
+          "reason"
+        ],
+        "title": "SkippedObservation"
       },
       "TargetEvaluation": {
         "properties": {

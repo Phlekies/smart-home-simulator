@@ -123,6 +123,18 @@
           ],
           "title": "Engine",
           "type": "string"
+        },
+        "scenario": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScenarioAssumptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Door states and material bounds applied to every cell, e.g. the best or worst case of /api/scenario-simulations; None evaluates the project as it is"
         }
       },
       "required": [
@@ -562,6 +574,33 @@
           "minimum": -360,
           "title": "Polarization Deg",
           "type": "number"
+        },
+        "provenance": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/RadioValueSource"
+              },
+              "propertyNames": {
+                "enum": [
+                  "tx_power_dbm",
+                  "tx_gain_dbi",
+                  "rx_gain_dbi",
+                  "sensitivity_dbm",
+                  "noise_figure_db",
+                  "channel",
+                  "protocol"
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional origin of each value. 'unknown' requires an empty value; measured/declared require one.",
+          "title": "Provenance"
         }
       },
       "required": [
@@ -583,6 +622,42 @@
         "polarization_deg"
       ],
       "title": "Radio",
+      "type": "object"
+    },
+    "RadioValueSource": {
+      "additionalProperties": false,
+      "description": "Where one radio value comes from; documentation only, never a solver input.",
+      "properties": {
+        "provenance": {
+          "enum": [
+            "measured",
+            "declared",
+            "standard-minimum",
+            "inferred",
+            "unknown"
+          ],
+          "title": "Provenance",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        }
+      },
+      "required": [
+        "provenance",
+        "source"
+      ],
+      "title": "RadioValueSource",
       "type": "object"
     },
     "ReceiverProfile": {
@@ -617,6 +692,63 @@
         "evidence"
       ],
       "title": "ReceiverProfile",
+      "type": "object"
+    },
+    "ScenarioAssumptions": {
+      "additionalProperties": false,
+      "description": "Named scenario: door states and material bounds that replace the nominal project values.",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "doors": {
+          "additionalProperties": {
+            "enum": [
+              "open",
+              "closed"
+            ],
+            "type": "string"
+          },
+          "propertyNames": {
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "title": "Doors",
+          "type": "object"
+        },
+        "materials": {
+          "additionalProperties": {
+            "enum": [
+              "low",
+              "nominal",
+              "high"
+            ],
+            "type": "string"
+          },
+          "propertyNames": {
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "title": "Materials",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "doors",
+        "materials"
+      ],
+      "title": "ScenarioAssumptions",
       "type": "object"
     }
   },

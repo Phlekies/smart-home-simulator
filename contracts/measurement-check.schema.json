@@ -1,0 +1,335 @@
+{
+  "$defs": {
+    "DeliverySummary": {
+      "additionalProperties": false,
+      "properties": {
+        "criterion_id": {
+          "title": "Criterion Id",
+          "type": "string"
+        },
+        "direction": {
+          "title": "Direction",
+          "type": "string"
+        },
+        "sent": {
+          "title": "Sent",
+          "type": "integer"
+        },
+        "received": {
+          "title": "Received",
+          "type": "integer"
+        },
+        "outcome": {
+          "enum": [
+            "pass",
+            "fail",
+            "inconclusive"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        }
+      },
+      "required": [
+        "criterion_id",
+        "direction",
+        "sent",
+        "received",
+        "outcome"
+      ],
+      "title": "DeliverySummary",
+      "type": "object"
+    },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "x": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "maximum": 10000,
+          "minimum": -10000,
+          "title": "Y",
+          "type": "number"
+        },
+        "z": {
+          "default": 0,
+          "maximum": 1000,
+          "minimum": -1000,
+          "title": "Z",
+          "type": "number"
+        }
+      },
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "title": "Point",
+      "type": "object"
+    },
+    "PointResidual": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "site_id": {
+          "title": "Site Id",
+          "type": "string"
+        },
+        "split": {
+          "title": "Split",
+          "type": "string"
+        },
+        "point_id": {
+          "title": "Point Id",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "ap-to-device",
+            "device-to-ap"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "samples": {
+          "title": "Samples",
+          "type": "integer"
+        },
+        "measured_median_dbm": {
+          "title": "Measured Median Dbm",
+          "type": "number"
+        },
+        "predicted_dbm": {
+          "title": "Predicted Dbm",
+          "type": "number"
+        },
+        "residual_db": {
+          "description": "measured − predicted",
+          "title": "Residual Db",
+          "type": "number"
+        },
+        "assumptions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "site_id",
+        "split",
+        "point_id",
+        "direction",
+        "samples",
+        "measured_median_dbm",
+        "predicted_dbm",
+        "residual_db",
+        "assumptions"
+      ],
+      "title": "PointResidual",
+      "type": "object"
+    },
+    "PointSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "point_id": {
+          "title": "Point Id",
+          "type": "string"
+        },
+        "position": {
+          "$ref": "#/$defs/Point"
+        },
+        "rssi": {
+          "additionalProperties": {
+            "$ref": "#/$defs/RssiSummary"
+          },
+          "title": "Rssi",
+          "type": "object"
+        },
+        "delivery": {
+          "items": {
+            "$ref": "#/$defs/DeliverySummary"
+          },
+          "title": "Delivery",
+          "type": "array"
+        }
+      },
+      "required": [
+        "point_id",
+        "position",
+        "rssi",
+        "delivery"
+      ],
+      "title": "PointSummary",
+      "type": "object"
+    },
+    "RssiSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "samples": {
+          "title": "Samples",
+          "type": "integer"
+        },
+        "median_dbm": {
+          "title": "Median Dbm",
+          "type": "number"
+        },
+        "min_dbm": {
+          "title": "Min Dbm",
+          "type": "number"
+        },
+        "max_dbm": {
+          "title": "Max Dbm",
+          "type": "number"
+        }
+      },
+      "required": [
+        "samples",
+        "median_dbm",
+        "min_dbm",
+        "max_dbm"
+      ],
+      "title": "RssiSummary",
+      "type": "object"
+    },
+    "SkippedObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "point_id": {
+          "title": "Point Id",
+          "type": "string"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "ap-to-device",
+                "device-to-ap"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Direction"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "point_id",
+        "direction",
+        "reason"
+      ],
+      "title": "SkippedObservation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "campaign_id": {
+      "title": "Campaign Id",
+      "type": "string"
+    },
+    "site_id": {
+      "title": "Site Id",
+      "type": "string"
+    },
+    "split": {
+      "title": "Split",
+      "type": "string"
+    },
+    "synthetic": {
+      "title": "Synthetic",
+      "type": "boolean"
+    },
+    "points": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "description": "Count of planned, measured and excluded points",
+      "title": "Points",
+      "type": "object"
+    },
+    "summary": {
+      "items": {
+        "$ref": "#/$defs/PointSummary"
+      },
+      "title": "Summary",
+      "type": "array"
+    },
+    "project_issues": {
+      "anyOf": [
+        {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "None when no project was sent",
+      "title": "Project Issues"
+    },
+    "residuals": {
+      "anyOf": [
+        {
+          "items": {
+            "$ref": "#/$defs/PointResidual"
+          },
+          "type": "array"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Residuals"
+    },
+    "skipped": {
+      "items": {
+        "$ref": "#/$defs/SkippedObservation"
+      },
+      "title": "Skipped",
+      "type": "array"
+    },
+    "notes": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Notes",
+      "type": "array"
+    }
+  },
+  "required": [
+    "campaign_id",
+    "site_id",
+    "split",
+    "synthetic",
+    "points",
+    "summary",
+    "project_issues",
+    "residuals",
+    "skipped",
+    "notes"
+  ],
+  "title": "MeasurementCheckResult",
+  "type": "object"
+}

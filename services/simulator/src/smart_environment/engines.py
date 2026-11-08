@@ -29,9 +29,13 @@ def input_hash(project: Project) -> str:
     The plan reference image is a display aid that no solver reads, so it is left out: adding or
     moving it neither changes the hash of existing projects nor invalidates their results.
     Optional fields added later (door state, material uncertainty) count only when set, so
-    projects that do not use them keep the hash they had before those fields existed.
+    projects that do not use them keep the hash they had before those fields existed. Radio
+    provenance labels describe values without changing them, so they never enter the hash.
     """
     data = project.model_dump(mode="json", exclude={"plan_reference"})
+    for device in data["devices"]:
+        for radio in device["radios"]:
+            radio.pop("provenance", None)
     for wall in data["building"]["walls"]:
         if wall.get("door") is None:
             wall.pop("door", None)
@@ -163,6 +167,19 @@ def radio_pair_check(a: Radio, b: Radio) -> tuple[str, str | None, list[str]]:
     return compatibility, None, reasons
 
 
+def sensitivity_note(radio: Radio, device_id: str) -> str | None:
+    """Flag a margin that rests on a sensitivity nobody measured or declared for this device."""
+    origin = (radio.provenance or {}).get("sensitivity_dbm")
+    if origin is None:
+        return None
+    if origin.provenance == "standard-minimum":
+        return (f"El margen hacia {device_id} usa la sensibilidad mínima del estándar, no la del producto "
+                "(prudente, no garantiza funcionamiento).")
+    if origin.provenance == "inferred":
+        return f"El margen hacia {device_id} usa una sensibilidad inferida, no medida ni declarada."
+    return None
+
+
 def simulate(project: Project) -> SimulationResult:
     started = time.perf_counter()
     devices = {d.id: d for d in project.devices}
@@ -182,6 +199,8 @@ def simulate(project: Project) -> SimulationResult:
                 reasons.append(f"Falta potencia de transmisión de {tx.name}; no se calcula esa dirección.")
             elif result.margin_db is None:
                 reasons.append(f"Falta sensibilidad del receptor {result.rx_device_id}.")
+            elif note := sensitivity_note(b if result.rx_device_id == target.id else a, result.rx_device_id):
+                reasons.append(note)
             elif result.distance_m < 0.1:
                 reasons.append("Distancia inferior a 0.1 m: fuera del alcance del modelo; pérdida acotada.")
         complete = (forward is not None and reverse is not None and forward.margin_db is not None

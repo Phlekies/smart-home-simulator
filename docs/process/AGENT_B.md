@@ -5,17 +5,19 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — cinco tareas pedidas por el usuario el 2026-10-30, entregadas: **I-004** (revisar e integrar
-  A-102, PR #12), **B-109** (medidas frente a predicciones y calibración), **B-110** (caché de
-  resultados), **B-111** (E2E de la API con los ejemplos Java) y **B-112** (instalación limpia).
-- En review: I-003/B-107 en [PR #11](https://github.com/Phlekies/smart-home-simulator/pull/11), pendiente de que el usuario lo fusione.
+- Estado: **review** — **B-113** (procedencia por parámetro de radio), **B-114** (mapas bajo un
+  escenario), **B-115** (informe por equipo) y **B-116** (comprobar campañas de medida por API).
+  Todas aditivas; no cambian contratos que A esté consumiendo en A-109…A-113.
+- En review, pendientes de merge por el usuario: [#11](https://github.com/Phlekies/smart-home-simulator/pull/11)
+  (documentos comunes), [#13](https://github.com/Phlekies/smart-home-simulator/pull/13) (B-109…B-112, I-004) y el
+  [#12](https://github.com/Phlekies/smart-home-simulator/pull/12) de A (revisado en I-004).
 - Sesión/chat: sesión Claude Code (desktop), agente B; sin identificador adicional conocido.
-- Rama/worktree: clon B, rama local `agent-b/b-109-112` apilada sobre #11. No escribe en el
-  checkout ni en el worktree de A.
+- Rama/worktree: clon B, rama local `agent-b/b-113-116` apilada sobre #13. No escribe en el checkout
+  ni en los worktrees de A (`integration-review`, `five-ui-tasks`).
 - Última actualización: 2026-10-30 (Europe/Madrid).
-- Archivos reservados: `services/simulator/**` (nuevos `calibration.py`, `cache.py`, pruebas),
+- Archivos reservados: `services/simulator/**` (models, engines, coverage, nuevos `report.py`, pruebas),
   `scripts/export_contracts.py`, `contracts/**`, `apps/web/src/generated/**` solo por generación,
-  `docs/simulation/**`, documentos comunes de integración y este registro. No toca archivos de A.
+  `docs/simulation/**`, documentos comunes de integración y este registro.
 
 ## Plantilla de entrega — completar al trabajar
 
@@ -33,6 +35,28 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### B-113…B-116 — procedencia, mapas con escenario, informe y medidas (review)
+
+```text
+Tareas / estado: B-113, B-114, B-115, B-116 / review. Rama local agent-b/b-113-116 sobre #13.
+B-113: Radio.provenance opcional (validada contra los valores), fuera del hash; simulate avisa si un
+  margen usa un mínimo de estándar o una sensibilidad inferida; receiver_profile la rellena.
+B-114: CoverageMapParameters.scenario opcional; misma validación que los escenarios (helper común);
+  alcance y notas del mapa lo nombran. Ajustado un stub de test_coverage a la nueva firma interna.
+B-115: report.py; POST /api/reports y /api/reports/markdown; sin veredicto; decisiones pendientes y
+  no evaluado explícitos; validación de escenarios en la petición (422).
+B-116: POST /api/measurements/check con resumen tipado, encaje con el proyecto y residuos; tipos
+  measurement-campaign.ts y measurement-check.ts generados.
+Contratos: aditivos (3 rutas nuevas; Radio y CoverageMapParameters con campos opcionales).
+Comandos: pytest 244; export --check sin deriva; npm test 84; build correcto. Código en curso de A
+  (A-109…A-113) compila con los tipos nuevos y pasa 120 pruebas (copia temporal, worktree intacto).
+Solicitud a A: añadir installation-report.ts, measurement-campaign.ts y measurement-check.ts al script
+  contracts; mostrar procedencia (B-113), mapa de peor/mejor caso (B-114), descarga del informe
+  (B-115) e importación de campañas (B-116).
+Publicación: [PR #15](https://github.com/Phlekies/smart-home-simulator/pull/15) en borrador, apilado sobre #13, por autorización
+  del usuario. Merges pendientes del usuario: #11 → #13 → #15 (cambiando la base a main), y #12.
+```
 
 ### I-004 y B-109…B-112 — cinco tareas (review)
 
