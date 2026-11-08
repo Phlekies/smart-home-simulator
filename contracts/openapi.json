@@ -2368,6 +2368,40 @@
         ],
         "title": "DirectionResult"
       },
+      "EvidenceLevel": {
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "consistency",
+              "calibration",
+              "validation"
+            ],
+            "title": "Level"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "checked",
+              "none"
+            ],
+            "title": "Status"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "level",
+          "status",
+          "detail"
+        ],
+        "title": "EvidenceLevel",
+        "description": "What kind of evidence backs the numbers (B-135); consistency is not accuracy."
+      },
       "ExcludedCandidate": {
         "properties": {
           "candidate_id": {
@@ -2701,6 +2735,14 @@
             "type": "array",
             "title": "Maps",
             "description": "Requested coverage maps (B-120)"
+          },
+          "evidence_levels": {
+            "items": {
+              "$ref": "#/components/schemas/EvidenceLevel"
+            },
+            "type": "array",
+            "title": "Evidence Levels",
+            "description": "Consistency, calibration and validation behind these numbers, kept apart (B-135)"
           }
         },
         "additionalProperties": false,
@@ -4015,6 +4057,17 @@
             ],
             "title": "Max Network Distance M",
             "description": "Discard places farther than this straight-line distance from every network socket (B-119)"
+          },
+          "scenario": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScenarioAssumptions-Output"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Door states and material bounds for every place (B-134), e.g. the worst case of /api/scenario-simulations to rank under unfavourable hypotheses; None uses the project as it is"
           }
         },
         "additionalProperties": false,
@@ -4108,6 +4161,17 @@
             ],
             "title": "Max Network Distance M",
             "description": "Discard places farther than this straight-line distance from every network socket (B-119)"
+          },
+          "scenario": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ScenarioAssumptions-Input"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Door states and material bounds for every place (B-134), e.g. the worst case of /api/scenario-simulations to rank under unfavourable hypotheses; None uses the project as it is"
           },
           "project": {
             "$ref": "#/components/schemas/Project-Input"

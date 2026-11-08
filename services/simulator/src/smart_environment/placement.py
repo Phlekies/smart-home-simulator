@@ -21,7 +21,7 @@ from .engines import (
 )
 from .models import (
     CandidateEvaluation, Device, ExcludedCandidate, Fixture, Link, PlacementSearchRequest, PlacementSearchResult,
-    Point, Project, Radio, TargetEvaluation,
+    Point, Project, Radio, ScenarioAssumptions, TargetEvaluation,
 )
 
 MAX_WORK = 2_000_000  # candidates × targets × walls
@@ -51,7 +51,7 @@ class Target(NamedTuple):
 def request_hash(request: PlacementSearchRequest) -> str:
     """Project, parameters and outlets/sockets. Unset B-119 fields leave older hashes unchanged."""
     parameters = request.model_dump(mode="json", exclude={"project"})
-    for key in ("max_power_distance_m", "max_network_distance_m"):
+    for key in ("max_power_distance_m", "max_network_distance_m", "scenario"):
         if parameters.get(key) is None:
             parameters.pop(key, None)
     payload = {"project": input_hash(request.project), "parameters": parameters}
@@ -120,7 +120,8 @@ def preflight(request: PlacementSearchRequest) -> list[Target]:
     return found
 
 
-def _evaluate(project: Project, ap: Device, place: Point, targets: list[Target]) -> list[TargetEvaluation]:
+def _evaluate(project: Project, ap: Device, place: Point, targets: list[Target],
+              scenario: ScenarioAssumptions | None = None) -> list[TargetEvaluation]:
     moved = ap.model_copy(update={"position": place})
     out = []
     for link, other, ap_radio, other_radio, blocked, _, backhaul in targets:
@@ -135,8 +136,8 @@ def _evaluate(project: Project, ap: Device, place: Point, targets: list[Target])
                                         forward_margin_db=None, reverse_margin_db=None, limiting_margin_db=None,
                                         limiting_direction=None, status="not-computed", reason="too-close"))
             continue
-        forward = direction(project, moved, ap_radio, other, other_radio)
-        reverse = direction(project, other, other_radio, moved, ap_radio)
+        forward = direction(project, moved, ap_radio, other, other_radio, scenario)
+        reverse = direction(project, other, other_radio, moved, ap_radio, scenario)
         f = None if forward is None else forward.margin_db
         r = None if reverse is None else reverse.margin_db
         if f is not None and r is not None:
@@ -172,7 +173,7 @@ def search(request: PlacementSearchRequest) -> PlacementSearchResult:
         places += [(f"{zone.id}@{x:g},{y:g}", zone.label, "zone", Point(x=x, y=y, z=zone.height_m))
                    for x, y in zone.positions()]
     baseline = _summarize("current", "Posición actual", "current", ap.position,
-                          _evaluate(project, ap, ap.position, targets))
+                          _evaluate(project, ap, ap.position, targets, request.scenario))
     evaluated, excluded = [], []
     for candidate_id, label, source, place in places:
         wall = next((w for w in project.building.walls if inside_wall(place, w)), None)
@@ -180,7 +181,8 @@ def search(request: PlacementSearchRequest) -> PlacementSearchResult:
         if reason is not None:
             excluded.append(ExcludedCandidate(candidate_id=candidate_id, position=place, reason=reason))
             continue
-        evaluated.append(_summarize(candidate_id, label, source, place, _evaluate(project, ap, place, targets)))
+        evaluated.append(_summarize(candidate_id, label, source, place,
+                                    _evaluate(project, ap, place, targets, request.scenario)))
     ranked = any(c.complete_targets for c in evaluated)
     if ranked:
         evaluated.sort(key=lambda c: (-c.complete_targets,
@@ -195,6 +197,10 @@ def search(request: PlacementSearchRequest) -> PlacementSearchResult:
     if incomplete:
         reasons.append("Faltan potencia o sensibilidad para un margen bidireccional de: " + ", ".join(incomplete)
                        + ". Esos equipos no influyen en el orden.")
+    if request.scenario is not None:
+        reasons.append(f"Orden bajo el escenario «{request.scenario.name}»: puertas "
+                       f"{request.scenario.doors or 'sin cambios'}, materiales {request.scenario.materials or 'nominales'}. "
+                       "Es una hipótesis, no una medida; compárelo con el orden nominal.")
     if not evaluated:
         reasons.append("Ningún lugar permitido queda tras los descartes: no hay candidatos que comparar.")
     elif not ranked:
@@ -234,6 +240,7 @@ def search(request: PlacementSearchRequest) -> PlacementSearchResult:
         ranked=ranked, target_device_ids=[t.device.id for t in targets], baseline=baseline,
         ranking=evaluated[:TOP], evaluated=len(evaluated), excluded=excluded,
         elapsed_ms=(time.perf_counter() - started) * 1000,
-        scope="Búsqueda exhaustiva entre lugares permitidos para el AP; trayecto directo; "
-              "compatibilidad funcional no evaluada",
+        scope="Búsqueda exhaustiva entre lugares permitidos para el AP; trayecto directo"
+              + (f"; escenario «{request.scenario.name}»" if request.scenario else "")
+              + "; compatibilidad funcional no evaluada",
         limitations=PLACEMENT_LIMITATIONS, reasons=reasons)

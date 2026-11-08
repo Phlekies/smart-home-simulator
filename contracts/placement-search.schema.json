@@ -228,6 +228,18 @@
           "default": null,
           "description": "Discard places farther than this straight-line distance from every network socket (B-119)",
           "title": "Max Network Distance M"
+        },
+        "scenario": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScenarioAssumptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Door states and material bounds for every place (B-134), e.g. the worst case of /api/scenario-simulations to rank under unfavourable hypotheses; None uses the project as it is"
         }
       },
       "required": [
@@ -337,6 +349,63 @@
         "z"
       ],
       "title": "Point",
+      "type": "object"
+    },
+    "ScenarioAssumptions": {
+      "additionalProperties": false,
+      "description": "Named scenario: door states and material bounds that replace the nominal project values.",
+      "properties": {
+        "id": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 160,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "doors": {
+          "additionalProperties": {
+            "enum": [
+              "open",
+              "closed"
+            ],
+            "type": "string"
+          },
+          "propertyNames": {
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "title": "Doors",
+          "type": "object"
+        },
+        "materials": {
+          "additionalProperties": {
+            "enum": [
+              "low",
+              "nominal",
+              "high"
+            ],
+            "type": "string"
+          },
+          "propertyNames": {
+            "maxLength": 120,
+            "minLength": 1
+          },
+          "title": "Materials",
+          "type": "object"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "doors",
+        "materials"
+      ],
+      "title": "ScenarioAssumptions",
       "type": "object"
     },
     "TargetEvaluation": {

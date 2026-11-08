@@ -183,6 +183,13 @@ export type Reasons1 = string[];
  * Requested coverage maps (B-120)
  */
 export type Maps = ReportMap[];
+export type Level = "consistency" | "calibration" | "validation";
+export type Status4 = "checked" | "none";
+export type Detail = string;
+/**
+ * Consistency, calibration and validation behind these numbers, kept apart (B-135)
+ */
+export type EvidenceLevels = EvidenceLevel[];
 
 export interface InstallationReport {
   title: Title;
@@ -198,6 +205,7 @@ export interface InstallationReport {
   limitations: Limitations;
   access_points?: AccessPoints;
   maps?: Maps;
+  evidence_levels?: EvidenceLevels;
 }
 export interface ReportLink {
   link_id: LinkId;
@@ -396,4 +404,12 @@ export interface CoverageSample {
   reverse_margin_db: ReverseMarginDb1;
   status: Status3;
   reason: Reason;
+}
+/**
+ * What kind of evidence backs the numbers (B-135); consistency is not accuracy.
+ */
+export interface EvidenceLevel {
+  level: Level;
+  status: Status4;
+  detail: Detail;
 }
