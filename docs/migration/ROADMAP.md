@@ -126,9 +126,11 @@ ilustrativas, BER BPSK o capacidad Shannon a la interfaz principal.
 
 ## Puerta de finalización de la migración
 
-M0–M5 han de tener evidencia. Hoy solo la base M0/M1 tiene la evidencia descrita en
-STATUS.md, con CI remota todavía pendiente. El estimador rápido actual no equivale al
-motor multipath Java. Por tanto, la migración completa sigue en curso.
+M0–M5 han de tener evidencia. Estado a 2026-11-03: M0 y M1 completas con CI remota. M2–M5 tienen
+los puntos abiertos que lista el [checklist](CHECKLIST.md), varios ya hechos en PR pendientes de
+fusionar. El estimador rápido no equivale al motor multipath Java: el contraste está en
+[B-121](../simulation/JAVA_PARITY.md) y la elección de motor para cerrar M5 la decide el usuario.
+Por tanto, la migración completa sigue en curso.
 
 Completar migración no significa «producto con precisión validada». El objetivo rector
 es [PRODUCT_OBJECTIVE.md](../PRODUCT_OBJECTIVE.md) y el desarrollo posterior se ejecuta

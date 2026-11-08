@@ -6,8 +6,16 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 ## Reserva actual
 
 - Estado: **review** — B-117…B-121 en [PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17) y B-122…B-125 en [PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), ambos en borrador.
-  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 (cambiando bases a `main`) y #14.
+  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 → #23 (cambiando bases a `main`) y #14.
   PR #18–#21 son de Dependabot (acciones de CI y Gradle): sin revisar ni fusionar por B.
+- **review** — B-126…B-129 ([PR #23](https://github.com/Phlekies/smart-home-simulator/pull/23), apilado sobre #22). Reserva escrita
+  después de empezar B-126 y B-128 (descuido corregido el mismo día; nadie más tenía esos archivos):
+  - **B-126** geometría de cruces en vértices de pared independiente del sentido de dibujo, con casos de
+    esquinas, uniones, roces, alturas y escalas (`engines.py`, `scenarios.py`, pruebas, `docs/simulation/GEOMETRY.md`).
+  - **B-127** recorrido E2E en navegador sobre la combinación de la pila B con #14 (rama temporal, sin commit).
+  - **B-128** modo local sin Node: `smart_environment/serve.py` sirve la interfaz compilada y la API.
+  - **B-129** matriz de funciones, ruta y checklists al día.
+  - Sin cambios de contrato.
 - **review** — B-122…B-125 ([PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), apilado sobre #17):
   - **B-122** geometría fuera del modelo (equipo dentro de una pared, por encima o por debajo de todas las
     paredes) sin conclusión favorable; lugares de búsqueda por encima de las paredes descartados.
@@ -47,6 +55,27 @@ Siguiente paso:
 ```
 
 ## Historial
+
+### B-126…B-129 — geometría, recorrido E2E, modo local y matriz (review)
+
+```text
+Tareas / estado: B-126…B-129 / review. Rama local agent-b/b-126-129 sobre #22. 2026-11-03, Europe/Madrid.
+Reserva escrita después de empezar B-126/B-128 (descuido corregido el mismo día; registrado arriba).
+B-126: crossed_walls (engines) sustituye el convenio semiabierto de extremos; scenarios usa la misma regla.
+  Error encontrado con una sonda: la misma esquina en L costaba 0/10/20 dB según el sentido de dibujo.
+  47 casos nuevos; ejemplos Java sin cambios; docs/simulation/GEOMETRY.md.
+B-128: smart_environment/serve.py (StaticFiles en "/" tras las rutas /api, solo 127.0.0.1); salida UTF-8.
+B-127: recorrido E2E en el navegador integrado sobre la pila B + #14 (worktree temporal, fusión limpia, build
+  tsc+vite, servido por B-128): importar, editar, calcular, comparar (+6.4 dB, igual que link-differences),
+  guardar/recuperar (copia local reimportada idéntica; restaurada tras recargar) y crear (pared, dos
+  equipos, enlace, estimación). Consola sin errores. «Guardar JSON» lanzó la descarga del navegador; no
+  apareció ningún archivo nuevo en Descargas. Servidor detenido, worktree y enlace eliminados.
+B-129: FEATURE_MATRIX v2, puerta de ROADMAP, anotaciones de CHECKLIST, LOCAL_DEVELOPMENT, SCOPE_AND_ENGINES.
+Contratos: sin cambios. Comandos: pytest 424; export --check sin deriva; git diff --check limpio.
+Publicación: PR #23 en borrador, apilado sobre #22, por autorización del usuario.
+Siguiente paso: para cerrar M5 faltan merges, decisión de motor
+  (usuario), interfaz pendiente (A) e instalador sin Python/Node (decisión de herramienta).
+```
 
 ### B-122…B-125 — geometría fuera del modelo, diferencias, instrumentos y ámbito (review)
 

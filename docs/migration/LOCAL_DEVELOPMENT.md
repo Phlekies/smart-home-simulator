@@ -40,6 +40,20 @@ servicio falla de forma visible; no se busca un puerto alternativo silenciosamen
 El lanzador pasa su propia salida a los servicios, así que el motivo (por ejemplo
 «Port 5174 is already in use») aparece junto al aviso «A service stopped».
 
+## Modo local sin Node (B-128)
+
+Para usar la aplicación sin herramientas de desarrollo de la web, compila la interfaz una vez (este
+paso sí necesita Node) y sírvela junto a la API desde un solo proceso de Python:
+
+```powershell
+npm.cmd --prefix apps/web run build
+.venv/Scripts/python.exe -m smart_environment.serve
+```
+
+Abrir http://127.0.0.1:8000/ . Opciones: `--port` y `--dist` (otra carpeta compilada). Escucha solo
+en 127.0.0.1 y, sin interfaz compilada, se detiene indicando la orden de compilación. La carpeta
+`apps/web/dist` no se versiona: un paquete distribuible tendría que incluirla.
+
 Para desarrollo también pueden ejecutarse en dos terminales:
 
 ```powershell
