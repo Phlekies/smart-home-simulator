@@ -1,5 +1,6 @@
 import type { CoverageMapParameters, CoverageMapResult } from '../generated/coverage-map.ts';
 import type { Project } from '../generated/project.ts';
+import { stableEcho } from './echo.ts';
 
 export type CoverageRequest = CoverageMapParameters & { project: Project };
 export type MapMetric = 'forward_dbm' | 'reverse_dbm' | 'forward_margin_db' | 'reverse_margin_db';
@@ -21,18 +22,10 @@ export function mapColor(value: number | null, metric: MapMetric): string {
   const t = Math.max(0, Math.min(1, (value - min) / (max - min)));
   return `rgb(${Math.round(80 - 45 * t)}, ${Math.round(50 + 150 * t)}, ${Math.round(135 + 50 * t)})`;
 }
-function stable(value: unknown): string {
-  if (Array.isArray(value)) return `[${value.map(stable).join(',')}]`;
-  if (value !== null && typeof value === 'object') {
-    const object = value as Record<string, unknown>;
-    return `{${Object.keys(object).sort().map(key => `${JSON.stringify(key)}:${stable(object[key])}`).join(',')}}`;
-  }
-  return JSON.stringify(value);
-}
 export function validateMapResult(result: CoverageMapResult, request: CoverageRequest, expectedHash: string) {
   const { project: _project, ...parameters } = request;
   const size = result.columns * result.rows;
-  if (result.request_hash !== expectedHash || stable(result.parameters) !== stable(parameters)) throw new Error('El mapa recibido pertenece a otros parámetros. Vuelve a calcular.');
+  if (result.request_hash !== expectedHash || stableEcho(result.parameters) !== stableEcho(parameters)) throw new Error('El mapa recibido pertenece a otros parámetros. Vuelve a calcular.');
   if (!Number.isInteger(result.columns) || !Number.isInteger(result.rows) || result.columns < 1 || result.rows < 1 || size > 40000
     || result.columns !== Math.max(1, Math.ceil(parameters.grid.width_m / parameters.grid.resolution_m - 1e-9))
     || result.rows !== Math.max(1, Math.ceil(parameters.grid.depth_m / parameters.grid.resolution_m - 1e-9))

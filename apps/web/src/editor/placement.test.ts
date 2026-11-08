@@ -46,3 +46,13 @@ test('a delta is suppressed when equal complete counts hide different complete l
   result.baseline.targets[0].status = 'incomplete'; result.ranking[0].targets[1].status = 'incomplete';
   assert.equal(comparablePlacementDelta(result.baseline, result.ranking[0]), null);
 });
+
+test('optional search fields echoed as null still match; real values are still compared', () => {
+  // B-119 and B-134 added distance limits and a scenario with a null default.
+  const { request, result } = analysisFixture();
+  const echoed = structuredClone(result);
+  Object.assign(echoed.parameters, { max_power_distance_m: null, max_network_distance_m: null, scenario: null });
+  validatePlacementResult(echoed, request);
+  Object.assign(echoed.parameters, { max_power_distance_m: 3 });
+  assert.throws(() => validatePlacementResult(echoed, request));
+});
