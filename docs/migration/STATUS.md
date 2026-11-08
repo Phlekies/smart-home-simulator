@@ -4,44 +4,38 @@ Inicio: 2026-10-29. La migración completa está en curso, no terminada.
 
 ## Resumen vigente para retomar trabajo
 
-Última actualización documental: 2026-10-30, consolidación I-003 (B) tras fusionar #8, #9 y #10.
-Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md) y [tablero](../process/WORKBOARD.md).
+Última actualización documental: 2026-11-08, consolidación I-007 (B) tras fusionar #11…#25 y #14.
+Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md), [tablero](../process/WORKBOARD.md)
+y el [plan de cierre](CLOSING_PLAN.md).
 
-- M0/base M1 implementados; CI remota de migración superada en PR #2 para 33f1df8.
-- M2 parcial: paredes/undo, recuperación local, radios/enlaces y recorrido de teclado
-  implementados. Referencia de imagen de sesión disponible; persistencia del consumidor
-  A-102 y evaluación completa de accesibilidad pendientes.
-- Mapas: API B-103 y visualización A-104 en `main` ([evidencia UI](../ui/COVERAGE_MAP.md)).
-  Sionna RT no está integrado en la API; B-102 lo evaluó en WSL/CPU (18/18) y no ejecuta en Windows nativo.
-- También en `main`, solo como API y sin interfaz todavía: búsqueda de ubicación del AP (B-105),
-  perfiles Wi-Fi genéricos (B-106) y escenarios de puertas/materiales (B-108).
-- Sin validación experimental en viviendas; el producto completo continúa pendiente.
-- `main` = 6fb42e2: #7 (I-002, ejecutada por A, 046ee82) y después, a petición del usuario, #8
-  (6d7e69f), #9 (760e3cd) y #10 (6fb42e2). PR #3–#6 cerrados sin fusionar porque ya estaban en `main`.
-  CI de 6fb42e2: migración en verde; Java: en verde (Linux, Windows y macOS; run 41070899874).
-- Última evidencia de código: combinación `main`+#8+#9+#10 verificada localmente por B: **199 pruebas
-  Python, 84 web/editor, build, contratos y tipos generados sin deriva**. Java no se modifica.
-- [Matriz de funciones Java](FEATURE_MATRIX.md) (B-107): qué se conserva, sustituye o excluye y por qué.
-- Interfaz A-109…A-113 en [PR #14](https://github.com/Phlekies/smart-home-simulator/pull/14), revisada por B (I-005), con A-102 incluida.
-- En revisión: I-004, B-109…B-112 (#13) y B-113…B-116 (#15): procedencia por
-  parámetro, mapas con escenario, informe por enlace y comprobación de medidas. Ver secciones inferiores.
-- En revisión: B-117…B-121 ([PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17), sobre #16): conexión de datos de los AP,
-  perfiles de AP, enchufes y tomas en la búsqueda, mapas en el informe y paridad con Java.
-- En revisión: B-122…B-125 ([PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), sobre #17): geometría fuera del
-  modelo, diferencias exactas entre versiones, medidas con móvil y
-  [ámbito real y motores](SCOPE_AND_ENGINES.md).
-- En revisión: B-126…B-129 ([PR #23](https://github.com/Phlekies/smart-home-simulator/pull/23), sobre #22): cruces de paredes independientes
-  del dibujo, recorrido E2E en navegador, modo local de un proceso y matriz v2.
-- En revisión: B-130…B-133 e I-006 ([PR #24](https://github.com/Phlekies/smart-home-simulator/pull/24), sobre #23): motor de cierre
-  decidido (ADR-008), instalación con Python, huella de proyecto, ensayo de integración completo y
-  [plan de cierre](CLOSING_PLAN.md).
-- En revisión: B-134 y B-135 ([PR #25](https://github.com/Phlekies/smart-home-simulator/pull/25), sobre #24): búsqueda de ubicación bajo
-  incertidumbre y niveles de evidencia en el informe.
+- `main` = 8734c9b: #11, #13, #15, #16, #17, #22, #23, #24 y #25 (pila B: B-107…B-135, I-003…I-006) y #14
+  (A-102, A-109…A-113), fusionados el 2026-11-08 por B con autorización del usuario. CI de `main`:
+  Java (Linux, Windows y macOS) y migración en verde. El #12 queda abierto: su commit llegó con el #14.
+- Checklist técnico: M0, M1, M3 y M5 (salvo la condición final sobre Java) completas. Abiertos:
+  - M2: accesibilidad y recorrido de creación;
+  - M4: mapas guardables y predicción separada de la recomendación de compra.
+
+  Todos son de interfaz y están reservados como A-114…A-119 por B, que asume el papel de A por
+  instrucción del usuario.
+- Motor de la migración: estimador directo 0.2.0 ([ADR-008](ARCHITECTURE.md)); Sionna RT evaluado, no integrado.
+- Instalación: `python scripts/start.py` (B-131). Sin validación experimental en viviendas; el producto
+  sigue su propio plan.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## I-007 — merges y verificación de `main` (8734c9b) — 2026-11-08
+
+| Comprobación | Resultado |
+|---|---|
+| Merges | #11 → #13 → #15 → #16 → #17 → #22 → #23 → #24 → #25 (cada uno con su base cambiada a `main`) y #14. Sin conflictos; commit de cabecera comprobado en cada merge |
+| CI de `main` 8734c9b | «CI» (Java, tres sistemas) y «Migration contracts and application» en verde |
+| Local sobre `main` | 444 Python; contratos sin deriva; script `contracts` de A sin deriva; build (`tsc` + vite) y 120 pruebas web; paquete local generado |
+| Clon nuevo desde GitHub | `python scripts/start.py --prepare-only`: `.venv`, dependencias, `npm ci` y compilación en 30 s |
+| Navegador sobre ese clon (servidor único B-128) | Importar el apartamento y calcular (la interfaz muestra «Modelo 0.2.0 · sin calibrar»). Fijar la base y mover el sensor de puerta de X = 40 a 30 m: −78.8 → −72.4 dBm (+6.4 dB). Copia local con X = 30 m; recargar y restaurar da −72.4 dBm. Consola sin errores. Servidor detenido |
+| Casillas marcadas | M2 imagen de referencia; M3 conversión y diferencias con Java; M4 comparación con restricciones; M5 pruebas, E2E y documentación del ámbito |
 
 ## B-134 y B-135 — búsqueda bajo incertidumbre y niveles de evidencia — 2026-11-08
 

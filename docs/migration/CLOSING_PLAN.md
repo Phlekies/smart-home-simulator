@@ -1,6 +1,8 @@
 # Plan de cierre de la migración (B-133)
 
-Preparado el 2026-11-08 por B (integrador). Ejecutarlo **después** de que el usuario fusione los PR.
+Preparado el 2026-11-08 por B (integrador). **Pasos 1–3 ejecutados el mismo día (I-007)**: los merges los
+hizo B con autorización del usuario, `main` = 8734c9b y las casillas están marcadas. El paso 4 está en curso:
+B asume el papel de A (A-114…A-119).
 Ningún paso se marca antes: `[x]` en el [checklist](CHECKLIST.md) exige trabajo en `main` y evidencia en
 [STATUS](STATUS.md).
 
