@@ -1,7 +1,8 @@
 name: Release
 
 # Pushing a tag such as v1.0.0 builds native packages on every operating system and publishes
-# them as a GitHub release, with the notes taken from CHANGELOG.md.
+# them as a GitHub release, with the notes taken from CHANGELOG.md. The new local web application
+# is attached as a zip that only needs Python (scripts/package_local.py, B-131).
 on:
   push:
     tags: ["v*"]
@@ -64,9 +65,42 @@ jobs:
           path: dist/*
           if-no-files-found: error
 
+  local-app:
+    name: Package the local web application
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Build the interface and the zip
+        run: |
+          npm ci --prefix apps/web
+          npm run build --prefix apps/web
+          python scripts/package_local.py --output dist --name "SmartEnvironment-local-${GITHUB_REF_NAME#v}"
+
+      - name: Upload the zip
+        uses: actions/upload-artifact@v7
+        with:
+          name: package-local-app
+          path: dist/*
+          if-no-files-found: error
+
   release:
     name: Publish the release
-    needs: package
+    needs: [package, local-app]
     runs-on: ubuntu-latest
 
     steps:
@@ -98,5 +132,8 @@ jobs:
           - **macOS** (Apple silicon): open the `.dmg` and drag the app to Applications. The build is not
             notarised, so the first time right-click the app and choose *Open*.
           - **Linux** (Debian/Ubuntu): `sudo apt install ./SmartHomeSimulator-*-linux-x64.deb`.
+          - **New local web application** (migration in progress): unzip `SmartEnvironment-local-*.zip`
+            and run `python scripts/start.py` (Python 3.11 or later; no Node needed). It serves the
+            interface on http://127.0.0.1:8000/ only.
           EOF
           gh release create "$GITHUB_REF_NAME" dist/* --title "Smart Home Simulator ${VERSION}" --notes-file notes.md
