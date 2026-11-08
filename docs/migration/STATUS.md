@@ -35,7 +35,7 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
 - En revisión: B-130…B-133 e I-006 ([PR #24](https://github.com/Phlekies/smart-home-simulator/pull/24), sobre #23): motor de cierre
   decidido (ADR-008), instalación con Python, huella de proyecto, ensayo de integración completo y
   [plan de cierre](CLOSING_PLAN.md).
-- En revisión local: B-134 y B-135 (rama `agent-b/b-134-135`, sobre #24): búsqueda de ubicación bajo
+- En revisión: B-134 y B-135 ([PR #25](https://github.com/Phlekies/smart-home-simulator/pull/25), sobre #24): búsqueda de ubicación bajo
   incertidumbre y niveles de evidencia en el informe.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.

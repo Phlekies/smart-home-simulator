@@ -6,9 +6,9 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 ## Reserva actual
 
 - Estado: **review** — B-117…B-121 en [PR #17](https://github.com/Phlekies/smart-home-simulator/pull/17) y B-122…B-125 en [PR #22](https://github.com/Phlekies/smart-home-simulator/pull/22), ambos en borrador.
-  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 → #23 → #24 (cambiando bases a `main`) y #14.
+  Pendiente del usuario: merges #11 → #13 → #15 → #16 → #17 → #22 → #23 → #24 → #25 (cambiando bases a `main`) y #14.
   PR #18–#21 son de Dependabot (acciones de CI y Gradle): sin revisar ni fusionar por B.
-- **review** — B-134 y B-135 (rama local `agent-b/b-134-135`, apilada sobre #24). Condiciones de la tabla
+- **review** — B-134 y B-135 ([PR #25](https://github.com/Phlekies/smart-home-simulator/pull/25), apilado sobre #24). Condiciones de la tabla
   de inventario de ROADMAP que seguían abiertas para B:
   - **B-134** `HubPlacementOptimizer`: evaluación bajo incertidumbre. `PlacementSearchParameters.scenario`
     opcional (mismas reglas que los mapas B-114), para ordenar los lugares, por ejemplo, en el peor caso.
@@ -92,7 +92,8 @@ Comandos: pytest 444; export --check sin deriva; ensayo main + pila B + #14: con
   build y 120 pruebas web; worktree eliminado.
 Solicitud a A: opción «ordenar bajo el peor caso» en la búsqueda (A-110) y mostrar el nivel de evidencia
   del informe.
-Siguiente paso: publicar si el usuario lo autoriza; tras los merges, CLOSING_PLAN.
+Publicación: PR #25 en borrador, apilado sobre #24, por autorización del usuario.
+Siguiente paso: tras los merges, CLOSING_PLAN.
 ```
 
 ### B-130…B-133 e I-006 — decisión de motor, instalación con Python, huella y ensayo de integración (review)
