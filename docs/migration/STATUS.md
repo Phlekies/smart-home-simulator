@@ -22,13 +22,27 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
 - Última evidencia de código: combinación `main`+#8+#9+#10 verificada localmente por B: **199 pruebas
   Python, 84 web/editor, build, contratos y tipos generados sin deriva**. Java no se modifica.
 - [Matriz de funciones Java](FEATURE_MATRIX.md) (B-107): qué se conserva, sustituye o excluye y por qué.
-- En revisión: I-004, B-109…B-112 (#13) y B-113…B-116 (rama `agent-b/b-113-116`): procedencia por
+- Interfaz A-109…A-113 en [PR #14](https://github.com/Phlekies/smart-home-simulator/pull/14), revisada por B (I-005), con A-102 incluida.
+- En revisión: I-004, B-109…B-112 (#13) y B-113…B-116 (#15): procedencia por
   parámetro, mapas con escenario, informe por enlace y comprobación de medidas. Ver secciones inferiores.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## I-005 — revisión de A-109…A-113 ([PR #14](https://github.com/Phlekies/smart-home-simulator/pull/14)) — 2026-10-31
+
+| Comprobación | Resultado |
+|---|---|
+| Alcance del diff frente a `main` | 38 archivos de A (interfaz, `package.json`, `docs/ui`, su registro); ninguno de backend, contratos ni generados. Incluye los commits de A-102 (#12) |
+| Proyecto de demostración `docs/ui/five-tasks-demo.shsim.json` | Sintético: una pared y dos equipos «de prueba», sin referencia de imagen ni datos de una vivienda |
+| Capturas nuevas | Solo la aplicación con datos sintéticos de QA |
+| Pila B (#11+#13+#15) + #14 en rama local temporal | Sin conflictos; 244 Python, contratos sin deriva, generados sin deriva con el script `contracts` de A, 120 pruebas web, build correcto |
+| Navegador (`scripts/dev.py`, apartamento) | «Comparar escenarios» devuelve los rangos con mi API: ida −59.29…−70.91 dBm, vuelta «Sin datos» por la potencia del hub desconocida, radio sin verificar; consola sin errores. Servidores detenidos |
+
+Orden propuesto de merge: #11 → #13 → #15 (cambiando su base a `main`) → #14 (que ya contiene #12;
+el #12 puede cerrarse como incluido o fusionarse antes). Los checklists solo se marcan tras el merge.
 
 ## B-113…B-116 — procedencia, mapas con escenario, informe y medidas — 2026-10-30
 

@@ -26,7 +26,7 @@ no basta esta especificación. La migración tiene [su checklist propio](../migr
 
 ## P2 — Riesgo y supuestos
 
-- [ ] Puertas y materiales inciertos admiten escenarios identificados (API B-108 en `main` y mapas con escenario B-114; interfaz A-111…A-113 en curso).
+- [ ] Puertas y materiales inciertos admiten escenarios identificados (API B-108 en `main` y mapas con escenario B-114; interfaz A-111…A-113 en #14, revisada).
 - [ ] Clasificación distingue favorable, marginal, insuficiente y sin datos.
 - [ ] Sin umbral RSSI universal ni porcentajes de éxito inventados.
 - [ ] Ruido/interferencia no evaluados se declaran independientemente de la cobertura.
