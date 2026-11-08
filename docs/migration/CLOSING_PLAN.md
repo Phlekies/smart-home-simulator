@@ -61,6 +61,9 @@ build y 120 pruebas web, sin conflictos.
 
 ## 5. Declaración de cierre (B, con el usuario)
 
+**Hecho el 2026-11-08 (I-008):** M0–M5 marcadas en `main` 23ace32; ruta, matriz, STATUS y README
+actualizados. Java se conserva como referencia mientras el usuario no decida otra cosa.
+
 Cuando M0–M5 estén marcadas:
 1. Actualizar [ROADMAP](ROADMAP.md) («Puerta de finalización»), [FEATURE_MATRIX](FEATURE_MATRIX.md) y STATUS.
 2. Proponer al usuario qué hacer con Java: conservarlo como referencia, que es lo que hacen hoy

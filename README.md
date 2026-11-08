@@ -10,7 +10,7 @@ detectar riesgos y comparar mejoras. Wi-Fi primero, empezando por 2.4 GHz.
 [Plan del producto tras la migración](docs/product/DEVELOPMENT_PLAN.md) ·
 [Checklist del producto](docs/product/ACCEPTANCE_CHECKLIST.md).
 
-> **Migración en curso (2026-10-29):** nueva aplicación local con interfaz React/TypeScript
+> **Migración técnica completada (2026-11-08):** nueva aplicación local con interfaz React/TypeScript
 > y servicio Python. [Arranque local](docs/migration/LOCAL_DEVELOPMENT.md),
 > [ruta completa](docs/migration/ROADMAP.md), [checklist](docs/migration/CHECKLIST.md)
 > y [evidencia del estado](docs/migration/STATUS.md). Para usarla basta con Python 3.11+:

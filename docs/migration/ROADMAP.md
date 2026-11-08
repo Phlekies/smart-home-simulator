@@ -126,13 +126,16 @@ ilustrativas, BER BPSK o capacidad Shannon a la interfaz principal.
 
 ## Puerta de finalización de la migración
 
-M0–M5 han de tener evidencia. Estado a 2026-11-03: M0 y M1 completas con CI remota. M2–M5 tienen
-los puntos abiertos que lista el [checklist](CHECKLIST.md), varios ya hechos en PR pendientes de
-fusionar. El estimador rápido no equivale al motor multipath Java: el contraste está en
-[B-121](../simulation/JAVA_PARITY.md). El usuario decidió el 2026-11-08 cerrar la migración con el
-estimador directo ([ADR-008](ARCHITECTURE.md)) y una instalación que solo requiere Python. Los pasos
-restantes están en el [plan de cierre](CLOSING_PLAN.md).
-Por tanto, la migración completa sigue en curso.
+M0–M5 han de tener evidencia. **Migración técnica completada el 2026-11-08** (`main` = 23ace32):
+- todas las casillas del [checklist](CHECKLIST.md) están marcadas con evidencia en STATUS;
+- la CI de migración está en verde, y también la de Java en el PR #26, con el mismo árbol.
+
+Decisiones del usuario:
+- motor: el estimador directo ([ADR-008](ARCHITECTURE.md)), que no equivale al multipath Java
+  (contraste en [B-121](../simulation/JAVA_PARITY.md));
+- instalación: solo con Python.
+
+Java se conserva como referencia (ADR-001); retirarlo exigiría una tarea propia decidida por el usuario.
 
 Completar migración no significa «producto con precisión validada». El objetivo rector
 es [PRODUCT_OBJECTIVE.md](../PRODUCT_OBJECTIVE.md) y el desarrollo posterior se ejecuta

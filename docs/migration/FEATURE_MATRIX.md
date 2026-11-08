@@ -69,12 +69,12 @@ motivo), **Nueva** (no existía en Java).
 | 192 pruebas Java en CI | Conservada | CI Java sigue en Linux/Windows/macOS | Referencia mientras no se superen las puertas |
 | — | Nueva | Pruebas Python (444) y web (131), contratos sin deriva en CI, paridad con Java (B-121), recorridos E2E en navegador (B-127, I-007, A-114…A-119) e integración completa (I-006, I-007) | Sustitución verificable |
 
-## Pendiente para cerrar M5 sobre esta matriz
+## Estado al cerrar la migración (2026-11-08, `main` 23ace32)
 
-- Motor: decidido el 2026-11-08 ([ADR-008](ARCHITECTURE.md)). La migración se cierra con el estimador
-  directo y Sionna RT queda evaluado, no integrado.
-- Interfaz (A): descarga del informe con mapas, exportación de imagen, zoom/pan, accesibilidad completa y,
-  si aporta, plantillas adicionales; mostrar procedencia, conexión de datos y diferencias.
-- Distribución: decidido el 2026-11-08 que basta con Python. `scripts/start.py` lo prepara todo y
-  `scripts/package_local.py` incluye la web compilada (B-131). No se hará instalador nativo en la migración.
+- **Motor:** estimador directo ([ADR-008](ARCHITECTURE.md)); Sionna RT evaluado, no integrado.
+- **Interfaz:** informe descargable con mapas, exportación de imagen, zoom/pan, mapas guardables y
+  recorrido guiado (A-114…A-119).
+- **Distribución:** con Python (`scripts/start.py`; zip con la web compilada en las releases, B-131).
+- **Siguen pendientes, sin bloquear la migración:** herramienta de habitaciones, más plantillas y mostrar
+  en la interfaz la procedencia, la conexión de datos y las diferencias exactas. Son mejoras de producto.
 - Revisar la matriz al cerrar cada fase: un estado «Pendiente» no se convierte en «Excluida» sin motivo.

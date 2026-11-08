@@ -10,7 +10,9 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 - **Cambio de rol (2026-11-08):** por instrucción del usuario, esta sesión asume también el papel de A de forma
   secuencial para la interfaz pendiente (A-114…A-119, reservadas en [AGENT_A](AGENT_A.md)). Mientras dure,
   B no trabaja en paralelo sobre los mismos archivos.
-- A-114…A-120 en review (rama local `agent-a/a-114-119`); incluye la corrección de integración A-120
+- A-114…A-120 fusionadas por #26 (23ace32); I-008: migración técnica declarada completa. Sin tareas
+  abiertas de B; quedan las del producto (criterio de fallo, medidas) y la decisión sobre Java.
+- Detalle de A-120: incluye la corrección de integración
   (mapas y búsqueda de la interfaz rotos en `main` desde los campos opcionales nuevos).
 - Contratos de B-117…B-121 (todos aditivos y opcionales; ningún consumidor existente cambia):
   `Device.data_connection`, `Building.power_outlets`/`network_ports` (fuera de `input_hash`),

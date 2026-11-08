@@ -5,7 +5,7 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- Estado: **review** — A-114…A-120, hechas por la sesión de B por instrucción del usuario (2026-11-08), de
+- Estado: **done** — A-114…A-120 en `main` por #26 (23ace32), hechas por la sesión de B por instrucción del usuario (2026-11-08), de
   forma secuencial y documentada (AGENTS.md: un único agente puede asumir ambos roles). Rama local
   `agent-a/a-114-119` sobre `main` 8734c9b + I-007.
   - **A-114** guardar y reabrir mapas como archivo local; vigencia con `POST /api/projects/fingerprint` (B-132).
