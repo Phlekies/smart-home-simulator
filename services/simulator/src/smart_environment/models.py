@@ -568,7 +568,8 @@ class PlacementZone(Model):
 class PlacementSearchParameters(Model):
     """Everything that defines a search except the project; echoed in the result."""
 
-    model_config = ConfigDict(json_schema_extra=_optional_fields("max_power_distance_m", "max_network_distance_m"))
+    model_config = ConfigDict(json_schema_extra=_optional_fields(
+        "max_power_distance_m", "max_network_distance_m", "scenario"))
 
     access_point_device_id: Identifier
     access_point_radio_id: Identifier
@@ -582,6 +583,9 @@ class PlacementSearchParameters(Model):
         "Discard places farther than this straight-line distance from every power outlet (B-119)"))
     max_network_distance_m: Positive | None = Field(default=None, le=100, description=(
         "Discard places farther than this straight-line distance from every network socket (B-119)"))
+    scenario: ScenarioAssumptions | None = Field(default=None, description=(
+        "Door states and material bounds for every place (B-134), e.g. the worst case of "
+        "/api/scenario-simulations to rank under unfavourable hypotheses; None uses the project as it is"))
 
 
 class PlacementSearchRequest(PlacementSearchParameters):
@@ -608,6 +612,8 @@ class PlacementSearchRequest(PlacementSearchParameters):
             raise ValueError("max_power_distance_m needs at least one power outlet in the project")
         if self.max_network_distance_m is not None and not self.project.building.network_ports:
             raise ValueError("max_network_distance_m needs at least one network socket in the project")
+        if self.scenario is not None and (issue := scenario_issue(self.project, self.scenario)):
+            raise ValueError(issue)
         return self
 
 
@@ -824,5 +830,6 @@ class ScenarioResult(Model):
 
 
 # Coverage-map models reference ScenarioAssumptions, defined after them.
-for _model in (CoverageMapParameters, CoverageMapRequest, CoverageMapResult, CoverageMapJob):
+for _model in (CoverageMapParameters, CoverageMapRequest, CoverageMapResult, CoverageMapJob,
+               PlacementSearchParameters, PlacementSearchRequest, PlacementSearchResult):
     _model.model_rebuild()

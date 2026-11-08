@@ -69,3 +69,16 @@ def test_api_endpoints():
     assert markdown.status_code == 200 and markdown.headers["content-type"].startswith("text/markdown")
     assert markdown.text.startswith("# Prueba")
     assert client.post("/api/reports", json={**body, "scenarios": [{"id": "best", "name": "x"}]}).status_code == 422
+
+
+# --- Evidence levels (B-135) -------------------------------------------------------------
+
+def test_report_keeps_consistency_calibration_and_validation_apart():
+    report = build_report(ReportRequest(project=scenario_project(sensitivity=-77)))
+    assert [(e.level, e.status) for e in report.evidence_levels] == [
+        ("consistency", "checked"), ("calibration", "none"), ("validation", "none")]
+    assert "no que acierte en una vivienda" in report.evidence_levels[0].detail
+    text = to_markdown(report)
+    section = text.split("## Nivel de evidencia")[1].split("## Decisiones pendientes")[0]
+    assert "| Consistencia matemática | comprobado |" in section
+    assert "| Calibración con medidas | ninguno |" in section and "| Validación en viviendas | ninguno |" in section

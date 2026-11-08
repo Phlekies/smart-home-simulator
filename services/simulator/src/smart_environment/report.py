@@ -26,6 +26,14 @@ PENDING_DECISIONS = [
     "Reserva de diseño para clasificar la cobertura (favorable, marginal, insuficiente): sin decidir.",
     "Validación experimental en viviendas: sin medidas todavía; las cifras son del estimador.",
 ]
+EVIDENCE_LEVELS = [
+    ("consistency", "checked",
+     "Casos analíticos de espacio libre, pared y reflexión (B-101), reglas de cruce de paredes (B-126) y trayecto "
+     "directo igual al de Java en antenas y polarización (B-121). Comprueba que el modelo calcula lo que dice; no "
+     "que acierte en una vivienda."),
+    ("calibration", "none", "Sin campañas de calibración: ningún parámetro se ha ajustado con medidas."),
+    ("validation", "none", "Sin medidas independientes en viviendas: el error frente a la realidad es desconocido."),
+]
 NOT_EVALUATED = [
     "Tráfico, velocidad útil, latencia y estabilidad del enlace.",
     "Interferencias de otras redes y equipos.",
@@ -93,6 +101,14 @@ class ReportLink(Model):
     notes: list[str]
 
 
+class EvidenceLevel(Model):
+    """What kind of evidence backs the numbers (B-135); consistency is not accuracy."""
+
+    level: Literal["consistency", "calibration", "validation"]
+    status: Literal["checked", "none"]
+    detail: str
+
+
 class MapSummary(Model):
     """Counts and spread of a map; not a coverage percentage (no failure criterion or design reserve yet)."""
 
@@ -112,7 +128,7 @@ class ReportMap(Model):
 
 
 class InstallationReport(Model):
-    model_config = ConfigDict(json_schema_extra=_optional_fields("access_points", "maps"))
+    model_config = ConfigDict(json_schema_extra=_optional_fields("access_points", "maps", "evidence_levels"))
 
     title: str
     project_name: str
@@ -128,6 +144,8 @@ class InstallationReport(Model):
     access_points: list[AccessPointConnection] = Field(default_factory=list, description=(
         "Data path of each access point (B-117), as in the simulation result"))
     maps: list[ReportMap] = Field(default_factory=list, description="Requested coverage maps (B-120)")
+    evidence_levels: list[EvidenceLevel] = Field(default_factory=list, description=(
+        "Consistency, calibration and validation behind these numbers, kept apart (B-135)"))
 
 
 def _direction(project: Project, result: DirectionResult | None, receiver: Radio) -> ReportDirection | None:
@@ -200,10 +218,14 @@ def build_report(request: ReportRequest) -> InstallationReport:
         scope=simulation.scope + ". El informe no clasifica la cobertura ni recomienda compras.",
         links=links, counts=counts, pending_decisions=PENDING_DECISIONS, not_evaluated=NOT_EVALUATED,
         limitations=LIMITATIONS, access_points=simulation.access_points,
-        maps=[_map(project, parameters) for parameters in request.maps])
+        maps=[_map(project, parameters) for parameters in request.maps],
+        evidence_levels=[EvidenceLevel(level=level, status=status, detail=detail)
+                         for level, status, detail in EVIDENCE_LEVELS])
 
 
 DOOR_LABELS = {"open": "abierta", "closed": "cerrada", "unknown": "estado desconocido"}
+EVIDENCE_LABELS = {"consistency": "Consistencia matemática", "calibration": "Calibración con medidas",
+                   "validation": "Validación en viviendas"}
 CONNECTION_LABELS = {"gateway": "pasarela", "wired": "cable (no evaluado)", "wireless": "inalámbrica",
                      "unknown": "desconocida", "undefined": "sin definir", "loop": "bucle"}
 SIGN_LABELS = {"consistent": "mismo signo en todos los escenarios",
@@ -280,6 +302,10 @@ def to_markdown(report: InstallationReport) -> str:
                                f"{_cell(sample.reverse_dbm)} | {_cell(sample.forward_margin_db)} | "
                                f"{_cell(sample.reverse_margin_db)} | {_cell(sample.status)} |")
             out += ["", *[f"- {_cell(reason)}" for reason in item.result.reasons], ""]
+    if report.evidence_levels:
+        out += ["## Nivel de evidencia", "", "| Nivel | Estado | Qué significa |", "|---|---|---|"]
+        out += [f"| {EVIDENCE_LABELS[e.level]} | {'comprobado' if e.status == 'checked' else 'ninguno'} | "
+                f"{_cell(e.detail)} |" for e in report.evidence_levels] + [""]
     out += ["## Decisiones pendientes", "", *[f"- {d}" for d in report.pending_decisions], "",
             "## No evaluado", "", *[f"- {n}" for n in report.not_evaluated], "",
             "## Limitaciones del motor", "", *[f"- {_cell(item)}" for item in report.limitations], ""]

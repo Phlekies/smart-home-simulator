@@ -49,6 +49,8 @@ export type MaxPowerDistanceM = number | null;
  * Discard places farther than this straight-line distance from every network socket (B-119)
  */
 export type MaxNetworkDistanceM = number | null;
+export type Id2 = string;
+export type Name = string;
 export type Criterion = "max-min-bidirectional-margin";
 /**
  * False when no candidate has complete margins: nothing is ordered
@@ -130,6 +132,10 @@ export interface PlacementSearchParameters {
   engine: Engine1;
   max_power_distance_m?: MaxPowerDistanceM;
   max_network_distance_m?: MaxNetworkDistanceM;
+  /**
+   * Door states and material bounds for every place (B-134), e.g. the worst case of /api/scenario-simulations to rank under unfavourable hypotheses; None uses the project as it is
+   */
+  scenario?: ScenarioAssumptions | null;
 }
 /**
  * A place where the AP may physically go (power, cabling and mounting already checked).
@@ -156,6 +162,21 @@ export interface PlacementZone {
   max_y_m: MaxYM;
   height_m: HeightM;
   step_m: StepM;
+}
+/**
+ * Named scenario: door states and material bounds that replace the nominal project values.
+ */
+export interface ScenarioAssumptions {
+  id: Id2;
+  name: Name;
+  doors: Doors;
+  materials: Materials;
+}
+export interface Doors {
+  [k: string]: "open" | "closed";
+}
+export interface Materials {
+  [k: string]: "low" | "nominal" | "high";
 }
 export interface CandidateEvaluation {
   candidate_id: CandidateId;

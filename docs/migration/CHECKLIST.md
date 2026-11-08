@@ -71,7 +71,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] Presupuesto de ambos sentidos para puntos individuales (punto exacto sin redondeo; B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
 - [x] AP/emisor y receptor/perfil identificados en cada resultado (B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
 - [x] Energía agregada no se presenta como señal de una conexión (un AP por mapa; B-103 + A-104 en `main`; evidencia en [COVERAGE_MAP](../ui/COVERAGE_MAP.md)).
-- [ ] Comparación de posiciones y optimización básica con restricciones (comparación manual A-105 y API de lugares permitidos B-105 en `main`; interfaz A-110 en #14, revisada).
+- [ ] Comparación de posiciones y optimización básica con restricciones (comparación manual A-105 y API de lugares permitidos B-105 en `main`; interfaz A-110 en #14, revisada; orden bajo el peor caso B-134 en revisión).
 - [ ] Mapas guardables y resultados invalidados al editar (invalidación verificada en A-104; B-120 guarda los mapas en el informe y B-132 define el mapa guardado como archivo local con huella de vigencia, ambos en revisión; falta guardar y reabrir desde la interfaz).
 - [ ] Predicción técnica separada de recomendación de compra validada.
 

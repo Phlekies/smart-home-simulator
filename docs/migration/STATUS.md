@@ -35,11 +35,21 @@ Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md
 - En revisión: B-130…B-133 e I-006 ([PR #24](https://github.com/Phlekies/smart-home-simulator/pull/24), sobre #23): motor de cierre
   decidido (ADR-008), instalación con Python, huella de proyecto, ensayo de integración completo y
   [plan de cierre](CLOSING_PLAN.md).
+- En revisión: B-134 y B-135 ([PR #25](https://github.com/Phlekies/smart-home-simulator/pull/25), sobre #24): búsqueda de ubicación bajo
+  incertidumbre y niveles de evidencia en el informe.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## B-134 y B-135 — búsqueda bajo incertidumbre y niveles de evidencia — 2026-11-08
+
+| Tarea | Comprobación | Resultado |
+|---|---|---|
+| B-134 | `test_placement_uncertainty.py` (5) | Con un tabique incierto, el lugar A gana en el caso nominal y el B en el peor caso. El margen de A baja exactamente 12 dB (de 3 a 15 dB) y el de B no cambia (ladrillo conocido). El peor caso de `/api/scenario-simulations` se usa tal cual; mismas reglas que los mapas; huella de petición sin cambios para búsquedas antiguas |
+| B-135 | `test_report.py` | Tres niveles en orden: consistencia «comprobado», calibración y validación «ninguno»; sección Markdown |
+| Ensayo de integración | `main` + pila B + #14 en worktree temporal | 444 Python; contratos y tipos de A sin deriva; build y 120 pruebas web; sin conflictos; worktree eliminado |
 
 ## B-130…B-133 e I-006 — decisión de motor, instalación con Python, huella y ensayo de integración — 2026-11-08
 

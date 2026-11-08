@@ -40,6 +40,12 @@ Parámetros:
   cable más corto posible: solo se descartan lugares que seguro no alcanzan. Un límite sin enchufes
   o tomas en el proyecto responde 422. Enchufes y tomas no entran en `input_hash`, pero sí en
   `request_hash`, para que la caché no devuelva una búsqueda antigua.
+- `scenario` (B-134, opcional): estados de puerta y límites de material aplicados a todos los lugares,
+  con las mismas reglas que los mapas (B-114). Pasar el escenario `worst` de
+  `/api/scenario-simulations` ordena los lugares bajo hipótesis desfavorables. Si el orden cambia
+  respecto al nominal, la elección depende de puertas o materiales sin resolver, y eso es lo que hay
+  que mostrar a la persona. Es la «evaluación bajo incertidumbre» que la ruta exige para sustituir el
+  optimizador Java.
 
 ## Semántica
 

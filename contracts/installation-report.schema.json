@@ -469,6 +469,40 @@
       "title": "CoverageSample",
       "type": "object"
     },
+    "EvidenceLevel": {
+      "additionalProperties": false,
+      "description": "What kind of evidence backs the numbers (B-135); consistency is not accuracy.",
+      "properties": {
+        "level": {
+          "enum": [
+            "consistency",
+            "calibration",
+            "validation"
+          ],
+          "title": "Level",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "checked",
+            "none"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "detail": {
+          "title": "Detail",
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "status",
+        "detail"
+      ],
+      "title": "EvidenceLevel",
+      "type": "object"
+    },
     "MapGrid": {
       "additionalProperties": false,
       "description": "Horizontal sampling plane. Cell (i, j) is evaluated at its centre:\nx = origin_x_m + (i + 0.5)·resolution_m, y = origin_y_m + (j + 0.5)·resolution_m, z = height_m.\nEdge cells narrower than resolution_m use the centre of their clipped extent.",
@@ -1252,6 +1286,14 @@
         "$ref": "#/$defs/ReportMap"
       },
       "title": "Maps",
+      "type": "array"
+    },
+    "evidence_levels": {
+      "description": "Consistency, calibration and validation behind these numbers, kept apart (B-135)",
+      "items": {
+        "$ref": "#/$defs/EvidenceLevel"
+      },
+      "title": "Evidence Levels",
       "type": "array"
     }
   },

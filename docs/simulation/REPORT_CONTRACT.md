@@ -55,6 +55,16 @@ cada sentido limitante va acompañado de «un margen positivo no garantiza el fu
 3. Opcional (B-120): pedir los mapas visibles al generar el informe y dibujarlos a partir de
    `maps[].result` en la versión descargada.
 
+## Nivel de evidencia (B-135)
+
+`evidence_levels` separa tres cosas que no deben confundirse:
+- **Consistencia matemática** (comprobada): casos analíticos, reglas de cruce y paridad con Java.
+- **Calibración con medidas** (ninguna todavía).
+- **Validación en viviendas** (ninguna todavía).
+
+En Markdown es la tabla «Nivel de evidencia». Cuando haya medidas, estos estados cambiarán con su
+evidencia; nunca se dan por supuestos.
+
 ## Informe guardado (B-132)
 
 El JSON del informe lleva `input_hash` y `engine_version`, también en cada mapa. Al reabrirlo,
