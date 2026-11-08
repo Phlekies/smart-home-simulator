@@ -16,13 +16,14 @@ import time
 from typing import NamedTuple
 
 from .backhaul import is_network_device
-from .engines import LIMITATIONS, direction, geometry_issue, input_hash, inside_wall, radio_pair_check, wall_heights
+from .engines import (
+    ENGINE_VERSION, LIMITATIONS, direction, geometry_issue, input_hash, inside_wall, radio_pair_check, wall_heights,
+)
 from .models import (
     CandidateEvaluation, Device, ExcludedCandidate, Fixture, Link, PlacementSearchRequest, PlacementSearchResult,
     Point, Project, Radio, TargetEvaluation,
 )
 
-ENGINE_VERSION = "0.1.0"
 MAX_WORK = 2_000_000  # candidates × targets × walls
 TOP = 50
 PLACEMENT_LIMITATIONS = LIMITATIONS + [

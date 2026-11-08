@@ -151,6 +151,45 @@
         }
       }
     },
+    "/api/projects/fingerprint": {
+      "post": {
+        "summary": "Project Fingerprint",
+        "description": "Hash and engine version a saved map, report or result must match to be current (B-132).",
+        "operationId": "project_fingerprint_api_projects_fingerprint_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Project-Input"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFingerprint"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/simulations": {
       "post": {
         "summary": "Simulation",
@@ -4963,6 +5002,34 @@
           "legacy_source"
         ],
         "title": "Project"
+      },
+      "ProjectFingerprint": {
+        "properties": {
+          "input_hash": {
+            "type": "string",
+            "title": "Input Hash",
+            "description": "Same hash as in simulations, maps, scenarios, reports and measurement campaigns"
+          },
+          "engine": {
+            "type": "string",
+            "const": "quick-estimate",
+            "title": "Engine"
+          },
+          "engine_version": {
+            "type": "string",
+            "title": "Engine Version",
+            "description": "A saved result with another engine version is stale"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "input_hash",
+          "engine",
+          "engine_version"
+        ],
+        "title": "ProjectFingerprint",
+        "description": "What a saved result must match to still describe this project (B-132)."
       },
       "ProjectReference": {
         "properties": {

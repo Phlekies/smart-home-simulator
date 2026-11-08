@@ -10,7 +10,8 @@ from smart_environment.differences import DifferenceResult
 from smart_environment.measurements import MeasurementCampaign
 from smart_environment.report import InstallationReport
 from smart_environment.models import (
-    CoverageMapJob, GenericProfile, PlacementSearchResult, Project, ScenarioResult, SimulationResult,
+    CoverageMapJob, GenericProfile, PlacementSearchResult, Project, ProjectFingerprint, ScenarioResult,
+    SimulationResult,
 )
 
 root = Path(__file__).resolve().parents[1]
@@ -27,6 +28,7 @@ contracts = {"project.schema.json": Project.model_json_schema(mode="serializatio
              "installation-report.schema.json": InstallationReport.model_json_schema(mode="serialization"),
              "measurement-check.schema.json": MeasurementCheckResult.model_json_schema(mode="serialization"),
              "link-difference.schema.json": DifferenceResult.model_json_schema(mode="serialization"),
+             "project-fingerprint.schema.json": ProjectFingerprint.model_json_schema(mode="serialization"),
              "openapi.json": app.openapi()}
 for name, schema in contracts.items():
     path = root / "contracts" / name
