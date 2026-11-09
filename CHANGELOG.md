@@ -20,9 +20,10 @@ installed, before buying it. Needs only Python 3.11+: `python scripts/start.py`.
   never a favourable one.
 - Coverage maps for one access point and one receiver profile at a chosen height, computed as
   background jobs, saved and reopened with a check against the project and the engine version.
-- Scenarios for doors with an unknown state and materials with a loss range, position comparison,
-  placement search over allowed places, exact differences per budget term, installation reports
-  in Markdown and JSON, generic Wi-Fi radio profiles and a format for future measurements.
+- Scenarios for doors with an unknown state and materials with a loss range, position comparison
+  with the signal change explained per budget term, placement search over allowed places (also
+  under a scenario), installation reports in Markdown and JSON, generic Wi-Fi radio profiles,
+  provenance of radio values, access-point data connections and a format for future measurements.
 - Import of the Java project files, and a parity harness that compares the Python engine with
   the Java one (largest difference 0.0022 dB over 76 direct-path probes).
 - One-command start (`scripts/start.py`) and a release zip that does not need Node.

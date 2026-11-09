@@ -33,7 +33,7 @@ entrega; este resumen y el checklist reflejan lo pendiente actual.
 | B-137 | README en inglés con resumen en español, seis capturas reales hechas con `scripts/make_demo_project.py` (proyecto sintético, valores ilustrativos), CHANGELOG 2.0.0, CONTRIBUTING y versión 2.0.0 |
 | B-138 | CI: pruebas Python y web, build y empaquetado en Linux, Windows y macOS; deriva de contratos en Linux. Release: zip de B-131 con notas del CHANGELOG. Dependabot: npm y GitHub Actions |
 | A-121 | Rótulo del mapa y barra del plano apilados; columna `minmax(0, 1fr)` por debajo de 650 px. Comprobado a 1440 y 390 px |
-| Comandos | pytest 444; contratos sin deriva; npm test 131; build. La CI remota de esta rama no se ha ejecutado todavía |
+| Comandos | Tras fusionar `main` con #27 en la rama: pytest 444; contratos y tipos sin deriva; npm test 151; build; capturas rehechas con la interfaz de #27 y comprobación a 390 px. La CI remota de esta rama no se ha ejecutado todavía |
 
 ## A-114…A-120 — interfaz de cierre, hecha por B en el papel de A — 2026-11-08
 

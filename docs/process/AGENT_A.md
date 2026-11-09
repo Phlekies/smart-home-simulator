@@ -33,7 +33,7 @@ Fallo 2: por debajo de 650 px la lista de equipos pasa a fila (7 × 190 px) y la
   espacio de trabajo crecía hasta 1350 px: desplazamiento horizontal de 975 px a 390 px de ancho.
   Columna minmax(0, 1fr): sin desplazamiento horizontal; la lista se desplaza dentro de su panel.
 Navegador: Brave sin interfaz con perfil aislado, 1440 px y 390 px; barra y rótulo sin solaparse.
-Comandos: npm test 131; build (tsc + vite). Servidores detenidos.
+Comandos: npm test 131 (151 tras fusionar #27); build (tsc + vite). Servidores detenidos.
 ```
 
 ### A-114…A-120 — interfaz de cierre (review), hecha por la sesión de B en el papel de A

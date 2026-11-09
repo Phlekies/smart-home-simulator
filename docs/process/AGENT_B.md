@@ -16,8 +16,8 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
   - Contratos sin cambios (salvo el número de versión de la API).
   - Resultado: commit aa9e9d1 (B-136/B-138) y commit de B-137 con README, CHANGELOG, CONTRIBUTING,
     capturas en `docs/images/` y `scripts/make_demo_project.py` (proyecto sintético, valores ilustrativos).
-    En el papel de A, A-121 (ver [AGENT_A](AGENT_A.md)). Comandos: pytest 444; contratos sin deriva;
-    npm test 131; build; arnés de paridad desde la etiqueta con valores idénticos. Pendiente de
+    En el papel de A, A-121 (ver [AGENT_A](AGENT_A.md)). Rama fusionada con `main` (#27). Comandos: pytest 444; contratos sin deriva;
+    npm test 151; build; arnés de paridad desde la etiqueta con valores idénticos. Pendiente de
     autorización del usuario: push de la rama y de la etiqueta, PR y merge.
 - Estado: **done** — I-007: merges #11…#25 y #14 en `main` (8734c9b) con autorización del usuario
   (2026-11-08), verificación de `main` y casillas del plan de cierre. Pila B-107…B-135 integrada.

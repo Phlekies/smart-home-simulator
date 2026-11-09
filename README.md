@@ -34,9 +34,10 @@ know: unknown values stay unknown, and a positive margin is never presented as a
 ## Features
 
 - **Two-way link diagnosis.** Every link is evaluated in both directions with the transmitter
-  power, antenna gain and receiver sensitivity of each side. A link is only *above threshold*
-  when both directions are; missing sensitivity gives *unverified*, never a favourable result.
-  Each row expands into the budget terms: distance, path loss and every wall crossed.
+  power, antenna gain and receiver sensitivity of each side. A link only shows *both margins at
+  0 dB or more* when both directions reach it; missing sensitivity gives *unverified*, never a
+  favourable result. Each row expands into the budget terms: distance, path loss and every wall
+  crossed. For access points, the data path to the main router is checked hop by hop.
 
   ![Link diagnostics: received power and margin per direction](docs/images/link-diagnostics.png)
 
@@ -63,12 +64,15 @@ know: unknown values stay unknown, and a positive margin is never presented as a
 
   <img src="docs/images/view-3d.png" alt="3D view of the demo apartment" width="420">
 
-- **Compare and search positions.** Compare a device or access point at two positions, search the
-  best allowed place for it, and get the exact difference of each budget term between two
-  installations (API).
-- **Reports and projects.** Download an installation report (Markdown or JSON); projects are
-  plain JSON files. The browser keeps a local recovery copy, and the original Java project files
-  still import.
+- **Compare and search positions.** Compare the installation before and after moving devices,
+  with an explanation of the signal change term by term (distance, walls, antennas), and compare
+  the allowed places for an access point, also under the worst-case scenario.
+- **Where each value comes from.** Transmit power and sensitivity are labelled as declared,
+  measured, standard minimum, inferred or unknown, with their source. Access points declare
+  their data connection: the gateway itself, a cable, or a wireless link of the project.
+- **Reports and projects.** Prepare an installation report as Markdown or JSON, with the current
+  map and the evidence level of each conclusion; projects are plain JSON files. The browser keeps
+  a local recovery copy, and the original Java project files still import.
 - **Local only.** The service listens on `127.0.0.1`; plans and reports never leave the machine.
 
 ## Getting started
@@ -156,8 +160,8 @@ flowchart LR
   the product until real measurements exist to compare both engines
   ([evaluation](docs/simulation/ADVANCED_ENGINE_EVALUATION.md)).
 - **Tested on three systems.** 444 Python tests (geometry, budgets, contracts, scenarios, reports,
-  API) and 131 interface tests (geometry, history, coverage runner, recovery, saved maps), run by
-  CI on Linux, Windows and macOS together with the build and the packaging.
+  API) and 151 interface tests (geometry, history, coverage runner, saved maps, link differences,
+  reports), run by CI on Linux, Windows and macOS together with the build and the packaging.
 
 ## Development
 
