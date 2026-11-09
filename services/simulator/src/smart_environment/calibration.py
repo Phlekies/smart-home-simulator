@@ -6,8 +6,9 @@ moment. Residual = measured median − prediction (dB). Unknown antenna gains ar
 and listed as assumptions, so the residual still contains them.
 
 Calibration fits one offset on ``calibration`` campaigns only and reports its effect on
-``validation`` campaigns only, before and after. No probabilities, coverage classes or false
-favourables are computed: those need the failure criterion and design reserve still pending.
+``validation`` campaigns only, before and after. No probabilities are computed. The failure
+criterion and the design reserve are now provisional decisions (B-139/B-140); false favourables
+against them are computed once real campaigns exist (P4), not from synthetic data.
 """
 
 from __future__ import annotations

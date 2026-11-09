@@ -46,8 +46,8 @@ Las campañas `pilot` aparecen en los residuos, pero no entran ni en el ajuste n
 ## Lo que falta para cerrar P4
 
 - Datos reales del piloto y de viviendas independientes, con objetivos congelados antes de evaluar.
-- Falsos favorables frente a las pruebas activas: necesitan el umbral del criterio de fallo y la
-  reserva de diseño, ambos pendientes de decisión.
+- Falsos favorables frente a las pruebas activas: el criterio (`low-traffic-v1`) y la reserva de diseño
+  ya están decididos de forma provisional ([clasificación](COVERAGE_CLASSIFICATION.md)); se calculan con campañas reales, no sintéticas.
 - Dependencia espacial entre puntos e incertidumbre estadística; ajustes por material solo si
   reducen el error en datos independientes.
 - Comparación con el motor avanzado sobre los mismos datos (ver [B-102](ADVANCED_ENGINE_EVALUATION.md)).

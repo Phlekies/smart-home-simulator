@@ -57,20 +57,21 @@ la precisión. `partition_issues()` comprueba esta regla.
 1. Colocar el equipo y esperar a que la conexión se estabilice; anotar la hora.
 2. RSSI AP→equipo: muestras crudas durante un intervalo fijo (propuesta: 1 Hz, 60 s).
    RSSI equipo→AP si el router lo expone, en el mismo intervalo.
-3. Prueba activa de entrega del perfil de bajo tráfico (propuesta: eco ICMP o sonda UDP de
-   64 B cada 0.2 s, 100 paquetes en el sentido que define el criterio).
+3. Prueba activa de entrega del perfil de bajo tráfico según el criterio `low-traffic-v1`: eco ICMP
+   de ida y vuelta desde un equipo cableado al router, ≥ 300 paquetes de 64 B a 1 por segundo.
 4. Registrar condiciones: puertas, personas, redes visibles en el mismo canal.
 5. Marcar `excluded` con motivo si ocurre un incidente (reinicio del router, cambio de
    canal, interferencia evidente). Las reglas de exclusión se fijan **antes** de comparar
    con las predicciones; nunca se excluye un punto por discrepar del modelo.
 
-## Criterio activo de fallo — decisión pendiente
+## Criterio activo de fallo — `low-traffic-v1` (provisional)
 
-El formato permite definir método, sentido, paquetes mínimos y proporción mínima de
-entrega. **El umbral no está decidido** y no se fija en este documento: es una decisión de
-producto para el perfil de sensor/actuador de bajo tráfico. Debe acordarse antes del
-piloto, revisarse con sus resultados y congelarse (`frozen_on`) antes de recoger datos de
-validación. Un RSSI favorable no sustituye este criterio.
+Decidido el 2026-11-09 (U1, delegado por el usuario en B; detalle en la [clasificación](COVERAGE_CLASSIFICATION.md)):
+eco ICMP de ida y vuelta desde un equipo cableado al router hasta el equipo, o un sustituto siempre
+encendido con la misma radio, colocado en el punto; ≥ 300 paquetes de 64 B a 1 por segundo. **Falla
+si se entrega menos del 95 % o si el equipo no se asocia.** Está en el código como
+`LOW_TRAFFIC_CRITERION`. Se revisa con los resultados del piloto y cada campaña de validación
+congela su copia (`frozen_on`) antes de recoger datos. Un RSSI favorable no sustituye este criterio.
 
 ## Qué se analizará después (P4, no implementado)
 

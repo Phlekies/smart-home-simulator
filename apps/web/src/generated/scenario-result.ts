@@ -28,6 +28,10 @@ export type NoiseDbm = number;
 export type SnrDb = number;
 export type MarginDb = number | null;
 /**
+ * Class of this scenario alone (B-139)
+ */
+export type CoverageClass = ("favourable" | "marginal" | "insufficient" | "no-data") | null;
+/**
  * nominal, best, worst, then the requested scenarios
  */
 export type Outcomes = ScenarioOutcome[];
@@ -42,10 +46,31 @@ export type ReverseRangeDbm = number[] | null;
 export type Hypotheses = string[];
 export type MarginSign = "consistent" | "depends-on-hypotheses" | "incomplete";
 export type Reasons = string[];
+/**
+ * Class of the link over its automatic scenarios: favourable only if nominal and worst keep the reserve
+ */
+export type CoverageClass1 = ("favourable" | "marginal" | "insufficient" | "no-data") | null;
 export type Links = LinkScenarioResult[];
 export type ElapsedMs = number;
 export type Scope = string;
 export type Limitations = string[];
+export type Id2 = "coverage-class-v1";
+/**
+ * Limiting margin a favourable class needs, in dB
+ */
+export type DesignReserveDb = number;
+/**
+ * The classification rule in plain words
+ */
+export type Rule = string;
+/**
+ * Active test that decides whether a real link fails
+ */
+export type FailureCriterion = string;
+/**
+ * False until measurements have fitted the reserve
+ */
+export type Calibrated = boolean;
 
 export interface ScenarioResult {
   engine: Engine;
@@ -56,6 +81,10 @@ export interface ScenarioResult {
   elapsed_ms: ElapsedMs;
   scope: Scope;
   limitations: Limitations;
+  /**
+   * Policy behind coverage_class
+   */
+  classification?: ClassificationPolicy | null;
 }
 /**
  * Named scenario: door states and material bounds that replace the nominal project values.
@@ -81,11 +110,13 @@ export interface LinkScenarioResult {
   hypotheses: Hypotheses;
   margin_sign: MarginSign;
   reasons: Reasons;
+  coverage_class?: CoverageClass1;
 }
 export interface ScenarioOutcome {
   scenario_id: ScenarioId;
   forward: DirectionResult | null;
   reverse: DirectionResult | null;
+  coverage_class?: CoverageClass;
 }
 export interface DirectionResult {
   tx_device_id: TxDeviceId;
@@ -98,4 +129,14 @@ export interface DirectionResult {
   noise_dbm: NoiseDbm;
   snr_db: SnrDb;
   margin_db: MarginDb;
+}
+/**
+ * How coverage classes are assigned (B-139, decisions U1/U2); provisional until calibrated.
+ */
+export interface ClassificationPolicy {
+  id: Id2;
+  design_reserve_db: DesignReserveDb;
+  rule: Rule;
+  failure_criterion: FailureCriterion;
+  calibrated: Calibrated;
 }

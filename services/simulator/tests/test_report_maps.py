@@ -59,7 +59,9 @@ def test_markdown_lists_counts_points_and_no_percentage():
     project, parameters = map_parameters()
     text = to_markdown(build_report(ReportRequest(project=project, maps=[parameters])))
     assert "## Mapas de cobertura" in text and "### Sensor genérico · 1 m" in text
-    assert "no un porcentaje de cobertura" in text and "%" not in text.split("## Mapas de cobertura")[1]
+    maps_section = text.split("## Mapas de cobertura")[1].split("\n## ")[0]
+    assert "no un porcentaje de cobertura" in maps_section and "%" not in maps_section
+    assert "Celdas por clase: Favorable" in maps_section and "| Clase |" in maps_section
     assert "| (2, 2, 1) |" in text and "| (11, 5, 1) |" in text
 
 

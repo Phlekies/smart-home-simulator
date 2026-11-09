@@ -49,16 +49,21 @@ def test_sensitivity_provenance_comes_from_the_link_radio():
     assert link.reverse.to_device_id != target.id and link.reverse.sensitivity_provenance == "sin etiqueta"
 
 
-def test_markdown_escapes_names_and_never_issues_a_verdict():
+def test_markdown_escapes_names_and_never_recommends_a_purchase():
     project = scenario_project(sensitivity=-77)
     project.devices[1].name = "Sensor | baño"
-    text = to_markdown(build_report(ReportRequest(project=project, title="Mi casa")))
+    report = build_report(ReportRequest(project=project, title="Mi casa"))
+    text = to_markdown(report)
     assert text.startswith("# Mi casa") and "Sensor \\| baño" in text
     assert "| Ida |" in text and "| Vuelta |" in text and "Decisiones pendientes" in text
     assert "no garantiza el funcionamiento" in text
-    for verdict in ("cobertura favorable", "cobertura insuficiente", "compra recomendada"):
+    for verdict in ("funcionará", "compra recomendada", "garantiza la cobertura"):
         assert verdict not in text.lower()
-    assert "classification" not in InstallationReport.model_json_schema()["properties"]
+    # B-139: classes come with their uncalibrated policy and the real failure criterion.
+    assert report.classification is not None and report.classification.calibrated is False
+    assert "Clasificación (reserva de diseño 10 dB, sin calibrar)" in text and "Criterio de fallo real" in text
+    assert all(link.coverage_class is not None for link in report.links)
+    assert "classification" not in InstallationReport.model_json_schema().get("required", [])
 
 
 def test_api_endpoints():

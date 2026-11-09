@@ -25,6 +25,18 @@ export type NoiseDbm = number;
 export type SnrDb = number;
 export type MarginDb = number | null;
 export type Reasons = string[];
+/**
+ * favourable / marginal / insufficient / no-data under the result's classification policy (B-139)
+ */
+export type CoverageClass = ("favourable" | "marginal" | "insufficient" | "no-data") | null;
+/**
+ * Lower margin of both directions
+ */
+export type LimitingMarginDb = number | null;
+/**
+ * Same with every unknown door closed and uncertain material at its maximum loss; equals the nominal one when the direct path crosses no such wall
+ */
+export type WorstCaseLimitingMarginDb = number | null;
 export type Links = LinkResult[];
 export type DeviceId = string;
 export type Kind = "gateway" | "wired" | "wireless" | "unknown" | "undefined";
@@ -44,7 +56,7 @@ export type Status1 = string;
 /**
  * Lower margin of both directions; None if either is missing
  */
-export type LimitingMarginDb = number | null;
+export type LimitingMarginDb1 = number | null;
 /**
  * Wireless links from this device towards the gateway, in order
  */
@@ -63,6 +75,23 @@ export type Reasons1 = string[];
  * Data path of every access point, router or bridge, and of any device with a data connection
  */
 export type AccessPoints = AccessPointConnection[];
+export type Id1 = "coverage-class-v1";
+/**
+ * Limiting margin a favourable class needs, in dB
+ */
+export type DesignReserveDb = number;
+/**
+ * The classification rule in plain words
+ */
+export type Rule = string;
+/**
+ * Active test that decides whether a real link fails
+ */
+export type FailureCriterion = string;
+/**
+ * False until measurements have fitted the reserve
+ */
+export type Calibrated = boolean;
 
 export interface SimulationResult {
   engine: Engine;
@@ -73,6 +102,10 @@ export interface SimulationResult {
   limitations: Limitations;
   links: Links;
   access_points?: AccessPoints;
+  /**
+   * Policy behind coverage_class
+   */
+  classification?: ClassificationPolicy | null;
 }
 export interface LinkResult {
   id: Id;
@@ -81,6 +114,9 @@ export interface LinkResult {
   forward: DirectionResult | null;
   reverse: DirectionResult | null;
   reasons: Reasons;
+  coverage_class?: CoverageClass;
+  limiting_margin_db?: LimitingMarginDb;
+  worst_case_limiting_margin_db?: WorstCaseLimitingMarginDb;
 }
 export interface DirectionResult {
   tx_device_id: TxDeviceId;
@@ -114,5 +150,15 @@ export interface BackhaulHop {
   from_device_id: FromDeviceId;
   to_device_id: ToDeviceId;
   status: Status1;
-  limiting_margin_db: LimitingMarginDb;
+  limiting_margin_db: LimitingMarginDb1;
+}
+/**
+ * How coverage classes are assigned (B-139, decisions U1/U2); provisional until calibrated.
+ */
+export interface ClassificationPolicy {
+  id: Id1;
+  design_reserve_db: DesignReserveDb;
+  rule: Rule;
+  failure_criterion: FailureCriterion;
+  calibrated: Calibrated;
 }

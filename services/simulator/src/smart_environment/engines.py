@@ -10,6 +10,7 @@ from collections.abc import Callable
 from typing import NamedTuple
 
 from .backhaul import access_point_connections
+from .classification import POLICY, classify_link, limiting
 from .models import (
     Device, DirectionResult, Link, LinkResult, Material, Point, Project, Radio, ScenarioAssumptions,
     SimulationResult, Wall,
@@ -304,6 +305,24 @@ def sensitivity_note(radio: Radio, device_id: str) -> str | None:
     return None
 
 
+def automatic_scenarios(project: Project) -> list[ScenarioAssumptions]:
+    """Nominal, best and worst cases of the hypotheses the project leaves open (B-108).
+
+    Only doors marked ``unknown`` and materials with an uncertainty range vary; doors stated open
+    or closed are facts. Nominal treats unknown doors as closed and materials as nominal. The worst
+    case also decides the coverage class (B-139), so it is defined here once.
+    """
+    unknown_doors = [w.id for w in project.building.walls if w.door == "unknown"]
+    uncertain = [m.id for m in project.building.materials if m.uncertainty is not None]
+    return [
+        ScenarioAssumptions(id="nominal", name="Proyecto tal cual: puertas desconocidas cerradas, materiales nominales"),
+        ScenarioAssumptions(id="best", name="Hipótesis favorables: puertas desconocidas abiertas, materiales en su mínimo",
+                            doors={d: "open" for d in unknown_doors}, materials={m: "low" for m in uncertain}),
+        ScenarioAssumptions(id="worst", name="Hipótesis desfavorables: puertas desconocidas cerradas, materiales en su máximo",
+                            doors={d: "closed" for d in unknown_doors}, materials={m: "high" for m in uncertain}),
+    ]
+
+
 def link_result(project: Project, link: Link) -> LinkResult:
     """Both directions of one project link, with every missing value stated."""
     devices = {d.id: d for d in project.devices}
@@ -312,7 +331,8 @@ def link_result(project: Project, link: Link) -> LinkResult:
     b = next(r for r in target.radios if r.id == link.target_radio_id)
     compatibility, blocked, reasons = radio_pair_check(a, b)
     if blocked is not None:
-        return LinkResult(id=link.id, compatibility=compatibility, status=blocked, reasons=reasons)
+        return LinkResult(id=link.id, compatibility=compatibility, status=blocked, reasons=reasons,
+                          coverage_class="no-data")
     forward = direction(project, source, a, target, b)
     reverse = direction(project, target, b, source, a)
     for result, tx in [(forward, source), (reverse, target)]:
@@ -335,8 +355,19 @@ def link_result(project: Project, link: Link) -> LinkResult:
         status = "above-threshold"
     else:
         status = "unverified"
+    nominal = limiting(*(d.margin_db if d is not None else None for d in (forward, reverse)))
+    worst_case = nominal
+    worst = automatic_scenarios(project)[2]
+    if nominal is not None and (worst.doors or worst.materials):
+        worst_directions = (direction(project, source, a, target, b, worst),
+                            direction(project, target, b, source, a, worst))
+        worst_case = limiting(*(d.margin_db if d is not None else None for d in worst_directions))
+    coverage_class = classify_link(status, nominal, worst_case)
+    if coverage_class == "marginal" and nominal is not None and worst_case is not None and worst_case < nominal:
+        reasons.append(f"Con las hipótesis abiertas en su peor caso el margen limitante baja a {worst_case:.1f} dB.")
     return LinkResult(id=link.id, compatibility=compatibility, status=status,
-                      forward=forward, reverse=reverse, reasons=reasons)
+                      forward=forward, reverse=reverse, reasons=reasons, coverage_class=coverage_class,
+                      limiting_margin_db=nominal, worst_case_limiting_margin_db=worst_case)
 
 
 def simulate(project: Project) -> SimulationResult:
@@ -348,4 +379,5 @@ def simulate(project: Project) -> SimulationResult:
                             elapsed_ms=(time.perf_counter() - started) * 1000,
                             scope="Presupuesto de enlace directo; compatibilidad funcional no evaluada",
                             limitations=LIMITATIONS, links=results,
-                            access_points=access_point_connections(project, by_id.__getitem__))
+                            access_points=access_point_connections(project, by_id.__getitem__),
+                            classification=POLICY)

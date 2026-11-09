@@ -8,8 +8,8 @@ Tipos TS: `apps/web/src/generated/coverage-map.ts`.
 ## Qué responde
 
 «¿Cómo sería el enlace de **este perfil de equipo**, a **esta altura**, en cada punto del plano,
-con **este AP**?», en ambos sentidos. Es la base de P1 y del consumidor A-104. **No** clasifica
-cobertura: sin política de reserva acordada (P2), solo se devuelven potencias y márgenes.
+con **este AP**?», en ambos sentidos. Es la base de P1 y del consumidor A-104. Desde B-139 cada celda
+y punto exacto lleva además `coverage_class` según la reserva de diseño provisional ([clasificación](COVERAGE_CLASSIFICATION.md)).
 
 ## Endpoints (aditivos)
 
@@ -86,7 +86,8 @@ recalcula. Enchufes, tomas e imagen de plano no lo vuelven obsoleto, porque no c
    propia leyenda; no convertirlos en «sin cobertura».
 4. Descartar el mapa si el proyecto o los parámetros cambian (comparar `request_hash` o la
    revisión del editor), como ya se hace con las simulaciones.
-5. No derivar «favorable/insuficiente» en la interfaz mientras la política de reserva no exista.
+5. Usar `cells.coverage_class` y la política `classification` del resultado; no recalcular las clases
+   en la interfaz con otro umbral.
 
 ## Pendiente para un motor avanzado
 

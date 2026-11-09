@@ -98,6 +98,17 @@ class FailureCriterion(Model):
     frozen_on: date | None = None
 
 
+# Decision U1 of 2026-11-09 (B-140), delegated by the user: what "the link fails" means for the
+# low-traffic sensor/actuator profile. Provisional until the pilot; a campaign freezes its own copy
+# (``frozen_on``) before collecting validation data. RSSI never replaces this test.
+LOW_TRAFFIC_CRITERION = FailureCriterion(
+    id="low-traffic-v1",
+    description=("Sensor o actuador Wi-Fi de bajo tráfico: eco ICMP de ida y vuelta desde un equipo cableado al "
+                 "router hasta el equipo, o un sustituto con la misma radio, colocado en el punto; 64 B cada "
+                 "segundo durante 5 minutos. Falla si se entrega menos del 95 % o si el equipo no se asocia."),
+    method="icmp-echo", direction="round-trip", min_packets=300, min_delivery_ratio=0.95)
+
+
 class RssiObservation(Model):
     direction: Direction
     receiver_instrument_id: Identifier

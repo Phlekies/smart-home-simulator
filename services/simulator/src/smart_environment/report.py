@@ -1,8 +1,9 @@
 """Installation report per link (B-115, P5): what was computed, what it rests on, what is missing.
 
-It only gathers results the API already produces (link budget in both directions and the
-scenarios of unresolved doors/materials) and states the decisions that are still open. It never
-issues a coverage verdict: the failure criterion and design reserve are not defined yet.
+It only gathers results the API already produces (link budget in both directions, the
+scenarios of unresolved doors/materials and the coverage class of B-139) and states what is
+still open. The class uses a provisional, uncalibrated design reserve; the report never
+recommends a purchase.
 """
 
 from __future__ import annotations
@@ -13,17 +14,19 @@ import statistics
 
 from pydantic import ConfigDict, Field, model_validator
 
+from .classification import DESIGN_RESERVE_DB, POLICY
 from .coverage import MAX_WORK, compute, map_work, preflight
 from .engines import LIMITATIONS, input_hash, simulate
 from .models import (
-    AccessPointConnection, CoverageMapParameters, CoverageMapRequest, CoverageMapResult, DirectionResult, Model,
-    Project, Radio, ScenarioAssumptions, ScenarioRequest, _optional_fields,
+    AccessPointConnection, ClassificationPolicy, CoverageClass, CoverageMapParameters, CoverageMapRequest,
+    CoverageMapResult, DirectionResult, Model, Project, Radio, ScenarioAssumptions, ScenarioRequest,
+    _optional_fields,
 )
 from .scenarios import evaluate as evaluate_scenarios
 
 PENDING_DECISIONS = [
-    "Umbral del criterio activo de fallo del enlace (proporción de paquetes entregados): sin decidir.",
-    "Reserva de diseño para clasificar la cobertura (favorable, marginal, insuficiente): sin decidir.",
+    f"Criterio de fallo (95 % de entrega en ≥ 300 ecos) y reserva de diseño ({DESIGN_RESERVE_DB:g} dB): provisionales "
+    "desde el 2026-11-09; se revisan con el piloto y se congelan antes de la validación.",
     "Validación experimental en viviendas: sin medidas todavía; las cifras son del estimador.",
 ]
 EVIDENCE_LEVELS = [
@@ -85,6 +88,8 @@ class ReportDirection(Model):
 
 
 class ReportLink(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("coverage_class", "worst_case_limiting_margin_db"))
+
     link_id: str
     devices: list[str] = Field(description="Names of both ends, source first")
     radios: list[str] = Field(description="Protocol, channel and frequency of each end")
@@ -99,6 +104,9 @@ class ReportLink(Model):
     margin_sign: str
     hypotheses: list[str]
     notes: list[str]
+    coverage_class: CoverageClass | None = Field(default=None, description="Class of the link (B-139)")
+    worst_case_limiting_margin_db: float | None = Field(default=None, description=(
+        "Limiting margin with the open hypotheses at their worst"))
 
 
 class EvidenceLevel(Model):
@@ -110,7 +118,9 @@ class EvidenceLevel(Model):
 
 
 class MapSummary(Model):
-    """Counts and spread of a map; not a coverage percentage (no failure criterion or design reserve yet)."""
+    """Counts and spread of a map; cell counts per class, not a coverage percentage of the home."""
+
+    model_config = ConfigDict(json_schema_extra=_optional_fields("class_counts"))
 
     cells: int
     computed_cells: int
@@ -119,6 +129,7 @@ class MapSummary(Model):
     limiting_margin_db: list[float] | None = Field(description=(
         "[min, median, max] of the lower margin of both directions over computed cells; None without any"))
     negative_limiting_cells: int = Field(description="Computed cells whose lower margin is below 0 dB")
+    class_counts: dict[str, int] | None = Field(default=None, description="Cells per coverage class (B-139)")
 
 
 class ReportMap(Model):
@@ -128,7 +139,8 @@ class ReportMap(Model):
 
 
 class InstallationReport(Model):
-    model_config = ConfigDict(json_schema_extra=_optional_fields("access_points", "maps", "evidence_levels"))
+    model_config = ConfigDict(json_schema_extra=_optional_fields("access_points", "maps", "evidence_levels",
+                                                                 "classification"))
 
     title: str
     project_name: str
@@ -146,6 +158,7 @@ class InstallationReport(Model):
     maps: list[ReportMap] = Field(default_factory=list, description="Requested coverage maps (B-120)")
     evidence_levels: list[EvidenceLevel] = Field(default_factory=list, description=(
         "Consistency, calibration and validation behind these numbers, kept apart (B-135)"))
+    classification: ClassificationPolicy | None = Field(default=None, description="Policy behind coverage_class")
 
 
 def _direction(project: Project, result: DirectionResult | None, receiver: Radio) -> ReportDirection | None:
@@ -173,7 +186,8 @@ def _map(project: Project, parameters: CoverageMapParameters) -> ReportMap:
         cells=len(cells.status), computed_cells=result.computed_cells, partial_cells=result.partial_cells,
         not_computed_cells=result.not_computed_cells,
         limiting_margin_db=[margins[0], statistics.median(margins), margins[-1]] if margins else None,
-        negative_limiting_cells=sum(margin < 0 for margin in margins)))
+        negative_limiting_cells=sum(margin < 0 for margin in margins),
+        class_counts={name: (cells.coverage_class or []).count(name) for name in CLASS_KEYS}))
 
 
 def build_report(request: ReportRequest) -> InstallationReport:
@@ -205,24 +219,30 @@ def build_report(request: ReportRequest) -> InstallationReport:
             limiting_margin_db=None if limiting is None else limiting[0],
             forward_range_dbm=scenario.forward_range_dbm, reverse_range_dbm=scenario.reverse_range_dbm,
             margin_sign=scenario.margin_sign, hypotheses=scenario.hypotheses,
-            notes=list(dict.fromkeys(result.reasons + scenario.reasons))))
+            notes=list(dict.fromkeys(result.reasons + scenario.reasons)),
+            coverage_class=result.coverage_class, worst_case_limiting_margin_db=result.worst_case_limiting_margin_db))
     counts = {"links": len(links),
               "both_margins": sum(link.limiting_margin_db is not None for link in links),
               "incomplete": sum(link.limiting_margin_db is None and link.compatibility != "incompatible"
                                 for link in links),
               "incompatible": sum(link.compatibility == "incompatible" for link in links),
-              "depends_on_hypotheses": sum(link.margin_sign == "depends-on-hypotheses" for link in links)}
+              "depends_on_hypotheses": sum(link.margin_sign == "depends-on-hypotheses" for link in links),
+              **{key.replace("-", "_"): sum(link.coverage_class == key for link in links) for key in CLASS_KEYS}}
     return InstallationReport(
         title=request.title or f"Informe de instalación · {project.name}", project_name=project.name,
         input_hash=input_hash(project), engine=simulation.engine, engine_version=simulation.engine_version,
-        scope=simulation.scope + ". El informe no clasifica la cobertura ni recomienda compras.",
+        scope=simulation.scope + ". La clasificación es una predicción sin calibrar; el informe no recomienda compras.",
         links=links, counts=counts, pending_decisions=PENDING_DECISIONS, not_evaluated=NOT_EVALUATED,
         limitations=LIMITATIONS, access_points=simulation.access_points,
         maps=[_map(project, parameters) for parameters in request.maps],
         evidence_levels=[EvidenceLevel(level=level, status=status, detail=detail)
-                         for level, status, detail in EVIDENCE_LEVELS])
+                         for level, status, detail in EVIDENCE_LEVELS],
+        classification=POLICY)
 
 
+CLASS_KEYS = ("favourable", "marginal", "insufficient", "no-data")
+CLASS_LABELS = {"favourable": "Favorable", "marginal": "Marginal", "insufficient": "Insuficiente",
+                "no-data": "Sin datos"}
 DOOR_LABELS = {"open": "abierta", "closed": "cerrada", "unknown": "estado desconocido"}
 EVIDENCE_LABELS = {"consistency": "Consistencia matemática", "calibration": "Calibración con medidas",
                    "validation": "Validación en viviendas"}
@@ -245,10 +265,15 @@ def to_markdown(report: InstallationReport) -> str:
            f"Enlaces: {report.counts['links']} · con margen en ambos sentidos: {report.counts['both_margins']} · "
            f"incompletos: {report.counts['incomplete']} · incompatibles: {report.counts['incompatible']} · "
            f"dependen de hipótesis: {report.counts['depends_on_hypotheses']}", ""]
+    if report.classification is not None:
+        out += [f"Clasificación (reserva de diseño {report.classification.design_reserve_db:g} dB, sin calibrar): "
+                + " · ".join(f"{CLASS_LABELS[key]} {report.counts.get(key.replace('-', '_'), 0)}" for key in CLASS_KEYS),
+                "", f"> {_cell(report.classification.rule)}", ""]
     for link in report.links:
         out += [f"## {_cell(' ↔ '.join(link.devices))} (`{_cell(link.link_id)}`)", "",
                 *[f"- {_cell(r)}" for r in link.radios],
-                f"- Compatibilidad de radio: {link.compatibility}; estado del cálculo: {link.status}", "",
+                f"- Compatibilidad de radio: {link.compatibility}; estado del cálculo: {link.status}",
+                *([f"- **Clasificación: {CLASS_LABELS[link.coverage_class]}**"] if link.coverage_class else []), "",
                 "| Sentido | Potencia (dBm) | Margen (dB) | Sensibilidad | Paredes atravesadas |",
                 "|---|---:|---:|---|---|"]
         for label, direction in (("Ida", link.forward), ("Vuelta", link.reverse)):
@@ -280,8 +305,8 @@ def to_markdown(report: InstallationReport) -> str:
         out += [f"- {_cell(reason)}" for path in report.access_points for reason in path.reasons] + [""]
     if report.maps:
         out += ["## Mapas de cobertura", "",
-                "Recuentos de celdas, no un porcentaje de cobertura: no hay criterio de fallo ni reserva de diseño. "
-                "La interfaz dibuja cada mapa a partir de su resultado completo.", ""]
+                "Recuentos de celdas por clase, no un porcentaje de cobertura de la vivienda: dependen del área "
+                "dibujada. La interfaz dibuja cada mapa a partir de su resultado completo.", ""]
         for item in report.maps:
             summary, parameters = item.summary, item.result.parameters
             grid = parameters.grid
@@ -294,18 +319,27 @@ def to_markdown(report: InstallationReport) -> str:
                     f"{summary.partial_cells} · sin calcular {summary.not_computed_cells}",
                     f"- Margen limitante mínimo / mediana / máximo: {spread} dB · celdas con margen negativo: "
                     f"{summary.negative_limiting_cells}"]
+            if summary.class_counts:
+                out.append("- Celdas por clase: " + " · ".join(
+                    f"{CLASS_LABELS[key]} {summary.class_counts.get(key, 0)}" for key in CLASS_KEYS))
             if item.result.points:
-                out += ["", "| Punto (m) | Ida (dBm) | Vuelta (dBm) | Margen ida (dB) | Margen vuelta (dB) | Estado |",
-                        "|---|---:|---:|---:|---:|---|"]
+                out += ["", "| Punto (m) | Ida (dBm) | Vuelta (dBm) | Margen ida (dB) | Margen vuelta (dB) | Estado | Clase |",
+                        "|---|---:|---:|---:|---:|---|---|"]
                 for point, sample in zip(parameters.points, item.result.points):
                     out.append(f"| ({point.x:g}, {point.y:g}, {point.z:g}) | {_cell(sample.forward_dbm)} | "
                                f"{_cell(sample.reverse_dbm)} | {_cell(sample.forward_margin_db)} | "
-                               f"{_cell(sample.reverse_margin_db)} | {_cell(sample.status)} |")
+                               f"{_cell(sample.reverse_margin_db)} | {_cell(sample.status)} | "
+                               f"{CLASS_LABELS.get(sample.coverage_class or '', '—')} |")
             out += ["", *[f"- {_cell(reason)}" for reason in item.result.reasons], ""]
     if report.evidence_levels:
         out += ["## Nivel de evidencia", "", "| Nivel | Estado | Qué significa |", "|---|---|---|"]
         out += [f"| {EVIDENCE_LABELS[e.level]} | {'comprobado' if e.status == 'checked' else 'ninguno'} | "
                 f"{_cell(e.detail)} |" for e in report.evidence_levels] + [""]
+    if report.classification is not None:
+        out += ["## Criterio de fallo y reserva de diseño", "",
+                f"- Criterio de fallo real: {_cell(report.classification.failure_criterion)}",
+                f"- Reserva de diseño: {report.classification.design_reserve_db:g} dB, "
+                f"{'calibrada con medidas' if report.classification.calibrated else 'provisional, sin calibrar'}.", ""]
     out += ["## Decisiones pendientes", "", *[f"- {d}" for d in report.pending_decisions], "",
             "## No evaluado", "", *[f"- {n}" for n in report.not_evaluated], "",
             "## Limitaciones del motor", "", *[f"- {_cell(item)}" for item in report.limitations], ""]

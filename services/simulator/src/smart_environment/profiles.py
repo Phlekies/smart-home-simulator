@@ -27,6 +27,17 @@ def _noise_figure() -> ProfileValue:
                                "no al margen respecto a la sensibilidad.")
 
 
+# Link requirement per profile (B-140): the rate a device needs fixes the sensitivity its margin uses.
+_REQUIREMENTS = {
+    0: "Requisito recomendado para sensores y actuadores de bajo tráfico (mensajes de pocos bytes): basta la tasa "
+       "más robusta, MCS0. Es el perfil con el que se evalúa el criterio de fallo low-traffic-v1.",
+    3: "Requisito intermedio para equipos que envían datos de forma continua sin vídeo (p. ej. audio o telemetría "
+       "frecuente). Que haya cobertura a MCS3 no demuestra el caudal que necesitan.",
+    7: "Requisito de la tasa más alta de un flujo. Para cámaras solo indica cobertura a esa tasa: el caudal, la "
+       "estabilidad del vídeo y la saturación del canal no se evalúan.",
+}
+
+
 def _profile(mcs: int) -> GenericProfile:
     return GenericProfile(
         id=f"wifi4-ht20-mcs{mcs}",
@@ -40,8 +51,9 @@ def _profile(mcs: int) -> GenericProfile:
         antenna_gain_dbi=ProfileValue(value=0, provenance="inferred",
                                       source="Antena isotrópica supuesta: la ganancia real del equipo es desconocida."),
         noise_figure_db=_noise_figure(),
-        notes=["La sensibilidad mínima está definida para PER 10 % con PSDU de 4096 octetos; no es el criterio "
-               "de fallo del enlace de un sensor, que se fija aparte.",
+        notes=[_REQUIREMENTS[mcs],
+               "La sensibilidad mínima está definida para PER 10 % con PSDU de 4096 octetos; no es el criterio "
+               "de fallo del enlace de un sensor (low-traffic-v1, en el formato de medidas).",
                "Los equipos reales suelen ser más sensibles que el mínimo: el margen calculado es prudente.",
                "Sin potencia de transmisión declarada no se calcula el sentido equipo→AP."],
     )
