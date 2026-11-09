@@ -5,7 +5,7 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- **review** — B-136…B-138 (rama local `agent-b/b-136-138`, sobre I-008), por instrucción del usuario del
+- **done** — B-136…B-138 en `main` por #28 (44b715c), por instrucción del usuario del
   2026-11-09: «el código Java, una vez no sea necesario, se quita o se aparta»; objetivo, portfolio.
   - **B-136** retirar Java de `main` (`src/`, Gradle, `packaging/`, capturas Java). Queda preservado en la
     etiqueta `java-desktop-final` (sobre `main` 23ace32) y en la release v1.0.0. Referencias revisadas:
@@ -17,8 +17,13 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
   - Resultado: commit aa9e9d1 (B-136/B-138) y commit de B-137 con README, CHANGELOG, CONTRIBUTING,
     capturas en `docs/images/` y `scripts/make_demo_project.py` (proyecto sintético, valores ilustrativos).
     En el papel de A, A-121 (ver [AGENT_A](AGENT_A.md)). Rama fusionada con `main` (#27). Comandos: pytest 444; contratos sin deriva;
-    npm test 151; build; arnés de paridad desde la etiqueta con valores idénticos. Pendiente de
-    autorización del usuario: push de la rama y de la etiqueta, PR y merge.
+    npm test 151; build; arnés de paridad desde la etiqueta con valores idénticos.
+  - **I-009** (2026-11-09, autorizado por el usuario: «Sí, publica y fusiona» y «Yes, do the cleanup»):
+    etiqueta `java-desktop-final` publicada; PR #28 fusionado con la CI en verde en Linux, Windows y
+    macOS sobre bd81738; CI de `main` 44b715c en verde. Cerrados #1 (plantillas Java), #12 (ya en `main`
+    por #14), #19 y #20 (Gradle y Jackson), sin borrar ramas. Etiqueta `v2.0.0` sobre 44b715c.
+    Workflow Release 42687858146 en verde: release «Smart Home Simulator 2.0.0» publicada como la más reciente, con SmartHomeSimulator-2.0.0.zip (451 KB) y las notas del CHANGELOG; el zip descargado no se ha probado (el mismo empaquetado se probó en local).
+    Siguen abiertos los PR de Dependabot #18, #21 y #29, para revisión del usuario.
 - Estado: **done** — I-007: merges #11…#25 y #14 en `main` (8734c9b) con autorización del usuario
   (2026-11-08), verificación de `main` y casillas del plan de cierre. Pila B-107…B-135 integrada.
 - **Cambio de rol (2026-11-08):** por instrucción del usuario, esta sesión asume también el papel de A de forma

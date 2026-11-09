@@ -4,18 +4,18 @@ Inicio: 2026-10-29. Migración técnica completada el 2026-11-08; el producto si
 
 ## Resumen vigente para retomar trabajo
 
-Última actualización documental: 2026-11-09, B-136…B-138 y A-121 en revisión (B).
+Última actualización documental: 2026-11-09, I-009: #28 fusionado y release 2.0.0 (B).
 Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md), [tablero](../process/WORKBOARD.md)
 y el [plan de cierre](CLOSING_PLAN.md).
 
-- **Migración técnica completada.** `main` = 23ace32, con #11…#25 y #14 (I-007) y #26 (A-114…A-120).
-  Todas las casillas del [checklist técnico](CHECKLIST.md) están marcadas.
-- **CI:** la de migración de 23ace32 está en verde; la del PR #26 (mismo árbol), en verde en Java y migración.
+- **Migración técnica completada.** `main` = 44b715c, con #11…#25 y #14 (I-007), #26 (A-114…A-120), #27
+  (interfaz de A) y #28 (B-136…B-138, A-121). Todas las casillas del [checklist técnico](CHECKLIST.md) están marcadas.
+- **CI:** la de `main` 44b715c está en verde en Linux, Windows y macOS (solo la aplicación nueva).
 - **Motor:** estimador directo 0.2.0 ([ADR-008](ARCHITECTURE.md)); Sionna RT evaluado, no integrado.
 - **Instalación:** `python scripts/start.py`.
-- **Java fuera de `main` (B-136, ADR-009), en revisión:** la rama `agent-b/b-136-138` lo retira; queda en la
-  etiqueta `java-desktop-final` (23ace32) y la release v1.0.0. Hasta fusionarla, `main` aún contiene Java.
-  La misma rama trae el README de portfolio (B-137), la CI solo de la aplicación nueva (B-138) y A-121.
+- **Java fuera de `main` (B-136, ADR-009):** por #28; queda en la etiqueta `java-desktop-final` (23ace32) y
+  la release v1.0.0. El repositorio presenta la aplicación nueva (README de portfolio, B-137) y la
+  release 2.0.0 publica el zip que solo necesita Python (B-138).
 - **Lo que no acredita:** el cierre no valida la precisión. El [checklist del producto](../product/ACCEPTANCE_CHECKLIST.md)
   sigue su plan: falta decidir el criterio de fallo y la reserva de diseño, y faltan medidas reales para
   calibrar y validar.
@@ -25,6 +25,15 @@ y el [plan de cierre](CLOSING_PLAN.md).
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
 
+## I-009 — publicación de #28, limpieza y release 2.0.0 — 2026-11-09
+
+| Paso | Resultado |
+|---|---|
+| Publicación | Etiqueta `java-desktop-final` publicada. PR #28 fusionado (merge 44b715c) con los tres checks en verde sobre bd81738; el árbol de `main` es idéntico al probado y su CI está en verde |
+| Limpieza | Cerrados con comentario #1 (plantillas Java), #12 (contenido ya en `main` por #14), #19 y #20 (Gradle, Jackson). Ramas conservadas. Abiertos para revisión del usuario: Dependabot #18, #21 y #29 |
+| Release | Etiqueta `v2.0.0` sobre 44b715c. Workflow Release 42687858146 en verde: release «Smart Home Simulator 2.0.0» publicada como la más reciente, con SmartHomeSimulator-2.0.0.zip (451 KB) y las notas del CHANGELOG; el zip descargado no se ha probado (el mismo empaquetado se probó en local). |
+| Pendiente manual | Subir `docs/images/social-preview.png` en Settings → General → Social preview (no automatizable con estos permisos) |
+
 ## B-136…B-138 y A-121 — Java fuera de `main` y repositorio de portfolio — 2026-11-09
 
 | Tarea | Resultado |
@@ -33,7 +42,7 @@ entrega; este resumen y el checklist reflejan lo pendiente actual.
 | B-137 | README en inglés con resumen en español, seis capturas reales hechas con `scripts/make_demo_project.py` (proyecto sintético, valores ilustrativos), CHANGELOG 2.0.0, CONTRIBUTING y versión 2.0.0 |
 | B-138 | CI: pruebas Python y web, build y empaquetado en Linux, Windows y macOS; deriva de contratos en Linux. Release: zip de B-131 con notas del CHANGELOG. Dependabot: npm y GitHub Actions |
 | A-121 | Rótulo del mapa y barra del plano apilados; columna `minmax(0, 1fr)` por debajo de 650 px. Comprobado a 1440 y 390 px |
-| Comandos | Tras fusionar `main` con #27 en la rama: pytest 444; contratos y tipos sin deriva; npm test 151; build; capturas rehechas con la interfaz de #27 y comprobación a 390 px. La CI remota de esta rama no se ha ejecutado todavía |
+| Comandos | Tras fusionar `main` con #27 en la rama: pytest 444; contratos y tipos sin deriva; npm test 151; build; capturas rehechas con la interfaz de #27 y comprobación a 390 px. CI del PR #28: tres sistemas en verde |
 
 ## A-114…A-120 — interfaz de cierre, hecha por B en el papel de A — 2026-11-08
 
