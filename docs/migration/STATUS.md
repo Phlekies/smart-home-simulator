@@ -1,30 +1,39 @@
 # Estado y evidencia
 
-Inicio: 2026-10-29. La migración completa está en curso, no terminada.
+Inicio: 2026-10-29. Migración técnica completada el 2026-11-08; el producto sigue su propio plan.
 
 ## Resumen vigente para retomar trabajo
 
-Última actualización documental: 2026-11-08, consolidación I-007 (B) tras fusionar #11…#25 y #14.
+Última actualización documental: 2026-11-09, B-136…B-138 y A-121 en revisión (B).
 Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md), [tablero](../process/WORKBOARD.md)
 y el [plan de cierre](CLOSING_PLAN.md).
 
-- `main` = 8734c9b: #11, #13, #15, #16, #17, #22, #23, #24 y #25 (pila B: B-107…B-135, I-003…I-006) y #14
-  (A-102, A-109…A-113), fusionados el 2026-11-08 por B con autorización del usuario. CI de `main`:
-  Java (Linux, Windows y macOS) y migración en verde. El #12 queda abierto: su commit llegó con el #14.
-- Checklist técnico: M0, M1, M3 y M5 (salvo la condición final sobre Java) completas. Abiertos:
-  - M2: accesibilidad y recorrido de creación;
-  - M4: mapas guardables y predicción separada de la recomendación de compra.
-
-  Todos son de interfaz y están reservados como A-114…A-119 por B, que asume el papel de A por
-  instrucción del usuario.
-- Motor de la migración: estimador directo 0.2.0 ([ADR-008](ARCHITECTURE.md)); Sionna RT evaluado, no integrado.
-- Instalación: `python scripts/start.py` (B-131). Sin validación experimental en viviendas; el producto
-  sigue su propio plan.
+- **Migración técnica completada.** `main` = 23ace32, con #11…#25 y #14 (I-007) y #26 (A-114…A-120).
+  Todas las casillas del [checklist técnico](CHECKLIST.md) están marcadas.
+- **CI:** la de migración de 23ace32 está en verde; la del PR #26 (mismo árbol), en verde en Java y migración.
+- **Motor:** estimador directo 0.2.0 ([ADR-008](ARCHITECTURE.md)); Sionna RT evaluado, no integrado.
+- **Instalación:** `python scripts/start.py`.
+- **Java fuera de `main` (B-136, ADR-009), en revisión:** la rama `agent-b/b-136-138` lo retira; queda en la
+  etiqueta `java-desktop-final` (23ace32) y la release v1.0.0. Hasta fusionarla, `main` aún contiene Java.
+  La misma rama trae el README de portfolio (B-137), la CI solo de la aplicación nueva (B-138) y A-121.
+- **Lo que no acredita:** el cierre no valida la precisión. El [checklist del producto](../product/ACCEPTANCE_CHECKLIST.md)
+  sigue su plan: falta decidir el criterio de fallo y la reserva de diseño, y faltan medidas reales para
+  calibrar y validar.
 - `AGENTS.md` continúa local/excluido. Las secciones inferiores son evidencia histórica;
   las frases de publicación de aquellas entregas no describen revisiones posteriores.
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## B-136…B-138 y A-121 — Java fuera de `main` y repositorio de portfolio — 2026-11-09
+
+| Tarea | Resultado |
+|---|---|
+| B-136 | Fuera de `main`: `src/`, Gradle, `packaging/` y capturas JavaFX. Etiqueta local `java-desktop-final` → 23ace32. El arnés de paridad extrae las fuentes de la etiqueta y reproduce los valores guardados (diferencia máxima 0.0022 dB, commit Java 7e016cd) |
+| B-137 | README en inglés con resumen en español, seis capturas reales hechas con `scripts/make_demo_project.py` (proyecto sintético, valores ilustrativos), CHANGELOG 2.0.0, CONTRIBUTING y versión 2.0.0 |
+| B-138 | CI: pruebas Python y web, build y empaquetado en Linux, Windows y macOS; deriva de contratos en Linux. Release: zip de B-131 con notas del CHANGELOG. Dependabot: npm y GitHub Actions |
+| A-121 | Rótulo del mapa y barra del plano apilados; columna `minmax(0, 1fr)` por debajo de 650 px. Comprobado a 1440 y 390 px |
+| Comandos | Tras fusionar `main` con #27 en la rama: pytest 444; contratos y tipos sin deriva; npm test 151; build; capturas rehechas con la interfaz de #27 y comprobación a 390 px. La CI remota de esta rama no se ha ejecutado todavía |
 
 ## A-114…A-120 — interfaz de cierre, hecha por B en el papel de A — 2026-11-08
 

@@ -2,7 +2,7 @@
 
 ## ADR-001 — Migración incremental
 
-Java permanece en su estructura para no romper referencias y releases. Nueva aplicación
+Java permaneció en su estructura hasta superar las puertas de sustitución (retirado en ADR-009). Nueva aplicación
 en `apps/web` y `services/simulator`. Los JSON Java v1 se importan conservando la entrada
 original en `legacy_source`; la conversión declara cada supuesto importante. No se exige
 igualdad numérica con Java cuando cambia el modelo físico.
@@ -52,6 +52,18 @@ Consecuencias:
 - El estimador no equivale al motor multipath Java y no se anuncia como tal.
 - Integrar un motor avanzado pasa a ser una decisión de producto (P4), cuando haya medidas
   independientes con las que comparar ambos.
+
+## ADR-009 — Java fuera de `main` una vez superadas las puertas
+
+Decisión del usuario del 2026-11-09 (B-136): con M0–M5 completas, el código Java ya no hace falta en el
+repositorio. Se retiran de `main` `src/`, Gradle, `packaging/` y las capturas de la aplicación JavaFX.
+Se conservan:
+- la etiqueta `java-desktop-final`, que apunta al último `main` que contenía Java (23ace32);
+- la release v1.0.0, con sus ejecutables nativos;
+- los ejemplos `examples/*.shsim.json`, que la API sigue importando.
+
+El arnés de paridad (B-121) extrae las fuentes Java de esa etiqueta, así que la comparación sigue siendo
+reproducible sin tener Java en el árbol. La CI y las releases pasan a ser solo de la aplicación nueva.
 
 ## ADR-005 — Reproducibilidad y obsolescencia
 

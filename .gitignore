@@ -1,18 +1,18 @@
-# Build output
-/bin/
+# Build output (local packages from scripts/package_local.py)
 /build/
-/out/
-*.class
 
-# Gradle
-.gradle/
-!gradle/wrapper/gradle-wrapper.jar
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
 
-# IDEs (Eclipse/IntelliJ/VS Code regenerate these from the Gradle build)
-.classpath
-.project
-.settings/
-.metadata/
+# Web
+node_modules/
+apps/web/dist/
+
+# IDEs
 .idea/
 *.iml
 .vscode/
@@ -24,13 +24,4 @@ Thumbs.db
 # Local secrets / notes (never commit credentials)
 *.env
 secrets*
-
-# Python / web migration
-.venv/
-__pycache__/
-*.py[cod]
-.pytest_cache/
-*.egg-info/
-node_modules/
-apps/web/dist/
 .local/

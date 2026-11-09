@@ -1,21 +1,13 @@
 version: 2
 updates:
-  - package-ecosystem: gradle
-    directory: /
+  - package-ecosystem: npm
+    directory: /apps/web
     schedule:
       interval: monthly
     groups:
-      test-dependencies:
+      web-dependencies:
         patterns:
-          - "org.junit*"
-          - "com.tngtech.archunit*"
-          - "org.testfx*"
-    ignore:
-      # JavaFX, and the UI libraries built on it, stay on the 21 LTS line.
-      - dependency-name: "org.openjfx:*"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "io.github.mkpaz:atlantafx-base"
-        update-types: ["version-update:semver-major"]
+          - "*"
 
   - package-ecosystem: github-actions
     directory: /

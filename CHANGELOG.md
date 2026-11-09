@@ -4,6 +4,39 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [2.0.0] - 2026-11-09
+
+The desktop simulator becomes a local web application with a Python service, focused on one
+decision: whether each smart-home device will have enough Wi-Fi coverage where it is going to be
+installed, before buying it. Needs only Python 3.11+: `python scripts/start.py`.
+
+### Added
+- React and TypeScript interface served from `127.0.0.1`: floor-plan editor with materials,
+  undo/redo, walls by coordinates, a scaled reference image, zoom and pan, PNG export, a 3D view,
+  a guided path and a local recovery copy.
+- Python service (FastAPI and Pydantic) with JSON Schema, OpenAPI and generated TypeScript types
+  checked for drift in CI.
+- Two-way link budgets per radio, with explicit unknowns: missing data gives an unverified result,
+  never a favourable one.
+- Coverage maps for one access point and one receiver profile at a chosen height, computed as
+  background jobs, saved and reopened with a check against the project and the engine version.
+- Scenarios for doors with an unknown state and materials with a loss range, position comparison
+  with the signal change explained per budget term, placement search over allowed places (also
+  under a scenario), installation reports in Markdown and JSON, generic Wi-Fi radio profiles,
+  provenance of radio values, access-point data connections and a format for future measurements.
+- Import of the Java project files, and a parity harness that compares the Python engine with
+  the Java one (largest difference 0.0022 dB over 76 direct-path probes).
+- One-command start (`scripts/start.py`) and a release zip that does not need Node.
+
+### Changed
+- The engine is a direct-path estimator; reflections, diffraction and fading of the Java engine
+  are not carried over. Sionna RT was evaluated and is not integrated.
+- CI runs the Python and interface tests, the build and the packaging on Linux, Windows and macOS.
+
+### Removed
+- The Java/JavaFX application, Gradle build and native installers left `main`. They remain in the
+  `java-desktop-final` tag and in release 1.0.0.
+
 ## [1.0.0] - 2026-09-30
 
 First stable release.
@@ -69,6 +102,7 @@ First stable release.
 Original learning project: JavaFX grid with sensors, a hub, walls, ray animation and a
 first propagation heatmap.
 
+[2.0.0]: https://github.com/Phlekies/smart-home-simulator/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/Phlekies/smart-home-simulator/releases/tag/v1.0.0
 [0.4.0]: https://github.com/Phlekies/smart-home-simulator/compare/8266d5e...fb67fbc
 [0.3.0]: https://github.com/Phlekies/smart-home-simulator/compare/8266d5e...fe1f333

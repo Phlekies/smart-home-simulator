@@ -13,8 +13,9 @@ Una simulación no garantiza perfección: cada resultado debe indicar modelo, ve
 supuestos, datos, ámbito de validez y evidencia experimental. Ningún porcentaje de confianza
 ni margen de error se inventa. «Sin verificar» es un resultado válido.
 
-No se migra borrando Java. Sus fuentes, Gradle, ejemplos, instaladores y pruebas permanecen
-operativos como referencia hasta superar los criterios de sustitución. El prototipo 3D de
+No se migra borrando Java. Sus fuentes, Gradle, ejemplos, instaladores y pruebas permanecieron
+operativos como referencia hasta superar los criterios de sustitución. Superados el 2026-11-08, el
+2026-11-09 Java salió de `main` (ADR-009); queda en la etiqueta `java-desktop-final` y en la release v1.0.0. El prototipo 3D de
 la carpeta padre tampoco se modifica. La nueva aplicación vive en este repositorio clonado.
 
 ## Arquitectura de destino
@@ -126,13 +127,16 @@ ilustrativas, BER BPSK o capacidad Shannon a la interfaz principal.
 
 ## Puerta de finalización de la migración
 
-M0–M5 han de tener evidencia. Estado a 2026-11-03: M0 y M1 completas con CI remota. M2–M5 tienen
-los puntos abiertos que lista el [checklist](CHECKLIST.md), varios ya hechos en PR pendientes de
-fusionar. El estimador rápido no equivale al motor multipath Java: el contraste está en
-[B-121](../simulation/JAVA_PARITY.md). El usuario decidió el 2026-11-08 cerrar la migración con el
-estimador directo ([ADR-008](ARCHITECTURE.md)) y una instalación que solo requiere Python. Los pasos
-restantes están en el [plan de cierre](CLOSING_PLAN.md).
-Por tanto, la migración completa sigue en curso.
+M0–M5 han de tener evidencia. **Migración técnica completada el 2026-11-08** (`main` = 23ace32):
+- todas las casillas del [checklist](CHECKLIST.md) están marcadas con evidencia en STATUS;
+- la CI de migración está en verde, y también la de Java en el PR #26, con el mismo árbol.
+
+Decisiones del usuario:
+- motor: el estimador directo ([ADR-008](ARCHITECTURE.md)), que no equivale al multipath Java
+  (contraste en [B-121](../simulation/JAVA_PARITY.md));
+- instalación: solo con Python.
+
+Por decisión del usuario, Java salió de `main` el 2026-11-09 (ADR-009) y queda en la etiqueta `java-desktop-final`.
 
 Completar migración no significa «producto con precisión validada». El objetivo rector
 es [PRODUCT_OBJECTIVE.md](../PRODUCT_OBJECTIVE.md) y el desarrollo posterior se ejecuta

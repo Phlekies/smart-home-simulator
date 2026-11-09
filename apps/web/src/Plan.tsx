@@ -219,12 +219,18 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
   const previewLength = drawingStart && drawingEnd ? Math.hypot(drawingEnd.x - drawingStart.x, drawingEnd.y - drawingStart.y) : 0;
   const zoomBy = (factor: number) => setView(current => zoomView(bounds, current, factor));
   return <>
+    {/* Toolbar and map caption share one overlay so they stack instead of overlapping when either wraps. */}
+    <div className="plan-overlay">
     <div className="plan-controls" role="toolbar" aria-label="Vista del plano">
       <button type="button" onClick={() => zoomBy(1.5)} disabled={(view?.scale ?? 1) >= 20} aria-label="Acercar el plano">＋</button>
       <button type="button" onClick={() => zoomBy(1 / 1.5)} disabled={!view} aria-label="Alejar el plano">－</button>
       <button type="button" onClick={() => setView(null)} disabled={!view}>Ver todo</button>
       <button type="button" aria-disabled={exporting || undefined} onClick={() => void exportImage()}>Exportar imagen</button>
       <span className="plan-zoom" role="status">{view ? `Zoom ×${view.scale.toFixed(1)} · arrastra el fondo para desplazar` : 'Plano completo'}{exportMessage ? ` · ${exportMessage}` : ''}</span>
+    </div>
+    {coverageLayer && <p className="map-caption"><strong>{metricNames[coverageLayer.metric]}</strong> · AP {project.devices.find(device => device.id === coverageLayer.result.parameters.access_point_device_id)?.name}
+      {' · '}Perfil {coverageLayer.result.parameters.profile.name} · {coverageLayer.result.frequency_hz / 1e6} MHz · altura {coverageLayer.result.parameters.grid.height_m} m · celda {coverageLayer.result.parameters.grid.resolution_m} m
+      <br />Sin calibración experimental · rayado: datos parciales · gris: sin valor / sin calcular</p>}
     </div>
     <svg ref={svgRef} className={`plan ${tool === 'wall' ? 'is-drawing' : ''} ${view ? 'is-zoomed' : ''}`} tabIndex={0} role="group"
       aria-label="Plano de la vivienda. Selecciona y arrastra paredes o dispositivos; usa Dibujar pared para crear obstáculos. Más y menos acercan o alejan, 0 muestra todo y las flechas desplazan el plano ampliado."
@@ -313,9 +319,6 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
           textAnchor="middle" fill="#f3cf88" fontSize=".55" paintOrder="stroke" stroke="#142221" strokeWidth=".15">{previewLength.toFixed(2)} m</text>
       </g>}
     </svg>
-    {coverageLayer && <p className="map-caption"><strong>{metricNames[coverageLayer.metric]}</strong> · AP {project.devices.find(device => device.id === coverageLayer.result.parameters.access_point_device_id)?.name}
-      {' · '}Perfil {coverageLayer.result.parameters.profile.name} · {coverageLayer.result.frequency_hz / 1e6} MHz · altura {coverageLayer.result.parameters.grid.height_m} m · celda {coverageLayer.result.parameters.grid.resolution_m} m
-      <br />Sin calibración experimental · rayado: datos parciales · gris: sin valor / sin calcular</p>}
     {tool === 'wall' && <p className="drawing-hint" role="status">{drawingMessage || 'Haz clic en el inicio y el final de la pared. Ajuste: 0,1 m. Escape cancela.'}</p>}
   </>;
 }

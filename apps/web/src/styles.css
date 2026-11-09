@@ -180,7 +180,7 @@ input::placeholder { color: #89937f; font-size: 11px; }
 .coverage-point { padding: 12px 16px; background: #edf3e8; border-radius: 6px; font-size: 12px; }
 .coverage-point h3 { margin-top: 0; }
 .coverage-panel progress { width: min(420px, 100%); }
-.map-caption { position: absolute; top: 10px; left: 10px; right: 10px; z-index: 2; margin: 0; padding: 8px 10px;
+.map-caption { align-self: stretch; margin: 0; padding: 8px 10px;
   background: #142221ee; border: 1px solid #718879; border-radius: 5px; color: #eef4e7; font-size: 10px; pointer-events: none; }
 @media (max-width: 800px) { .coverage-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 450px) { .coverage-fields { grid-template-columns: 1fr; } }
@@ -207,13 +207,14 @@ li { margin-bottom: 6px; }
 .app-footer { display: flex; justify-content: space-between; font-size: 10px; color: #839078; margin-top: 23px; }
 @media (min-width: 1550px) { .workspace-grid { grid-template-columns: 255px minmax(280px, 1fr) 305px; } .scene-content, .plan { min-height: 560px; } }
 @media (max-width: 1100px) { main { padding: 20px; } .workspace-grid { grid-template-columns: 200px minmax(250px, 1fr); } .properties-panel { grid-column: 1 / -1; max-height: none; } .radio-fields { grid-template-columns: repeat(4, 1fr); } .local-indicator { display: none; } .app-header .primary { margin-left: auto; } .project-heading { align-items: flex-start; flex-direction: column; } }
-@media (max-width: 650px) { .app-header { padding: 13px; gap: 10px; } .brand { font-size: 13px; } .brand small { font-size: 8px; } .brand-mark { display: none; } button.primary { padding: 10px; font-size: 11px; } main { padding: 15px; } h1 { font-size: 28px; } .workspace-grid { grid-template-columns: 1fr; } .devices-panel { padding: 15px; } .device-list { display: flex; max-height: 150px; overflow: auto; } .device-item { min-width: 190px; } .engine-card { display: none; } .add-button { margin-bottom: 0; } .scene-content, .plan { min-height: 350px; } .scene-toolbar { padding: 10px; } .properties-panel { grid-column: auto; } .radio-fields { grid-template-columns: repeat(2, 1fr); } .file-actions { flex-wrap: wrap; } .app-footer { flex-direction: column; gap: 5px; } .scene-footer { flex-wrap: wrap; } .results-panel { padding: 16px; } .results-heading { align-items: flex-start; flex-direction: column; } }
+@media (max-width: 650px) { .app-header { padding: 13px; gap: 10px; } .brand { font-size: 13px; } .brand small { font-size: 8px; } .brand-mark { display: none; } button.primary { padding: 10px; font-size: 11px; } main { padding: 15px; } h1 { font-size: 28px; } .workspace-grid { grid-template-columns: minmax(0, 1fr); } .devices-panel { padding: 15px; } .device-list { display: flex; max-height: 150px; overflow: auto; } .device-item { min-width: 190px; } .engine-card { display: none; } .add-button { margin-bottom: 0; } .scene-content, .plan { min-height: 350px; } .scene-toolbar { padding: 10px; } .properties-panel { grid-column: auto; } .radio-fields { grid-template-columns: repeat(2, 1fr); } .file-actions { flex-wrap: wrap; } .app-footer { flex-direction: column; gap: 5px; } .scene-footer { flex-wrap: wrap; } .results-panel { padding: 16px; } .results-heading { align-items: flex-start; flex-direction: column; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
 /* A-116…A-118: plan view controls, focus on the plan itself and the guided creation path. */
 .plan:focus-visible { outline: 3px solid #329b70; outline-offset: -3px; }
 .plan.is-zoomed { cursor: grab; }
-.scene-content > .plan-controls { inset: 8px 8px auto auto; z-index: 2; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: flex-end; max-width: calc(100% - 16px); pointer-events: none; }
+.scene-content > .plan-overlay { inset: 8px 8px auto 8px; z-index: 2; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; pointer-events: none; }
+.plan-controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: flex-end; max-width: 100%; }
 .plan-controls > * { pointer-events: auto; }
 .plan-controls button { padding: 5px 10px; font-size: 12px; }
 .plan-zoom { font-size: 11px; color: #dfe8df; background: #142221cc; padding: 3px 8px; border-radius: 4px; }
