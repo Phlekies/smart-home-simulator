@@ -88,7 +88,11 @@ validación en viviendas. Los checklists técnico y de producto siguen siendo la
 | A-118 | A (asumido por B) | done | Accesibilidad (nombres, foco, teclado) y recorrido guiado de creación de una vivienda | En `main` por #26 (23ace32); [evidencia](../ui/CLOSING_UI_TASKS.md) |
 | A-119 | A (asumido por B) | done | Revisión de textos: predicción técnica separada de recomendación de compra | En `main` por #26 (23ace32); [evidencia](../ui/CLOSING_UI_TASKS.md) |
 | A-120 | A (asumido por B) | done | Corrección de integración: mapas y búsqueda de la interfaz rechazaban los parámetros devueltos con campos opcionales nuevos (`null`) | En `main` por #26 (23ace32); ya fallaba en `main` |
-| I-008 | B integrador | done | Declaración de cierre de la migración técnica: checklist completo en `main` (23ace32) | Java se conserva como referencia |
+| I-008 | B integrador | done | Declaración de cierre de la migración técnica: checklist completo en `main` (23ace32) | Java se conservó como referencia hasta B-136 |
+| B-136 | B integrador | review | Retirar Java de `main` por decisión del usuario (ADR-009); queda en la etiqueta `java-desktop-final` y la release v1.0.0 | Rama `agent-b/b-136-138`; arnés de paridad lee la etiqueta |
+| B-137 | B integrador | review | README de portfolio con capturas reales, CHANGELOG 2.0.0 y CONTRIBUTING del nuevo stack | Rama `agent-b/b-136-138`; proyecto de demostración sintético |
+| B-138 | B integrador | review | CI y release solo de la aplicación nueva (Linux, Windows, macOS) | Rama `agent-b/b-136-138`; release con el zip de B-131 |
+| A-121 | A (asumido por B) | review | Rótulo del mapa sobre la barra del plano; desbordamiento horizontal por debajo de 650 px | Rama `agent-b/b-136-138` |
 | I-005 | B integrador | done | Revisión de A-109…A-113 (#14) con `main` y la pila B (#11, #13, #15) | [PR #16](https://github.com/Phlekies/smart-home-simulator/pull/16) (sobre #15); merges del usuario |
 | I-002 | A (integración por instrucción del usuario) | done | Entregas A-101…A-108 y B-101…B-104 en `main` (046ee82) por [PR #7](https://github.com/Phlekies/smart-home-simulator/pull/7); 162 Python/70 web/build/contratos; CI de migración y Java verde antes y después | AGENTS.md excluido; Java conservado. No volver a fusionar la pila B como entregas nuevas |
 | I-001 | B integrador | done | Base publicada en PR #2 e incluida en `main` por I-002; evidencia histórica en STATUS | Sin force-push; AGENTS.md local |

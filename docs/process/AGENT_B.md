@@ -5,7 +5,7 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
-- **claimed** — B-136…B-138 (rama local `agent-b/b-136-138`, sobre I-008), por instrucción del usuario del
+- **review** — B-136…B-138 (rama local `agent-b/b-136-138`, sobre I-008), por instrucción del usuario del
   2026-11-09: «el código Java, una vez no sea necesario, se quita o se aparta»; objetivo, portfolio.
   - **B-136** retirar Java de `main` (`src/`, Gradle, `packaging/`, capturas Java). Queda preservado en la
     etiqueta `java-desktop-final` (sobre `main` 23ace32) y en la release v1.0.0. Referencias revisadas:
@@ -14,6 +14,11 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
     CHANGELOG 2.0.0, CONTRIBUTING para el nuevo stack y versión de producto 2.0.0.
   - **B-138** CI solo de la aplicación nueva (Linux, Windows y macOS) y release con el zip de B-131.
   - Contratos sin cambios (salvo el número de versión de la API).
+  - Resultado: commit aa9e9d1 (B-136/B-138) y commit de B-137 con README, CHANGELOG, CONTRIBUTING,
+    capturas en `docs/images/` y `scripts/make_demo_project.py` (proyecto sintético, valores ilustrativos).
+    En el papel de A, A-121 (ver [AGENT_A](AGENT_A.md)). Comandos: pytest 444; contratos sin deriva;
+    npm test 131; build; arnés de paridad desde la etiqueta con valores idénticos. Pendiente de
+    autorización del usuario: push de la rama y de la etiqueta, PR y merge.
 - Estado: **done** — I-007: merges #11…#25 y #14 en `main` (8734c9b) con autorización del usuario
   (2026-11-08), verificación de `main` y casillas del plan de cierre. Pila B-107…B-135 integrada.
 - **Cambio de rol (2026-11-08):** por instrucción del usuario, esta sesión asume también el papel de A de forma

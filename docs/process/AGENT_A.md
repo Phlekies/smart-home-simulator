@@ -17,8 +17,24 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 - Archivos previstos: `apps/web/src/**` (salvo `generated`), `apps/web/package.json` (script `contracts`),
   `docs/ui/**` y este registro.
 - Estado anterior (A original): A-109…A-113 y A-102 fusionadas en `main` por #14 (I-007).
+- **review** — A-121, hecha por la sesión de B en el papel de A (2026-11-09), en la rama `agent-b/b-136-138`:
+  correcciones de la interfaz vistas al preparar las capturas del portfolio. Archivos: `apps/web/src/Plan.tsx`
+  y `apps/web/src/styles.css`.
 
 ## Historial
+
+### A-121 — solapamiento del plano y desbordamiento en móvil (review), hecha por la sesión de B
+
+```text
+Tarea / estado: A-121 / review. Rama local agent-b/b-136-138. 2026-11-09.
+Fallo 1: con un mapa visible, el rótulo del mapa tapaba la barra de zoom y exportación del plano.
+  Ahora barra y rótulo comparten una capa en columna (.plan-overlay) y se apilan aunque la barra se parta.
+Fallo 2: por debajo de 650 px la lista de equipos pasa a fila (7 × 190 px) y la columna 1fr del
+  espacio de trabajo crecía hasta 1350 px: desplazamiento horizontal de 975 px a 390 px de ancho.
+  Columna minmax(0, 1fr): sin desplazamiento horizontal; la lista se desplaza dentro de su panel.
+Navegador: Brave sin interfaz con perfil aislado, 1440 px y 390 px; barra y rótulo sin solaparse.
+Comandos: npm test 131; build (tsc + vite). Servidores detenidos.
+```
 
 ### A-114…A-120 — interfaz de cierre (review), hecha por la sesión de B en el papel de A
 

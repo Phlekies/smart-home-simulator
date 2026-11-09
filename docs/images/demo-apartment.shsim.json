@@ -1,0 +1,617 @@
+{
+  "format": "smart-environment-simulator",
+  "version": 1,
+  "name": "Piso de demostración · Wi-Fi 2.4 GHz",
+  "units": "m",
+  "building": {
+    "width_m": 43.6,
+    "depth_m": 30.6,
+    "walls": [
+      {
+        "id": "wall-1",
+        "start": {
+          "x": 1.3,
+          "y": 1.3,
+          "z": 0.0
+        },
+        "end": {
+          "x": 41.6,
+          "y": 1.3,
+          "z": 0.0
+        },
+        "height_m": 2.6,
+        "thickness_m": 0.12,
+        "material_id": "brick",
+        "door": null
+      },
+      {
+        "id": "wall-2",
+        "start": {
+          "x": 41.6,
+          "y": 1.3,
+          "z": 0.0
+        },
+        "end": {
+          "x": 41.6,
+          "y": 28.6,
+          "z": 0.0
+        },
+        "height_m": 2.6,
+        "thickness_m": 0.12,
+        "material_id": "brick",
+        "door": null
+      },
+      {
+        "id": "wall-3",
+        "start": {
+          "x": 41.6,
+          "y": 28.6,
+          "z": 0.0
+        },
+        "end": {
+          "x": 1.3,
+          "y": 28.6,
+          "z": 0.0
+        },
+        "height_m": 2.6,
+        "thickness_m": 0.12,
+        "material_id": "brick",
+        "door": null
+      },
+      {
+        "id": "wall-4",
+        "start": {
+          "x": 1.3,
+          "y": 28.6,
+          "z": 0.0
+        },
+        "end": {
+          "x": 1.3,
+          "y": 1.3,
+          "z": 0.0
+        },
+        "height_m": 2.6,
+        "thickness_m": 0.12,
+        "material_id": "brick",
+        "door": null
+      },
+      {
+        "id": "wall-5",
+        "start": {
+          "x": 15.600000000000001,
+          "y": 1.3,
+          "z": 0.0
+        },
+        "end": {
+          "x": 15.600000000000001,
+          "y": 19.5,
+          "z": 0.0
+        },
+        "height_m": 2.6,
+        "thickness_m": 0.08,
+        "material_id": "drywall",
+        "door": null
+      },
+      {
+        "id": "wall-6",
+        "start": {
+          "x": 28.6,
+          "y": 9.1,
+          "z": 0.0
+        },
+        "end": {
+          "x": 28.6,
+          "y": 28.6,
+          "z": 0.0
+        },
+        "height_m": 2.6,
+        "thickness_m": 0.08,
+        "material_id": "drywall",
+        "door": null
+      },
+      {
+        "id": "wall-7",
+        "start": {
+          "x": 1.3,
+          "y": 19.5,
+          "z": 0.0
+        },
+        "end": {
+          "x": 15.600000000000001,
+          "y": 19.5,
+          "z": 0.0
+        },
+        "height_m": 2.6,
+        "thickness_m": 0.08,
+        "material_id": "drywall",
+        "door": null
+      },
+      {
+        "id": "wall-8",
+        "start": {
+          "x": 15.600000000000001,
+          "y": 9.1,
+          "z": 0.0
+        },
+        "end": {
+          "x": 28.6,
+          "y": 9.1,
+          "z": 0.0
+        },
+        "height_m": 2.6,
+        "thickness_m": 0.08,
+        "material_id": "drywall",
+        "door": null
+      },
+      {
+        "id": "wall-9",
+        "start": {
+          "x": 15.600000000000001,
+          "y": 19.5,
+          "z": 0.0
+        },
+        "end": {
+          "x": 28.6,
+          "y": 19.5,
+          "z": 0.0
+        },
+        "height_m": 2.6,
+        "thickness_m": 0.08,
+        "material_id": "drywall",
+        "door": null
+      },
+      {
+        "id": "wall-10",
+        "start": {
+          "x": 22.1,
+          "y": 9.1,
+          "z": 0.0
+        },
+        "end": {
+          "x": 22.1,
+          "y": 19.5,
+          "z": 0.0
+        },
+        "height_m": 2.6,
+        "thickness_m": 0.06,
+        "material_id": "wood",
+        "door": "unknown"
+      },
+      {
+        "id": "wall-11",
+        "start": {
+          "x": 33.800000000000004,
+          "y": 1.3,
+          "z": 0.0
+        },
+        "end": {
+          "x": 33.800000000000004,
+          "y": 9.1,
+          "z": 0.0
+        },
+        "height_m": 2.6,
+        "thickness_m": 0.06,
+        "material_id": "wood",
+        "door": null
+      }
+    ],
+    "materials": [
+      {
+        "id": "drywall",
+        "name": "Drywall",
+        "loss_db_24ghz": 3.0,
+        "loss_db_5ghz": 5.0,
+        "extra_loss_db_per_cm": 0.0,
+        "evidence": "Hypothesis: legacy empirical values; not calibrated",
+        "uncertainty": {
+          "loss_db_24ghz_low": 2.0,
+          "loss_db_24ghz_high": 7.0,
+          "loss_db_5ghz_low": 3.0,
+          "loss_db_5ghz_high": 10.0,
+          "source": "Composición del tabique desconocida (ilustrativo)"
+        }
+      },
+      {
+        "id": "brick",
+        "name": "Brick",
+        "loss_db_24ghz": 6.0,
+        "loss_db_5ghz": 9.0,
+        "extra_loss_db_per_cm": 0.1,
+        "evidence": "Hypothesis: legacy empirical values; not calibrated",
+        "uncertainty": null
+      },
+      {
+        "id": "concrete",
+        "name": "Concrete",
+        "loss_db_24ghz": 10.0,
+        "loss_db_5ghz": 15.0,
+        "extra_loss_db_per_cm": 0.2,
+        "evidence": "Hypothesis: legacy empirical values; not calibrated",
+        "uncertainty": null
+      },
+      {
+        "id": "glass",
+        "name": "Glass",
+        "loss_db_24ghz": 2.0,
+        "loss_db_5ghz": 3.0,
+        "extra_loss_db_per_cm": 0.0,
+        "evidence": "Hypothesis: legacy empirical values; not calibrated",
+        "uncertainty": null
+      },
+      {
+        "id": "wood",
+        "name": "Wood",
+        "loss_db_24ghz": 3.0,
+        "loss_db_5ghz": 5.0,
+        "extra_loss_db_per_cm": 0.05,
+        "evidence": "Hypothesis: legacy empirical values; not calibrated",
+        "uncertainty": null
+      },
+      {
+        "id": "metal-door",
+        "name": "Metal door",
+        "loss_db_24ghz": 18.0,
+        "loss_db_5ghz": 25.0,
+        "extra_loss_db_per_cm": 0.0,
+        "evidence": "Hypothesis: legacy empirical values; not calibrated",
+        "uncertainty": null
+      }
+    ],
+    "power_outlets": [],
+    "network_ports": []
+  },
+  "devices": [
+    {
+      "id": "S1",
+      "name": "Thermostat",
+      "role": "endpoint",
+      "position": {
+        "x": 7.0,
+        "y": 12.0,
+        "z": 1.4
+      },
+      "radios": [
+        {
+          "id": "radio-1",
+          "protocol": "wifi",
+          "frequency_hz": 2437000000.0,
+          "bandwidth_hz": 20000000.0,
+          "channel": 6,
+          "tx_power_dbm": 10.0,
+          "tx_gain_dbi": 0.0,
+          "rx_gain_dbi": 0.0,
+          "sensitivity_dbm": -82.0,
+          "noise_figure_db": 7.0,
+          "antenna": "omnidirectional",
+          "orientation_deg": 0.0,
+          "beamwidth_deg": 360.0,
+          "pattern_sharpness": 1.8,
+          "side_lobe_attenuation_db": 18.0,
+          "polarization_deg": 0.0,
+          "provenance": {
+            "tx_power_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            },
+            "sensitivity_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            }
+          }
+        }
+      ],
+      "evidence": "User-defined generic device; functional compatibility unverified",
+      "data_connection": null
+    },
+    {
+      "id": "S2",
+      "name": "Smoke detector",
+      "role": "endpoint",
+      "position": {
+        "x": 24.0,
+        "y": 5.0,
+        "z": 1.4
+      },
+      "radios": [
+        {
+          "id": "radio-1",
+          "protocol": "wifi",
+          "frequency_hz": 2437000000.0,
+          "bandwidth_hz": 20000000.0,
+          "channel": 6,
+          "tx_power_dbm": 10.0,
+          "tx_gain_dbi": 0.0,
+          "rx_gain_dbi": 0.0,
+          "sensitivity_dbm": -82.0,
+          "noise_figure_db": 7.0,
+          "antenna": "omnidirectional",
+          "orientation_deg": 0.0,
+          "beamwidth_deg": 360.0,
+          "pattern_sharpness": 1.8,
+          "side_lobe_attenuation_db": 18.0,
+          "polarization_deg": 0.0,
+          "provenance": {
+            "tx_power_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            },
+            "sensitivity_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            }
+          }
+        }
+      ],
+      "evidence": "User-defined generic device; functional compatibility unverified",
+      "data_connection": null
+    },
+    {
+      "id": "S3",
+      "name": "Door sensor",
+      "role": "endpoint",
+      "position": {
+        "x": 40.0,
+        "y": 3.0,
+        "z": 1.4
+      },
+      "radios": [
+        {
+          "id": "radio-1",
+          "protocol": "wifi",
+          "frequency_hz": 2437000000.0,
+          "bandwidth_hz": 20000000.0,
+          "channel": 6,
+          "tx_power_dbm": 10.0,
+          "tx_gain_dbi": 0.0,
+          "rx_gain_dbi": 0.0,
+          "sensitivity_dbm": -82.0,
+          "noise_figure_db": 7.0,
+          "antenna": "omnidirectional",
+          "orientation_deg": 0.0,
+          "beamwidth_deg": 360.0,
+          "pattern_sharpness": 1.8,
+          "side_lobe_attenuation_db": 18.0,
+          "polarization_deg": 0.0,
+          "provenance": {
+            "tx_power_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            },
+            "sensitivity_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            }
+          }
+        }
+      ],
+      "evidence": "User-defined generic device; functional compatibility unverified",
+      "data_connection": null
+    },
+    {
+      "id": "S4",
+      "name": "Window sensor",
+      "role": "endpoint",
+      "position": {
+        "x": 4.0,
+        "y": 26.0,
+        "z": 1.4
+      },
+      "radios": [
+        {
+          "id": "radio-1",
+          "protocol": "wifi",
+          "frequency_hz": 2437000000.0,
+          "bandwidth_hz": 20000000.0,
+          "channel": 6,
+          "tx_power_dbm": -20.0,
+          "tx_gain_dbi": 0.0,
+          "rx_gain_dbi": 0.0,
+          "sensitivity_dbm": -82.0,
+          "noise_figure_db": 7.0,
+          "antenna": "omnidirectional",
+          "orientation_deg": 0.0,
+          "beamwidth_deg": 360.0,
+          "pattern_sharpness": 1.8,
+          "side_lobe_attenuation_db": 18.0,
+          "polarization_deg": 0.0,
+          "provenance": {
+            "tx_power_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            },
+            "sensitivity_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            }
+          }
+        }
+      ],
+      "evidence": "User-defined generic device; functional compatibility unverified",
+      "data_connection": null
+    },
+    {
+      "id": "S5",
+      "name": "Smart plug",
+      "role": "endpoint",
+      "position": {
+        "x": 20.0,
+        "y": 25.0,
+        "z": 1.4
+      },
+      "radios": [
+        {
+          "id": "radio-1",
+          "protocol": "wifi",
+          "frequency_hz": 2437000000.0,
+          "bandwidth_hz": 20000000.0,
+          "channel": 6,
+          "tx_power_dbm": 10.0,
+          "tx_gain_dbi": 0.0,
+          "rx_gain_dbi": 0.0,
+          "sensitivity_dbm": -82.0,
+          "noise_figure_db": 7.0,
+          "antenna": "omnidirectional",
+          "orientation_deg": 0.0,
+          "beamwidth_deg": 360.0,
+          "pattern_sharpness": 1.8,
+          "side_lobe_attenuation_db": 18.0,
+          "polarization_deg": 0.0,
+          "provenance": {
+            "tx_power_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            },
+            "sensitivity_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            }
+          }
+        }
+      ],
+      "evidence": "User-defined generic device; functional compatibility unverified",
+      "data_connection": null
+    },
+    {
+      "id": "S6",
+      "name": "Security camera",
+      "role": "endpoint",
+      "position": {
+        "x": 39.0,
+        "y": 26.0,
+        "z": 1.4
+      },
+      "radios": [
+        {
+          "id": "radio-1",
+          "protocol": "wifi",
+          "frequency_hz": 2437000000.0,
+          "bandwidth_hz": 20000000.0,
+          "channel": 6,
+          "tx_power_dbm": 10.0,
+          "tx_gain_dbi": 3.0,
+          "rx_gain_dbi": 3.0,
+          "sensitivity_dbm": -64.0,
+          "noise_figure_db": 7.0,
+          "antenna": "directional",
+          "orientation_deg": 225.0,
+          "beamwidth_deg": 120.0,
+          "pattern_sharpness": 1.8,
+          "side_lobe_attenuation_db": 18.0,
+          "polarization_deg": 0.0,
+          "provenance": {
+            "tx_power_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            },
+            "sensitivity_dbm": {
+              "provenance": "standard-minimum",
+              "source": "IEEE 802.11 HT20 MCS7 (ilustrativo)"
+            }
+          }
+        }
+      ],
+      "evidence": "User-defined generic device; functional compatibility unverified",
+      "data_connection": null
+    },
+    {
+      "id": "H1",
+      "name": "Router Wi-Fi",
+      "role": "access-point",
+      "position": {
+        "x": 5.0,
+        "y": 4.0,
+        "z": 1.3
+      },
+      "radios": [
+        {
+          "id": "radio-1",
+          "protocol": "wifi",
+          "frequency_hz": 2437000000.0,
+          "bandwidth_hz": 20000000.0,
+          "channel": 6,
+          "tx_power_dbm": 20.0,
+          "tx_gain_dbi": 0.0,
+          "rx_gain_dbi": 0.0,
+          "sensitivity_dbm": -90.0,
+          "noise_figure_db": 7.0,
+          "antenna": "omnidirectional",
+          "orientation_deg": 0.0,
+          "beamwidth_deg": 360.0,
+          "pattern_sharpness": 1.8,
+          "side_lobe_attenuation_db": 18.0,
+          "polarization_deg": 0.0,
+          "provenance": {
+            "tx_power_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            },
+            "sensitivity_dbm": {
+              "provenance": "declared",
+              "source": "Valor ilustrativo de la demostración"
+            }
+          }
+        }
+      ],
+      "evidence": "User-defined generic device; functional compatibility unverified",
+      "data_connection": {
+        "kind": "gateway",
+        "link_id": null,
+        "note": "Router del operador (ilustrativo)"
+      }
+    }
+  ],
+  "links": [
+    {
+      "id": "link-S1",
+      "source_device_id": "S1",
+      "source_radio_id": "radio-1",
+      "target_device_id": "H1",
+      "target_radio_id": "radio-1"
+    },
+    {
+      "id": "link-S2",
+      "source_device_id": "S2",
+      "source_radio_id": "radio-1",
+      "target_device_id": "H1",
+      "target_radio_id": "radio-1"
+    },
+    {
+      "id": "link-S3",
+      "source_device_id": "S3",
+      "source_radio_id": "radio-1",
+      "target_device_id": "H1",
+      "target_radio_id": "radio-1"
+    },
+    {
+      "id": "link-S4",
+      "source_device_id": "S4",
+      "source_radio_id": "radio-1",
+      "target_device_id": "H1",
+      "target_radio_id": "radio-1"
+    },
+    {
+      "id": "link-S5",
+      "source_device_id": "S5",
+      "source_radio_id": "radio-1",
+      "target_device_id": "H1",
+      "target_radio_id": "radio-1"
+    },
+    {
+      "id": "link-S6",
+      "source_device_id": "S6",
+      "source_radio_id": "radio-1",
+      "target_device_id": "H1",
+      "target_radio_id": "radio-1"
+    }
+  ],
+  "settings": {
+    "path_loss_exponent": 2.1,
+    "extra_loss_db_per_m": 0.0,
+    "system_gain_db": 0.0
+  },
+  "migration_notes": [
+    "Proyecto sintético de demostración: valores ilustrativos, no medidos ni de un producto real."
+  ],
+  "legacy_source": null,
+  "plan_reference": null
+}

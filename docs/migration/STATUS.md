@@ -1,10 +1,10 @@
 # Estado y evidencia
 
-Inicio: 2026-10-29. La migración completa está en curso, no terminada.
+Inicio: 2026-10-29. Migración técnica completada el 2026-11-08; el producto sigue su propio plan.
 
 ## Resumen vigente para retomar trabajo
 
-Última actualización documental: 2026-11-08, declaración de cierre I-008 (B).
+Última actualización documental: 2026-11-09, B-136…B-138 y A-121 en revisión (B).
 Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md), [tablero](../process/WORKBOARD.md)
 y el [plan de cierre](CLOSING_PLAN.md).
 
@@ -12,7 +12,10 @@ y el [plan de cierre](CLOSING_PLAN.md).
   Todas las casillas del [checklist técnico](CHECKLIST.md) están marcadas.
 - **CI:** la de migración de 23ace32 está en verde; la del PR #26 (mismo árbol), en verde en Java y migración.
 - **Motor:** estimador directo 0.2.0 ([ADR-008](ARCHITECTURE.md)); Sionna RT evaluado, no integrado.
-- **Instalación:** `python scripts/start.py`. Java se conserva como referencia (ADR-001).
+- **Instalación:** `python scripts/start.py`.
+- **Java fuera de `main` (B-136, ADR-009), en revisión:** la rama `agent-b/b-136-138` lo retira; queda en la
+  etiqueta `java-desktop-final` (23ace32) y la release v1.0.0. Hasta fusionarla, `main` aún contiene Java.
+  La misma rama trae el README de portfolio (B-137), la CI solo de la aplicación nueva (B-138) y A-121.
 - **Lo que no acredita:** el cierre no valida la precisión. El [checklist del producto](../product/ACCEPTANCE_CHECKLIST.md)
   sigue su plan: falta decidir el criterio de fallo y la reserva de diseño, y faltan medidas reales para
   calibrar y validar.
@@ -21,6 +24,16 @@ y el [plan de cierre](CLOSING_PLAN.md).
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## B-136…B-138 y A-121 — Java fuera de `main` y repositorio de portfolio — 2026-11-09
+
+| Tarea | Resultado |
+|---|---|
+| B-136 | Fuera de `main`: `src/`, Gradle, `packaging/` y capturas JavaFX. Etiqueta local `java-desktop-final` → 23ace32. El arnés de paridad extrae las fuentes de la etiqueta y reproduce los valores guardados (diferencia máxima 0.0022 dB, commit Java 7e016cd) |
+| B-137 | README en inglés con resumen en español, seis capturas reales hechas con `scripts/make_demo_project.py` (proyecto sintético, valores ilustrativos), CHANGELOG 2.0.0, CONTRIBUTING y versión 2.0.0 |
+| B-138 | CI: pruebas Python y web, build y empaquetado en Linux, Windows y macOS; deriva de contratos en Linux. Release: zip de B-131 con notas del CHANGELOG. Dependabot: npm y GitHub Actions |
+| A-121 | Rótulo del mapa y barra del plano apilados; columna `minmax(0, 1fr)` por debajo de 650 px. Comprobado a 1440 y 390 px |
+| Comandos | pytest 444; contratos sin deriva; npm test 131; build. La CI remota de esta rama no se ha ejecutado todavía |
 
 ## A-114…A-120 — interfaz de cierre, hecha por B en el papel de A — 2026-11-08
 
