@@ -2,12 +2,28 @@ import type { Project, Point } from '../generated/project.ts';
 import type { CandidateEvaluation, PlacementCandidate, PlacementSearchParameters, PlacementSearchResult, PlacementZone } from '../generated/placement-search.ts';
 import { stable } from './latestAnalysis.ts';
 import { stableEcho } from './echo.ts';
+import { automaticAssumptions, scenarioNames } from './scenarios.ts';
 import { sameSimulationProject } from './referencePersistence.ts';
 export type PlacementRequest = PlacementSearchParameters & { project: Project };
+export function placementScenarios(project: Project) {
+  return automaticAssumptions(project)
+    .filter(({ doors, materials }) => Object.keys(doors).length > 0 || Object.keys(materials).length > 0)
+    .map(assumptions => ({ ...assumptions, name: scenarioNames[assumptions.id] }));
+}
 export function linkedPlacementTargets(project: Project, deviceId: string, radioId: string) {
-  return project.links.flatMap(link => link.source_device_id === deviceId && link.source_radio_id === radioId
-    ? [{ linkId: link.id, deviceId: link.target_device_id }] : link.target_device_id === deviceId && link.target_radio_id === radioId
-      ? [{ linkId: link.id, deviceId: link.source_device_id }] : []);
+  const dataLink = project.devices.find(device => device.id === deviceId)?.data_connection?.link_id;
+  return project.links.flatMap(link => {
+    if (link.source_device_id !== deviceId && link.target_device_id !== deviceId) return [];
+    const source = link.source_device_id === deviceId;
+    const apRadioId = source ? link.source_radio_id : link.target_radio_id;
+    const backhaul = link.id === dataLink;
+    if (!backhaul && apRadioId !== radioId) return [];
+    return [{ linkId: link.id, deviceId: source ? link.target_device_id : link.source_device_id,
+      apRadioId, peerRadioId: source ? link.target_radio_id : link.source_radio_id, backhaul }];
+  });
+}
+function isPriority(target: ReturnType<typeof linkedPlacementTargets>[number], priorities: string[]) {
+  return target.backhaul || !priorities.length || priorities.includes(target.deviceId);
 }
 export function finiteInput(value: string, label: string, min: number, max: number): number {
   const number = Number(value);
@@ -37,7 +53,7 @@ export function validatePlacementRequest(request: PlacementRequest) {
   const ap = request.project.devices.find(device => device.id === request.access_point_device_id);
   if (!ap?.radios.some(radio => radio.id === request.access_point_radio_id)) throw new Error('Elige una radio del AP disponible.');
   const all = linkedPlacementTargets(request.project, ap.id, request.access_point_radio_id);
-  const targets = all.filter(target => !request.target_device_ids.length || request.target_device_ids.includes(target.deviceId));
+  const targets = all.filter(target => isPriority(target, request.target_device_ids));
   if (!targets.length || request.target_device_ids.some(id => !all.some(target => target.deviceId === id))) throw new Error('Los equipos prioritarios necesitan enlaces con la radio del AP elegida.');
   const ids = [...request.candidates, ...request.zones].map(item => item.id);
   const count = request.candidates.length + request.zones.reduce((sum, zone) => sum + zoneCount(zone), 0);
@@ -65,10 +81,10 @@ export function validatePlacementResult(result: PlacementSearchResult, request: 
     || result.baseline.candidate_id !== 'current' || stable(result.baseline.position) !== stable(ap.position)
     || result.ranking.length > 50 || new Set(result.ranking.map(row => row.candidate_id)).size !== result.ranking.length
     || result.ranking.some(row => !inAllowedPlace(row, request))) throw new Error('La búsqueda recibida no corresponde a los lugares o parámetros solicitados.');
-  const targets = linkedPlacementTargets(project, ap.id, parameters.access_point_radio_id).filter(target => !parameters.target_device_ids.length || parameters.target_device_ids.includes(target.deviceId));
-  const expected = targets.map(target => `${target.linkId}\0${target.deviceId}`).sort();
+  const targets = linkedPlacementTargets(project, ap.id, parameters.access_point_radio_id).filter(target => isPriority(target, parameters.target_device_ids));
+  const expected = targets.map(target => `${target.linkId}\0${target.deviceId}\0${target.backhaul}`).sort();
   for (const row of [result.baseline, ...result.ranking]) {
-    if (stable(row.targets.map(target => `${target.link_id}\0${target.device_id}`).sort()) !== stable(expected)) throw new Error('La respuesta contiene otros enlaces prioritarios.');
+    if (stable(row.targets.map(target => `${target.link_id}\0${target.device_id}\0${target.backhaul ?? false}`).sort()) !== stable(expected)) throw new Error('La respuesta contiene otros enlaces prioritarios o un camino de datos distinto.');
   }
 }
 export function comparablePlacementDelta(base: CandidateEvaluation, alternative: CandidateEvaluation): number | null {

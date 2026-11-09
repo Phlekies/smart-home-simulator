@@ -8,12 +8,20 @@ import WallCreator from './WallCreator';
 import PlanReference from './PlanReference';
 import PositionComparison from './PositionComparison';
 import LinkDiagnostics from './LinkDiagnostics';
+import AccessPointDiagnostics from './AccessPointDiagnostics';
+import DataConnectionEditor from './DataConnectionEditor';
+import RadioProvenanceEditor from './RadioProvenanceEditor';
+import ReportPanel from './ReportPanel';
 import ConnectionEditor from './ConnectionEditor';
 import CoveragePanel from './CoveragePanel';
 import PlacementSearch from './PlacementSearch';
 import ScenarioPanel from './ScenarioPanel';
 import type { CoverageLayer } from './editor/coverage';
 import { linksUsingRadio, MAX_RADIOS, withAddedConnection, withAddedRadio, withRemovedConnection, withRemovedRadio } from './editor/connections';
+import { clearDanglingDataConnections } from './editor/dataConnections';
+import { radioEditPatch } from './editor/radioProvenance';
+import { installationReportFormats, requestInstallationReport } from './editor/installationReport';
+import { linkStatusNames } from './linkStatus';
 import { captureComparison, samePositionConfiguration } from './editor/comparison';
 import type { ComparisonBase } from './editor/comparison';
 import { bindReference, defaultReferenceView, sameSimulationProject } from './editor/referencePersistence';
@@ -30,8 +38,6 @@ import type { SimulationResult } from './generated/simulation-result';
 
 const Scene3D = lazy(() => import('./Scene3D'));
 type Engine = { id: string; name: string; available: boolean; description: string };
-const statusNames = { 'above-threshold': 'Sobre umbral', 'below-threshold': 'Bajo umbral',
-  incompatible: 'Incompatible', unverified: 'Sin verificar', unsupported: 'Fuera de alcance' };
 
 class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
@@ -75,6 +81,7 @@ export default function App() {
   const [engines, setEngines] = useState<Engine[]>([]);
   const [view, setView] = useState<'2d' | '3d'>('2d');
   const [busy, setBusy] = useState(false);
+  const [quickReportPending, setQuickReportPending] = useState(false);
   const [loading, setLoading] = useState(true);
   const loadingRef = useRef(loading); loadingRef.current = loading;
   const [exampleId, setExampleId] = useState('apartment');
@@ -185,7 +192,7 @@ export default function App() {
     change(p => { const d = p.devices.find(d => d.id === selected); if (d) Object.assign(d, patch); });
   }
   function editRadio(patch: Partial<Radio>) {
-    change(p => { const d = p.devices.find(d => d.id === selected); const r = d?.radios.find(r => r.id === radio?.id); if (r) Object.assign(r, patch); });
+    change(p => { const d = p.devices.find(d => d.id === selected); const r = d?.radios.find(r => r.id === radio?.id); if (r) Object.assign(r, radioEditPatch(r, patch)); });
   }
   function addRadio() {
     if (!project || !device || loading || !checkEditorFields()) return;
@@ -203,7 +210,8 @@ export default function App() {
     try {
       const count = linksUsingRadio(project, device.id, radio.id).length;
       const next = withRemovedRadio(project, device.id, radio.id);
-      change(draft => Object.assign(draft, next)); setRadioId(next.devices.find(item => item.id === device.id)!.radios[0].id);
+      change(draft => { Object.assign(draft, next); clearDanglingDataConnections(draft); });
+      setRadioId(next.devices.find(item => item.id === device.id)!.radios[0].id);
       setNotice(`Radio y ${count} ${count === 1 ? 'enlace asociado retirados' : 'enlaces asociados retirados'}. Puedes deshacer el cambio.`);
       window.requestAnimationFrame(() => radioInput.current?.focus());
     } catch (e) { setError(e instanceof Error ? e.message : 'No se pudo retirar la radio.'); }
@@ -221,7 +229,8 @@ export default function App() {
     if (!project || loading) return 'Espera a que termine la carga del proyecto.';
     try {
       const next = withRemovedConnection(project, id);
-      change(draft => Object.assign(draft, next)); setNotice('Enlace retirado. Puedes deshacer el cambio.'); return null;
+      change(draft => { Object.assign(draft, next); clearDanglingDataConnections(draft); });
+      setNotice('Enlace retirado. Puedes deshacer el cambio.'); return null;
     } catch (e) { return e instanceof Error ? e.message : 'No se pudo retirar el enlace.'; }
   }
   async function run() {
@@ -261,21 +270,20 @@ export default function App() {
     } catch (e) { setError(`Revisa los datos antes de guardar. ${String(e)}`); }
   }
   async function downloadReport() {
-    if (!project || !checkEditorFields()) return;
-    const current = project, map = coverageRef.current?.result.parameters;
+    if (!project || loading || quickReportPending || !checkEditorFields()) return;
+    const current = project, map = coverageRef.current?.result ?? null;
+    const stale = () => current !== historyRef.current.present || map?.request_hash !== coverageRef.current?.result.request_hash;
+    setQuickReportPending(true); setError(''); setNotice('Preparando informe Markdown…');
     try {
-      const response = await fetch('/api/reports/markdown', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ project, ...(map ? { maps: [map] } : {}) }) });
-      if (!response.ok) {
-        const payload = await response.json().catch(() => ({}));
-        throw new Error(typeof payload.detail === 'string' ? payload.detail : `La API rechazó el informe (${response.status}).`);
-      }
-      const text = await response.text();
-      if (current !== historyRef.current.present) { setNotice('El proyecto cambió mientras se preparaba el informe. Descárgalo de nuevo.'); return; }
-      downloadText(text, 'informe-instalacion.md', 'text/markdown');
-      setNotice(map ? 'Informe descargado con el mapa visible. No contiene veredicto de cobertura ni recomendación de compra.'
-        : 'Informe descargado. Calcula un mapa antes si quieres incluirlo. No contiene veredicto de cobertura ni recomendación de compra.');
-    } catch (e) { setError(`No se pudo preparar el informe. ${e instanceof Error ? e.message : String(e)}`); }
+      const text = await requestInstallationReport('markdown', current, map);
+      if (stale()) { setNotice('El proyecto o el mapa cambió mientras se preparaba el informe. Descárgalo de nuevo.'); return; }
+      const format = installationReportFormats.markdown;
+      downloadText(text, format.filename, format.type);
+      setNotice(map ? 'Informe Markdown descargado con el resumen del mapa visible.'
+        : 'Informe Markdown descargado. Calcula un mapa si quieres incluirlo.');
+    } catch (e) {
+      if (!stale()) setError(`No se pudo preparar el informe. ${e instanceof Error ? e.message : String(e)}`);
+    } finally { setQuickReportPending(false); }
   }
   function goToStep(step: StepId) {
     if (!project || loading) return;
@@ -486,9 +494,19 @@ export default function App() {
               <NumberField label="Ruido receptor · dB" value={radio.noise_figure_db} min={0} max={60} onChange={n => n !== null && editRadio({ noise_figure_db: n })} />
             </div>
             <p className="helper">Configurar un protocolo no verifica las funciones del producto. Las tecnologías se evaluarán por separado.</p>
+            <RadioProvenanceEditor radio={radio} disabled={loading} onChange={provenance => editRadio({ provenance })} />
+            {project && <DataConnectionEditor project={project} device={device} disabled={loading}
+              onChange={data_connection => editDevice({ data_connection })} />}
             {project && <ConnectionEditor project={project} device={device} radio={radio} disabled={loading}
               onAdd={addConnection} onRemove={removeConnection} />}
-            <button className="danger-link" onClick={() => { change(p => { p.devices = p.devices.filter(d => d.id !== device.id); p.links = p.links.filter(l => l.source_device_id !== device.id && l.target_device_id !== device.id); }); setSelected(''); setNotice('Dispositivo y enlaces eliminados. Puedes deshacer el cambio.'); focusProject(); }}>Eliminar dispositivo y sus enlaces</button>
+            <button className="danger-link" onClick={() => {
+              change(p => {
+                p.devices = p.devices.filter(d => d.id !== device.id);
+                p.links = p.links.filter(l => l.source_device_id !== device.id && l.target_device_id !== device.id);
+                clearDanglingDataConnections(p);
+              });
+              setSelected(''); setNotice('Dispositivo y enlaces eliminados. Puedes deshacer el cambio.'); focusProject();
+            }}>Eliminar dispositivo y sus enlaces</button>
           </> : <p className="helper">Selecciona una pared o un dispositivo para editar sus propiedades.</p>}</>}
         </aside>
       </section>
@@ -504,7 +522,8 @@ export default function App() {
       <section className="results-panel panel">
         <div className="results-heading"><div><span className="eyebrow">DIAGNÓSTICO DE LA INSTALACIÓN</span><h2>Comprueba cada dirección.</h2></div>
           <div className="results-actions">{result && <button onClick={() => download({ project, result }, 'diagnostico.json')}>Exportar diagnóstico</button>}
-            <button disabled={!project?.links.length || loading} onClick={() => void downloadReport()}>Descargar informe</button></div></div>
+            <button disabled={!project?.links.length || loading} aria-disabled={quickReportPending || undefined}
+              onClick={() => void downloadReport()}>Descargar informe</button></div></div>
         {result ? <>
           <div className="result-meta"><span>{result.links.length} enlaces evaluados</span><span>{result.elapsed_ms.toFixed(1)} ms</span>
             <span title={result.input_hash}>Escenario {result.input_hash.slice(0, 10)}</span><span>Modelo {result.engine_version} · sin calibrar</span></div>
@@ -520,15 +539,18 @@ export default function App() {
                     selectWall(id); window.requestAnimationFrame(() => document.querySelector<HTMLInputElement>('.properties-panel input')?.focus());
                   }} /> : <p>No se encuentra la configuración de este enlace. Vuelve a ejecutar la estimación.</p>}</details></td>
                 <td>{n(link.forward?.received_power_dbm)}</td><td>{n(link.reverse?.received_power_dbm)}</td>
-                <td>{n(link.forward?.margin_db)} / {n(link.reverse?.margin_db)}</td><td><span className={`badge ${link.status}`}>{statusNames[link.status]}</span></td></tr>;
+                <td>{n(link.forward?.margin_db)} / {n(link.reverse?.margin_db)}</td><td><span className={`badge ${link.status}`}>{linkStatusNames[link.status]}</span></td></tr>;
             })}
           </tbody></table></div>
-          <p className="comparison-limit">«Sobre umbral» significa margen positivo frente a la sensibilidad indicada en ambos sentidos. Es una predicción técnica sin calibrar: no garantiza la conexión ni es una recomendación de compra.</p>
+          <p className="comparison-limit">El margen se calcula frente a la sensibilidad indicada en ambos sentidos. Es una predicción técnica sin calibrar. Las mediciones permiten comprobar la fiabilidad del enlace.</p>
+          {project && <AccessPointDiagnostics project={project} paths={result.access_points} />}
           <details className="limitations"><summary>Alcance y límites de esta estimación</summary><p>{result.scope}</p><ul>{result.limitations.map(l => <li key={l}>{l}</li>)}</ul></details>
         </> : <div className="results-empty"><span>↗</span><div><strong>{project?.links.length ? 'Tu escenario está listo para explorar.' : 'Añade dispositivos y conecta los que quieras evaluar.'}</strong>
           <p>Ejecuta una estimación para ver señal y margen en ambos sentidos. La velocidad real y la latencia requieren simulación de tráfico.</p></div></div>}
       </section>
-      {project && <PositionComparison project={project} result={result} base={comparisonBase} disabled={busy || loading}
+      {project && <ReportPanel key={`report-${projectEpoch}-${coverageLayer?.result.request_hash ?? ''}`} project={project}
+        map={coverageLayer?.result ?? null} revision={revision.current} disabled={loading} onValidate={checkEditorFields} onDownload={downloadText} />}
+      {project && <PositionComparison project={project} result={result} base={comparisonBase} disabled={busy || loading} onValidate={checkEditorFields}
         onCapture={captureBase} onClear={() => { setComparisonBase(null); setNotice('Comparación retirada; el proyecto actual se conserva.'); focusProject(); }} onRestore={restoreBasePositions} />}
       {!!project?.migration_notes.length && <details className="migration panel"><summary>Datos importados · {project.migration_notes.length} notas que debes revisar</summary>
         <ul>{project.migration_notes.map(note => <li key={note}>{note}</li>)}</ul></details>}

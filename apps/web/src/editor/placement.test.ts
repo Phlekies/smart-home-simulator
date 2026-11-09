@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { analysisFixture } from './analysisFixtures.ts';
-import { allowedPoint, allowedZone, comparablePlacementDelta, linkedPlacementTargets, placementToApply, validatePlacementRequest, validatePlacementResult, zoneCount } from './placement.ts';
+import { allowedPoint, allowedZone, comparablePlacementDelta, linkedPlacementTargets, placementScenarios, placementToApply, validatePlacementRequest, validatePlacementResult, zoneCount } from './placement.ts';
 test('allowed points retain decimals and zones count samples without enumerating large arrays', () => {
   assert.deepEqual(allowedPoint('p', ' Exact ', ['-2.125', '3.75', '1.375']).position, { x: -2.125, y: 3.75, z: 1.375 });
   assert.equal(zoneCount(allowedZone('z', 'Zone', ['0', '0', '1.2', '.5', '1.4', '.5'])), 6);
@@ -19,6 +19,21 @@ test('priority links are scoped to the selected AP radio in both directions', ()
   assert.deepEqual(linkedPlacementTargets(project, 'ap', 'other'), []);
   request.target_device_ids = ['foreign']; assert.throws(() => validatePlacementRequest(request));
 });
+test('wireless data link is required even on a different AP radio and outside the priorities', () => {
+  const { project, request, result } = analysisFixture();
+  const ap = project.devices[0];
+  ap.radios.push({ ...ap.radios[0], id: 'data-radio' });
+  ap.data_connection = { kind: 'wireless', link_id: 'link-b', note: null };
+  project.links[1].source_radio_id = 'data-radio';
+  request.target_device_ids = ['a'];
+  result.parameters.target_device_ids = ['a'];
+  assert.equal(validatePlacementRequest(request), 1);
+  assert.equal(linkedPlacementTargets(project, ap.id, 'r').find(link => link.backhaul)?.apRadioId, 'data-radio');
+  for (const row of [result.baseline, ...result.ranking]) row.targets[1].backhaul = true;
+  validatePlacementResult(result, request);
+  result.ranking[0].targets.pop();
+  assert.throws(() => validatePlacementResult(result, request), /camino de datos/);
+});
 test('candidate IDs, total positions, zone count and work limits are checked before HTTP', () => {
   const { request } = analysisFixture(); assert.equal(validatePlacementRequest(request), 1);
   request.candidates.push({ ...request.candidates[0] }); assert.throws(() => validatePlacementRequest(request)); request.candidates.pop();
@@ -34,6 +49,19 @@ test('result parameters, links and allowed positions must match before any alter
   }
   const position = placementToApply(project, request, result, 'place'); position.x = 99; assert.equal(result.ranking[0].position.x, 3.125);
   const moved = structuredClone(project); moved.devices[1].position.x += .1; assert.throws(() => placementToApply(moved, request, result, 'place'));
+});
+test('the same scenario must be applied to the current and alternative locations', () => {
+  const { project, request, result } = analysisFixture();
+  project.building.walls = [{ id: 'door', start: { x: 0, y: 0, z: 0 }, end: { x: 1, y: 0, z: 0 },
+    thickness_m: .1, height_m: 2.6, material_id: project.building.materials[0].id, door: 'unknown' }];
+  const [best, worst] = placementScenarios(project);
+  assert.deepEqual(best.doors, { door: 'open' });
+  assert.deepEqual(worst.doors, { door: 'closed' });
+  request.scenario = worst;
+  result.parameters.scenario = structuredClone(worst);
+  validatePlacementResult(result, request);
+  result.parameters.scenario.doors.door = 'open';
+  assert.throws(() => validatePlacementResult(result, request));
 });
 test('zone results accept only points on the declared grid at its declared height', () => {
   const { request, result } = analysisFixture(); request.candidates = []; request.zones = [allowedZone('z', 'zone', ['0', '0', '1', '1', '1.4', '.5'])];

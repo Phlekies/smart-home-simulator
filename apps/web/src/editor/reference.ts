@@ -3,6 +3,7 @@ export type ReferencePlacement = { metersPerPixel: number; originX: number; orig
 export type PlanReference = {
   url: string; name: string; widthPx: number; heightPx: number;
   placement: ReferencePlacement; opacity: number; visible: boolean;
+  calibration: { pointA: PixelPoint; pointB: PixelPoint; distanceM: number } | null;
 };
 
 export const MAX_IMAGE_BYTES = 8_000_000;

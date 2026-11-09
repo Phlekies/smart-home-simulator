@@ -1,0 +1,5 @@
+.radio-provenance > summary { padding-block: 9px; font-size: 13px; font-weight: 600; }
+.radio-provenance dl { margin-block: 10px 14px; font-size: 12px; }
+.radio-provenance dl > div { padding-block: 5px; border-bottom: 1px solid #e5eadf; overflow-wrap: anywhere; }
+.radio-provenance dt { font-weight: 600; }
+.radio-provenance dd { margin: 3px 0 0; color: #4b6149; }

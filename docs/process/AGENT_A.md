@@ -344,3 +344,29 @@ Siguiente paso:
   queda activa por la petición de probar el proyecto y estas cinco mejoras; propietarios,
   PID, rutas y logs en .local/preview-runtime.json y qa-runtime.json de este worktree.
   No detenerla como servidor huérfano; son servicios identificados para pruebas del usuario.
+
+### Cierre complementario sobre PR #26 — 2026-11-09
+
+- Estado **review**, rama `codex/finish-migration-ui`, worktree `.local/main-ui-finish`, base `23ace32`.
+- Reserva A: validación y foco de mapas guardados (`CoveragePanel`, `editor/savedMap`), cota A–B y PNG (`Plan`, `PlanReference`, helpers), hipótesis de búsqueda (`PlacementSearch`, `editor/placement`), inspector y diagnóstico de radio/AP, explicación de diferencias, descarga JSON del informe y su integración web, registro y evidencia `docs/ui/`.
+- Se conserva la implementación de #26 donde coincide y se trasladan los complementos de las ramas locales. Las pruebas con teclado y el árbol se distinguen de la prueba con un lector real.
+
+- Se comprobó que un mapa JSON vigente se abre con teclado. Mover el AP retira
+  la capa, devuelve el foco a «Abrir mapa JSON» al terminar la comprobación y
+  bloquea la exportación; Deshacer permite volver a mostrar el mapa original.
+  El importador valida el tamaño, la rejilla, los puntos y las identidades.
+- La búsqueda aplica la misma hipótesis a la ubicación actual y a las alternativas.
+  En navegador se evaluó «Peor caso» al seleccionar la radio 2 de un AP con enlace
+  de datos por radio 1. Ambos márgenes del enlace aparecieron con sus radios.
+- Se comprobó en navegador la pasarela declarada y el desglose de distancia y
+  paredes en ambos sentidos tras mover un AP de prueba. Se descargó el informe
+  JSON y se revisaron los tres niveles de evidencia de B-135.
+- La cota de prueba de 12,005 m figuró en el árbol de accesibilidad y se exportó
+  un PNG del plano calibrado. Se verificaron nombres y estados con teclado y árbol
+  de accesibilidad. Pendiente escuchar los anuncios con Narrador o NVDA.
+- Pruebas: 151 web, 444 Python, build de producción y contratos correctos.
+  Los archivos generados y los contratos conservan el contenido de main.
+  Vite sigue avisando del tamaño del módulo 3D y Starlette del uso de httpx en pruebas.
+- Vista local en 127.0.0.1:8005, con PID y registros en `.local/preview-runtime.json`.
+  Las pruebas de interfaz se realizaron con datos sintéticos. Las mediciones en
+  viviendas y la validación del estimador corresponden al trabajo de producto.
