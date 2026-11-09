@@ -9,13 +9,13 @@ export class LatestAnalysis<T> {
     this.epoch += 1; this.controller?.abort(); this.controller = null;
     if (!silent) this.publish(empty<T>());
   }
-  async run<R>(input: R, perform: (request: R, signal: AbortSignal) => Promise<T>, validate: (result: T, request: R) => void) {
+  async run<R>(input: R, perform: (request: R, signal: AbortSignal) => Promise<T>, validate?: (result: T, request: R) => void) {
     this.invalidate(true); const epoch = this.epoch, request = structuredClone(input), controller = new AbortController();
     this.controller = controller; this.publish({ ...empty<T>(), pending: true });
     try {
       const result = await perform(request, controller.signal);
       if (epoch !== this.epoch) return;
-      validate(result, request); this.controller = null; this.publish({ pending: false, result, error: null });
+      validate?.(result, request); this.controller = null; this.publish({ pending: false, result, error: null });
     } catch (e) {
       if (epoch !== this.epoch) return;
       this.controller = null; this.publish({ ...empty<T>(), error: e instanceof Error ? e.message : String(e) });

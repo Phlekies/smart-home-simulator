@@ -8,19 +8,11 @@ import type { CoverageLayer } from './editor/coverage';
 import { mapExtent, metricNames } from './editor/coverage';
 import { doorNames } from './editor/uncertainty';
 import { downloadBlob } from './editor/files';
-import { exportSize, panView, visibleBounds, zoomView } from './editor/viewport';
+import { createPlanImage } from './editor/planImage';
+import { panView, visibleBounds, zoomView } from './editor/viewport';
 import type { Bounds, View } from './editor/viewport';
 
 type Pan = { pointerId: number; clientX: number; clientY: number; view: View; worldPerPixel: number };
-const SVG_NS = 'http://www.w3.org/2000/svg';
-
-async function dataUrl(url: string): Promise<string> {
-  const blob = await (await fetch(url)).blob();
-  return await new Promise((resolve, reject) => {
-    const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = () => reject(reader.error);
-    reader.readAsDataURL(blob);
-  });
-}
 type Drag = {
   kind: 'device' | 'wall'; id: string; pointerId: number; anchor: Point;
   x: number; y: number; minX: number; minY: number; maxX: number; maxY: number;
@@ -28,6 +20,7 @@ type Drag = {
 };
 const snap = (n: number) => Math.round(n * 10) / 10;
 const clamp = (n: number, min = -10000, max = 10000) => Math.max(min, Math.min(max, n));
+const planMetres = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 3 });
 
 export default function Plan({ project, selected, onSelect, onMove, result, tool, selectedWallId, reference, coverageLayer,
   onSelectWall, onAddWall, onMoveWall, onGestureStart, onGestureEnd }: {
@@ -48,13 +41,18 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
   const [drawingEnd, setDrawingEnd] = useState<Point | null>(null);
   const [drawingMessage, setDrawingMessage] = useState('');
   const [view, setView] = useState<View | null>(null);
+  const [exporting, setExporting] = useState(false);
   const [exportMessage, setExportMessage] = useState('');
+  const exportPending = useRef(false);
+  const latestExport = useRef({ project, coverageLayer, reference });
+  latestExport.current = { project, coverageLayer, reference };
   const pan = useRef<Pan | null>(null);
   const endGesture = useRef(onGestureEnd);
   endGesture.current = onGestureEnd;
   const allX = project.devices.map(d => d.position.x).concat(project.building.walls.flatMap(w => [w.start.x, w.end.x]));
   const allY = project.devices.map(d => d.position.y).concat(project.building.walls.flatMap(w => [w.start.y, w.end.y]));
   const imageBounds = reference?.visible ? referenceBounds(reference.widthPx, reference.heightPx, reference.placement) : null;
+  const calibration = reference?.visible ? reference.calibration : null;
   if (imageBounds) { allX.push(imageBounds.minX, imageBounds.maxX); allY.push(imageBounds.minY, imageBounds.maxY); }
   const mapGrid = coverageLayer ? mapExtent(coverageLayer.result) : null;
   if (mapGrid) { allX.push(mapGrid.x, mapGrid.x + mapGrid.width); allY.push(mapGrid.y, mapGrid.y + mapGrid.height); }
@@ -89,41 +87,30 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
   }
   async function exportImage() {
     const svg = svgRef.current;
-    if (!svg) return;
+    if (!svg || exportPending.current) return;
+    const snapshot = latestExport.current;
+    const apId = snapshot.coverageLayer?.result.parameters.access_point_device_id;
+    const apName = snapshot.project.devices.find(device => device.id === apId)?.name;
+    exportPending.current = true;
+    setExporting(true);
     setExportMessage('Preparando la imagen…');
     try {
-      const { width, height } = exportSize(liveBounds);
-      const clone = svg.cloneNode(true) as SVGSVGElement;
-      clone.setAttribute('xmlns', SVG_NS);
-      clone.setAttribute('viewBox', `${liveBounds.minX} ${liveBounds.minY} ${liveBounds.maxX - liveBounds.minX} ${liveBounds.maxY - liveBounds.minY}`);
-      clone.setAttribute('width', String(width)); clone.setAttribute('height', String(height));
-      const background = document.createElementNS(SVG_NS, 'rect');
-      Object.entries({ x: liveBounds.minX, y: liveBounds.minY, width: liveBounds.maxX - liveBounds.minX, height: liveBounds.maxY - liveBounds.minY, fill: '#142221' })
-        .forEach(([name, value]) => background.setAttribute(name, String(value)));
-      clone.insertBefore(background, clone.firstChild);
-      const caption = document.createElementNS(SVG_NS, 'text');
-      Object.entries({ x: liveBounds.minX + .3, y: liveBounds.maxY - .3, 'font-size': .45, fill: '#dfe8df' })
-        .forEach(([name, value]) => caption.setAttribute(name, String(value)));
-      caption.textContent = `${project.name} · cuadrícula 1 m · estimación de trayecto directo sin calibrar`;
-      clone.appendChild(caption);
-      // Images embedded in an SVG drawn as a picture cannot load blob: URLs; inline them first.
-      for (const image of Array.from(clone.querySelectorAll('image'))) {
-        const href = image.getAttribute('href');
-        if (href?.startsWith('blob:')) image.setAttribute('href', await dataUrl(href));
+      const { blob, width, height } = await createPlanImage(svg, liveBounds, snapshot.project.name, snapshot.coverageLayer, apName);
+      if (svgRef.current !== svg) return;
+      const current = latestExport.current;
+      if (current.project !== snapshot.project || current.coverageLayer !== snapshot.coverageLayer
+        || JSON.stringify(current.reference) !== JSON.stringify(snapshot.reference)) {
+        throw new Error('El plano o el mapa cambió durante la exportación. Vuelve a preparar la imagen.');
       }
-      const picture = new Image();
-      picture.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(new XMLSerializer().serializeToString(clone))}`;
-      await picture.decode();
-      const canvas = document.createElement('canvas'); canvas.width = width; canvas.height = height;
-      const context = canvas.getContext('2d');
-      if (!context) throw new Error('El navegador no pudo dibujar la imagen.');
-      context.drawImage(picture, 0, 0, width, height);
-      const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'));
-      if (!blob) throw new Error('El navegador no pudo generar el PNG.');
-      const slug = project.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      const slug = snapshot.project.name.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '');
       downloadBlob(blob, `${slug || 'plano'}.png`);
       setExportMessage(`Imagen del plano completo exportada (${width} × ${height} px).`);
-    } catch (e) { setExportMessage(`No se pudo exportar la imagen. ${e instanceof Error ? e.message : String(e)}`); }
+    } catch (e) {
+      if (svgRef.current === svg) setExportMessage(`No se pudo exportar la imagen. ${e instanceof Error ? e.message : String(e)}`);
+    } finally {
+      exportPending.current = false;
+      if (svgRef.current === svg) setExporting(false);
+    }
   }
 
   useEffect(() => { setDrawingStart(null); setDrawingEnd(null); setDrawingMessage(''); setFrozenBounds(null); }, [tool]);
@@ -238,7 +225,7 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
       <button type="button" onClick={() => zoomBy(1.5)} disabled={(view?.scale ?? 1) >= 20} aria-label="Acercar el plano">＋</button>
       <button type="button" onClick={() => zoomBy(1 / 1.5)} disabled={!view} aria-label="Alejar el plano">－</button>
       <button type="button" onClick={() => setView(null)} disabled={!view}>Ver todo</button>
-      <button type="button" onClick={() => void exportImage()}>Exportar imagen</button>
+      <button type="button" aria-disabled={exporting || undefined} onClick={() => void exportImage()}>Exportar imagen</button>
       <span className="plan-zoom" role="status">{view ? `Zoom ×${view.scale.toFixed(1)} · arrastra el fondo para desplazar` : 'Plano completo'}{exportMessage ? ` · ${exportMessage}` : ''}</span>
     </div>
     {coverageLayer && <p className="map-caption"><strong>{metricNames[coverageLayer.metric]}</strong> · AP {project.devices.find(device => device.id === coverageLayer.result.parameters.access_point_device_id)?.name}
@@ -306,6 +293,18 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
           {Math.hypot(wall.end.x - wall.start.x, wall.end.y - wall.start.y).toFixed(2)} m
         </text>}
       </g>)}
+      {calibration && <g pointerEvents="none" aria-hidden="true">
+        <line x1={calibration.pointA.x} y1={calibration.pointA.y} x2={calibration.pointB.x} y2={calibration.pointB.y}
+          stroke="#142221" strokeWidth="4" vectorEffect="non-scaling-stroke" />
+        <line x1={calibration.pointA.x} y1={calibration.pointA.y} x2={calibration.pointB.x} y2={calibration.pointB.y}
+          stroke="#f3cf88" strokeWidth="2" vectorEffect="non-scaling-stroke" />
+        {[calibration.pointA, calibration.pointB].map((point, index) =>
+          <circle key={index} cx={point.x} cy={point.y} r=".07" fill="#f3cf88" stroke="#142221" strokeWidth=".04" />)}
+        <text x={(calibration.pointA.x + calibration.pointB.x) / 2} y={(calibration.pointA.y + calibration.pointB.y) / 2 - .26}
+          textAnchor="middle" fontSize=".4" fill="#f3cf88" paintOrder="stroke" stroke="#142221" strokeWidth=".12">
+          A–B · {planMetres.format(calibration.distanceM)} m
+        </text>
+      </g>}
       {project.devices.map(device => <g key={device.id} transform={`translate(${device.position.x} ${device.position.y})`}
         role="button" tabIndex={tool === 'select' ? 0 : -1} aria-label={`Seleccionar ${device.name}`} className="plan-device"
         onKeyDown={event => keyboardMove(event, 'device', device.id)} onPointerDown={event => startDrag(event, 'device', device.id)}>
@@ -313,7 +312,7 @@ export default function Plan({ project, selected, onSelect, onMove, result, tool
         <circle r=".36" fill={device.role === 'controller' || device.role === 'access-point' ? '#f3b26f' : '#79d9b2'} stroke="#142221" strokeWidth=".09" />
         <text x=".6" y="-.45" fontSize=".5" fill="#e5eae1" paintOrder="stroke" stroke="#142221" strokeWidth=".15" pointerEvents="none">{device.name}</text>
       </g>)}
-      {drawingStart && drawingEnd && <g pointerEvents="none">
+      {drawingStart && drawingEnd && <g data-plan-draft="" pointerEvents="none">
         <line x1={drawingStart.x} y1={drawingStart.y} x2={drawingEnd.x} y2={drawingEnd.y} stroke="#f3cf88" strokeWidth=".12" strokeDasharray=".25 .15" />
         <circle cx={drawingStart.x} cy={drawingStart.y} r=".16" fill="#f3cf88" />
         <text x={(drawingStart.x + drawingEnd.x) / 2} y={(drawingStart.y + drawingEnd.y) / 2 - .4}

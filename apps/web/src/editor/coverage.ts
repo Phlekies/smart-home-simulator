@@ -13,6 +13,12 @@ export function mapExtent(result: CoverageMapResult) {
   return { x: grid.origin_x_m, y: grid.origin_y_m, width: grid.width_m, height: grid.depth_m,
     textureWidth: result.columns * grid.resolution_m, textureHeight: result.rows * grid.resolution_m };
 }
+export function mapGridDimensions(grid: Pick<CoverageMapParameters['grid'], 'width_m' | 'depth_m' | 'resolution_m'>) {
+  return {
+    columns: Math.max(1, Math.ceil(grid.width_m / grid.resolution_m - 1e-9)),
+    rows: Math.max(1, Math.ceil(grid.depth_m / grid.resolution_m - 1e-9)),
+  };
+}
 export function rasterCellSize(columns: number, rows: number) {
   return Math.max(1, Math.min(6, Math.floor(24000 / Math.max(columns, rows))));
 }
@@ -24,11 +30,11 @@ export function mapColor(value: number | null, metric: MapMetric): string {
 }
 export function validateMapResult(result: CoverageMapResult, request: CoverageRequest, expectedHash: string) {
   const { project: _project, ...parameters } = request;
+  const dimensions = mapGridDimensions(parameters.grid);
   const size = result.columns * result.rows;
   if (result.request_hash !== expectedHash || stableEcho(result.parameters) !== stableEcho(parameters)) throw new Error('El mapa recibido pertenece a otros parámetros. Vuelve a calcular.');
   if (!Number.isInteger(result.columns) || !Number.isInteger(result.rows) || result.columns < 1 || result.rows < 1 || size > 40000
-    || result.columns !== Math.max(1, Math.ceil(parameters.grid.width_m / parameters.grid.resolution_m - 1e-9))
-    || result.rows !== Math.max(1, Math.ceil(parameters.grid.depth_m / parameters.grid.resolution_m - 1e-9))
+    || result.columns !== dimensions.columns || result.rows !== dimensions.rows
     || [...Object.keys(metricNames), 'status'].some(name => {
       const values = result.cells[name as keyof typeof result.cells];
       return !Array.isArray(values) || values.length !== size;

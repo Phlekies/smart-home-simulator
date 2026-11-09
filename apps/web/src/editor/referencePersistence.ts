@@ -36,8 +36,17 @@ export function makeReference(image: LocalReferenceImage, a: PixelPoint, b: Pixe
 export function bindReference(saved: SavedReference | null | undefined, image: LocalReferenceImage | null,
   view: ReferenceView): PlanReference | null {
   if (!saved || !image || !matchesReference(saved, image)) return null;
-  return { url: image.url, name: saved.file_name, widthPx: saved.width_px, heightPx: saved.height_px,
-    placement: { metersPerPixel: saved.meters_per_pixel, originX: saved.origin_x_m, originY: saved.origin_y_m }, ...view };
+  const placement = { metersPerPixel: saved.meters_per_pixel, originX: saved.origin_x_m, originY: saved.origin_y_m };
+  const toPlanPoint = (point: PixelPoint) => ({
+    x: placement.originX + point.x * placement.metersPerPixel,
+    y: placement.originY + point.y * placement.metersPerPixel,
+  });
+  const calibration = saved.calibration ? {
+    pointA: toPlanPoint(saved.calibration.point_a_px),
+    pointB: toPlanPoint(saved.calibration.point_b_px),
+    distanceM: saved.calibration.distance_m,
+  } : null;
+  return { url: image.url, name: saved.file_name, widthPx: saved.width_px, heightPx: saved.height_px, placement, calibration, ...view };
 }
 
 // Only the background-image metadata is excluded. Any other project edit remains relevant.

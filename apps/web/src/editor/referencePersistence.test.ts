@@ -46,10 +46,19 @@ test('binding recovers the saved scale/origin, while view changes remain transie
   assert.deepEqual(bound?.placement, { metersPerPixel: .02, originX: -2.125, originY: 3.75 });
   assert.equal(bound?.opacity, .3); assert.equal(bound?.visible, false);
   assert.equal(bindReference(saved, image, defaultReferenceView())?.opacity, .55);
+  assert.ok(bound?.calibration);
+  const { pointA, pointB, distanceM } = bound.calibration;
+  assert.ok(Math.abs(pointA.x - (-.1225)) < 1e-12);
+  assert.ok(Math.abs(pointB.x - 11.8825) < 1e-12);
+  assert.ok(Math.abs(pointA.y - 9.755) < 1e-12);
+  assert.equal(pointB.y, pointA.y);
+  assert.equal(distanceM, 12.005);
 });
 test('metadata without recorded calibration still restores its authoritative placement', () => {
   const { saved, image } = fixture(); saved.calibration = null;
-  assert.equal(bindReference(saved, image, defaultReferenceView())?.placement.metersPerPixel, .02);
+  const bound = bindReference(saved, image, defaultReferenceView());
+  assert.equal(bound?.placement.metersPerPixel, .02);
+  assert.equal(bound?.calibration, null);
 });
 test('project JSON and recovery preserve metadata and original input without persisting image bytes', () => {
   const { saved } = fixture(); const project = coverageFixture().request.project;

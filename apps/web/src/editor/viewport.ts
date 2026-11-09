@@ -46,3 +46,12 @@ export function exportSize(base: Bounds, longSide = 1600): { width: number; heig
   const scale = Math.min(longSide / Math.max(w, h), 4000 / w, 4000 / h);
   return { width: Math.max(1, Math.round(w * scale)), height: Math.max(1, Math.round(h * scale)) };
 }
+
+/** Match SVG's aspect-preserving fit, including any rounding of the raster dimensions. */
+export function scaleBar(base: Bounds, plot: { width: number; height: number }) {
+  const pixelsPerMetre = Math.min(plot.width / (base.maxX - base.minX), plot.height / (base.maxY - base.minY));
+  const limit = 160 / pixelsPerMetre;
+  const decade = 10 ** Math.floor(Math.log10(limit));
+  const metres = ([5, 2, 1].find(value => value * decade <= limit) ?? 1) * decade;
+  return { metres, pixels: metres * pixelsPerMetre };
+}

@@ -1,3 +1,5 @@
+import { provenanceNames } from './editor/radioProfiles';
+import type { RadioParameter } from './editor/radioProvenance';
 import type { Link, Project, Radio } from './generated/project';
 import type { DirectionResult, LinkResult } from './generated/simulation-result';
 
@@ -5,6 +7,12 @@ const number = (value: number | null | undefined, unit: string) => value == null
 const radioDescription = (radio: Radio | undefined) => radio
   ? `${radio.id} · ${radio.protocol === 'unknown' ? 'protocolo sin verificar' : radio.protocol.toUpperCase()} · ${radio.frequency_hz / 1e6} MHz · canal ${radio.channel ?? 'sin datos'}`
   : 'Sin datos';
+
+function valueOrigin(radio: Radio | undefined, parameter: RadioParameter) {
+  const origin = radio?.provenance?.[parameter];
+  if (!origin) return 'procedencia sin documentar';
+  return [provenanceNames[origin.provenance], origin.source].filter(Boolean).join(' · ');
+}
 
 export default function LinkDiagnostics({ project, configured, result, onSelectWall }: {
   project: Project; configured: Link; result: LinkResult; onSelectWall: (id: string) => void;
@@ -14,8 +22,8 @@ export default function LinkDiagnostics({ project, configured, result, onSelectW
     const txRadio = tx?.radios.find(radio => radio.id === txRadioId), rxRadio = rx?.radios.find(radio => radio.id === rxRadioId);
     return <section className="direction-diagnostic" aria-label={`${title}: ${tx?.name ?? txId} a ${rx?.name ?? rxId}`}>
       <h4>{title} · {tx?.name ?? txId} → {rx?.name ?? rxId}</h4>
-      <p>Radio emisora: {radioDescription(txRadio)}.</p>
-      <p>Radio receptora: {radioDescription(rxRadio)}. Sensibilidad receptora: {number(rxRadio?.sensitivity_dbm, 'dBm')}.</p>
+      <p>Radio emisora: {radioDescription(txRadio)}. Potencia TX: {number(txRadio?.tx_power_dbm, 'dBm')} ({valueOrigin(txRadio, 'tx_power_dbm')}).</p>
+      <p>Radio receptora: {radioDescription(rxRadio)}. Sensibilidad receptora: {number(rxRadio?.sensitivity_dbm, 'dBm')} ({valueOrigin(rxRadio, 'sensitivity_dbm')}).</p>
       {computed ? <>
         <dl className="direction-metrics">
           <div><dt>Distancia 3D</dt><dd>{number(computed.distance_m, 'm')}</dd></div>
