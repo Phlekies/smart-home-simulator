@@ -16,8 +16,9 @@ calcula, sin física nueva:
 - **Global:** recuentos, alcance, limitaciones del motor, lo que no se evalúa (tráfico, interferencia,
   compatibilidad funcional, multipath) y las decisiones pendientes.
 
-**No emite veredicto de cobertura ni recomienda compras**: el criterio activo de fallo y la reserva de
-diseño no están decididos, y el informe lo dice en «Decisiones pendientes».
+**No recomienda compras.** Desde B-139 incluye la clase de cada enlace, los recuentos por clase y la
+política (`classification`: reserva de diseño, criterio de fallo y `calibrated: false`). Lo provisional
+se dice en «Decisiones pendientes» ([clasificación](COVERAGE_CLASSIFICATION.md)).
 
 ## Endpoints (aditivos)
 
@@ -44,7 +45,8 @@ cada sentido limitante va acompañado de «un margen positivo no garantiza el fu
   - un **resumen**: celdas calculadas, parciales y sin calcular; mínimo, mediana y máximo del margen
     limitante; y recuento de celdas con margen negativo.
 
-  El resumen **no es un porcentaje de cobertura**: no hay criterio de fallo ni reserva de diseño.
+  El resumen **no es un porcentaje de cobertura** de la vivienda: cuenta celdas por clase
+  (`class_counts`) y depende del área dibujada.
   En Markdown, cada mapa lleva sus recuentos, sus notas y una tabla con los puntos exactos.
 
 ## Trabajo del consumidor (A)

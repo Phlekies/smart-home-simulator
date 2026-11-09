@@ -78,6 +78,10 @@ export type LimitingMarginDb = number | null;
 export type LimitingDirection = ("forward" | "reverse") | null;
 export type Status = "complete" | "incomplete" | "not-computed";
 export type Reason = string | null;
+/**
+ * Class of this device's link from the candidate place, under the search scenario (B-139)
+ */
+export type CoverageClass = ("favourable" | "marginal" | "insufficient" | "no-data") | null;
 export type Targets = TargetEvaluation[];
 export type CompleteTargets = number;
 export type WorstMarginDb = number | null;
@@ -200,6 +204,7 @@ export interface TargetEvaluation {
   limiting_direction: LimitingDirection;
   status: Status;
   reason: Reason;
+  coverage_class?: CoverageClass;
 }
 export interface ExcludedCandidate {
   candidate_id: CandidateId1;

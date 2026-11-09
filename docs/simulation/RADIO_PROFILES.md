@@ -60,9 +60,11 @@ solo clientes, así que los selectores de mapas existentes no muestran perfiles 
 ## Lo que un perfil no dice
 
 - La sensibilidad mínima corresponde a PER 10 % con paquetes de 4096 octetos; **no** es el criterio
-  activo de fallo de un sensor, que sigue pendiente de decisión ([protocolo piloto](PILOT_PROTOCOL.md)).
-- Un margen positivo frente a un mínimo del estándar no garantiza el funcionamiento ni clasifica
-  la cobertura: la reserva de diseño (P2) no está fijada.
+  activo de fallo de un sensor (`low-traffic-v1`, [protocolo piloto](PILOT_PROTOCOL.md)).
+- Un margen positivo frente a un mínimo del estándar no garantiza el funcionamiento. La clase usa la
+  reserva de diseño provisional de 10 dB ([clasificación](COVERAGE_CLASSIFICATION.md)).
+- Requisito por perfil (B-140): MCS0 para sensores y actuadores de bajo tráfico; MCS3 para datos
+  continuos sin vídeo; MCS7 solo indica cobertura a esa tasa (en cámaras, el vídeo no se evalúa).
 - No hay perfiles de Zigbee, Thread, 5 GHz ni de productos comerciales.
 - Trabajo del consumidor (A, B-118): ofrecer «Aplicar perfil de AP» en el inspector de la radio de un
   router o AP, con el canal, y mostrar la procedencia y la potencia que falta por declarar.

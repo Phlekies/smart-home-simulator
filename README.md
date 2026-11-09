@@ -108,6 +108,13 @@ margin = Pr − receiver sensitivity
 | `Gt(θ)` | Omnidirectional, or a `cos^k` main lobe with a side-lobe floor |
 | `L_pol` | Polarisation mismatch, capped at 26 dB |
 
+The API classifies every link, map cell and candidate place from its *limiting margin* (the weaker
+direction): **favourable** with at least 10 dB as drawn and in the worst case of its open
+hypotheses, **marginal** between 0 and 10 dB, **insufficient** below 0 dB in either direction, and
+**no data** when power, sensitivity or a verified radio is missing. The 10 dB design reserve is
+provisional and uncalibrated; the pilot measurements will fit it
+([classification](docs/simulation/COVERAGE_CLASSIFICATION.md)).
+
 Results carry the engine version and a SHA-256 of the canonical project, so a result computed for
 a previous version of the plan is detected as stale. The engine refuses bands it has no material
 data for instead of guessing.

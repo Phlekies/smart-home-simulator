@@ -3,10 +3,13 @@
 Versión 1 · 2026-10-29. Objetivo rector: [PRODUCT_OBJECTIVE.md](../PRODUCT_OBJECTIVE.md).
 Prioridad confirmada: Wi-Fi primero, comenzando por 2.4 GHz.
 
-La migración actual aún no está completa. Sus puertas están en
-[migration/ROADMAP.md](../migration/ROADMAP.md). No confundir fin de migración con producto
-validado. Se pueden preparar datos/mediciones antes; no se espera a terminar la interfaz
-para iniciar la validación científica.
+La migración técnica terminó el 2026-11-08 ([ROADMAP](../migration/ROADMAP.md)). No confundir fin
+de migración con producto validado. Se pueden preparar datos y mediciones antes; no se espera a
+terminar la interfaz para iniciar la validación científica.
+
+**2026-11-09 (B-139/B-140):** criterio de fallo y reserva de diseño decididos de forma provisional
+([clasificación](../simulation/COVERAGE_CLASSIFICATION.md)). Desbloquean la clasificación de P2 y el
+piloto de P0; se revisan con el piloto y se congelan antes de la validación.
 
 ## Criterio para ordenar el trabajo
 

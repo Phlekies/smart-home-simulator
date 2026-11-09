@@ -1140,6 +1140,46 @@
         ],
         "title": "CandidateEvaluation"
       },
+      "ClassificationPolicy": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "const": "coverage-class-v1",
+            "title": "Id"
+          },
+          "design_reserve_db": {
+            "type": "number",
+            "title": "Design Reserve Db",
+            "description": "Limiting margin a favourable class needs, in dB"
+          },
+          "rule": {
+            "type": "string",
+            "title": "Rule",
+            "description": "The classification rule in plain words"
+          },
+          "failure_criterion": {
+            "type": "string",
+            "title": "Failure Criterion",
+            "description": "Active test that decides whether a real link fails"
+          },
+          "calibrated": {
+            "type": "boolean",
+            "title": "Calibrated",
+            "description": "False until measurements have fitted the reserve"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "design_reserve_db",
+          "rule",
+          "failure_criterion",
+          "calibrated"
+        ],
+        "title": "ClassificationPolicy",
+        "description": "How coverage classes are assigned (B-139, decisions U1/U2); provisional until calibrated."
+      },
       "Conditions": {
         "properties": {
           "id": {
@@ -1280,6 +1320,27 @@
             },
             "type": "array",
             "title": "Status"
+          },
+          "coverage_class": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "favourable",
+                    "marginal",
+                    "insufficient",
+                    "no-data"
+                  ]
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Class",
+            "description": "Class of each cell's limiting margin; no-data for partial, uncomputed or unclassifiable cells (B-139)"
           }
         },
         "additionalProperties": false,
@@ -1644,6 +1705,17 @@
             "type": "array",
             "title": "Reasons",
             "description": "Map-level notes: missing data, unverified compatibility, etc."
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClassificationPolicy"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Policy behind coverage_class"
           }
         },
         "additionalProperties": false,
@@ -1736,6 +1808,24 @@
               }
             ],
             "title": "Reason"
+          },
+          "coverage_class": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "favourable",
+                  "marginal",
+                  "insufficient",
+                  "no-data"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Class",
+            "description": "Class of the limiting margin (B-139)"
           }
         },
         "additionalProperties": false,
@@ -1749,7 +1839,7 @@
           "reason"
         ],
         "title": "CoverageSample",
-        "description": "One evaluated position. Forward is AP→profile, reverse is profile→AP; no classification."
+        "description": "One evaluated position. Forward is AP→profile, reverse is profile→AP."
       },
       "DataConnection-Input": {
         "properties": {
@@ -2743,6 +2833,17 @@
             "type": "array",
             "title": "Evidence Levels",
             "description": "Consistency, calibration and validation behind these numbers, kept apart (B-135)"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClassificationPolicy"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Policy behind coverage_class"
           }
         },
         "additionalProperties": false,
@@ -3040,6 +3141,48 @@
             },
             "type": "array",
             "title": "Reasons"
+          },
+          "coverage_class": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "favourable",
+                  "marginal",
+                  "insufficient",
+                  "no-data"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Class",
+            "description": "favourable / marginal / insufficient / no-data under the result's classification policy (B-139)"
+          },
+          "limiting_margin_db": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limiting Margin Db",
+            "description": "Lower margin of both directions"
+          },
+          "worst_case_limiting_margin_db": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worst Case Limiting Margin Db",
+            "description": "Same with every unknown door closed and uncertain material at its maximum loss; equals the nominal one when the direct path crosses no such wall"
           }
         },
         "additionalProperties": false,
@@ -3129,6 +3272,24 @@
             },
             "type": "array",
             "title": "Reasons"
+          },
+          "coverage_class": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "favourable",
+                  "marginal",
+                  "insufficient",
+                  "no-data"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Class",
+            "description": "Class of the link over its automatic scenarios: favourable only if nominal and worst keep the reserve"
           }
         },
         "additionalProperties": false,
@@ -3289,6 +3450,21 @@
             "type": "integer",
             "title": "Negative Limiting Cells",
             "description": "Computed cells whose lower margin is below 0 dB"
+          },
+          "class_counts": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Class Counts",
+            "description": "Cells per coverage class (B-139)"
           }
         },
         "additionalProperties": false,
@@ -3302,7 +3478,7 @@
           "negative_limiting_cells"
         ],
         "title": "MapSummary",
-        "description": "Counts and spread of a map; not a coverage percentage (no failure criterion or design reserve yet)."
+        "description": "Counts and spread of a map; cell counts per class, not a coverage percentage of the home."
       },
       "Material-Input": {
         "properties": {
@@ -5803,6 +5979,36 @@
             },
             "type": "array",
             "title": "Notes"
+          },
+          "coverage_class": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "favourable",
+                  "marginal",
+                  "insufficient",
+                  "no-data"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Class",
+            "description": "Class of the link (B-139)"
+          },
+          "worst_case_limiting_margin_db": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Worst Case Limiting Margin Db",
+            "description": "Limiting margin with the open hypotheses at their worst"
           }
         },
         "additionalProperties": false,
@@ -6152,6 +6358,24 @@
                 "type": "null"
               }
             ]
+          },
+          "coverage_class": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "favourable",
+                  "marginal",
+                  "insufficient",
+                  "no-data"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Class",
+            "description": "Class of this scenario alone (B-139)"
           }
         },
         "additionalProperties": false,
@@ -6237,6 +6461,17 @@
             },
             "type": "array",
             "title": "Limitations"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClassificationPolicy"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Policy behind coverage_class"
           }
         },
         "additionalProperties": false,
@@ -6380,6 +6615,17 @@
             "type": "array",
             "title": "Access Points",
             "description": "Data path of every access point, router or bridge, and of any device with a data connection"
+          },
+          "classification": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ClassificationPolicy"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Policy behind coverage_class"
           }
         },
         "additionalProperties": false,
@@ -6520,6 +6766,24 @@
               }
             ],
             "title": "Reason"
+          },
+          "coverage_class": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "favourable",
+                  "marginal",
+                  "insufficient",
+                  "no-data"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Coverage Class",
+            "description": "Class of this device's link from the candidate place, under the search scenario (B-139)"
           }
         },
         "additionalProperties": false,

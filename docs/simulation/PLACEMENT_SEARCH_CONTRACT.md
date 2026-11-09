@@ -9,7 +9,7 @@ Esquema: `contracts/placement-search.schema.json`. Tipos TS: `apps/web/src/gener
 «¿Dónde, entre los sitios donde **puedo** poner el router, mejora más el enlace del equipo que
 peor está?». Corresponde a M4 («optimización básica con restricciones») y a la búsqueda
 exhaustiva pequeña de P3, que sirve de referencia antes de cualquier heurística. No recomienda
-compras ni clasifica cobertura.
+compras. Desde B-139 cada equipo evaluado lleva su `coverage_class` bajo el escenario de la búsqueda ([clasificación](COVERAGE_CLASSIFICATION.md)).
 
 ## Diferencias con el optimizador Java
 

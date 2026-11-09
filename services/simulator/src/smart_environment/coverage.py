@@ -1,8 +1,9 @@
 """Coverage maps by profile and height (B-103), computed as cancellable background jobs.
 
 Every cell is a direct-path link budget between the selected AP radio and the candidate
-profile placed at the cell centre, in both directions. No coverage class is assigned: the
-design-reserve policy is still undecided, so only received power and margins are reported.
+profile placed at the cell centre, in both directions. Each cell and exact point also gets a
+coverage class from its limiting margin and the design reserve (B-139); a map that the model
+cannot describe (unverified radios, AP or height outside the walls) is left without data.
 """
 
 from __future__ import annotations
@@ -19,6 +20,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 from .backhaul import connection, is_network_device, path_note
 from .cache import ResultCache
+from .classification import DESIGN_RESERVE_DB, POLICY, classify_margin, limiting
 
 from .engines import (  # inside_wall is re-exported for placement and older imports
     ENGINE_VERSION, LIMITATIONS, direction, geometry_issue, input_hash, inside_wall, link_result, radio_pair_check,
@@ -33,7 +35,7 @@ MAX_WORK = 2_000_000  # cells × walls; bounds a quick-estimate job to a few sec
 MAP_LIMITATIONS = LIMITATIONS + [
     "Valor en el centro de cada celda, sin interpolación; los puntos exactos se evalúan aparte.",
     "Un solo AP seleccionado: la energía de otros AP no se suma a esta conexión.",
-    "Sin clasificación favorable/marginal/insuficiente: la reserva de diseño está pendiente.",
+    f"Clasificación con reserva de diseño provisional de {DESIGN_RESERVE_DB:g} dB, sin calibrar con medidas.",
 ]
 
 
@@ -107,9 +109,12 @@ def compute(request: CoverageMapRequest, progress: Callable[[float], None] = lam
         reasons.append("Falta la potencia de transmisión del perfil: sentido equipo→AP no calculado.")
     if profile_radio.sensitivity_dbm is None or ap_radio.sensitivity_dbm is None:
         reasons.append("Falta alguna sensibilidad: los márgenes de ese sentido no se calculan.")
+    classifiable = compatibility == "radio-compatible"
     if issue := geometry_issue(project, ap.position, ap.name):
         reasons.append(issue)
+        classifiable = False
     if (heights := wall_heights(project)) is not None and not heights[0] <= grid.height_m <= heights[1]:
+        classifiable = False
         reasons.append(f"La altura del mapa ({grid.height_m:g} m) queda fuera de las paredes ({heights[0]:g}–"
                        f"{heights[1]:g} m): las celdas no atraviesan paredes ni forjados modelados y sus valores "
                        "no describen esa planta.")
@@ -132,7 +137,11 @@ def compute(request: CoverageMapRequest, progress: Callable[[float], None] = lam
         progress((j + 1) / total)
     if cancelled():
         raise Cancelled()
-    exact = [evaluate(project, ap, ap_radio, profile_radio, point, request.scenario) for point in request.points]
+    exact = [_classified(evaluate(project, ap, ap_radio, profile_radio, point, request.scenario),
+                         classifiable and geometry_issue(project, point, "punto") is None)
+             for point in request.points]
+    if not classifiable:
+        reasons.append("Sin clasificación: radios sin verificar, o AP o altura fuera de lo que modela el proyecto.")
     progress(1.0)
     counts = {status: sum(s.status == status for s in samples) for status in ("computed", "partial", "not-computed")}
     if request.scenario is not None:
@@ -149,13 +158,26 @@ def compute(request: CoverageMapRequest, progress: Callable[[float], None] = lam
                             reverse_dbm=_rounded(s.reverse_dbm for s in samples),
                             forward_margin_db=_rounded(s.forward_margin_db for s in samples),
                             reverse_margin_db=_rounded(s.reverse_margin_db for s in samples),
-                            status=[s.status for s in samples]),
+                            status=[s.status for s in samples],
+                            coverage_class=[_classified(s, classifiable).coverage_class for s in samples]),
         points=exact, computed_cells=counts["computed"], partial_cells=counts["partial"],
         not_computed_cells=counts["not-computed"], elapsed_ms=(time.perf_counter() - started) * 1000,
         scope=f"Mapa de trayecto directo a {grid.height_m:g} m para el perfil «{request.profile.name}»"
               + (f" bajo el escenario «{request.scenario.name}»" if request.scenario else "")
               + "; compatibilidad funcional no evaluada",
-        limitations=MAP_LIMITATIONS, reasons=reasons)
+        limitations=MAP_LIMITATIONS, reasons=reasons, classification=POLICY)
+
+
+def _classified(sample: CoverageSample, classifiable: bool) -> CoverageSample:
+    """The sample with its class; only fully computed samples of a classifiable map get one."""
+    margin = limiting(sample.forward_margin_db, sample.reverse_margin_db)
+    if sample.status == "computed" and classifiable:
+        value = classify_margin(margin)
+    elif classifiable and any(m is not None and m < 0 for m in (sample.forward_margin_db, sample.reverse_margin_db)):
+        value = "insufficient"  # one direction already fails, whatever the other one is
+    else:
+        value = "no-data"
+    return sample.model_copy(update={"coverage_class": value})
 
 
 def _rounded(values) -> list[float | None]:

@@ -121,6 +121,46 @@
       "title": "BackhaulHop",
       "type": "object"
     },
+    "ClassificationPolicy": {
+      "additionalProperties": false,
+      "description": "How coverage classes are assigned (B-139, decisions U1/U2); provisional until calibrated.",
+      "properties": {
+        "id": {
+          "const": "coverage-class-v1",
+          "title": "Id",
+          "type": "string"
+        },
+        "design_reserve_db": {
+          "description": "Limiting margin a favourable class needs, in dB",
+          "title": "Design Reserve Db",
+          "type": "number"
+        },
+        "rule": {
+          "description": "The classification rule in plain words",
+          "title": "Rule",
+          "type": "string"
+        },
+        "failure_criterion": {
+          "description": "Active test that decides whether a real link fails",
+          "title": "Failure Criterion",
+          "type": "string"
+        },
+        "calibrated": {
+          "description": "False until measurements have fitted the reserve",
+          "title": "Calibrated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "design_reserve_db",
+        "rule",
+        "failure_criterion",
+        "calibrated"
+      ],
+      "title": "ClassificationPolicy",
+      "type": "object"
+    },
     "DirectionResult": {
       "additionalProperties": false,
       "properties": {
@@ -245,6 +285,51 @@
           },
           "title": "Reasons",
           "type": "array"
+        },
+        "coverage_class": {
+          "anyOf": [
+            {
+              "enum": [
+                "favourable",
+                "marginal",
+                "insufficient",
+                "no-data"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "favourable / marginal / insufficient / no-data under the result's classification policy (B-139)",
+          "title": "Coverage Class"
+        },
+        "limiting_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lower margin of both directions",
+          "title": "Limiting Margin Db"
+        },
+        "worst_case_limiting_margin_db": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Same with every unknown door closed and uncertain material at its maximum loss; equals the nominal one when the direct path crosses no such wall",
+          "title": "Worst Case Limiting Margin Db"
         }
       },
       "required": [
@@ -302,6 +387,18 @@
       },
       "title": "Access Points",
       "type": "array"
+    },
+    "classification": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClassificationPolicy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Policy behind coverage_class"
     }
   },
   "required": [

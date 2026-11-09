@@ -41,6 +41,14 @@ export type ReverseRangeDbm = number[] | null;
 export type MarginSign = string;
 export type Hypotheses = string[];
 export type Notes = string[];
+/**
+ * Class of the link (B-139)
+ */
+export type CoverageClass = ("favourable" | "marginal" | "insufficient" | "no-data") | null;
+/**
+ * Limiting margin with the open hypotheses at their worst
+ */
+export type WorstCaseLimitingMarginDb = number | null;
 export type Links = ReportLink[];
 export type PendingDecisions = string[];
 export type NotEvaluated = string[];
@@ -95,6 +103,12 @@ export type LimitingMarginDb2 = number[] | null;
  * Computed cells whose lower margin is below 0 dB
  */
 export type NegativeLimitingCells = number;
+/**
+ * Cells per coverage class (B-139)
+ */
+export type ClassCounts = {
+  [k: string]: number;
+} | null;
 export type Engine1 = string;
 export type EngineVersion1 = string;
 /**
@@ -162,12 +176,20 @@ export type ReverseDbm = (number | null)[];
 export type ForwardMarginDb = (number | null)[];
 export type ReverseMarginDb = (number | null)[];
 export type Status2 = ("computed" | "partial" | "not-computed")[];
+/**
+ * Class of each cell's limiting margin; no-data for partial, uncomputed or unclassifiable cells (B-139)
+ */
+export type CoverageClass1 = ("favourable" | "marginal" | "insufficient" | "no-data")[] | null;
 export type ForwardDbm1 = number | null;
 export type ReverseDbm1 = number | null;
 export type ForwardMarginDb1 = number | null;
 export type ReverseMarginDb1 = number | null;
 export type Status3 = "computed" | "partial" | "not-computed";
 export type Reason = string | null;
+/**
+ * Class of the limiting margin (B-139)
+ */
+export type CoverageClass2 = ("favourable" | "marginal" | "insufficient" | "no-data") | null;
 export type Points1 = CoverageSample[];
 export type ComputedCells1 = number;
 export type PartialCells1 = number;
@@ -179,6 +201,23 @@ export type Limitations1 = string[];
  * Map-level notes: missing data, unverified compatibility, etc.
  */
 export type Reasons1 = string[];
+export type Id3 = "coverage-class-v1";
+/**
+ * Limiting margin a favourable class needs, in dB
+ */
+export type DesignReserveDb = number;
+/**
+ * The classification rule in plain words
+ */
+export type Rule = string;
+/**
+ * Active test that decides whether a real link fails
+ */
+export type FailureCriterion = string;
+/**
+ * False until measurements have fitted the reserve
+ */
+export type Calibrated = boolean;
 /**
  * Requested coverage maps (B-120)
  */
@@ -206,6 +245,10 @@ export interface InstallationReport {
   access_points?: AccessPoints;
   maps?: Maps;
   evidence_levels?: EvidenceLevels;
+  /**
+   * Policy behind coverage_class
+   */
+  classification?: ClassificationPolicy | null;
 }
 export interface ReportLink {
   link_id: LinkId;
@@ -222,6 +265,8 @@ export interface ReportLink {
   margin_sign: MarginSign;
   hypotheses: Hypotheses;
   notes: Notes;
+  coverage_class?: CoverageClass;
+  worst_case_limiting_margin_db?: WorstCaseLimitingMarginDb;
 }
 export interface ReportDirection {
   from_device_id: FromDeviceId;
@@ -267,7 +312,7 @@ export interface ReportMap {
   result: CoverageMapResult;
 }
 /**
- * Counts and spread of a map; not a coverage percentage (no failure criterion or design reserve yet).
+ * Counts and spread of a map; cell counts per class, not a coverage percentage of the home.
  */
 export interface MapSummary {
   cells: Cells;
@@ -276,6 +321,7 @@ export interface MapSummary {
   not_computed_cells: NotComputedCells;
   limiting_margin_db: LimitingMarginDb2;
   negative_limiting_cells: NegativeLimitingCells;
+  class_counts?: ClassCounts;
 }
 /**
  * Full map, so the report file keeps it for drawing and staleness
@@ -300,6 +346,10 @@ export interface CoverageMapResult {
   scope: Scope1;
   limitations: Limitations1;
   reasons: Reasons1;
+  /**
+   * Policy behind coverage_class
+   */
+  classification?: ClassificationPolicy | null;
 }
 /**
  * Everything that defines a map except the project; echoed in the result for staleness checks.
@@ -393,9 +443,10 @@ export interface CoverageCells {
   forward_margin_db: ForwardMarginDb;
   reverse_margin_db: ReverseMarginDb;
   status: Status2;
+  coverage_class?: CoverageClass1;
 }
 /**
- * One evaluated position. Forward is AP→profile, reverse is profile→AP; no classification.
+ * One evaluated position. Forward is AP→profile, reverse is profile→AP.
  */
 export interface CoverageSample {
   forward_dbm: ForwardDbm1;
@@ -404,6 +455,17 @@ export interface CoverageSample {
   reverse_margin_db: ReverseMarginDb1;
   status: Status3;
   reason: Reason;
+  coverage_class?: CoverageClass2;
+}
+/**
+ * How coverage classes are assigned (B-139, decisions U1/U2); provisional until calibrated.
+ */
+export interface ClassificationPolicy {
+  id: Id3;
+  design_reserve_db: DesignReserveDb;
+  rule: Rule;
+  failure_criterion: FailureCriterion;
+  calibrated: Calibrated;
 }
 /**
  * What kind of evidence backs the numbers (B-135); consistency is not accuracy.

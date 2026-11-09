@@ -16,6 +16,7 @@ import time
 from typing import NamedTuple
 
 from .backhaul import is_network_device
+from .classification import classify_margin
 from .engines import (
     ENGINE_VERSION, LIMITATIONS, direction, geometry_issue, input_hash, inside_wall, radio_pair_check, wall_heights,
 )
@@ -30,7 +31,7 @@ PLACEMENT_LIMITATIONS = LIMITATIONS + [
     "Solo se mueve el AP elegido; si su conexión de datos es inalámbrica, ese enlace se evalúa con él.",
     "Enchufes y tomas de red solo descartan lugares más lejanos, en línea recta, que el límite indicado; "
     "el recorrido real del cable y el montaje no se verifican.",
-    "Ordenar por margen no clasifica cobertura ni recomienda compras; la reserva de diseño está pendiente.",
+    "La clase de cada equipo usa la reserva de diseño provisional (B-139); ordenar lugares no recomienda compras.",
 ]
 
 
@@ -124,17 +125,19 @@ def _evaluate(project: Project, ap: Device, place: Point, targets: list[Target],
               scenario: ScenarioAssumptions | None = None) -> list[TargetEvaluation]:
     moved = ap.model_copy(update={"position": place})
     out = []
-    for link, other, ap_radio, other_radio, blocked, _, backhaul in targets:
+    for link, other, ap_radio, other_radio, blocked, notes, backhaul in targets:
         if blocked:
             out.append(TargetEvaluation(device_id=other.id, link_id=link.id, backhaul=backhaul,
                                         forward_margin_db=None, reverse_margin_db=None, limiting_margin_db=None,
-                                        limiting_direction=None, status="not-computed", reason=blocked))
+                                        limiting_direction=None, status="not-computed", reason=blocked,
+                                        coverage_class="no-data"))
             continue
         p, q = other.position, place
         if ((p.x - q.x) ** 2 + (p.y - q.y) ** 2 + (p.z - q.z) ** 2) ** 0.5 < 0.1:
             out.append(TargetEvaluation(device_id=other.id, link_id=link.id, backhaul=backhaul,
                                         forward_margin_db=None, reverse_margin_db=None, limiting_margin_db=None,
-                                        limiting_direction=None, status="not-computed", reason="too-close"))
+                                        limiting_direction=None, status="not-computed", reason="too-close",
+                                        coverage_class="no-data"))
             continue
         forward = direction(project, moved, ap_radio, other, other_radio, scenario)
         reverse = direction(project, other, other_radio, moved, ap_radio, scenario)
@@ -144,10 +147,16 @@ def _evaluate(project: Project, ap: Device, place: Point, targets: list[Target],
             (limiting, side), status = min((f, "forward"), (r, "reverse")), "complete"
         else:
             limiting, side, status = None, None, "incomplete"
+        # Unverified radios (notes) are never classified; one failing direction is insufficient anyway.
+        if any(m is not None and m < 0 for m in (f, r)):
+            value = "insufficient"
+        else:
+            value = classify_margin(limiting) if not notes else "no-data"
         out.append(TargetEvaluation(device_id=other.id, link_id=link.id, backhaul=backhaul, forward_margin_db=f,
                                     reverse_margin_db=r, limiting_margin_db=limiting, limiting_direction=side,
                                     status=status,
-                                    reason=None if status == "complete" else "missing-power-or-sensitivity"))
+                                    reason=None if status == "complete" else "missing-power-or-sensitivity",
+                                    coverage_class=value))
     return out
 
 

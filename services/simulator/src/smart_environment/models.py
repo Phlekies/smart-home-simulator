@@ -322,6 +322,19 @@ class Project(Model):
         return self
 
 
+CoverageClass = Literal["favourable", "marginal", "insufficient", "no-data"]
+
+
+class ClassificationPolicy(Model):
+    """How coverage classes are assigned (B-139, decisions U1/U2); provisional until calibrated."""
+
+    id: Literal["coverage-class-v1"]
+    design_reserve_db: float = Field(description="Limiting margin a favourable class needs, in dB")
+    rule: str = Field(description="The classification rule in plain words")
+    failure_criterion: str = Field(description="Active test that decides whether a real link fails")
+    calibrated: bool = Field(description="False until measurements have fitted the reserve")
+
+
 class DirectionResult(Model):
     tx_device_id: str
     rx_device_id: str
@@ -336,12 +349,21 @@ class DirectionResult(Model):
 
 
 class LinkResult(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields(
+        "coverage_class", "limiting_margin_db", "worst_case_limiting_margin_db"))
+
     id: str
     compatibility: Literal["radio-compatible", "incompatible", "unverified"]
     status: Literal["above-threshold", "below-threshold", "incompatible", "unverified", "unsupported"]
     forward: DirectionResult | None = None
     reverse: DirectionResult | None = None
     reasons: list[str] = Field(default_factory=list)
+    coverage_class: CoverageClass | None = Field(default=None, description=(
+        "favourable / marginal / insufficient / no-data under the result's classification policy (B-139)"))
+    limiting_margin_db: float | None = Field(default=None, description="Lower margin of both directions")
+    worst_case_limiting_margin_db: float | None = Field(default=None, description=(
+        "Same with every unknown door closed and uncertain material at its maximum loss; equals the "
+        "nominal one when the direct path crosses no such wall"))
 
 
 class BackhaulHop(Model):
@@ -367,7 +389,7 @@ class AccessPointConnection(Model):
 
 
 class SimulationResult(Model):
-    model_config = ConfigDict(json_schema_extra=_optional_fields("access_points"))
+    model_config = ConfigDict(json_schema_extra=_optional_fields("access_points", "classification"))
 
     engine: str
     engine_version: str
@@ -378,6 +400,7 @@ class SimulationResult(Model):
     links: list[LinkResult]
     access_points: list[AccessPointConnection] = Field(default_factory=list, description=(
         "Data path of every access point, router or bridge, and of any device with a data connection"))
+    classification: ClassificationPolicy | None = Field(default=None, description="Policy behind coverage_class")
 
 
 class SimulationRequest(Model):
@@ -473,7 +496,9 @@ CellStatus = Literal["computed", "partial", "not-computed"]
 
 
 class CoverageSample(Model):
-    """One evaluated position. Forward is AP→profile, reverse is profile→AP; no classification."""
+    """One evaluated position. Forward is AP→profile, reverse is profile→AP."""
+
+    model_config = ConfigDict(json_schema_extra=_optional_fields("coverage_class"))
 
     forward_dbm: float | None
     reverse_dbm: float | None
@@ -481,19 +506,26 @@ class CoverageSample(Model):
     reverse_margin_db: float | None
     status: CellStatus
     reason: str | None = None
+    coverage_class: CoverageClass | None = Field(default=None, description="Class of the limiting margin (B-139)")
 
 
 class CoverageCells(Model):
     """Row-major arrays (index = j·columns + i), one entry per cell, same meaning as CoverageSample."""
+
+    model_config = ConfigDict(json_schema_extra=_optional_fields("coverage_class"))
 
     forward_dbm: list[float | None]
     reverse_dbm: list[float | None]
     forward_margin_db: list[float | None]
     reverse_margin_db: list[float | None]
     status: list[CellStatus]
+    coverage_class: list[CoverageClass] | None = Field(default=None, description=(
+        "Class of each cell's limiting margin; no-data for partial, uncomputed or unclassifiable cells (B-139)"))
 
 
 class CoverageMapResult(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("classification"))
+
     engine: str
     engine_version: str
     input_hash: str = Field(description="Hash of the project (same as simulation results)")
@@ -513,6 +545,7 @@ class CoverageMapResult(Model):
     scope: str
     limitations: list[str]
     reasons: list[str] = Field(description="Map-level notes: missing data, unverified compatibility, etc.")
+    classification: ClassificationPolicy | None = Field(default=None, description="Policy behind coverage_class")
 
 
 class CoverageMapJob(Model):
@@ -618,7 +651,7 @@ class PlacementSearchRequest(PlacementSearchParameters):
 
 
 class TargetEvaluation(Model):
-    model_config = ConfigDict(json_schema_extra=_optional_fields("backhaul"))
+    model_config = ConfigDict(json_schema_extra=_optional_fields("backhaul", "coverage_class"))
 
     device_id: str
     link_id: str
@@ -630,6 +663,8 @@ class TargetEvaluation(Model):
     limiting_direction: Literal["forward", "reverse"] | None
     status: Literal["complete", "incomplete", "not-computed"]
     reason: str | None = None
+    coverage_class: CoverageClass | None = Field(default=None, description=(
+        "Class of this device's link from the candidate place, under the search scenario (B-139)"))
 
 
 class CandidateEvaluation(Model):
@@ -802,12 +837,17 @@ def scenario_issue(project: Project, scenario: ScenarioAssumptions) -> str | Non
 
 
 class ScenarioOutcome(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("coverage_class"))
+
     scenario_id: str
     forward: DirectionResult | None
     reverse: DirectionResult | None
+    coverage_class: CoverageClass | None = Field(default=None, description="Class of this scenario alone (B-139)")
 
 
 class LinkScenarioResult(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("coverage_class"))
+
     id: str
     compatibility: Literal["radio-compatible", "incompatible", "unverified"]
     outcomes: list[ScenarioOutcome] = Field(description="nominal, best, worst, then the requested scenarios")
@@ -816,9 +856,13 @@ class LinkScenarioResult(Model):
     hypotheses: list[str] = Field(description="Crossed walls with an unknown door or uncertain material")
     margin_sign: Literal["consistent", "depends-on-hypotheses", "incomplete"]
     reasons: list[str] = Field(default_factory=list)
+    coverage_class: CoverageClass | None = Field(default=None, description=(
+        "Class of the link over its automatic scenarios: favourable only if nominal and worst keep the reserve"))
 
 
 class ScenarioResult(Model):
+    model_config = ConfigDict(json_schema_extra=_optional_fields("classification"))
+
     engine: str
     engine_version: str
     input_hash: str
@@ -827,6 +871,7 @@ class ScenarioResult(Model):
     elapsed_ms: float
     scope: str
     limitations: list[str]
+    classification: ClassificationPolicy | None = Field(default=None, description="Policy behind coverage_class")
 
 
 # Coverage-map models reference ScenarioAssumptions, defined after them.

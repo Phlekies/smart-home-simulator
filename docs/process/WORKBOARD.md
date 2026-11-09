@@ -94,6 +94,20 @@ validación en viviendas. Los checklists técnico y de producto siguen siendo la
 | B-138 | B integrador | done | CI y release solo de la aplicación nueva (Linux, Windows, macOS) | [PR #28](https://github.com/Phlekies/smart-home-simulator/pull/28); release 2.0.0 con el zip de B-131 |
 | A-121 | A (asumido por B) | done | Rótulo del mapa sobre la barra del plano; desbordamiento horizontal por debajo de 650 px | [PR #28](https://github.com/Phlekies/smart-home-simulator/pull/28) |
 | I-009 | B integrador | done | Publicar y fusionar #28, cerrar PR obsoletos (#1, #12, #19, #20) y publicar la release 2.0.0 | Evidencia en STATUS |
+| B-139 | B | review | Clasificación favorable/marginal/insuficiente/sin datos con reserva de diseño provisional de 10 dB (U2) en enlaces, escenarios, celdas, búsqueda e informe | Rama `agent-b/b-139-141`; contrato aditivo; [clasificación](../simulation/COVERAGE_CLASSIFICATION.md) |
+| B-140 | B | review | Criterio de fallo `low-traffic-v1` (U1) en el protocolo y el formato de medidas; requisito de enlace por perfil | Rama `agent-b/b-139-141` |
+| B-141 | B integrador | review | Checklist del producto reconciliado con el código (27 cumplidos con evidencia, 16 pendientes) | Rama `agent-b/b-139-141` |
+| B-142 | B | blocked | Cotejar la tabla HT de sensibilidades con el texto de IEEE 802.11-2020 | Necesita acceso al texto de la norma (programa IEEE GET, con cuenta del usuario) |
+| A-122 | A | ready | **Mínimo usable:** mostrar `coverage_class` en la tabla de enlaces, el mapa (capa por clase), los escenarios, la búsqueda y el informe, con la política `classification` | Depende de B-139 en `main`; no recalcular clases en la interfaz |
+| A-123 | A | ready | **Mínimo usable:** resumen por equipo en lenguaje llano (clase, sentido limitante, qué cambiar, qué falta) sin exigir entender dBm | Depende de A-122 |
+| A-124 | A | ready | **Mínimo usable:** marcar enchufes y tomas de red en el plano y usarlos en la búsqueda de ubicación | API B-119 en `main` |
+| A-125 | A | ready | **Mínimo usable:** elegir perfiles de AP (rol `access-point`) además de los de cliente | API B-118 en `main` |
+| A-126 | A | ready | **Mínimo usable:** pruebas de la interfaz contra la API real (estimación, mapa, escenarios, informe) | Evita fallos como A-120 |
+| A-127 | A | ready | **Mínimo validado:** importar una campaña de medidas, mostrar residuos y la nota de medir con móvil | API B-116/B-124 en `main` |
+| U-1 | Usuario | ready | Probar el recorrido completo con 2–3 personas nuevas, sin ayuda | Tras A-122/A-123 |
+| U-2 | Usuario | ready | Comprobar los anuncios con un lector de pantalla real (NVDA o Narrador) | — |
+| U-3 | Usuario | ready | Campaña piloto en una vivienda con el criterio `low-traffic-v1` ([protocolo](../simulation/PILOT_PROTOCOL.md)) | Desbloquea la revisión de la reserva |
+| U-4 | Usuario | blocked | Medidas en viviendas independientes con objetivos congelados | Tras el piloto (U-3) |
 | I-005 | B integrador | done | Revisión de A-109…A-113 (#14) con `main` y la pila B (#11, #13, #15) | [PR #16](https://github.com/Phlekies/smart-home-simulator/pull/16) (sobre #15); merges del usuario |
 | I-002 | A (integración por instrucción del usuario) | done | Entregas A-101…A-108 y B-101…B-104 en `main` (046ee82) por [PR #7](https://github.com/Phlekies/smart-home-simulator/pull/7); 162 Python/70 web/build/contratos; CI de migración y Java verde antes y después | AGENTS.md excluido; Java conservado. No volver a fusionar la pila B como entregas nuevas |
 | I-001 | B integrador | done | Base publicada en PR #2 e incluida en `main` por I-002; evidencia histórica en STATUS | Sin force-push; AGENTS.md local |

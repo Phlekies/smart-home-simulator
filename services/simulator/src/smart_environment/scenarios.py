@@ -13,8 +13,10 @@ import hashlib
 import json
 import time
 
-from .engines import (
-    ENGINE_VERSION, LIMITATIONS, crossed_walls, direction, input_hash, material_loss_db, radio_pair_check,
+from .classification import POLICY, classify_outcome
+from .engines import (  # automatic_scenarios is re-exported: maps and tests import it from here
+    ENGINE_VERSION, LIMITATIONS, automatic_scenarios, crossed_walls, direction, input_hash, link_result,
+    material_loss_db, radio_pair_check,
 )
 from .models import (
     LinkScenarioResult, Project, ScenarioAssumptions, ScenarioOutcome, ScenarioRequest, ScenarioResult,
@@ -32,18 +34,6 @@ def request_hash(request: ScenarioRequest) -> str:
     canonical = json.dumps({"project": input_hash(request.project), "parameters": parameters},
                            sort_keys=True, separators=(",", ":"), allow_nan=False)
     return hashlib.sha256(canonical.encode()).hexdigest()
-
-
-def automatic_scenarios(project: Project) -> list[ScenarioAssumptions]:
-    unknown_doors = [w.id for w in project.building.walls if w.door == "unknown"]
-    uncertain = [m.id for m in project.building.materials if m.uncertainty is not None]
-    return [
-        ScenarioAssumptions(id="nominal", name="Proyecto tal cual: puertas desconocidas cerradas, materiales nominales"),
-        ScenarioAssumptions(id="best", name="Hipótesis favorables: puertas desconocidas abiertas, materiales en su mínimo",
-                            doors={d: "open" for d in unknown_doors}, materials={m: "low" for m in uncertain}),
-        ScenarioAssumptions(id="worst", name="Hipótesis desfavorables: puertas desconocidas cerradas, materiales en su máximo",
-                            doors={d: "closed" for d in unknown_doors}, materials={m: "high" for m in uncertain}),
-    ]
 
 
 def _range(values: list[float | None]) -> list[float] | None:
@@ -65,10 +55,18 @@ def evaluate(request: ScenarioRequest) -> ScenarioResult:
         if blocked is not None:
             results.append(LinkScenarioResult(id=link.id, compatibility=compatibility, outcomes=[],
                                               forward_range_dbm=None, reverse_range_dbm=None, hypotheses=[],
-                                              margin_sign="incomplete", reasons=reasons))
+                                              margin_sign="incomplete", reasons=reasons,
+                                              coverage_class="no-data"))
             continue
-        outcomes = [ScenarioOutcome(scenario_id=s.id, forward=direction(project, source, a, target, b, s),
-                                    reverse=direction(project, target, b, source, a, s)) for s in scenarios]
+        # The link's own status (missing data, position outside the model) bounds every scenario's class.
+        nominal_link = link_result(project, link)
+        outcomes = []
+        for s in scenarios:
+            forward = direction(project, source, a, target, b, s)
+            reverse = direction(project, target, b, source, a, s)
+            margins = [d.margin_db if d is not None else None for d in (forward, reverse)]
+            outcomes.append(ScenarioOutcome(scenario_id=s.id, forward=forward, reverse=reverse,
+                                            coverage_class=classify_outcome(nominal_link.status, margins)))
         on_path = crossed_walls(source.position, target.position, project.building.walls,
                                 lambda w: material_loss_db(materials[w.material_id], a.frequency_hz))
         hypotheses = [w.id for w in on_path
@@ -91,9 +89,10 @@ def evaluate(request: ScenarioRequest) -> ScenarioResult:
             id=link.id, compatibility=compatibility, outcomes=outcomes,
             forward_range_dbm=_range([o.forward.received_power_dbm if o.forward else None for o in outcomes]),
             reverse_range_dbm=_range([o.reverse.received_power_dbm if o.reverse else None for o in outcomes]),
-            hypotheses=hypotheses, margin_sign=sign, reasons=reasons))
+            hypotheses=hypotheses, margin_sign=sign, reasons=reasons,
+            coverage_class=nominal_link.coverage_class))
     return ScenarioResult(engine="quick-estimate", engine_version=ENGINE_VERSION, input_hash=input_hash(project),
                           scenarios=scenarios, links=results, elapsed_ms=(time.perf_counter() - started) * 1000,
                           scope="Escenarios de puertas y materiales sobre el trayecto directo; "
                                 "compatibilidad funcional no evaluada",
-                          limitations=SCENARIO_LIMITATIONS)
+                          limitations=SCENARIO_LIMITATIONS, classification=POLICY)

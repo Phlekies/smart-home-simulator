@@ -65,6 +65,16 @@ Se conservan:
 El arnés de paridad (B-121) extrae las fuentes Java de esa etiqueta, así que la comparación sigue siendo
 reproducible sin tener Java en el árbol. La CI y las releases pasan a ser solo de la aplicación nueva.
 
+## ADR-010 — Criterio de fallo y reserva de diseño provisionales
+
+Decisión del 2026-11-09 (B-139/B-140), delegada por el usuario en B. El criterio de fallo real es
+`low-traffic-v1`: eco ICMP de ida y vuelta, ≥ 300 paquetes, falla con menos del 95 % de entrega. La
+reserva de diseño es de 10 dB sobre el margen limitante de ambos sentidos. Con ellas, la API clasifica
+enlaces, escenarios, celdas y equipos evaluados como favorable, marginal, insuficiente o sin datos,
+siempre con su política (`classification`, `calibrated: false`). El cambio de contrato es aditivo.
+Ambos valores se revisan con el piloto y se congelan antes de la validación; una política calibrada
+lleva otra versión. Detalle en [la clasificación](../simulation/COVERAGE_CLASSIFICATION.md).
+
 ## ADR-005 — Reproducibilidad y obsolescencia
 
 Cada ejecución incluye hash SHA-256 del escenario canónico, ID/versión del motor,

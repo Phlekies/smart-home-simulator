@@ -4,7 +4,7 @@ Inicio: 2026-10-29. Migración técnica completada el 2026-11-08; el producto si
 
 ## Resumen vigente para retomar trabajo
 
-Última actualización documental: 2026-11-09, I-009: #28 fusionado y release 2.0.0 (B).
+Última actualización documental: 2026-11-09, B-139…B-141 en revisión: clasificación y criterio de fallo (B).
 Leer también el archivo local `AGENTS.md`, [proceso A/B](../process/WORKFLOW.md), [tablero](../process/WORKBOARD.md)
 y el [plan de cierre](CLOSING_PLAN.md).
 
@@ -16,6 +16,10 @@ y el [plan de cierre](CLOSING_PLAN.md).
 - **Java fuera de `main` (B-136, ADR-009):** por #28; queda en la etiqueta `java-desktop-final` (23ace32) y
   la release v1.0.0. El repositorio presenta la aplicación nueva (README de portfolio, B-137) y la
   release 2.0.0 publica el zip que solo necesita Python (B-138).
+- **Producto (B-139…B-141, en revisión en `agent-b/b-139-141`):** criterio de fallo `low-traffic-v1` y
+  reserva de diseño de 10 dB decididos de forma provisional; la API clasifica enlaces, escenarios,
+  celdas, búsqueda e informe. La interfaz aún no muestra las clases (A-122). Checklist del producto
+  reconciliado: 27 cumplidos, 16 pendientes.
 - **Lo que no acredita:** el cierre no valida la precisión. El [checklist del producto](../product/ACCEPTANCE_CHECKLIST.md)
   sigue su plan: falta decidir el criterio de fallo y la reserva de diseño, y faltan medidas reales para
   calibrar y validar.
@@ -24,6 +28,17 @@ y el [plan de cierre](CLOSING_PLAN.md).
 
 Las secciones siguientes conservan evidencia histórica. Sus límites se refieren a cada
 entrega; este resumen y el checklist reflejan lo pendiente actual.
+
+## B-139…B-141 — criterio de fallo, reserva de diseño y checklist del producto — 2026-11-09
+
+| Tarea | Resultado |
+|---|---|
+| Decisión | U1/U2 delegadas por el usuario en B: criterio `low-traffic-v1` (≥ 300 ecos ICMP, falla con < 95 %) y reserva de 10 dB, provisionales; ADR-010 y [clasificación](../simulation/COVERAGE_CLASSIFICATION.md) |
+| B-139 | `coverage_class` en enlaces (con margen limitante nominal y en el peor caso), escenarios, celdas y puntos de mapa, búsqueda de ubicación e informe (recuentos y Markdown); política `classification` con `calibrated: false`. Contrato aditivo; tipos regenerados |
+| B-140 | `LOW_TRAFFIC_CRITERION` en el formato de medidas, protocolo piloto actualizado y requisito por perfil (MCS0 bajo tráfico, MCS3 datos continuos, MCS7 solo cobertura) |
+| B-141 | Checklist del producto reconciliado con el código y #27: 27 cumplidos con evidencia, 16 pendientes con su tarea |
+| Comandos | pytest 472 (28 nuevos en `test_classification.py`); contratos y tipos sin deriva; npm test 151; build. Navegador: app compilada con el proyecto de demostración (estimación, mapa, escenarios, informe) sin errores de consola; la API devuelve 4 favorables, 1 insuficiente (sensor de ventana) y 1 marginal (cámara) |
+| Límites | Reserva sin calibrar; no hay medidas. B-142 (tabla HT) bloqueada por acceso a la norma. La interfaz no muestra aún las clases |
 
 ## I-009 — publicación de #28, limpieza y release 2.0.0 — 2026-11-09
 

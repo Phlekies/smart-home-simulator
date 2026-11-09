@@ -52,7 +52,8 @@ decrece con cada pérdida, así que `best` y `worst` son los extremos **exactos*
   - `depends-on-hypotheses`: el signo cambia; la conclusión depende de lo no resuelto.
   - `incomplete`: falta potencia o sensibilidad.
 
-  No es una clasificación de cobertura: la reserva de diseño sigue pendiente.
+  El signo no es la clase. Desde B-139 cada escenario y cada enlace llevan `coverage_class`: la del
+  enlace solo es favorable si el nominal y el peor caso conservan la reserva ([clasificación](COVERAGE_CLASSIFICATION.md)).
 
 ## Trabajo del consumidor (A)
 

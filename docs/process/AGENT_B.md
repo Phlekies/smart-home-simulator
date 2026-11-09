@@ -5,6 +5,29 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 
 ## Reserva actual
 
+- **review** — B-139…B-141 (rama local `agent-b/b-139-141`, sobre `main` 80e0f2d), 2026-11-09. El usuario
+  delegó en B las decisiones U1/U2: «responde tu U1, y U2 con los criterios más realistas para una aplicación
+  del estilo, y tras eso continúa con tu parte».
+  - **B-139** clasificación favorable/marginal/insuficiente/sin datos con reserva de diseño (U2) en enlaces,
+    escenarios, celdas de mapa e informe. Cambio de contrato **aditivo**: campos opcionales nuevos; ningún
+    consumidor existente cambia. Solicitud a A (A1/A2): mostrar la clasificación y un resumen por equipo.
+  - **B-140** criterio activo de fallo (U1) en el protocolo piloto y como criterio por defecto del formato
+    de medidas; requisito de enlace por perfil.
+  - **B-141** reconciliar el checklist del producto con `main` (evidencia de lo ya cumplido tras #27/#28).
+  - Archivos previstos: `services/simulator/src/smart_environment/{models,engines,scenarios,coverage,report,
+    measurements,profiles,calibration}.py`, sus pruebas, `contracts/**` y `apps/web/src/generated/**`
+    (solo generación), `docs/simulation/**`, y como integrador `docs/product/**`, `docs/migration/**`,
+    `WORKBOARD.md` y este registro.
+  - Resultado: módulo `classification.py`; campos opcionales `coverage_class`, `limiting_margin_db`,
+    `worst_case_limiting_margin_db` y `classification`; `LOW_TRAFFIC_CRITERION`; notas de requisito en los
+    perfiles; documentos de simulación, ADR-010, plan y checklist del producto, CHANGELOG [Unreleased].
+    Comandos: pytest 472; `export_contracts.py --check`; `npm run contracts` sin deriva; npm test 151;
+    build. Navegador: flujo completo en la app compilada sin errores de consola.
+  - **Solicitud a A:** A-122…A-127 en el tablero. Para A-122, usar `coverage_class` y `classification` tal
+    como llegan (sin recalcular). Etiquetas: Favorable, Marginal, Insuficiente, Sin datos. Mostrar siempre
+    que la reserva no está calibrada. Las celdas llevan `cells.coverage_class` y los mapas guardados antiguos
+    no lo tienen: tratar su ausencia como «sin clasificar», no como error.
+  - Bloqueado: B-142 (cotejar la tabla HT con IEEE 802.11-2020) necesita el texto de la norma.
 - **done** — B-136…B-138 en `main` por #28 (44b715c), por instrucción del usuario del
   2026-11-09: «el código Java, una vez no sea necesario, se quita o se aparta»; objetivo, portfolio.
   - **B-136** retirar Java de `main` (`src/`, Gradle, `packaging/`, capturas Java). Queda preservado en la

@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+- Coverage classes: favourable, marginal, insufficient or no data, from the lower margin of both
+  directions and a provisional 10 dB design reserve. Links, scenarios, map cells, placement targets
+  and the installation report carry the class and the policy behind it. The API change is additive;
+  the interface does not show the classes yet.
+- The real failure criterion for the pilot (`low-traffic-v1`: round-trip ICMP echo, at least 300
+  packets, fails below 95 % delivery) and the link requirement of each generic Wi-Fi profile.
+
 ## [2.0.0] - 2026-11-09
 
 The desktop simulator becomes a local web application with a Python service, focused on one

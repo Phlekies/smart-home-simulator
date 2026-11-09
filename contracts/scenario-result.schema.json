@@ -1,5 +1,45 @@
 {
   "$defs": {
+    "ClassificationPolicy": {
+      "additionalProperties": false,
+      "description": "How coverage classes are assigned (B-139, decisions U1/U2); provisional until calibrated.",
+      "properties": {
+        "id": {
+          "const": "coverage-class-v1",
+          "title": "Id",
+          "type": "string"
+        },
+        "design_reserve_db": {
+          "description": "Limiting margin a favourable class needs, in dB",
+          "title": "Design Reserve Db",
+          "type": "number"
+        },
+        "rule": {
+          "description": "The classification rule in plain words",
+          "title": "Rule",
+          "type": "string"
+        },
+        "failure_criterion": {
+          "description": "Active test that decides whether a real link fails",
+          "title": "Failure Criterion",
+          "type": "string"
+        },
+        "calibrated": {
+          "description": "False until measurements have fitted the reserve",
+          "title": "Calibrated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "design_reserve_db",
+        "rule",
+        "failure_criterion",
+        "calibrated"
+      ],
+      "title": "ClassificationPolicy",
+      "type": "object"
+    },
     "DirectionResult": {
       "additionalProperties": false,
       "properties": {
@@ -145,6 +185,25 @@
           },
           "title": "Reasons",
           "type": "array"
+        },
+        "coverage_class": {
+          "anyOf": [
+            {
+              "enum": [
+                "favourable",
+                "marginal",
+                "insufficient",
+                "no-data"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Class of the link over its automatic scenarios: favourable only if nominal and worst keep the reserve",
+          "title": "Coverage Class"
         }
       },
       "required": [
@@ -243,6 +302,25 @@
               "type": "null"
             }
           ]
+        },
+        "coverage_class": {
+          "anyOf": [
+            {
+              "enum": [
+                "favourable",
+                "marginal",
+                "insufficient",
+                "no-data"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Class of this scenario alone (B-139)",
+          "title": "Coverage Class"
         }
       },
       "required": [
@@ -297,6 +375,18 @@
       },
       "title": "Limitations",
       "type": "array"
+    },
+    "classification": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClassificationPolicy"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Policy behind coverage_class"
     }
   },
   "required": [

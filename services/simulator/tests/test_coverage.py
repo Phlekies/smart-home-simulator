@@ -104,7 +104,10 @@ def test_result_identifies_scenario_profile_height_and_metric():
     assert result.request_hash == request_hash(request)
     assert result.parameters.profile.name == "Sensor genérico" and result.parameters.grid.height_m == 1.2
     assert result.metric == "direct-path-received-power" and result.frequency_hz == 2.412e9
-    assert "classification" not in result.model_dump_json()
+    # B-139: the map states the policy behind its classes, uncalibrated.
+    assert result.classification is not None and result.classification.design_reserve_db == 10
+    assert result.classification.calibrated is False
+    assert len(result.cells.coverage_class) == len(result.cells.status)
     other = CoverageMapRequest.model_validate({**data, "grid": {**data["grid"], "height_m": 2.0}})
     assert request_hash(other) != result.request_hash
 
