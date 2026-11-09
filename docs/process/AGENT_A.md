@@ -17,13 +17,13 @@ Proceso: [WORKFLOW](WORKFLOW.md). Prioridades: [WORKBOARD](WORKBOARD.md).
 - Archivos previstos: `apps/web/src/**` (salvo `generated`), `apps/web/package.json` (script `contracts`),
   `docs/ui/**` y este registro.
 - Estado anterior (A original): A-109…A-113 y A-102 fusionadas en `main` por #14 (I-007).
-- **review** — A-121, hecha por la sesión de B en el papel de A (2026-11-09), en la rama `agent-b/b-136-138`:
+- **done** — A-121 en `main` por #28 (44b715c), hecha por la sesión de B en el papel de A (2026-11-09):
   correcciones de la interfaz vistas al preparar las capturas del portfolio. Archivos: `apps/web/src/Plan.tsx`
   y `apps/web/src/styles.css`.
 
 ## Historial
 
-### A-121 — solapamiento del plano y desbordamiento en móvil (review), hecha por la sesión de B
+### A-121 — solapamiento del plano y desbordamiento en móvil (done por #28), hecha por la sesión de B
 
 ```text
 Tarea / estado: A-121 / review. Rama local agent-b/b-136-138. 2026-11-09.
