@@ -13,8 +13,9 @@ Una simulación no garantiza perfección: cada resultado debe indicar modelo, ve
 supuestos, datos, ámbito de validez y evidencia experimental. Ningún porcentaje de confianza
 ni margen de error se inventa. «Sin verificar» es un resultado válido.
 
-No se migra borrando Java. Sus fuentes, Gradle, ejemplos, instaladores y pruebas permanecen
-operativos como referencia hasta superar los criterios de sustitución. El prototipo 3D de
+No se migra borrando Java. Sus fuentes, Gradle, ejemplos, instaladores y pruebas permanecieron
+operativos como referencia hasta superar los criterios de sustitución. Superados el 2026-11-08, el
+2026-11-09 Java salió de `main` (ADR-009); queda en la etiqueta `java-desktop-final` y en la release v1.0.0. El prototipo 3D de
 la carpeta padre tampoco se modifica. La nueva aplicación vive en este repositorio clonado.
 
 ## Arquitectura de destino
@@ -135,7 +136,7 @@ Decisiones del usuario:
   (contraste en [B-121](../simulation/JAVA_PARITY.md));
 - instalación: solo con Python.
 
-Java se conserva como referencia (ADR-001); retirarlo exigiría una tarea propia decidida por el usuario.
+Por decisión del usuario, Java salió de `main` el 2026-11-09 (ADR-009) y queda en la etiqueta `java-desktop-final`.
 
 Completar migración no significa «producto con precisión validada». El objetivo rector
 es [PRODUCT_OBJECTIVE.md](../PRODUCT_OBJECTIVE.md) y el desarrollo posterior se ejecuta

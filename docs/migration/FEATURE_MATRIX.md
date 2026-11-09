@@ -4,8 +4,8 @@ Versión 2 · 2026-11-03 (B-129). Base Java: `eff803c` (v1.0.0; README, paquetes
 `model`, `physics`). Estado de la nueva aplicación: `main` hasta #10 (incluye B-105/B-106, B-108 y A-104).
 En revisión: #11, #13, #15, #16, #17, #22 y B-126…B-129 (pila B) y #12/#14 (A). Lo que solo está en
 revisión se indica así. Criterio: [ROADMAP](ROADMAP.md) («Criterio para omitir o retirar
-funciones») y [objetivo del producto](../PRODUCT_OBJECTIVE.md). La aplicación Java sigue completa
-como referencia; nada de esta matriz autoriza borrarla.
+funciones») y [objetivo del producto](../PRODUCT_OBJECTIVE.md). La aplicación Java
+salió de `main` tras cerrar la migración ([ADR-009](ARCHITECTURE.md)) y queda en la etiqueta `java-desktop-final`.
 
 Estados: **Conservada** (equivalente útil), **Sustituida** (otra forma que responde mejor a la
 decisión de cobertura), **Parcial**, **Pendiente** (útil, aún no hecha), **Excluida** (no se migra, con
@@ -66,7 +66,7 @@ motivo), **Nueva** (no existía en Java).
 |---|---|---|---|
 | Informe HTML de cobertura | Sustituida | Informe Markdown por enlace con escenarios, conexión de datos, mapas y nivel de evidencia (B-115, B-117, B-120, B-135), descargable desde la interfaz (A-115) | P5: informe por equipo con sentidos, hipótesis y pendientes, sin veredicto |
 | Paquetes nativos (jpackage) y releases | Conservada en Java; sustituida en la nueva por una instalación con Python (decisión del 2026-11-08) | `python scripts/start.py` lo prepara y arranca todo; zip con la web compilada (`scripts/package_local.py`) adjunto a las releases (B-128/B-131, en revisión) | M5/P5: distribución local sin herramientas de desarrollo |
-| 192 pruebas Java en CI | Conservada | CI Java sigue en Linux/Windows/macOS | Referencia mientras no se superen las puertas |
+| 192 pruebas Java en CI | Sustituida | La CI ejecuta las pruebas Python y web en Linux, Windows y macOS; las de Java quedan en la etiqueta `java-desktop-final` | Java salió de `main` al superarse las puertas (ADR-009) |
 | — | Nueva | Pruebas Python (444) y web (131), contratos sin deriva en CI, paridad con Java (B-121), recorridos E2E en navegador (B-127, I-007, A-114…A-119) e integración completa (I-006, I-007) | Sustitución verificable |
 
 ## Estado al cerrar la migración (2026-11-08, `main` 23ace32)

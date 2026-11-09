@@ -9,6 +9,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, PlainTextResponse
 from pydantic import ValidationError
 
+from . import __version__
 from .cache import ResultCache
 from .calibration import MeasurementCheckRequest, MeasurementCheckResult, check as check_measurements
 from .coverage import CoverageJobs, CoverageLimitError
@@ -50,7 +51,7 @@ async def lifespan(_: FastAPI):
         coverage_jobs = CoverageJobs()
 
 
-app = FastAPI(title="Smart Environment Simulator", version="0.1.0", lifespan=lifespan,
+app = FastAPI(title="Smart Environment Simulator", version=__version__, lifespan=lifespan,
               description="API local. Estimación analítica; sin garantía de precisión experimental.")
 
 
@@ -69,7 +70,7 @@ async def limit_body(request: Request, call_next):
 
 @app.get("/api/health")
 def health() -> dict:
-    return {"status": "ok", "version": "0.1.0", "mode": "local"}
+    return {"status": "ok", "version": __version__, "mode": "local"}
 
 
 @app.get("/api/engines")

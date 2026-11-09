@@ -8,7 +8,9 @@ Pruebas sin JDK: `services/simulator/tests/test_java_parity.py`.
 
 El script compila en un directorio temporal los paquetes `model`, `physics` y `simulation` del
 código Java original, junto con el arnés. Deja fuera las clases que dependen de la interfaz
-(`LinkValidator`). Después ejecuta `PropagationEngine.computeCell`. **El código Java no se
+(`LinkValidator`). Después ejecuta `PropagationEngine.computeCell`. Desde ADR-009, las fuentes se
+extraen de la etiqueta `java-desktop-final` (`--java-ref`), porque Java ya no está en `main`; el 2026-11-09 la
+ejecución desde la etiqueta reprodujo exactamente los mismos valores. **El código Java no se
 modifica** y no se instala ni se descarga nada.
 
 - **Entorno:** Java 22.0.2 en Windows 11 y Python 3.13.

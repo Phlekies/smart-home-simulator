@@ -1,24 +1,28 @@
 """B-121 runner: Java parity of directional antennas and polarization, and contrast with Java multipath.
 
-Compiles the original Java model, physics and simulation sources (read-only) with the harness
-``java_parity/JavaParity.java`` into a temporary directory, runs them, and writes the evidence:
+Extracts the original Java model, physics and simulation sources from the git tag
+``java-desktop-final`` (Java left ``main`` in ADR-009), compiles them with the harness
+``java_parity/JavaParity.java`` in a temporary directory, runs them and writes the evidence:
 
     .venv/Scripts/python.exe services/simulator/benchmarks/java_parity.py \
         --output docs/simulation/evidence/java-parity.json
 
-Needs ``javac``/``java`` on PATH; nothing is installed or downloaded. ``test_java_parity.py``
-re-checks the stored Java values against the current Python estimator without a JDK.
+Needs ``javac``/``java`` on PATH and the tag in the local clone (``git fetch --tags``); nothing is
+installed or downloaded. ``test_java_parity.py`` re-checks the stored Java values against the current
+Python estimator without a JDK.
 """
 
 from __future__ import annotations
 
 import argparse
+import io
 import json
 import math
 import platform
 import statistics
 import subprocess
 import sys
+import tarfile
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -30,7 +34,7 @@ from smart_environment.engines import direction  # noqa: E402
 from smart_environment.legacy import MATERIALS, import_project  # noqa: E402
 from smart_environment.models import Building, Device, Point, Project, Radio, Settings, Wall  # noqa: E402
 
-JAVA_ROOT = ROOT / "src" / "main" / "java"
+JAVA_REF = "java-desktop-final"  # tag of the last main commit that still had the Java application
 PACKAGES = ("model", "physics", "simulation")
 EXAMPLES = ("smart-apartment", "office-floor", "warehouse")
 PARITY_TOLERANCE_DB = 0.01  # Java's FSPL uses the rounded 32.45 dB constant: about 0.002 dB apart
@@ -152,11 +156,22 @@ def imported_forward_dbm(name: str) -> dict[str, float]:
     return out
 
 
-def run_java(cases_by_mode: list[tuple[str, dict]]) -> dict[tuple[str, str, str], tuple[float, int]]:
-    with tempfile.TemporaryDirectory(prefix="shsim-java-parity-") as tmp:
+def java_sources(target: Path, ref: str = JAVA_REF) -> Path:
+    """Copy src/main/java of the given git reference into target; the working tree no longer has it."""
+    archive = subprocess.run(["git", "-C", str(ROOT), "archive", "--format=tar", ref, "src/main/java"],
+                             capture_output=True, check=True).stdout
+    with tarfile.open(fileobj=io.BytesIO(archive)) as tar:
+        tar.extractall(target, filter="data")
+    return target / "src" / "main" / "java"
+
+
+def run_java(cases_by_mode: list[tuple[str, dict]], ref: str = JAVA_REF) -> dict[tuple[str, str, str], tuple[float, int]]:
+    with tempfile.TemporaryDirectory(prefix="shsim-java-parity-") as tmp, \
+            tempfile.TemporaryDirectory(prefix="shsim-java-sources-") as sources_dir:
+        java_root = java_sources(Path(sources_dir), ref)
         # The engine needs neither the UI nor JavaFX; classes that reference them are left out.
         sources = [str(p) for package in PACKAGES
-                   for p in (JAVA_ROOT / "io" / "github" / "phlekies" / "smarthome" / package).rglob("*.java")
+                   for p in (java_root / "io" / "github" / "phlekies" / "smarthome" / package).rglob("*.java")
                    if not any(marker in p.read_text(encoding="utf-8")
                               for marker in ("smarthome.ui.", "javafx.", "Format::"))]
         sources.append(str(Path(__file__).parent / "java_parity" / "JavaParity.java"))
@@ -183,9 +198,11 @@ def _spread(values: list[float | None]) -> dict:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--java-ref", default=JAVA_REF, help="git reference that still has src/main/java")
     args = parser.parse_args(argv)
     parity, examples = parity_cases(), [c for name in EXAMPLES for c in example_cases(name)]
-    java = run_java([("direct", c) for c in parity + examples] + [(m, c) for m in ("rays", "waves") for c in examples])
+    java = run_java([("direct", c) for c in parity + examples] + [(m, c) for m in ("rays", "waves") for c in examples],
+                    args.java_ref)
     parity_rows = []
     for case in parity:
         for probe in case["probes"]:
@@ -211,7 +228,7 @@ def main(argv: list[str] | None = None) -> int:
                                                   if comparable else None)
             contrast_rows.append(row)
     java_version = subprocess.run(["java", "-version"], capture_output=True, text=True).stderr.splitlines()[0]
-    commit = subprocess.run(["git", "-C", str(ROOT), "log", "-1", "--format=%H", "--", "src/main/java"],
+    commit = subprocess.run(["git", "-C", str(ROOT), "log", "-1", "--format=%H", args.java_ref, "--", "src/main/java"],
                             capture_output=True, text=True).stdout.strip()
     report = {
         "task": "B-121", "generated_utc": datetime.now(timezone.utc).isoformat(timespec="seconds"),

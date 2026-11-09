@@ -84,7 +84,7 @@ ejecuciones idénticas para acreditar el mismo estado de los contratos.
 - [x] Instalación limpia y arranque local reproducibles (B-112: clon nuevo en Windows x64 siguiendo LOCAL_DEVELOPMENT; Linux en cada CI de migración desde el lock).
 - [x] Matriz de funciones conservadas/sustituidas/excluidas y motivos ([FEATURE_MATRIX](FEATURE_MATRIX.md), B-107; revisar al cerrar cada fase).
 - [x] Documentación del ámbito real y motores disponibles ([ámbito real y motores](SCOPE_AND_ENGINES.md), [ADR-008](ARCHITECTURE.md)).
-- [x] Java preservado como referencia hasta superar las puertas de sustitución (fuentes, Gradle, ejemplos y releases Java intactos; CI Java en verde en los tres sistemas; ADR-001).
+- [x] Java preservado como referencia hasta superar las puertas de sustitución (intacto hasta `main` 23ace32, con CI Java en verde en los tres sistemas; después retirado de `main` y conservado en la etiqueta `java-desktop-final` y la release v1.0.0, ADR-009).
 
 ## Puertas separadas del producto
 

@@ -10,36 +10,56 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Build and test (${{ matrix.os }})
+  test:
+    name: Test (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
 
     steps:
-      - name: Check out
-        uses: actions/checkout@v7
+      - uses: actions/checkout@v7
 
-      - name: Set up JDK 21
-        uses: actions/setup-java@v6
+      - uses: actions/setup-python@v6
         with:
-          distribution: temurin
-          java-version: 21
+          python-version: '3.13'
 
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v6
-
-      - name: Build, test, measure coverage and check the Javadoc
-        run: ./gradlew build javadoc --no-daemon
-
-      - name: Upload test and coverage reports
-        if: always()
-        uses: actions/upload-artifact@v7
+      - uses: actions/setup-node@v6
         with:
-          name: reports-${{ matrix.os }}
-          path: |
-            build/reports/tests/test
-            build/reports/jacoco/test/html
-          if-no-files-found: ignore
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install the pinned Python dependencies
+        run: |
+          python -m pip install -r services/simulator/requirements-dev.lock.txt
+          python -m pip install --no-deps --no-build-isolation -e services/simulator
+
+      - name: Test the simulator, contracts and API
+        run: python -m pytest services/simulator/tests -q
+
+      - name: Check JSON Schema / OpenAPI drift
+        if: runner.os == 'Linux'
+        run: python scripts/export_contracts.py --check
+
+      - name: Install web dependencies
+        run: npm ci --prefix apps/web
+
+      - name: Check generated TypeScript drift
+        if: runner.os == 'Linux'
+        run: |
+          npm run contracts --prefix apps/web
+          git diff --exit-code -- apps/web/src/generated
+
+      - name: Type-check and build the interface
+        run: npm run build --prefix apps/web
+
+      - name: Test the editor
+        run: npm test --prefix apps/web
+
+      - name: Package the Python-only local app
+        run: python scripts/package_local.py --output "$RUNNER_TEMP/local-app"

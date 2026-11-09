@@ -160,10 +160,11 @@ integrados en la API (Sionna se evaluó aparte en WSL, ver
 Las notas Java indican qué se ha inferido; rellenar campos no demuestra compatibilidad
 funcional de un producto comercial.
 
-## Java sigue disponible
+## La aplicación Java original
 
-`gradlew.bat run` y `gradlew.bat test` conservan su funcionamiento original. Su entorno
-se mantiene separado del nuevo stack; la migración no elimina ninguna fuente Java.
+Salió de `main` el 2026-11-09 (ADR-009). Para verla o ejecutarla: `git checkout java-desktop-final` y
+`gradlew.bat run` (necesita JDK 21+), o los ejecutables nativos de la release v1.0.0. Los ejemplos JSON
+siguen en `examples/` y la aplicación nueva los importa.
 
 ## Linux/macOS
 
