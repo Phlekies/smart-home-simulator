@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { exportSize, MAX_SCALE, panView, visibleBounds, zoomView } from './viewport.ts';
+import { exportSize, MAX_SCALE, panView, scaleBar, visibleBounds, zoomView } from './viewport.ts';
 
 const base = { minX: -2, minY: -2, maxX: 18, maxY: 12 };
 const close = (a: number, b: number) => assert.ok(Math.abs(a - b) < 1e-9, `${a} ≠ ${b}`);
@@ -35,4 +35,10 @@ test('zoom is bounded and the visible area never leaves the plan', () => {
 test('exported images keep the plan proportions and a bounded size', () => {
   assert.deepEqual(exportSize(base), { width: 1600, height: 1120 });
   assert.deepEqual(exportSize({ minX: 0, minY: 0, maxX: 10, maxY: 40 }), { width: 400, height: 1600 });
+});
+
+test('exported scale bar matches the aspect-preserving fit of the rasterized plan', () => {
+  const scale = scaleBar(base, { width: 1600, height: 1119 });
+  assert.equal(scale.metres, 2);
+  close(scale.pixels, 2 * (1119 / 14));
 });

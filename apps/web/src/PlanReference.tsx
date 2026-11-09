@@ -118,6 +118,7 @@ export default function PlanReference({ saved, image, view, disabled, onImage, o
     {saved && <div className="helper reference-saved" role="status">
       <p>{associated ? 'Imagen local comprobada.' : 'Imagen no disponible. Reasocia el archivo original para mostrarla con la escala guardada.'}</p>
       <p>{saved.file_name} · {saved.width_px} × {saved.height_px} px · escala {saved.meters_per_pixel} m/px · origen ({saved.origin_x_m}, {saved.origin_y_m}) m.</p>
+      {saved.calibration && <p>Cota de calibración A–B guardada · {String(saved.calibration.distance_m).replace('.', ',')} m.</p>}
       <details><summary>Procedencia y huella del archivo</summary><p>{saved.evidence}</p><p style={{ overflowWrap: 'anywhere' }}>SHA-256: {saved.sha256}</p></details>
     </div>}
     <fieldset className="inspector-fields" disabled={loading || disabled}><legend className="sr-only">Referencia de plano</legend>

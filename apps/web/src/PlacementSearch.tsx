@@ -3,7 +3,7 @@ import type { FormEvent } from 'react';
 import { api } from './api';
 import type { Point, Project } from './generated/project';
 import type { PlacementCandidate, PlacementSearchResult, PlacementZone } from './generated/placement-search';
-import { allowedPoint, allowedZone, comparablePlacementDelta, linkedPlacementTargets, placementToApply, validatePlacementRequest, validatePlacementResult, zoneCount } from './editor/placement';
+import { allowedPoint, allowedZone, comparablePlacementDelta, linkedPlacementTargets, placementScenarios, placementToApply, validatePlacementRequest, validatePlacementResult, zoneCount } from './editor/placement';
 import type { PlacementRequest } from './editor/placement';
 import { useAnalysis } from './useAnalysis';
 
@@ -17,13 +17,18 @@ export default function PlacementSearch({ project, revision, disabled, onValidat
   const options = project.devices.flatMap(device => device.radios.map(radio => ({ device, radio, key: key(device.id, radio.id) })));
   const [apKey, setAP] = useState(first ? key(first.id, first.radios[0].id) : '');
   const ap = options.find(option => option.key === apKey);
+  const [scenarioId, setScenarioId] = useState('');
+  const scenarios = placementScenarios(project);
+  const scenario = scenarios.find(item => item.id === scenarioId);
   const [priorities, setPriorities] = useState<string[]>([]), [points, setPoints] = useState<PlacementCandidate[]>([]), [zones, setZones] = useState<PlacementZone[]>([]);
   const [pointLabel, setPointLabel] = useState('Lugar permitido'), [pointFields, setPointFields] = useState([String(first?.position.x ?? 0), String(first?.position.y ?? 0), String(first?.position.z ?? 1.4)]);
   const [zoneLabel, setZoneLabel] = useState('Zona permitida'), [zoneFields, setZoneFields] = useState(['0', '0', String(project.building.width_m), String(project.building.depth_m), '1.4', '1']);
   const [confirmed, setConfirmed] = useState(false), [error, setError] = useState(''), [applied, setApplied] = useState(''), [selected, setSelected] = useState('');
   const analysis = useAnalysis<PlacementSearchResult>(revision), lastRequest = useRef<PlacementRequest | null>(null);
+  const runButton = useRef<HTMLButtonElement>(null);
   const targetLinks = ap ? linkedPlacementTargets(project, ap.device.id, ap.radio.id) : [];
-  const targetDevices = project.devices.filter(device => targetLinks.some(target => target.deviceId === device.id));
+  const targetDevices = project.devices.filter(device => targetLinks.some(target => target.deviceId === device.id && !target.backhaul));
+  const dataTarget = targetLinks.find(target => target.backhaul);
   const places = points.length + zones.reduce((sum, zone) => sum + zoneCount(zone), 0);
   function edit(action: () => void) { analysis.clear(); setError(''); setApplied(''); action(); }
   function addPoint(event: FormEvent) {
@@ -43,12 +48,12 @@ export default function PlacementSearch({ project, revision, disabled, onValidat
     } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
   }
   function run() {
-    if (disabled || !onValidate()) return;
+    if (disabled || analysis.pending || !places || !onValidate()) return;
     try {
       if (!ap) throw new Error('Elige la radio del AP que se movería.');
       if (!confirmed) throw new Error('Confirma que los lugares declarados permiten alimentación, cableado y montaje.');
       const request: PlacementRequest = { project, access_point_device_id: ap.device.id, access_point_radio_id: ap.radio.id,
-        target_device_ids: priorities, candidates: points, zones, engine: 'quick-estimate' };
+        target_device_ids: priorities, candidates: points, zones, engine: 'quick-estimate', ...(scenario && { scenario }) };
       validatePlacementRequest(request); lastRequest.current = structuredClone(request); setError(''); setApplied(''); setSelected('');
       analysis.run(request, (input, signal) => api<PlacementSearchResult>('/placement-searches', input, signal), validatePlacementResult);
     } catch (e) { setError(e instanceof Error ? e.message : String(e)); }
@@ -66,18 +71,27 @@ export default function PlacementSearch({ project, revision, disabled, onValidat
       onChange={event => update(values.map((value, i) => i === index ? event.target.value : value))} /></label>);
   }
   const name = (id: string | null) => project.devices.find(device => device.id === id)?.name ?? id ?? 'Sin datos';
-  return <section className="panel results-panel analysis-panel" aria-labelledby="placement-title" aria-busy={analysis.pending}>
+  return <section className="panel results-panel analysis-panel" aria-labelledby="placement-title">
     <span className="eyebrow">ALTERNATIVAS REALIZABLES · UN AP</span><h2 id="placement-title">Compara lugares permitidos para el AP.</h2>
     <p className="helper">El motor compara márgenes en ambos sentidos de los enlaces prioritarios. La persona declara dónde hay alimentación, cableado y montaje posibles. Lugares y resultados de esta búsqueda son de sesión.</p>
     <fieldset className="inspector-fields" disabled={disabled}><legend className="sr-only">Parámetros de búsqueda de ubicación</legend>
       <label className="field"><span>Equipo y radio del AP a mover</span><select aria-label="Equipo y radio del AP a mover" value={apKey} onChange={event => edit(() => {
         setAP(event.target.value); setPriorities([]); setPoints([]); setZones([]); setConfirmed(false);
       })}><option value="">Seleccionar AP…</option>{options.map(option => <option key={option.key} value={option.key}>{option.device.name} · {option.radio.id}</option>)}</select></label>
+      <label className="field"><span>Hipótesis de búsqueda</span><select value={scenario?.id ?? ''}
+        onChange={event => edit(() => setScenarioId(event.target.value))} aria-describedby="placement-hypothesis">
+        <option value="">Nominal · según el proyecto</option>
+        {scenarios.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+      </select></label>
+      <p id="placement-hypothesis" className="helper">{scenario
+        ? `${scenario.name}: ${Object.keys(scenario.doors ?? {}).length} puertas y ${Object.keys(scenario.materials ?? {}).length} materiales con hipótesis aplicadas a todos los lugares. El proyecto se conserva.`
+        : scenarios.length ? 'Los escenarios cambian puertas inciertas y pérdidas de materiales para toda la búsqueda.' : 'Declara una puerta incierta o un rango de pérdidas para comparar hipótesis.'}</p>
       <fieldset className="priority-targets"><legend>Equipos prioritarios</legend>
         <p className="helper">Sin selección se evalúan todos los equipos enlazados con esa radio. Cada radio/enlace conserva sus datos.</p>
         <button type="button" onClick={() => edit(() => setPriorities([]))}>Evaluar todos los enlazados</button>
         {targetDevices.map(device => <label key={device.id}><input type="checkbox" checked={priorities.includes(device.id)} onChange={event => edit(() => setPriorities(previous => event.target.checked ? [...previous, device.id] : previous.filter(id => id !== device.id)))} /> {device.name}</label>)}
-        {!targetDevices.length && <p className="helper">No hay equipos enlazados con esta radio. Crea los enlaces antes de buscar.</p>}
+        {dataTarget && <p className="helper">El enlace de datos hacia {project.devices.find(device => device.id === dataTarget.deviceId)?.name ?? dataTarget.deviceId} se evalúa siempre, incluso si usa otra radio.</p>}
+        {!targetLinks.length && <p className="helper">No hay equipos enlazados con esta radio ni un enlace de datos inalámbrico. Crea los enlaces antes de buscar.</p>}
       </fieldset>
       <div className="allowed-place-forms"><form onSubmit={addPoint} noValidate><h3>Añadir un lugar exacto</h3>
         <label className="field"><span>Etiqueta del lugar</span><input aria-label="Etiqueta del lugar" value={pointLabel} maxLength={160} onChange={event => setPointLabel(event.target.value)} /></label>
@@ -91,25 +105,28 @@ export default function PlacementSearch({ project, revision, disabled, onValidat
         {zones.map(zone => <li key={zone.id}>{zone.label}: X {zone.min_x_m}–{zone.max_x_m}, Y {zone.min_y_m}–{zone.max_y_m}, altura {zone.height_m} m · {zoneCount(zone)} posiciones <button type="button" aria-label={`Retirar zona ${zone.label}`} onClick={() => edit(() => setZones(previous => previous.filter(item => item.id !== zone.id)))}>Retirar</button></li>)}</ul>
       <p className="helper">{places} posiciones declaradas · máximo 2000. Los campos de un lugar o zona solo entran en la búsqueda después de añadirlos.</p>
       <label className="reference-toggle"><input type="checkbox" checked={confirmed} onChange={event => edit(() => setConfirmed(event.target.checked))} /> Confirmo alimentación, cableado y montaje viables en los lugares declarados.</label>
-      <div className="analysis-actions"><button className="primary" type="button" disabled={analysis.pending || !places} onClick={run}>Buscar ubicaciones del AP</button>
-        {analysis.pending && <button type="button" onClick={analysis.clear}>Descartar respuesta de búsqueda</button>}</div>
+      <div className="analysis-actions"><button ref={runButton} className="primary" type="button" disabled={!places} aria-disabled={analysis.pending || undefined} onClick={run}>Buscar ubicaciones del AP</button>
+        {analysis.pending && <button type="button" onClick={() => { analysis.clear(); runButton.current?.focus(); }}>Descartar respuesta de búsqueda</button>}</div>
     </fieldset>
     {(error || analysis.error) && <p role="alert" className="message error">{error || analysis.error}</p>}
     <p role="status">{analysis.pending ? 'Evaluando lugares permitidos…' : applied || (result ? 'Búsqueda disponible para esta instalación.' : 'Sin búsqueda vigente.')}</p>
-    {result && <><p className="helper">{result.evaluated} posiciones evaluadas · {result.excluded.length} excluidas · {result.elapsed_ms.toFixed(1)} ms · {result.ranked ? 'Orden por enlaces completos, peor margen y media.' : 'Sin orden: ningún lugar dispone de márgenes completos.'}</p>
+    {result && <><p className="helper">Hipótesis aplicada: {result.parameters.scenario?.name ?? 'Nominal'}. {result.evaluated} posiciones evaluadas · {result.excluded.length} excluidas · {result.elapsed_ms.toFixed(1)} ms · {result.ranked ? 'Orden por enlaces completos, peor margen y media.' : 'Sin orden: ningún lugar dispone de márgenes completos.'}</p>
       <p>Actual: peor margen {number(result.baseline.worst_margin_db)} dB · limitante {name(result.baseline.worst_target_id)} · {result.baseline.complete_targets} enlaces completos.</p>
       {!!result.ranking.length && <label className="field"><span>Alternativa de ubicación</span><select aria-label="Alternativa de ubicación" value={alternative?.candidate_id ?? ''} onChange={event => setSelected(event.target.value)}>
         {result.ranking.map(candidate => <option key={candidate.candidate_id} value={candidate.candidate_id}>{candidate.label} · ({candidate.position.x}, {candidate.position.y}, {candidate.position.z}) m · margen {number(candidate.worst_margin_db)} dB</option>)}</select></label>}
       {alternative && <><p>Alternativa: peor margen {number(alternative.worst_margin_db)} dB · limitante {name(alternative.worst_target_id)} · {alternative.complete_targets} enlaces completos.
         {' '}Cambio comparable: {number(comparablePlacementDelta(result.baseline, alternative), true)} dB.</p>
         <div className="table-scroll"><table><caption>Márgenes por enlace en dB · AP→equipo y equipo→AP</caption><thead><tr><th>Equipo y enlace</th><th>Actual ida / vuelta</th><th>Alternativa ida / vuelta</th><th>Limitante y datos de alternativa</th></tr></thead><tbody>
-          {alternative.targets.map(target => { const baseline = result.baseline.targets.find(item => item.link_id === target.link_id); return <tr key={target.link_id}>
-            <td>{name(target.device_id)}<small className="link-radio-pair">Radio del AP {result.access_point_radio_id} ↔ {(() => { const link = project.links.find(item => item.id === target.link_id); return link?.source_device_id === target.device_id ? link.source_radio_id : link?.target_radio_id; })()}</small></td><td>{number(baseline?.forward_margin_db ?? null)} / {number(baseline?.reverse_margin_db ?? null)}</td>
+          {alternative.targets.map(target => {
+            const baseline = result.baseline.targets.find(item => item.link_id === target.link_id);
+            const link = targetLinks.find(item => item.linkId === target.link_id);
+            return <tr key={target.link_id}>
+            <td>{name(target.device_id)}{target.backhaul && ' · Conexión de datos'}<small className="link-radio-pair">Radio del AP {link?.apRadioId} ↔ {link?.peerRadioId}</small></td><td>{number(baseline?.forward_margin_db ?? null)} / {number(baseline?.reverse_margin_db ?? null)}</td>
             <td>{number(target.forward_margin_db)} / {number(target.reverse_margin_db)}</td><td>{number(target.limiting_margin_db)} · {target.limiting_direction === 'forward' ? 'AP→equipo' : target.limiting_direction === 'reverse' ? 'equipo→AP' : 'Sin sentido limitante'}<br />{target.status === 'complete' ? 'Ambos sentidos calculados' : target.status === 'incomplete' ? 'Datos incompletos' : 'Sin calcular'}{target.reason && ` · ${targetReason(target.reason)}`}</td></tr>; })}
         </tbody></table></div><button type="button" disabled={disabled} onClick={apply}>Aplicar esta posición al AP</button></>}
       {!!result.excluded.length && <details><summary>Lugares excluidos ({result.excluded.length})</summary><ul>{result.excluded.map((item, index) => <li key={index}>({item.position.x}, {item.position.y}, {item.position.z}) m · {item.reason.startsWith('inside-wall:') ? `Dentro de la pared ${project.building.walls.findIndex(wall => wall.id === item.reason.slice('inside-wall:'.length)) + 1}` : item.reason}</li>)}</ul></details>}
       <details open className="limitations"><summary>Datos pendientes, alcance y límites</summary><p>{result.scope}</p><ul>{[...result.reasons, ...result.limitations].map((reason, index) => <li key={index}>{reason}</li>)}</ul></details>
     </>}
-    <p className="comparison-limit">La búsqueda usa trayecto directo sin calibración experimental. Ordenar márgenes no clasifica cobertura ni aconseja compras. Los enlaces incompletos no influyen en el margen del orden; revisa cuáles faltan. Añadir AP y su conexión de datos queda fuera de esta búsqueda.</p>
+    <p className="comparison-limit">La búsqueda usa trayecto directo sin calibración experimental. Ordenar márgenes no clasifica cobertura ni aconseja compras. Los enlaces incompletos no influyen en el margen del orden; revisa cuáles faltan. La búsqueda mueve un AP del proyecto y conserva su conexión de datos declarada.</p>
   </section>;
 }

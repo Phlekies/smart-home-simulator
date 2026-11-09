@@ -1,17 +1,18 @@
 import { useMemo } from 'react';
+import LinkDifferencePanel from './LinkDifferencePanel';
+import { linkStatusNames } from './linkStatus';
 import { comparePositions, movedDevices } from './editor/comparison';
+import { formatDifference } from './editor/linkDifference';
 import type { ComparisonBase } from './editor/comparison';
 import type { Point, Project } from './generated/project';
 import type { SimulationResult } from './generated/simulation-result';
 
 const value = (number: number | null) => number === null ? 'Sin datos' : number.toFixed(1);
-const delta = (number: number | null) => number === null ? 'Sin datos' : `${number > 0 ? '+' : ''}${Math.abs(number) < .05 ? '0.0' : number.toFixed(1)}`;
 const point = (p: Point) => `X ${p.x}, Y ${p.y}, altura ${p.z} m`;
-const statuses = { 'above-threshold': 'Sobre umbral', 'below-threshold': 'Bajo umbral', incompatible: 'Incompatible', unverified: 'Sin verificar', unsupported: 'Fuera de alcance' };
 
-export default function PositionComparison({ project, result, base, disabled, onCapture, onClear, onRestore }: {
+export default function PositionComparison({ project, result, base, disabled, onCapture, onClear, onRestore, onValidate }: {
   project: Project; result: SimulationResult | null; base: ComparisonBase | null; disabled: boolean;
-  onCapture: () => void; onClear: () => void; onRestore: () => void;
+  onCapture: () => void; onClear: () => void; onRestore: () => void; onValidate?: () => boolean;
 }) {
   const comparison = useMemo(() => base ? comparePositions(base, project, result) : null, [base, project, result]);
   const moves = useMemo(() => base ? movedDevices(base.project, project) : [], [base, project]);
@@ -39,12 +40,17 @@ export default function PositionComparison({ project, result, base, disabled, on
       {comparison?.kind === 'ready' && <div className="table-scroll"><table>
         <caption className="sr-only">Comparación de señal y margen: instalación base y alternativa, en ambos sentidos</caption>
         <thead><tr><th scope="col">Sentido del enlace</th><th scope="col">Base · dBm</th><th scope="col">Alternativa · dBm</th>
-          <th scope="col">Cambio · dB</th><th scope="col">Margen base / alternativa · dB</th><th scope="col">Evaluación base / alternativa</th></tr></thead>
+          <th scope="col">Cambio de señal · dB</th><th scope="col">Margen base / alternativa · dB</th>
+          <th scope="col">Cambio de margen · dB</th><th scope="col">Evaluación base / alternativa</th></tr></thead>
         <tbody>{comparison.rows.map(row => <tr key={`${row.linkId}-${row.direction}`}><th scope="row">{row.txName} → {row.rxName}
           <small className="link-radio-pair">{row.txRadioId} → {row.rxRadioId}</small></th>
-          <td>{value(row.power.base)}</td><td>{value(row.power.alternative)}</td><td>{delta(row.power.delta)}</td>
-          <td>{value(row.margin.base)} / {value(row.margin.alternative)}</td><td>{statuses[row.baseStatus]} / {statuses[row.alternativeStatus]}</td></tr>)}</tbody>
+          <td>{value(row.power.base)}</td><td>{value(row.power.alternative)}</td><td>{formatDifference(row.power.delta)}</td>
+          <td>{value(row.margin.base)} / {value(row.margin.alternative)}</td><td>{formatDifference(row.margin.delta)}</td>
+          <td>{linkStatusNames[row.baseStatus]} / {linkStatusNames[row.alternativeStatus]}</td></tr>)}</tbody>
       </table></div>}
+      {comparison?.kind === 'ready' && result?.engine === 'quick-estimate' && moves.length > 0
+        && <LinkDifferencePanel key={JSON.stringify([base.capturedAt, base.result.input_hash, result.input_hash, result.engine_version])}
+          base={base} project={project} current={result} rows={comparison.rows} disabled={disabled} onValidate={onValidate} />}
       <details className="limitations"><summary>Límites conservados de la instalación base</summary><p>{base.result.scope}</p><ul>{base.result.limitations.map(limit => <li key={limit}>{limit}</li>)}</ul></details>
     </> : <p className="comparison-state" role="status">{result ? 'Puedes fijar el cálculo actual como instalación base.' : 'Ejecuta la primera estimación para fijar una base.'}</p>}
   </section>;
